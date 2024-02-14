@@ -1,0 +1,6 @@
+// Create schema with
+// pg_dump --schema-only --no-owner namestone > schema.sql
+
+
+// example create INDEX
+create index domain_text_record__domain_id on domain_text_record(domain_id);

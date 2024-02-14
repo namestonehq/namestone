@@ -1,0 +1,51 @@
+{
+  "name": "namestone",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "NODE_OPTIONS=\"--max_old_space_size=400\" next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@ensdomains/content-hash": "^2.5.7",
+    "@headlessui/react": "^1.7.15",
+    "@next/bundle-analyzer": "^13.4.2",
+    "@rainbow-me/rainbowkit": "^1.0.2",
+    "@rainbow-me/rainbowkit-siwe-next-auth": "^0.3.0",
+    "@sentry/nextjs": "^7.52.1",
+    "canvas-confetti": "^1.6.0",
+    "ethers": "^5",
+    "framer-motion": "^10.12.12",
+    "fs": "^0.0.1-security",
+    "github-slugger": "^2.0.0",
+    "gray-matter": "^4.0.3",
+    "micro-cors": "^0.1.1",
+    "next": "13.4.2",
+    "next-auth": "4.20.1",
+    "next-cloudinary": "^4.12.0",
+    "next-themes": "^0.2.1",
+    "nodemailer": "^6.9.2",
+    "path": "^0.12.7",
+    "postgres": "^3.3.4",
+    "prettier-plugin-tailwindcss": "^0.2.8",
+    "prisma": "^4.14.1",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "react-markdown": "^8.0.7",
+    "react-player": "^2.12.0",
+    "sharp": "^0.32.1",
+    "siwe": "^2",
+    "viem": "^0.3.24",
+    "wagmi": "^1.2"
+  },
+  "devDependencies": {
+    "@iconify/react": "^4.1.0",
+    "autoprefixer": "^10.4.14",
+    "eslint": "8.40.0",
+    "eslint-config-next": "13.4.2",
+    "postcss": "^8.4.23",
+    "tailwindcss": "^3.3.2"
+  }
+}

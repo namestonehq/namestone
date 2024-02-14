@@ -1,0 +1,50 @@
+# Get Names
+
+This GET route fetches all names for a user or domain. ordered alphabetically
+
+## Parameters
+
+- `domain` (string): The domain for the user name.
+- `address` (string)(Optional): The address of the user. If not included route will return all names for the domain.
+- `text_records` (1 or 0)(Optional): Whether or not the the route returns text records. 1 by default.
+- `limit` (integer)(Optional): number of names returned in request. default 50
+- `offset` (integer)(Optional): offset the returned names window. default 0
+
+## Example
+
+```
+GET https://namestone.xyz/api/public_v1/get-names?domain=example.xyz&address=0x123abc...
+headers:
+{
+  `Authorization: YOUR_API_KEY`
+}
+```
+
+## Curl Example
+
+```
+curl -X GET \
+     -H 'Authorization: YOUR_API_KEY' \
+     'https://namestone.xyz/api/public_v1/get-names?domain=testbrand.eth&address=0x57632Ba9A844af0AB7d5cdf98b0056c8d87e3A85'
+
+```
+
+## Example Return
+
+```
+[
+   {
+      "name":"namestone",
+      "address":"0x57632Ba9A844af0AB7d5cdf98b0056c8d87e3A85",
+      "domain":"testbrand.eth",
+      "textRecords":{
+         "avatar":"https://imagedelivery.net/UJ5oN2ajUBrk2SVxlns2Aw/71cec612-fe0b-46a4-3d1c-e3eaf53d4600/public",
+         "com.twitter":"namestonehq",
+         "com.discord":"",
+         "location":"ENS",
+         "url":"https://namestone.xyz",
+         "description":"Brand Choice"
+      }
+   }
+]
+```

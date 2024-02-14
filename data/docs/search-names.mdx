@@ -1,0 +1,50 @@
+# Search Names
+
+This GET route fetches all names for a domain that start with a string. ordered alphabetically
+
+## Parameters
+
+- `domain` (string): The domain for the user name.
+- `name` (string): The string names will start with. 'ro' will return 'rob' and 'robert' and other names starting with 'ro'
+- `text_records` (1 or 0)(Optional): Whether or not the the route returns text records. 1 by default.
+- `limit` (integer)(Optional): number of names returned in request. default 50
+- `offset` (integer)(Optional): offset the returned names window. default 0
+
+## Example
+
+```
+GET https://namestone.xyz/api/public_v1/search-names?domain=example.xyz&name=ro
+headers:
+{
+  `Authorization: YOUR_API_KEY`
+}
+```
+
+## Curl Example
+
+```
+curl -X GET \
+     -H 'Authorization: YOUR_API_KEY' \
+     'https://namestone.xyz/api/public_v1/search-names?domain=example.xyz&name=ro'
+
+```
+
+## Example Return
+
+```
+[
+   {
+      "name":"robert",
+      "address":"0x57632Ba9A844af0AB7d5cdf98b0056c8d87e3A85",
+      "domain":"testbrand.eth",
+      "textRecords":{
+         "avatar":"https://imagedelivery.net/UJ5oN2ajUBrk2SVxlns2Aw/71cec612-fe0b-46a4-3d1c-e3eaf53d4600/public",
+         "com.twitter":"namestonehq",
+         "com.discord":"",
+         "location":"ENS",
+         "url":"https://namestone.xyz",
+         "description":"Brand Choice"
+      }
+   }
+]
+```

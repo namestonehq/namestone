@@ -1,0 +1,36 @@
+# Revoke Name
+
+This POST route is used to revoke a name for a given domain.
+
+## Parameters
+
+- `name` (string): The name being revoked, i.e., the "example" in example.testbrand.eth
+- `domain` (string): The domain ("testbrand.eth")
+
+## Example
+
+```
+POST https://namestone.xyz/api/public_v1/revoke-name
+
+{
+  "domain": "example.xyz",
+  "name": "bob"
+}
+headers:
+{
+  `Authorization: YOUR_API_KEY`
+}
+```
+
+## Curl Example
+
+```
+curl -X POST \
+     -H 'Content-Type: application/json' \
+     -H 'Authorization: YOUR_API_KEY' \
+     -d '{
+          "domain": "example.xyz",
+          "name": "bob"
+        }' \
+     https://namestone.xyz/api/public_v1/revoke-name
+```
