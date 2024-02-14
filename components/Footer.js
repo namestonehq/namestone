@@ -44,7 +44,7 @@ export default function Footer() {
                 alt="NameStone Twitter"
               />
             </Link>
-            <Link href="https://github.com/nftychat">
+            <Link href="https://github.com/resolverworks">
               <Image
                 className="h-[20px] flex-shrink-0 mx-4"
                 src={logoGithubWhite}

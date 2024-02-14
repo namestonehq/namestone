@@ -34,7 +34,7 @@ export default async function handler(req, res) {
 
     const mailOptions = {
       from: "darian@namestone.xyz",
-      to: "darian@nftychat.xyz, alex@nftychat.xyz, darian@namestone.xyz, alex@namestone.xyz",
+      to: "darian@namestone.xyz, alex@namestone.xyz",
       subject: email_subject,
       text: email_message,
     };

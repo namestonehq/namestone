@@ -1,17 +1,15 @@
-import { Fragment } from "react";
-
 export default function Home() {
   return (
     <div className="px-4 py-4">
       <h1 className="text-xl">
-        Privacy Policy for nftychat, inc. DBA NameStone
+        Privacy Policy for resolverworks, inc. DBA NameStone
       </h1>
       <br />
       <p className="mb-4">
         At NameStone, accessible from www.namestone.xyz, one of our main
         priorities is the privacy of our visitors. This Privacy Policy document
-        contains types of information that is collected and recorded by nftychat
-        and how we use it.
+        contains types of information that is collected and recorded by
+        resolverworks and how we use it.
       </p>
       <p className="mb-4">
         If you have additional questions or require more information about our
@@ -107,7 +105,7 @@ export default function Home() {
       <p className="mb-4">
         Third-party ad servers or ad networks uses technologies like cookies,
         JavaScript, or Web Beacons that are used in their respective
-        advertisements and links that appear on nftychat, which are sent
+        advertisements and links that appear on resolverworks, which are sent
         directly to users&apos; browser. They automatically receive your IP
         address when this occurs. These technologies are used to measure the
         effectiveness of their advertising campaigns and/or to personalize the
@@ -199,7 +197,7 @@ export default function Home() {
         participate in, and/or monitor and guide their online activity.
       </p>
       <p className="mb-4">
-        nftychat does not knowingly collect any Personal Identifiable
+        resolverworks does not knowingly collect any Personal Identifiable
         Information from children under the age of 13. If you think that your
         child provided this kind of information on our website, we strongly
         encourage you to contact us immediately and we will do our best efforts
