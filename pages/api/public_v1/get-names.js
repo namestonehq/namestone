@@ -11,7 +11,7 @@ async function checkApiKey(apiKey, domain) {
   const apiQuery = await sql`
     SELECT api_key.id, key FROM api_key 
     where api_key.key = ${apiKey}`;
-  if (apiQuery.count == 1) {
+  if (apiQuery.count >= 1) {
     return true;
   }
   return false;
@@ -36,10 +36,9 @@ async function handler(req, res) {
 
   const address = req.query.address;
   const includeTextRecords = req.query.text_records;
+  const apiKey = headers.authorization || req.query.api_key;
   // Check API key
-  const allowedApi = await checkApiKey(
-    headers.authorization || req.query.api_key
-  );
+  const allowedApi = await checkApiKey(apiKey);
   if (!allowedApi) {
     return res.status(401).json({
       error: "key error - You are not authorized to use this endpoint",
@@ -57,7 +56,8 @@ async function handler(req, res) {
   } else {
     // Get all domains from db for api key
     const domainQuery = await sql`
-    select id from domain where api_key = ${allowedApi}`;
+    select domain.id from domain join api_key on api_key.domain_id = domain.id where api_key.key = ${apiKey}`;
+
     if (domainQuery.length === 0) {
       return res.status(400).json({ error: "Domain does not exist" });
     }
