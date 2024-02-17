@@ -4,8 +4,8 @@ This GET route fetches all names for a user or domain. ordered alphabetically
 
 ## Parameters
 
-- `domain` (string): The domain for the user name.
-- `address` (string)(Optional): The address of the user. If not included route will return all names for the domain.
+- `domain` (string)(Optional): The domain for the user name. If not included route will return all names for all domains tied to your api key.
+- `address` (string)(Optional): The address of the user. If not included route will return all names.
 - `text_records` (1 or 0)(Optional): Whether or not the the route returns text records. 1 by default.
 - `limit` (integer)(Optional): number of names returned in request. default 50
 - `offset` (integer)(Optional): offset the returned names window. default 0
