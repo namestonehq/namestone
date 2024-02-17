@@ -1,11 +1,21 @@
 import sql from "../../../lib/db";
-import { checkApiKey } from "../../../utils/ServerUtils";
 import Cors from "micro-cors";
 
 const cors = Cors({
   allowMethods: ["GET", "HEAD", "POST", "OPTIONS"],
   origin: "*",
 });
+
+async function checkApiKey(apiKey, domain) {
+  console.log(apiKey, domain);
+  const apiQuery = await sql`
+    SELECT api_key.id, key FROM api_key 
+    where api_key.key = ${apiKey}`;
+  if (apiQuery.count == 1) {
+    return true;
+  }
+  return false;
+}
 
 async function handler(req, res) {
   const { headers } = req;
@@ -28,8 +38,7 @@ async function handler(req, res) {
   const includeTextRecords = req.query.text_records;
   // Check API key
   const allowedApi = await checkApiKey(
-    headers.authorization || req.query.api_key,
-    domain
+    headers.authorization || req.query.api_key
   );
   if (!allowedApi) {
     return res.status(401).json({
