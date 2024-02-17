@@ -12,9 +12,7 @@ async function handler(req, res) {
 
   // Check required parameters
   const domain = req.query.domain;
-  if (!domain) {
-    return res.status(400).json({ error: "Missing domain" });
-  }
+
   // get offset and limit
   let limit = req.query.limit;
   if (!limit) {
@@ -38,12 +36,23 @@ async function handler(req, res) {
       error: "key error - You are not authorized to use this endpoint",
     });
   }
-
-  const domainQuery = await sql`
-  select id from domain where name = ${domain} limit 1`;
-
-  if (domainQuery.length === 0) {
-    return res.status(400).json({ error: "Domain does not exist" });
+  let domainIds = [];
+  if (domain) {
+    // Get domain from db
+    const domainQuery = await sql`
+    select id from domain where name = ${domain} limit 1`;
+    if (domainQuery.length === 0) {
+      return res.status(400).json({ error: "Domain does not exist" });
+    }
+    domainIds = [domainQuery[0].id];
+  } else {
+    // Get all domains from db for api key
+    const domainQuery = await sql`
+    select id from domain where api_key = ${allowedApi}`;
+    if (domainQuery.length === 0) {
+      return res.status(400).json({ error: "Domain does not exist" });
+    }
+    domainIds = domainQuery.map((domain) => domain.id);
   }
 
   // Get subdomains from db
@@ -53,7 +62,7 @@ async function handler(req, res) {
     SELECT subdomain.id AS id, subdomain.name AS name, subdomain.address AS address, domain.name AS domain, subdomain.created_at, subdomain.contenthash
     FROM subdomain
     JOIN domain ON subdomain.domain_id = domain.id
-    WHERE domain_id = ${domainQuery[0].id}
+    WHERE domain_id = ANY(${domainIds})
     order by subdomain.name ASC
     LIMIT ${limit} OFFSET ${offset}`;
   } else {
@@ -62,7 +71,7 @@ async function handler(req, res) {
     FROM subdomain
     JOIN domain ON subdomain.domain_id = domain.id
     WHERE LOWER(subdomain.address) = ${address.toLowerCase()}
-    AND domain_id = ${domainQuery[0].id}
+    AND domain_id = ANY(${domainIds})
     order by subdomain.name ASC
     LIMIT ${limit} OFFSET ${offset}`;
   }
