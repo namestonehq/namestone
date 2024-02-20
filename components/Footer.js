@@ -8,7 +8,7 @@ import Link from "next/link";
 
 export default function Footer() {
   return (
-    <div className="flex flex-col items-center justify-center w-full px-8 bg-brownblack-700 md:px-20">
+    <div className="flex flex-col items-center justify-center w-full px-8 bg-neutral-900 md:px-20">
       <div className="flex flex-col md:flex-row w-full mt-[24px] pb-6 items-center justify-center md:justify-between relative border-b border-orange-500 border-opacity-30">
         <Link href="/">
           <Image

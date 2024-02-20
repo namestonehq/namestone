@@ -88,7 +88,7 @@ export default function Home() {
       {/* <Banner brand="Wassies" /> */}
       <Header />
       {/* Main Section */}
-      <div className="w-full px-6 overflow-hidden text-center bg-neutral-50 md:px-20 md:text-left">
+      <div className="w-full px-8 overflow-hidden text-center md:px-32 bg-neutral-50 md:text-left">
         <video
           autoPlay
           muted
@@ -99,7 +99,7 @@ export default function Home() {
           <source src="/background-landing-animation.mp4" type="video/mp4" />
           Your browser does not support the video tag.
         </video>
-        <div className="flex flex-wrap justify-center md:justify-between 2xl:justify-around mt-24 md:mt-[240px]  mb-8 z-10 ">
+        <div className="flex flex-wrap justify-start mt-24 md:mt-[240px]  mb-8 z-10 ">
           <div className="z-20 flex flex-col items-center md:items-start">
             <span className="max-w-lg font-bold text-md sm:text-lg md:text-xl md:leading-tight text-brownblack-700">
               Issue Free ENS Subnames

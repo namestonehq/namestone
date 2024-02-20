@@ -1,12 +1,25 @@
 import nodemailer from "nodemailer";
 import sql from "../../lib/db";
 import { v4 as uuidv4 } from "uuid";
+import { ethers } from "ethers";
+import { providerUrl } from "../../utils/ServerUtils";
+
+// Async function to resolve ENS name to address
+const resolveENS = async (name, provider) => {
+  try {
+    const address = await provider.resolveName(name);
+    return address;
+  } catch (error) {
+    console.error("Error resolving ENS name:", error);
+    return null;
+  }
+};
 
 export default async function handler(req, res) {
   if (req.method === "POST") {
-    const { name, email, project, domain } = JSON.parse(req.body);
+    const { name, email, wallet, domain } = JSON.parse(req.body);
 
-    if (!name || !email || !domain || !project) {
+    if (!name || !email || !domain || !wallet) {
       res.status(400).json({ error: "Missing parameters" });
       return;
     }
@@ -26,7 +39,7 @@ export default async function handler(req, res) {
   insert into domain ${sql(insertDomain, "name", "name_limit")}
   returning id;`;
     let insertBrand = {
-      name: project,
+      name: domain,
       url_slug: domain,
       domain_id: domainQuery[0].id,
     };
@@ -42,11 +55,37 @@ export default async function handler(req, res) {
   insert into api_key ${sql(insertApiKey, "key", "domain_id")} returning key;
   `;
 
+    // check if wallet is an ens name by checking for dot
+    let address;
+    if (wallet.includes(".")) {
+      let provider = new ethers.providers.JsonRpcProvider(providerUrl);
+      // try to resolve the ens name
+      address = await resolveENS(input, provider);
+      if (!address) {
+        res.status(400).json({ error: "Invalid ENS name" });
+        return;
+      }
+    } else {
+      // check if wallet is a valid address
+      try {
+        address = ethers.utils.getAddress(wallet);
+      } catch (error) {
+        res.status(400).json({ error: "Invalid address" });
+        return;
+      }
+    }
+    // create admin
+    let insertAdmin = {
+      address: address,
+      domain_id: domainQuery[0].id,
+    };
+    await sql` insert into admin ${sql(insertAdmin, "address", "domain_id")}`;
+
     // send email
     const email_subject = `Your Namestone API Key`;
     const email_message = `
     Hi ${name},
-    Here's your namestone API key for your project ${project}:
+    Here's your namestone API key for your domain ${domain}:
     ${apiKey[0].key}
 
     You can use this key to create and manage subdomains for ${domain}.
@@ -85,7 +124,7 @@ export default async function handler(req, res) {
     API Key Created For
     Name: ${name}
     Email: ${email}
-    Project: ${project}
+    Wallet Address: ${wallet}
     Domain: ${domain}
     `;
 

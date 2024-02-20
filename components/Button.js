@@ -8,6 +8,7 @@ const colorClassMapping = {
     "bg-brownblack-100 hover:bg-brownblack-200 active:bg-brownblack-300 disabled:bg-brownblack-300/[0.50]",
   white:
     "bg-white hover:bg-orange-300 active:bg-orange-400 disabled:bg-brownblack-300/[0.50]",
+  gray: "bg-neutral-200 hover:bg-neutral-300 active:bg-neutral-400 disabled:bg-brownblack-300/[0.50]",
 };
 
 export default function Button({

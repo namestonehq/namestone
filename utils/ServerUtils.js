@@ -2,7 +2,7 @@ import sql from "../lib/db.js";
 import { ethers } from "ethers";
 import contentHash from "@ensdomains/content-hash";
 
-const providerUrl =
+export const providerUrl =
   "https://eth-mainnet.g.alchemy.com/v2/" +
   process.env.NEXT_PUBLIC_ALCHEMY_API_KEY; // replace with your actual project ID
 
