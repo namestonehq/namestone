@@ -5,6 +5,7 @@ import confirmationCheckIcon from "../public/images/confirmation_check-icon.png"
 import { useRouter } from "next/router";
 import NameStoneLogo from "../components/NameStoneLogo";
 import Footer from "../components/Footer";
+import { useParams } from "next/navigation";
 
 export default function Home() {
   const router = useRouter();
@@ -14,6 +15,8 @@ export default function Home() {
   const adminClick = () => {
     router.push("/admin");
   };
+
+  const { address } = useParams();
 
   return (
     <div className="flex flex-col w-full h-[100vh]">
@@ -65,7 +68,13 @@ export default function Home() {
             </div>
             <div className="">
               <span className="text-sm font-normal leading-normal text-neutral-900">
-                You’ll need to connect the wallet you entered to get started.
+                You’ll need to connect the wallet{" "}
+              </span>
+              <span className="text-sm font-bold text-neutral-900 ">
+                {address}
+              </span>
+              <span className="text-sm font-normal leading-normal text-neutral-900">
+                to get started.
               </span>
             </div>
           </div>

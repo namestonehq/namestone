@@ -74,7 +74,7 @@ export default function Home() {
       .then((res) => {
         res.json().then((data) => {
           if (res.status === 200) {
-            router.push("/on-the-way");
+            router.push("/on-the-way?address=" + data.address);
           } else {
             setDisableSend(false);
             setErrorMsg(
