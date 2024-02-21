@@ -170,7 +170,7 @@ export default function Home() {
               labelText="Wallet Address"
               placeholderText="0x1232...  or slobo.eth"
               onChange={(e) => setWalletInput(e.target.value)}
-              value={setWalletInput}
+              value={WalletInput}
             />
             <WhiteInput
               labelText="Email"
