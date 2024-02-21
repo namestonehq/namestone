@@ -60,7 +60,7 @@ export default async function handler(req, res) {
     if (wallet.includes(".")) {
       let provider = new ethers.providers.JsonRpcProvider(providerUrl);
       // try to resolve the ens name
-      address = await resolveENS(input, provider);
+      address = await resolveENS(wallet, provider);
       if (!address) {
         res.status(400).json({ error: "Invalid ENS name" });
         return;
