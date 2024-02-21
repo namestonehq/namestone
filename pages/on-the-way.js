@@ -9,14 +9,13 @@ import { useParams } from "next/navigation";
 
 export default function Home() {
   const router = useRouter();
+  const { address } = useParams();
   const homeClick = () => {
     router.push("/");
   };
   const adminClick = () => {
     router.push("/admin");
   };
-
-  const { address } = useParams();
 
   return (
     <div className="flex flex-col w-full h-[100vh]">
