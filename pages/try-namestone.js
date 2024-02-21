@@ -262,6 +262,7 @@ export default function Home() {
               onClick={handleClick}
               disabled={disableSend}
               className="mt-4 mb-24"
+              pending={apiPending}
             />
           </div>
         </div>

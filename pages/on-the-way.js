@@ -9,7 +9,9 @@ import { useParams } from "next/navigation";
 
 export default function Home() {
   const router = useRouter();
-  const { address } = useParams();
+  const params = useParams();
+  const address = params ? params.address : "missing address";
+
   const homeClick = () => {
     router.push("/");
   };
@@ -70,7 +72,7 @@ export default function Home() {
                 You’ll need to connect the wallet{" "}
               </span>
               <span className="text-sm font-bold text-neutral-900 ">
-                {address}
+                {address}{" "}
               </span>
               <span className="text-sm font-normal leading-normal text-neutral-900">
                 to get started.
