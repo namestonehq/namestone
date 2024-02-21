@@ -92,6 +92,61 @@ export default async function handler(req, res) {
     Here is an example: https://namestone.xyz/docs/set-name 
     Please keep this key safe and do not share it with anyone.
     `;
+    const email_html =`<!DOCTYPE html>
+    <html>
+    <head>
+    <style>
+    body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+    }
+    .container {
+        width: 500px;
+        margin: 20px auto;
+        padding: 20px;
+    }
+    .api-key {
+        background-color: #f4f4f4;
+        padding: 10px;
+        margin: 20px 0;
+        word-wrap: break-word;
+        font-weight: bold;
+        border-radius: 5px;
+    }
+    .button {
+        display: inline-block;
+        background-color: #FF8B36;
+        color: #171717;
+        padding: 8px 50px;
+        text-decoration: none;
+        border-radius: 8px;
+        margin: 20px 0;
+        font-weight: bold;
+    }
+</style>
+    </head>
+    <body>
+        <div class="container">
+            <p>Hi <strong>${name}</strong>,</p>
+    
+            <p>Your API key for <strong>${domain}</strong> is:</p>
+    
+            <div class="api-key">${apiKey[0].key}</div>
+    
+            <p>Do not share this key with anyone. This key grants you access to NameStone's API, allowing you to gaslessly issue and manage subnames for <strong>${domain}</strong>.</p>
+    
+            <p>Visit our <a href="https://namestone.xyz/docs">docs</a> to get started.</p>
+    
+            <p>Feel free to reach out with questions or further assistance.</p>
+    
+            <p>Alex<br>
+            NameStone<br>
+            <a href="https://namestone.xyz">namestone.xyz</a></p>
+    
+            <a href="https://namestone.xyz/docs" class="button">Docs</a>
+        </div>
+    </body>
+    </html>`
 
     const transporter = nodemailer.createTransport({
       // Configurations for the transport method here. This is an example using Gmail.
@@ -109,6 +164,7 @@ export default async function handler(req, res) {
       to: email,
       subject: email_subject,
       text: email_message,
+      html: email_html,
     };
 
     try {
