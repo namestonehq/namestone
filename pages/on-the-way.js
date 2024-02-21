@@ -9,8 +9,8 @@ import { useParams } from "next/navigation";
 
 export default function Home() {
   const router = useRouter();
-  const params = useParams();
-  const address = params ? params.address : "missing address";
+  const { query } = router;
+  const address = query.address || "missing address";
 
   const homeClick = () => {
     router.push("/");
