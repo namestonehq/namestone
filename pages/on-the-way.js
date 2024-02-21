@@ -65,14 +65,7 @@ export default function Home() {
             </div>
             <div className="">
               <span className="text-sm font-normal leading-normal text-neutral-900">
-                You’ll need to connect the wallet{" "}
-              </span>
-              <span className="text-sm font-bold text-neutral-900 ">
-                0x229...CB65
-              </span>
-              <span className="text-sm font-normal leading-normal text-neutral-900">
-                {" "}
-                to get started.
+                You’ll need to connect the wallet you entered to get started.
               </span>
             </div>
           </div>
