@@ -19,6 +19,7 @@ export default function Home() {
   const [walletInput, setWalletInput] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [rerenderToggle, setRerenderToggle] = useState(false);
+  const [apiPending, setApiPending] = useState(false);
 
   // refresh resolver every 5 seconds
   useEffect(() => {
@@ -60,6 +61,7 @@ export default function Home() {
   const handleClick = () => {
     setErrorMsg("");
     setDisableSend(true);
+    setApiPending(true);
     fetch("/api/send-try-namestone-email", {
       method: "POST",
       body: JSON.stringify({
@@ -68,19 +70,29 @@ export default function Home() {
         wallet: walletInput,
         domain: domainInput,
       }),
-    }).then((res) => {
-      res.json().then((data) => {
-        if (res.status === 200) {
-          router.push("/on-the-way");
-        } else {
-          setDisableSend(false);
-          setErrorMsg(
-            "Something went wrong. Please refresh and try again or email alex at alex@namestone.xyz"
-          );
-          console.log(data);
-        }
+    })
+      .then((res) => {
+        res.json().then((data) => {
+          if (res.status === 200) {
+            router.push("/on-the-way");
+          } else {
+            setDisableSend(false);
+            setErrorMsg(
+              "Something went wrong. Please refresh and try again or email alex at alex@namestone.xyz"
+            );
+            console.log(data);
+          }
+          setApiPending(false);
+        });
+      })
+      .catch((err) => {
+        setDisableSend(false);
+        setErrorMsg(
+          "Something went wrong. Please refresh and try again or email alex at alex@namestone.xyz"
+        );
+        console.log(err);
+        setApiPending(false);
       });
-    });
   };
 
   return (
