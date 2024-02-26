@@ -80,7 +80,11 @@ export default function Home() {
     <div>
       <Head>
         <title>NameStone</title>
-        <meta name="description" content="Issue Free ENS Subnames" key="desc" />
+        <meta
+          name="description"
+          content="Issue gasless ENS subdomains"
+          key="desc"
+        />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
@@ -88,25 +92,15 @@ export default function Home() {
       {/* <Banner brand="Wassies" /> */}
       <Header />
       {/* Main Section */}
-      <div className="w-full px-8 overflow-hidden text-center md:px-32 bg-neutral-50 md:text-left">
-        <video
-          autoPlay
-          muted
-          loop
-          className="absolute z-0 object-contain w-full"
-          style={{ top: 0, left: 0 }}
-        >
-          <source src="/background-landing-animation.mp4" type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
-        <div className="flex flex-wrap justify-start mt-24 md:mt-[240px]  mb-8 z-10 ">
+      <div className="w-full px-6 overflow-hidden text-center bg-orange-20 md:px-20 md:text-left">
+        <div className="flex flex-wrap justify-center md:justify-between 2xl:justify-around mt-24 md:mt-[240px]  mb-8 z-10 ">
           <div className="z-20 flex flex-col items-center md:items-start">
             <span className="max-w-lg font-bold text-md sm:text-lg md:text-xl md:leading-tight text-brownblack-700">
-              Issue Free ENS Subnames
+              Issue gasless ENS subdomains
             </span>
             <span className="max-w-lg mt-3 text-sm md:text-base text-brownblack-700">
               Reward your community, generate revenue, and enhance your brand
-              with ENS subnames.
+              with <b>ENS subdomains.</b>
             </span>
             <div className="flex flex-wrap justify-center gap-4 mt-10 mb-16">
               <button
@@ -123,6 +117,25 @@ export default function Home() {
               </button>
             </div>
           </div>
+          <div className="w-[640px]">
+            <div className="relative pt-[56.25%] z-10">
+              {/* <div className="relative pt-[56.25%] w-[640px] z-10"> */}
+              <ReactPlayer
+                width="100%"
+                height="100%"
+                className="absolute top-0 left-0"
+                url="https://www.youtube.com/watch?v=kw1spZZmdRo&modestbranding=1&nologo=1&showinfo=0"
+              />
+            </div>
+          </div>
+        </div>
+        <div className="absolute top-0 left-0 z-0 hidden w-full h-full md:block">
+          <Image
+            src={backgroundImage1}
+            className="object-cover fill ml-[696px]"
+            alt="background image"
+            width={687}
+          />
         </div>
       </div>
       {/* Product Section */}
@@ -327,7 +340,7 @@ export default function Home() {
             <Fragment key={data.key}>
               {/* Testimony Card */}
               <div className="flex flex-col items-start mt-16 justify-between min-h-[240px] w-auto max-w-fit rounded-lg bg-white p-[32px] mx-[32px] text-left drop-shadow-lg z-30 ">
-                <div className="mb-4 text-sm md:max-w-xs text-brownblack-700">
+                <div className="mb-4 text-sm  md:max-w-xs text-brownblack-700">
                   {data.text}
                 </div>
                 <Image src={data.img} height={48} alt={data.img_alt} />
