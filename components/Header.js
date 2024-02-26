@@ -15,7 +15,7 @@ export default function Header({ subtitle }) {
   return (
     <div className="flex justify-center w-full">
       <div className="fixed z-40 flex justify-between w-full px-6 py-4 backdrop-blur-sm lg:px-32 max-w-[1536px]">
-        {menuOpen ? (
+        {!menuOpen ? (
           <>
             <div className="flex items-center text-2xl font-bold">
               <Link href="/" className="flex">
