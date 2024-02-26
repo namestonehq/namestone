@@ -149,7 +149,7 @@ export default function Home() {
           </div>
         </div>
         {/* Logos section */}
-        <div className="flex flex-col w-full pt-16 pb-32 pl-6 bg-white md:pl-32">
+        <div className="flex flex-col w-full pt-16 pb-32 pl-6 bg-white lg:pl-32">
           <div className="mb-10 text-base font-bold text-neutral-900">
             Serving web3 leaders
           </div>
@@ -418,7 +418,7 @@ export default function Home() {
           </div>
         </div>
         {/* Final Call section */}
-        <div className="flex flex-col items-start justify-start w-full px-6 py-16 text-left md:px-32 bg-neutral-900 ">
+        <div className="flex flex-col items-start justify-start w-full px-6 py-16 text-left lg:px-32 bg-neutral-900 ">
           <div className="mt-16 font-bold text-white text-md md:text-lg">
             Ready to get started?{" "}
           </div>
