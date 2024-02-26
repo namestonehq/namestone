@@ -75,11 +75,15 @@ async function handler(req, res) {
     order by subdomain.name ASC
     LIMIT ${limit} OFFSET ${offset}`;
   } else {
+    // split address by comma
+    let addresses = address.split(",");
+    // lowercase all addresses
+    addresses = addresses.map((address) => address.toLowerCase());
     subdomainEntries = await sql`
     SELECT subdomain.id AS id, subdomain.name AS name, subdomain.address AS address, domain.name AS domain, subdomain.created_at, subdomain.contenthash
     FROM subdomain
     JOIN domain ON subdomain.domain_id = domain.id
-    WHERE LOWER(subdomain.address) = ${address.toLowerCase()}
+    WHERE LOWER(subdomain.address) = ANY(${addresses})
     AND domain_id = ANY(${domainIds})
     order by subdomain.name ASC
     LIMIT ${limit} OFFSET ${offset}`;

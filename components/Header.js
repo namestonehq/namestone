@@ -47,7 +47,7 @@ export default function Header({ subtitle }) {
                 {" "}
                 Blog
               </Link>
-              <Link className="text-xs font-bold md:text-sm" href="/admins">
+              <Link className="text-xs font-bold md:text-sm" href="/admin">
                 {" "}
                 Admin Login
               </Link>

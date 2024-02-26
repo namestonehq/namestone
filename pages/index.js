@@ -115,7 +115,7 @@ export default function Home() {
             <div className="z-20 flex flex-col items-center md:items-start">
               {/* CHIPS */}
               <div className="inline-flex items-center justify-start gap-3 mb-4">
-                <div className="px-3 py-0.5 bg-neutral-900 bg-opacity-5 rounded-[99px] backdrop-blur-sm justify-center items-center gap-2 flex">
+                <div className="px-3 py-0.5 bg-neutral-200  rounded-[99px] justify-center items-center gap-2 flex">
                   <div className="text-sm font-normal leading-none text-neutral-900">
                     Supported by
                   </div>
@@ -126,7 +126,7 @@ export default function Home() {
                   <div className="text-sm font-normal leading-none text-neutral-900">
                     Integrated with
                   </div>
-                  <Image src={airstackLogo} width={69} alt="airstack Logo" />
+                  <Image src={airstackLogo} width={72} alt="airstack Logo" />
                 </div>
               </div>
               {/* TITLE */}
