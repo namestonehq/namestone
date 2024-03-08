@@ -25,11 +25,7 @@ export default function Header({ subtitle }) {
                   src={namestoneIcon}
                   alt="Forging Commmunity Identity"
                 />{" "}
-                <span className={`mr-1 ${subtitle ? "hidden md:block" : ""}`}>
-                  {" "}
-                  NameStone{" "}
-                </span>
-                {subtitle}
+                <span className={`mr-1`}> NameStone </span>
               </Link>
             </div>
             <div className="items-center space-x-6 md:space-x-10 lg:hidden">
@@ -38,12 +34,22 @@ export default function Header({ subtitle }) {
               </button>
             </div>
             <div className="items-center hidden space-x-6 md:space-x-10 lg:flex">
-              <Link className="text-xs font-bold md:text-sm" href="/docs">
+              <Link
+                className={`text-xs font-bold md:text-sm ${
+                  subtitle === "Docs" ? "text-orange-800" : ""
+                }`}
+                href="/docs"
+              >
                 {" "}
                 Docs
               </Link>
 
-              <Link className="text-xs font-bold md:text-sm" href="/blog">
+              <Link
+                className={`text-xs font-bold md:text-sm ${
+                  subtitle === "Blog" ? "text-orange-800" : ""
+                }`}
+                href="/blog"
+              >
                 {" "}
                 Blog
               </Link>
@@ -94,7 +100,13 @@ export default function Header({ subtitle }) {
                     className="inline-flex items-center self-stretch justify-start gap-3 p-4 hover:bg-neutral-100"
                     href="/docs"
                   >
-                    <div className="text-base font-bold leading-normal grow shrink basis-0 text-neutral-900">
+                    <div
+                      className={`text-base font-bold leading-normal grow shrink basis-0 ${
+                        subtitle === "Docs"
+                          ? "text-orange-800"
+                          : "text-neutral-900"
+                      }`}
+                    >
                       Docs
                     </div>
                   </Link>
@@ -102,7 +114,13 @@ export default function Header({ subtitle }) {
                     className="inline-flex items-center self-stretch justify-start gap-3 p-4 hover:bg-neutral-100"
                     href="/blog"
                   >
-                    <div className="text-base font-bold leading-normal grow shrink basis-0 text-neutral-900">
+                    <div
+                      className={`text-base font-bold leading-normal grow shrink basis-0 ${
+                        subtitle === "Blog"
+                          ? "text-orange-800"
+                          : "text-neutral-900"
+                      }`}
+                    >
                       Blog
                     </div>
                   </Link>

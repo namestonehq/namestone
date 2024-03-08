@@ -20,7 +20,6 @@ import imageEns from "../public/images/image-ens.png";
 import imageShowtime from "../public/images/image-showtime.png";
 import imageEtherscan from "../public/images/image-etherscan.png";
 import imageMailchain from "../public/images/image-mailchain.png";
-import imageNftychat from "../public/images/image-nftychat.png";
 import logoList from "../public/images/logos.png";
 import ensLogo from "../public/images/ens_logo_purple.svg";
 import airstackLogo from "../public/images/airstack-logo.svg";
@@ -201,13 +200,13 @@ export default function Home() {
               Gasless User Benefits
             </div>
             <div className="text-sm md:text-base text-brownblack-700">
-              Сlaiming an ENS name and changing text records, including <br />
-              an avatar, requires zero gas fees
+              Сlaiming an ENS name and changing text records, including an
+              avatar, requires zero gas fees
             </div>
 
             <div className="flex flex-row flex-wrap justify-start pt-16 md:gap-4">
               {gaslessData.map((data) => (
-                <div key={data.key} className="flex items-center mr-4 ">
+                <div key={data.key} className="flex items-center mb-1 mr-4">
                   <Image src={noGasImage} width={48} height={48} alt="no gas" />
                   <div className="text-base font-bold ml-3 py-[10px] text-neutral-900">
                     {data.text}
@@ -267,9 +266,9 @@ export default function Home() {
         </div>
 
         {/* Stats */}
-        <div className="inline-flex flex-col items-start justify-center w-full gap-20 px-6 pb-20 mt-32 text-center lg:px-32">
+        <div className="inline-flex flex-col items-start justify-center w-full gap-20 px-6 pb-20 mt-32 text-center bg-white lg:px-32">
           <div className="flex flex-col items-start justify-start gap-3 ">
-            <div className=" text-neutral-900 text-[40px] font-bold text-left">
+            <div className=" text-neutral-900  text-base md:text-[40px] font-bold text-left">
               The backbone for web3 names
             </div>
             <div className="text-base font-normal leading-7 text-left text-neutral-900">
@@ -346,13 +345,12 @@ export default function Home() {
               height={80}
               alt="mailchain"
             />
-            <Image src={imageNftychat} width={80} height={80} alt="nftychat" />
           </div>
         </div>
 
         {/* Trust Section */}
-        <div className="relative w-full pt-16 text-center bg-white">
-          <div className="flex flex-col items-center font-bold text-md md:text-lg text-brownblack-700">
+        <div className="relative flex flex-col items-start justify-start w-full px-6 py-16 pt-16 text-left bg-white lg:px-32">
+          <div className="flex flex-col items-start font-bold text-md md:text-lg text-brownblack-700">
             Trusted by web3 natives
           </div>
           <div className="flex flex-wrap justify-center pb-20">
@@ -370,7 +368,7 @@ export default function Home() {
           </div>
         </div>
         {/* BUILDERS */}
-        <div className="flex flex-col items-start justify-start w-full px-6 py-16 bg-white lg:px-32">
+        <div className="flex flex-col items-start justify-start w-full px-6 py-16 bg-neutral-50 lg:px-32">
           <div className="inline-flex items-center self-stretch justify-start gap-20">
             <div className="inline-flex flex-col items-start self-stretch justify-center gap-8 grow shrink basis-0">
               <div className="self-stretch text-neutral-900 text-[32px] font-bold">
