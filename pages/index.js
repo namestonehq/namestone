@@ -27,6 +27,7 @@ import airstackLogo from "../public/images/airstack-logo.svg";
 import darianCoin from "../public/images/darian-coin.png";
 import sloboCoin from "../public/images/slobo-coin.png";
 import churinaCoin from "../public/images/churina-coin.png";
+import raffyCoin from "../public/images/raffy-coin.png";
 
 import { useRouter } from "next/router";
 import Footer from "../components/Footer";
@@ -404,6 +405,18 @@ export default function Home() {
                   </div>
                   <div className="self-stretch text-sm font-normal leading-normal text-neutral-900">
                     Designer
+                  </div>
+                </div>
+              </div>
+              <div className="w-[336px] justify-start items-center gap-6 inline-flex">
+                <Image width={88} src={raffyCoin} alt="churina" />
+                <div className="inline-flex flex-col items-start justify-center gap-2 grow shrink basis-0">
+                  <div className="self-stretch text-base font-bold leading-7 text-neutral-900">
+                    raffy.eth
+                  </div>
+                  <div className="self-stretch text-sm font-normal leading-normal text-neutral-900">
+                    Financial software engineer with a passion for solving
+                    problems.
                   </div>
                 </div>
               </div>
