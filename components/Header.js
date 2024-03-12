@@ -13,8 +13,9 @@ export default function Header({ subtitle }) {
   }
 
   return (
-    <div className="flex justify-center w-full">
-      <div className="fixed z-40 flex justify-between w-full px-6 py-4 backdrop-blur-sm lg:px-32 max-w-[1536px]">
+    <div className="flex flex-col fixed justify-center w-full max-w-[1536px]">
+      <div className="relative w-full h-2 bg-gradient-to-r from-orange-400 via-red-500 to-red-500"></div>
+      <div className="z-40 flex justify-between w-full px-6 py-4 backdrop-blur-sm lg:px-32 ">
         {!menuOpen ? (
           <>
             <div className="flex items-center text-2xl font-bold">
@@ -81,13 +82,7 @@ export default function Header({ subtitle }) {
                       src={namestoneIcon}
                       alt="Forging Commmunity Identity"
                     />{" "}
-                    <span
-                      className={`mr-1 ${subtitle ? "hidden md:block" : ""}`}
-                    >
-                      {" "}
-                      NameStone{" "}
-                    </span>
-                    {subtitle}
+                    <span className={`mr-1 `}> NameStone </span>
                   </Link>
                   <div className="items-center space-x-6">
                     <button onClick={toggleMenu}>

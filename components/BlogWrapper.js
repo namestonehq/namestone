@@ -6,9 +6,11 @@ import Header from "./Header";
 
 function SectionContainer({ children }) {
   return (
-    <div className="flex flex-col justify-between bg-white h-fit">
-      <Header subtitle="Blog" />
-      <div className="max-w-3xl px-6 pt-24 pb-4 mx-auto">{children}</div>
+    <div className="flex justify-center bg-neutral-50 ">
+      <div className="w-full overflow-hidden flex flex-col max-w-[1536px]">
+        <Header subtitle="Blog" />
+        <div className="max-w-3xl px-6 pt-24 pb-4 mx-auto">{children}</div>
+      </div>
     </div>
   );
 }
