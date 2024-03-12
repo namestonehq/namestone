@@ -358,7 +358,7 @@ export default function Home() {
             {testimonyData.map((data) => (
               <Fragment key={data.key}>
                 {/* Testimony Card */}
-                <div className="flex flex-col items-start mt-16 justify-between min-h-[240px] w-auto max-w-fit rounded-lg bg-white p-[32px] mx-[32px] text-left drop-shadow-lg z-30 ">
+                <div className="flex flex-col items-start mt-16 justify-between min-h-[240px] w-auto max-w-fit rounded-lg bg-white p-[32px] mx-[32px] text-left drop-shadow-lg ">
                   <div className="mb-4 text-sm md:max-w-xs text-brownblack-700">
                     {data.text}
                   </div>
