@@ -11,9 +11,7 @@ import Link from "next/link";
 export default function Home() {
   const router = useRouter();
   const { query } = router;
-  // const address = query.address || "missing address";
-
-  const address = "0x534631Bcf33BDb069fB20A93d2fdb9e4D4dD42CF";
+  const address = query.address || "missing address";
 
   const homeClick = () => {
     router.push("/");
@@ -23,7 +21,13 @@ export default function Home() {
   };
 
   function shortAddress(address) {
-    return address.substring(0, 6) + "..." + address.substring(38);
+    if (address.startsWith("0x")) {
+      return (
+        address.substring(0, 6) + "..." + address.substring(address.length - 4)
+      );
+    } else {
+      return address;
+    }
   }
 
   return (
