@@ -6,11 +6,14 @@ import { useRouter } from "next/router";
 import NameStoneLogo from "../components/NameStoneLogo";
 import Footer from "../components/Footer";
 import { useParams } from "next/navigation";
+import Link from "next/link";
 
 export default function Home() {
   const router = useRouter();
   const { query } = router;
-  const address = query.address || "missing address";
+  // const address = query.address || "missing address";
+
+  const address = "0x534631Bcf33BDb069fB20A93d2fdb9e4D4dD42CF";
 
   const homeClick = () => {
     router.push("/");
@@ -19,10 +22,14 @@ export default function Home() {
     router.push("/admin");
   };
 
+  function shortAddress(address) {
+    return address.substring(0, 6) + "..." + address.substring(38);
+  }
+
   return (
     <div className="flex flex-col w-full h-[100vh]">
       <Head>
-        <title>Your Api Key is on the way</title>
+        <title>API Key is on the way</title>
         <meta name="description" content="Learn more about NameStone" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
@@ -38,19 +45,18 @@ export default function Home() {
 
       <div className="inline-flex flex-col items-start justify-start flex-1 px-8 py-36 gap-14 lg:px-32">
         <div className="flex flex-col items-start justify-start gap-5 ">
-          <Image
-            className="h-[60px] w-[60px] mb-6"
-            priority
-            src={confirmationCheckIcon}
-            alt="Forging Commmunity Identity"
-          />
           <div className="flex flex-col items-start justify-center gap-3 ">
             <div className="text-neutral-900 text-[32px] font-bold ">
-              Your API key is on the way
+              API Key Sent
             </div>
             <div className="text-sm font-normal leading-normal text-neutral-900">
               Please check your inbox for your API key. Questions? Email
-              alex@namestone.xyz
+              <span className="font-bold">
+                {" "}
+                <Link href="mailto:alex@namestone.xyz" className="font-bold">
+                  alex@namestone.xyz
+                </Link>
+              </span>
             </div>
           </div>
 
@@ -65,22 +71,28 @@ export default function Home() {
         <div className="flex flex-col items-start justify-center gap-5 ">
           <div className="flex flex-col items-start justify-center gap-3 ">
             <div className="text-[20px] font-bold leading-7 text-stone-950">
-              Access the Admin Panel
+              Admin Login
             </div>
-            <div className="">
-              <span className="text-sm font-normal leading-normal text-neutral-900">
-                You’ll need to connect the wallet{" "}
+            <span className="text-sm font-normal leading-normal text-neutral-900">
+              The admin panel allows you to add and modify subnames.
+            </span>
+            <span className="text-sm flex text-neutral-900 mb-5">
+              <div className="relative flex items-center group">
+                <span className="font-bold font-mono cursor-pointer">
+                  {shortAddress(address)}
+                </span>
+                <div className="absolute cursor-pointer px-2 rounded bg-gray-50 shadow opacity-0 group-hover:opacity-100 transition-opacity duration-300 -ml-2 -mt-12">
+                  {address}
+                </div>
+              </div>
+
+              <span className="text-sm font-normal pl-1 leading-normal text-neutral-900">
+                has been granted access.
               </span>
-              <span className="text-sm font-bold text-neutral-900 ">
-                {address}{" "}
-              </span>
-              <span className="text-sm font-normal leading-normal text-neutral-900">
-                to get started.
-              </span>
-            </div>
+            </span>
           </div>
           <div className="inline-flex items-center justify-start ">
-            <Button buttonText="Admin Login" onClick={adminClick} />
+            <Button buttonText="Login" onClick={adminClick} />
           </div>
         </div>
       </div>
