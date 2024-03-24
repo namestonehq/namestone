@@ -16,6 +16,7 @@ model domain {
   created_at       DateTime             @default(now())
   address          String?
   name             String?
+  contract         String? 
   contenthash      String?
   name_limit       Int                  @default(0)
   subdomains       subdomain[]

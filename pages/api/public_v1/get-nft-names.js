@@ -64,12 +64,12 @@ async function handler(req, res) {
     domainIds = domainQuery.map((domain) => domain.id);
   }
 
-  // Get subdomains from db for non contract domains
+  // Get subdomains from db for contract domains
   let subdomainEntries;
   if (address === undefined) {
     subdomainEntries = await sql`
-    SELECT subdomain.id AS id, subdomain.name AS name, subdomain.address AS address, domain.name AS domain, subdomain.created_at, subdomain.contenthash
-    FROM subdomain
+    SELECT subdomain.id AS id, subdomain.name AS name, subdomain.address AS address, domain.name AS domain,  subdomain.registered_at as created_at, subdomain.keys
+    FROM ponder."NftSubdomain" as subdomain
     JOIN domain ON subdomain.domain_id = domain.id
     WHERE domain_id = ANY(${domainIds})
     order by subdomain.name ASC
@@ -80,8 +80,8 @@ async function handler(req, res) {
     // lowercase all addresses
     addresses = addresses.map((address) => address.toLowerCase());
     subdomainEntries = await sql`
-    SELECT subdomain.id AS id, subdomain.name AS name, subdomain.address AS address, domain.name AS domain, subdomain.created_at, subdomain.contenthash
-    FROM subdomain
+    SELECT subdomain.id AS id, subdomain.name AS name, subdomain.address AS address, domain.name AS domain,  subdomain.registered_at as created_at, subdomain.keys
+    FROM ponder."NftSubdomain" as subdomain
     JOIN domain ON subdomain.domain_id = domain.id
     WHERE LOWER(subdomain.address) = ANY(${addresses})
     AND domain_id = ANY(${domainIds})
@@ -94,6 +94,7 @@ async function handler(req, res) {
   if (includeTextRecords === "0") {
     subdomainEntries.forEach((entry) => {
       delete entry.id;
+      delete entry.keys;
       subDomainPayloads.push(entry);
     });
   } else {
