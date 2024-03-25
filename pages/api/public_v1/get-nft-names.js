@@ -6,6 +6,8 @@ const cors = Cors({
   origin: "*",
 });
 
+const teamNickContract = "0x7C6EfCb602BC88794390A0d74c75ad2f1249A17f";
+
 async function checkApiKey(apiKey, domain) {
   console.log(apiKey, domain);
   const apiQuery = await sql`
