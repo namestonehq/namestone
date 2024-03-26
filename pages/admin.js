@@ -8,6 +8,7 @@ import { useSession } from "next-auth/react";
 import Button from "../components/Button";
 import { Dialog } from "@headlessui/react";
 import { ethers } from "ethers";
+import placeholderImage from "../public/images/placeholder-icon-image.png";
 
 export default function Admin() {
   const { data: session, status: authStatus } = useSession();
@@ -237,22 +238,20 @@ export default function Admin() {
               return (
                 <div
                   key={brand.url_slug}
-                  className={`flex items-center h-10 mb-2 mr-6 md:text-sm text-xs md:font-bold rounded-lg text-brownblack-700 cursor-pointer ${
+                  className={`flex items-center h-10 mb-2 mr-6 md:text-sm text-xs rounded-lg text-brownblack-700 cursor-pointer ${
                     selectedBrand?.url_slug === brand.url_slug
-                      ? "bg-brownblack-20"
+                      ? " bg-neutral-100"
                       : ""
                   }`}
                   onClick={() => setSelectedBrand(brand)}
                 >
                   <div className="flex  overflow-hidden rounded-full  w-[24px] h-[24px] mx-2">
-                    {brand.default_avatar && (
-                      <Image
-                        src={brand.default_avatar}
-                        width={24}
-                        height={24}
-                        alt={brand.name}
-                      />
-                    )}
+                    <Image
+                      src={brand.default_avatar || placeholderImage}
+                      width={24}
+                      height={24}
+                      alt={brand.name}
+                    />
                   </div>
                   <span className="hidden md:block">{brand.name}</span>
                 </div>
@@ -267,21 +266,19 @@ export default function Admin() {
           {/* Brand Name */}
           <div className="flex items-center text-base font-bold text-brownblack-700">
             <div className="flex overflow-hidden rounded-full  w-[24px] h-[24px] mr-2">
-              {selectedBrand.default_avatar && (
-                <Image
-                  src={selectedBrand.default_avatar}
-                  width={24}
-                  height={24}
-                  alt={selectedBrand.name}
-                />
-              )}
+              <Image
+                src={selectedBrand.default_avatar || placeholderImage}
+                width={24}
+                height={24}
+                alt={selectedBrand.name}
+              />
             </div>
             <div>{selectedBrand.name}</div>
           </div>
           {/* Tab selection */}
           <div className="flex items-center justify-between w-full">
             <div className="flex flex-row my-3 text-sm">
-              <div className="py-[2px] px-[6px] border-b-4 border-brownblack-200 rounded-b-sm">
+              <div className="py-[2px] px-[6px] border-b-4 border-neutral-300 rounded-b-sm">
                 Claimed Names
               </div>
 
