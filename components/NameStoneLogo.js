@@ -12,7 +12,7 @@ export default function NameStoneLogo() {
         src={namestoneLogo}
         alt="Forging Commmunity Identity"
       />
-      <span className={`mr-1 `}> NameStone </span>
+      <span className={`mr-1 text-white `}> NameStone </span>
     </Link>
   );
 }

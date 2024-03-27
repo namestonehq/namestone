@@ -3,7 +3,7 @@ import CustomConnectButton from "../CustomConnectButton";
 
 export default function AuthContentContainer(props) {
   return (
-    <div className="flex flex-col items-center justify-center w-full min-h-screen bg-orange-50">
+    <div className="flex flex-col items-center justify-center w-full min-h-screen  bg-neutral-900">
       {/* Nav bar */}
       <div className="flex items-center justify-between w-full px-4 py-4 md:px-20">
         <NameStoneLogo />
