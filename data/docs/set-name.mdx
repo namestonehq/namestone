@@ -18,8 +18,8 @@ POST https://namestone.xyz/api/public_v1/set-name
 
 {
   "domain": "example.xyz",
-  "name": "bob"
-  "address": "0x123abc...",
+  "name": "slobo"
+  "address": "0xD4416b13d2b3a9aBae7AcD5D6C2BbDBE25686401",
   "text_records": {
       "com.twitter": "namestonehq",
       "com.github":"nftyslobo",
@@ -28,7 +28,8 @@ POST https://namestone.xyz/api/public_v1/set-name
       "location":"new york",
       "description":"APIs are cool",
       "avatar":"https://raw.githubusercontent.com/aslobodnik/profile/main/pic.jpeg",
-  }
+  },
+  	"contenthash": "ipfs://bafybeib65htzaufd5en2o6tpety3ekxu7kpy4qxyooe5szphpyim3hrhia"
 }
 headers:
 {
@@ -54,7 +55,8 @@ curl -X POST \
             "location":"new york",
             "description":"APIs are cool",
             "avatar":"https://raw.githubusercontent.com/aslobodnik/profile/main/pic.jpeg"
-          }
+          },
+          "contenthash": "ipfs://bafybeib65htzaufd5en2o6tpety3ekxu7kpy4qxyooe5szphpyim3hrhia"
         }' \
      https://namestone.xyz/api/public_v1/set-name
 ```
