@@ -46,14 +46,20 @@ async function handler(req, res) {
   for (const { name, keys } of subDomainNames) {
     const tokenId = await contract.methods.tokenFor(name).call();
 
-    const textRecords = {};
-    const keysList = keys.slice(1, -1).split(","); // Remove surrounding brackets and split by comma
-    for (const key of keysList) {
-      const value = await contract.methods.text(tokenId, key.trim()).call(); // Trim whitespace from keys
-      textRecords[key.trim()] = value;
-    }
+    const keysList = keys.slice(1, -1).split(",");
+    const calls = keysList.map((key) =>
+      contract.methods.text(tokenId, key.trim()).call.request()
+    );
 
-    result.push({ name, textRecords });
+    const textRecords = (await contract.methods.multicall(calls).call()).reduce(
+      (acc, value, index) => ({
+        ...acc,
+        [keysList[index].trim()]: value,
+      }),
+      {}
+    );
+
+    result.push({ name, keys, textRecords });
   }
 
   return res.status(200).json(result);
