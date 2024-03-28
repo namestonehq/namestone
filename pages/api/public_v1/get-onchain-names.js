@@ -9,7 +9,9 @@ const cors = Cors({
 });
 
 // Connect to the Arbitrum Sepolia testnet
-const web3 = new Web3("https://sepolia.arbitrum.io/rpc");
+const web3 = new Web3(
+  "https://arb-sepolia.g.alchemy.com/v2/J-2xMLR7YSCYeXGpN-Pj7JApRPeNawbP"
+);
 const contractAddress = "0xcdb7fafde2212ec26f58f275fedf07a6ef69814c";
 const contractABI = CypherPunk;
 const contract = new web3.eth.Contract(contractABI, contractAddress);
