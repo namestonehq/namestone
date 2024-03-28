@@ -12,7 +12,7 @@ async function handler(req, res) {
 
   const address = req.query.address;
 
-  if (!domain || !tokenId) {
+  if (!domain) {
     return res.status(400).json({ message: "Missing required parameters" });
   }
   const subDomainName = await sql`
