@@ -1,0 +1,42 @@
+# Gasless DNS Setup
+
+## Overview
+
+With NameStone you can create gasless ENS subnames on your DNS domain (e.g., name.testbrand.xyz). This means you can create as many subnames as you want without a single on-chain transcation.
+
+NameStone works best with Cloudflare. If you are using a different domain registrar you can [transfer your domain to Cloudflare](https://developers.cloudflare.com/registrar/get-started/transfer-domain-to-cloudflare/#set-up-a-domain-transfer).
+
+## 1. Turn on DNSSEC
+
+![](https://imagedelivery.net/UJ5oN2ajUBrk2SVxlns2Aw/c2dbe3fd-5fa5-4aa3-2faf-fdf90e916100/public)
+
+Log in to the Cloudflare dashboard and select your account and domain.
+
+[1] Go to DNS > Settings.
+
+[2] For DNSSEC, click Enable DNSSEC.
+
+[Cloudflare Instructions for Enabling DNSSEC](https://developers.cloudflare.com/dns/dnssec/)
+
+#### \* Please note: It may take up to 24 hours for DNSSEC to be enabled. Check the status [here](https://dnssec-debugger.verisignlabs.com/).
+
+## 3. Add a new TXT Record
+
+![](https://imagedelivery.net/UJ5oN2ajUBrk2SVxlns2Aw/906f72f8-111f-4cc0-d262-7060600e0500/public)
+
+For Type, select '"TXT".
+For Name, type an asterisk: \*
+Content Field, copy and paste the following record:
+
+```
+ENS1
+0x828ec5bDe537B8673AF98D77bCB275ae1CA26D1f
+0x1E0B906b2350aABE06e8051670b083CCe03287FD
+https://theoffchaingateway.onrender.com/pg
+```
+
+## 4. Confirm that DNSSEC setup is complete
+
+![](https://imagedelivery.net/UJ5oN2ajUBrk2SVxlns2Aw/16fe4428-89ae-47a4-29ee-ad6f4fd86b00/public)
+
+Now your domain name is ready to issue ENS subnames. Email [alex@namestone.xyz](mailto:alex@namestone.xy) to get your API key and start issuing subnames.

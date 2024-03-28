@@ -83,8 +83,8 @@ export default function SubdomainsTable({
         </div>
       </Dialog>
 
-      <div className="w-full h-full overflow-x-auto border rounded-lg border-1 border-brownblack-50">
-        <table className="min-w-full divide-y divide-brownblack-50">
+      <div className="w-full h-full overflow-x-auto border rounded-lg border-1  border-neutral-200">
+        <table className="min-w-full divide-y divide-neutral-200">
           <thead>
             <tr>
               <th className="px-6 py-3 text-left ">
@@ -106,7 +106,7 @@ export default function SubdomainsTable({
               )}
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-brownblack-50">
+          <tbody className="bg-white divide-y divide-neutral-200">
             {subdomains.map((subdomain, index) => (
               <tr key={index}>
                 <td className="px-6 py-4">

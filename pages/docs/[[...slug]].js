@@ -20,6 +20,7 @@ const navDict = {
     },
   },
   "Admin Panel": { file: "admin_panel" },
+  "Gasless DNS": { file: "gasless-dns" },
 };
 const fileNameLookup = {
   index: "Introduction",
