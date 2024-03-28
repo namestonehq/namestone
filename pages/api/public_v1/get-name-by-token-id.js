@@ -23,7 +23,7 @@ async function handler(req, res) {
     return res.status(404).json({ message: "Subdomain not found" });
   }
 
-  return res.status(200).json(subDomainName);
+  return res.status(200).json(subDomainName[0]);
 }
 
 export default cors(handler);
