@@ -1,7 +1,7 @@
 import sql from "../../../lib/db";
 import Cors from "micro-cors";
 import { CypherPunk } from "../../../data/contracts/CypherPunk";
-import { ethers } from "ethers";
+import Web3 from "web3";
 
 const cors = Cors({
   allowMethods: ["GET", "HEAD", "POST", "OPTIONS"],
@@ -9,12 +9,12 @@ const cors = Cors({
 });
 
 // Connect to the Arbitrum Sepolia testnet using the Alchemy RPC endpoint
-const provider = new ethers.providers.JsonRpcProvider(
+const web3 = new Web3(
   "https://arb-sepolia.g.alchemy.com/v2/J-2xMLR7YSCYeXGpN-Pj7JApRPeNawbP"
 );
 const contractAddress = "0xcdb7fafde2212ec26f58f275fedf07a6ef69814c";
 const contractABI = CypherPunk;
-const contract = new ethers.Contract(contractAddress, contractABI, provider);
+const contract = new web3.eth.Contract(contractABI, contractAddress);
 
 async function handler(req, res) {
   // Check required parameters
@@ -43,26 +43,21 @@ async function handler(req, res) {
 
   const result = [];
 
-  const tokenIds = await Promise.all(
-    subDomainNames.map(({ name }) => contract.tokenFor(name))
-  );
-
-  for (let i = 0; i < subDomainNames.length; i++) {
-    const { name, keys } = subDomainNames[i];
-    const tokenId = tokenIds[i];
+  for (const { name, keys } of subDomainNames) {
+    const tokenId = await contract.methods.tokenFor(name).call();
 
     const keysList = keys.slice(1, -1).split(",");
-    const calls = keysList.map((key) => contract.text(tokenId, key.trim()));
+    const promises = keysList.map(async (key) => {
+      const value = await contract.methods.text(tokenId, key.trim()).call();
+      return { key: key.trim(), value };
+    });
 
-    const textRecords = {};
-    const values = await Promise.all(calls);
+    const textRecords = (await Promise.all(promises)).reduce(
+      (acc, { key, value }) => ({ ...acc, [key]: value }),
+      {}
+    );
 
-    for (let j = 0; j < keysList.length; j++) {
-      const key = keysList[j].trim();
-      textRecords[key] = values[j].toString();
-    }
-
-    result.push({ name, textRecords });
+    result.push({ name, keys, textRecords });
   }
 
   return res.status(200).json(result);
