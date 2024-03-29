@@ -1,19 +1,18 @@
 # Claim Name
 
-This POST route is used to claim a name for a given address and domain.  
-It will throw an error if the name has already been claimed.
+This POST route is used to claim a name for a given address and domain. It will throw an error if the name has already been claimed.
 
 ## URL Parameters
 
-- `single_claim` (1 or 0): if this parameter is 1, each address can claim only one name
+- `single_claim` (1 or 0): If this parameter is 1, each address can claim only one name.
 
 ## Post Parameters
 
-- `name` (string): The name being set, i.e., the "example" in example.testbrand.eth
-- `domain` (string): The domain ("testbrand.eth")
-- `address` (string): The ethereum address the name points to
-- `contenthash` (string)(Optional): The link for an ipfs or ipns website
-- `text_records` (object)(Optional): An object containing key-value pairs representing the text records to be set
+- `name` (string): The name being set, i.e., the "example" in example.testbrand.eth.
+- `domain` (string): The domain ("testbrand.eth").
+- `address` (string): The ethereum address the name points to.
+- `contenthash` (string)(Optional): The link for an ipfs or ipns website.
+- `text_records` (object)(Optional): An object containing key-value pairs representing the text records to be set.
 
 ## Example
 
@@ -21,17 +20,17 @@ It will throw an error if the name has already been claimed.
 POST https://namestone.xyz/api/public_v1/claim-name
 
 {
-  "domain": "example.xyz",
-  "name": "bob",
-  "address": "0x123abc...",
+  "domain":"testbrand.eth",
+  "name":"example",
+  "address":"0xE997...3C57",
   "text_records": {
-      "com.twitter": "namestonehq",
-      "com.github":"nftyslobo",
+      "com.twitter":"namestonehq",
+      "com.github":"aslobodnik",
       "com.discord":"superslobo",
-      "url":"https://www.google.com",
-      "location":"new york",
+      "url":"https://www.namestone.xyz",
+      "location":"📍 nyc",
       "description":"APIs are cool",
-      "avatar":"https://raw.githubusercontent.com/aslobodnik/profile/main/pic.jpeg",
+      "avatar":"https://raw.githubusercontent.com/aslobodnik/profile/main/pic.jpeg"
   }
 }
 headers:
@@ -47,17 +46,17 @@ curl -X POST \
      -H 'Content-Type: application/json' \
      -H 'Authorization: YOUR_API_KEY' \
      -d '{
-          "domain": "example.xyz",
-          "name": "bob"
-          "address": "0x123abc...",
+          "domain": "testbrand.eth",
+          "name": "example",
+          "address": "0xE997...3C57",
           "text_records": {
             "com.twitter": "namestonehq",
-            "com.github":"nftyslobo",
+            "com.github":"aslobodnik",
             "com.discord":"superslobo",
-            "url":"https://www.google.com",
-            "location":"new york",
+            "url":"https://www.namestone.xyz",
+            "location":"📍 nyc",
             "description":"APIs are cool",
-            "avatar":"https://raw.githubusercontent.com/aslobodnik/profile/main/pic.jpeg",
+            "avatar":"https://raw.githubusercontent.com/aslobodnik/profile/main/pic.jpeg"
           }
         }' \
      https://namestone.xyz/api/public_v1/claim-name
@@ -67,11 +66,9 @@ curl -X POST \
 
 Standard text records are those that the [ENS app](https://app.ens.domains/namestone.testbrand.eth) will show.
 
-```
-- description
-- com.discord
-- com.github
-- com.twitter
-- url
-- avatar
-```
+- • description
+- • com.discord
+- • com.github
+- • com.twitter
+- • url
+- • avatar
