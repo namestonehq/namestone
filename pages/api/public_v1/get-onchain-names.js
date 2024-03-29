@@ -57,7 +57,7 @@ async function handler(req, res) {
       {}
     );
 
-    result.push({ name, keys, textRecords });
+    result.push({ name, textRecords });
   }
 
   return res.status(200).json(result);
