@@ -29,11 +29,11 @@ async function handler(req, res) {
 
   if (addresses && addresses.length > 0) {
     subDomainNames = await sql`
-      SELECT name, keys FROM ponder."NftSubdomain" WHERE "domainName" = ${domain} AND "address" = ANY (${addresses})
+      SELECT name, address, keys FROM ponder."NftSubdomain" WHERE "domainName" = ${domain} AND "address" = ANY (${addresses})
     `;
   } else {
     subDomainNames = await sql`
-      SELECT name, keys FROM ponder."NftSubdomain" WHERE "domainName" = ${domain}
+      SELECT name, address, keys FROM ponder."NftSubdomain" WHERE "domainName" = ${domain}
     `;
   }
 
@@ -43,7 +43,7 @@ async function handler(req, res) {
 
   const result = [];
 
-  for (const { name, keys } of subDomainNames) {
+  for (const { name, address, keys } of subDomainNames) {
     const tokenId = await contract.methods.tokenFor(name).call();
 
     const keysList = keys.slice(1, -1).split(",");
@@ -57,7 +57,7 @@ async function handler(req, res) {
       {}
     );
 
-    result.push({ name, textRecords });
+    result.push({ name, address, textRecords });
   }
 
   return res.status(200).json(result);
