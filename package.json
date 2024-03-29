@@ -16,7 +16,7 @@
     "@rainbow-me/rainbowkit-siwe-next-auth": "^0.3.0",
     "@sentry/nextjs": "^7.52.1",
     "canvas-confetti": "^1.6.0",
-    "ethers": "^5",
+    "ethers": "^6.11.1",
     "framer-motion": "^10.12.12",
     "fs": "^0.0.1-security",
     "github-slugger": "^2.0.0",
