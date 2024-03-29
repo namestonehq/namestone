@@ -61,7 +61,7 @@ async function handler(req, res) {
 
     for (let j = 0; j < keysList.length; j++) {
       const key = keysList[j].trim();
-      textRecords[key] = values[j];
+      textRecords[key] = values[j].toString();
     }
 
     result.push({ name, textRecords });
