@@ -29,11 +29,11 @@ async function handler(req, res) {
 
   if (addresses && addresses.length > 0) {
     subDomainNames = await sql`
-      SELECT name, address, keys FROM ponder."NftSubdomain" WHERE "domainName" = ${domain} AND "address" = ANY (${addresses})
+      SELECT name, address, keys FROM ponder."NftSubdomain" WHERE "domainName" = ${domain} AND "address" = ANY (${addresses})  order by id desc
     `;
   } else {
     subDomainNames = await sql`
-      SELECT name, address, keys FROM ponder."NftSubdomain" WHERE "domainName" = ${domain}
+      SELECT name, address, keys FROM ponder."NftSubdomain" WHERE "domainName" = ${domain} order by id desc
     `;
   }
 
