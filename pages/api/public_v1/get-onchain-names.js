@@ -1,4 +1,4 @@
-xiimport sql from "../../../lib/db";
+import sql from "../../../lib/db";
 import Cors from "micro-cors";
 import { CypherPunk } from "../../../data/contracts/CypherPunk";
 import Web3 from "web3";
