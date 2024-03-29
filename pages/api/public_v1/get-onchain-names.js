@@ -38,7 +38,7 @@ async function handler(req, res) {
   }
 
   if (subDomainNames.length === 0) {
-    return res.status(404).json({ message: "No subdomains found" });
+    return res.status(200).json([]);
   }
 
   const result = [];
