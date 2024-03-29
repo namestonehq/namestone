@@ -10,7 +10,11 @@ const cors = Cors({
 
 // Connect to the Arbitrum Sepolia testnet using the Alchemy RPC endpoint
 const web3 = new Web3(
-  "https://arb-sepolia.g.alchemy.com/v2/J-2xMLR7YSCYeXGpN-Pj7JApRPeNawbP"
+  "https://arb-sepolia.g.alchemy.com/v2/J-2xMLR7YSCYeXGpN-Pj7JApRPeNawbP",
+  {
+    validateInputs: false,
+    validateOutputs: false,
+  }
 );
 const contractAddress = "0xcdb7fafde2212ec26f58f275fedf07a6ef69814c";
 const contractABI = CypherPunk;
