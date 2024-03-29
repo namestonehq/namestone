@@ -1,4 +1,4 @@
-import sql from "../../../lib/db";
+xiimport sql from "../../../lib/db";
 import Cors from "micro-cors";
 import { CypherPunk } from "../../../data/contracts/CypherPunk";
 import Web3 from "web3";
@@ -43,23 +43,28 @@ async function handler(req, res) {
 
   const result = [];
 
-  for (const { name, keys } of subDomainNames) {
-    const tokenId = await contract.methods.tokenFor(name).call();
+  const tokenIds = await Promise.all(
+    subDomainNames.map(({ name }) => contract.methods.tokenFor(name).call())
+  );
+
+  for (let i = 0; i < subDomainNames.length; i++) {
+    const { name, keys } = subDomainNames[i];
+    const tokenId = tokenIds[i];
 
     const keysList = keys.slice(1, -1).split(",");
     const calls = keysList.map((key) =>
-      contract.methods.text(tokenId, key.trim()).call.request()
+      contract.methods.text(tokenId, key.trim())
     );
 
-    const textRecords = (await contract.methods.multicall(calls).call()).reduce(
-      (acc, value, index) => ({
-        ...acc,
-        [keysList[index].trim()]: value,
-      }),
-      {}
-    );
+    const textRecords = {};
+    const values = await contract.methods.multicall(calls).call();
 
-    result.push({ name, keys, textRecords });
+    for (let j = 0; j < keysList.length; j++) {
+      const key = keysList[j].trim();
+      textRecords[key] = values[j];
+    }
+
+    result.push({ name, textRecords });
   }
 
   return res.status(200).json(result);
