@@ -33,6 +33,25 @@ export default async function handler(req, res) {
       res.status(400).json({ error: "Domain already exists" });
       return;
     }
+    // check if wallet is an ens name by checking for dot
+    let address;
+    if (wallet.includes(".")) {
+      let provider = new ethers.providers.JsonRpcProvider(providerUrl);
+      // try to resolve the ens name
+      address = await resolveENS(wallet, provider);
+      if (!address) {
+        res.status(400).json({ error: "Invalid ENS name" });
+        return;
+      }
+    } else {
+      // check if wallet is a valid address
+      try {
+        address = ethers.utils.getAddress(wallet);
+      } catch (error) {
+        res.status(400).json({ error: "Invalid address" });
+        return;
+      }
+    }
 
     let insertDomain = { name: domain, name_limit: 1000 };
     domainQuery = await sql`
@@ -55,25 +74,6 @@ export default async function handler(req, res) {
   insert into api_key ${sql(insertApiKey, "key", "domain_id")} returning key;
   `;
 
-    // check if wallet is an ens name by checking for dot
-    let address;
-    if (wallet.includes(".")) {
-      let provider = new ethers.providers.JsonRpcProvider(providerUrl);
-      // try to resolve the ens name
-      address = await resolveENS(wallet, provider);
-      if (!address) {
-        res.status(400).json({ error: "Invalid ENS name" });
-        return;
-      }
-    } else {
-      // check if wallet is a valid address
-      try {
-        address = ethers.utils.getAddress(wallet);
-      } catch (error) {
-        res.status(400).json({ error: "Invalid address" });
-        return;
-      }
-    }
     // create admin
     let insertAdmin = {
       address: address,
@@ -92,7 +92,7 @@ export default async function handler(req, res) {
     Here is an example: https://namestone.xyz/docs/set-name 
     Please keep this key safe and do not share it with anyone.
     `;
-    const email_html =`<!DOCTYPE html>
+    const email_html = `<!DOCTYPE html>
     <html>
     <head>
     <style>
@@ -146,7 +146,7 @@ export default async function handler(req, res) {
             <a href="https://namestone.xyz/docs" class="button">Docs</a>
         </div>
     </body>
-    </html>`
+    </html>`;
 
     const transporter = nodemailer.createTransport({
       // Configurations for the transport method here. This is an example using Gmail.
