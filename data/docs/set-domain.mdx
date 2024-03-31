@@ -1,15 +1,13 @@
 # Set Domain
 
-This POST route is used to set a domain for a given address.  
-If the domain doesn't exist it will be created with the api key and admins that match the first domain created by the api key.  
-If the domain exists and the api key has access the endpoint will overwrite existing domain data.
+This POST route is used to set a domain for a given address. If the domain doesn't exist, it will be created with the API key and admins that match the first domain created by the API key. If the domain exists, and the API key has access, the endpoint will overwrite existing domain data.
 
 ## Parameters
 
-- `domain` (string): The domain ("testbrand.eth")
-- `address` (string): The ethereum address the name points to
-- `contenthash` (string)(Optional): The link for an ipfs or ipns website
-- `text_records` (object)(Optional): An object containing key-value pairs representing the text records to be set
+- `domain` (string): The domain ("testbrand.eth").
+- `address` (string): The ethereum address the name points to.
+- `contenthash` (string)(Optional): The link for an ipfs or ipns website.
+- `text_records` (object)(Optional): An object containing key-value pairs representing the text records to be set.
 
 ## Example
 
@@ -17,14 +15,14 @@ If the domain exists and the api key has access the endpoint will overwrite exis
 POST https://namestone.xyz/api/public_v1/set-domain
 
 {
-  "domain": "example.xyz",
-  "address": "0x123abc...",
+  "domain":"testbrand.eth",
+  "address":"0xE997d9b785Dd99832d21b3Ce5A34fCacC6D53C57",
   "text_records": {
-      "com.twitter": "namestonehq",
-      "com.github":"nftyslobo",
+      "com.twitter":"namestonehq",
+      "com.github":"aslobodnik",
       "com.discord":"superslobo",
-      "url":"https://www.google.com",
-      "location":"new york",
+      "url":"https://www.namestone.xyz",
+      "location":"📍 nyc",
       "description":"APIs are cool",
       "avatar":"https://raw.githubusercontent.com/aslobodnik/profile/main/pic.jpeg"
   }
@@ -42,16 +40,16 @@ curl -X POST \
      -H 'Content-Type: application/json' \
      -H 'Authorization: YOUR_API_KEY' \
      -d '{
-          "name": "bob",
-          "address": "0x123abc...",
+          "name":"example",
+          "address":"0xE997d9b785Dd99832d21b3Ce5A34fCacC6D53C57",
           "text_records": {
-            "com.twitter": "namestonehq",
-            "com.github":"nftyslobo",
+            "com.twitter":"namestonehq",
+            "com.github":"aslobodnik",
             "com.discord":"superslobo",
-            "url":"https://www.google.com",
-            "location":"new york",
+            "url":"https://www.namestone.xyz",
+            "location":"📍 nyc",
             "description":"APIs are cool",
-            "avatar":"https://raw.githubusercontent.com/aslobodnik/profile/main/pic.jpeg",
+            "avatar":"https://raw.githubusercontent.com/aslobodnik/profile/main/pic.jpeg"
           }
         }' \
      https://namestone.xyz/api/public_v1/set-name
@@ -61,9 +59,9 @@ curl -X POST \
 
 Standard text records are those that the [ens app](https://app.ens.domains/namestone.testbrand.eth) will show.
 
-- description
-- com.discord
-- com.github
-- com.twitter
-- url
-- avatar
+- • description
+- • com.discord
+- • com.github
+- • com.twitter
+- • url
+- • avatar
