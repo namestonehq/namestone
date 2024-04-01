@@ -4,8 +4,8 @@ This POST route is used to revoke a name for a given domain.
 
 ## Parameters
 
-- `name` (string): The name being revoked, i.e., the "example" in example.testbrand.eth
-- `domain` (string): The domain ("testbrand.eth")
+- `name` (string): The name being revoked, i.e., the "example" in example.testbrand.eth.
+- `domain` (string): The domain ("testbrand.eth").
 
 ## Example
 
@@ -13,8 +13,8 @@ This POST route is used to revoke a name for a given domain.
 POST https://namestone.xyz/api/public_v1/revoke-name
 
 {
-  "domain": "example.xyz",
-  "name": "bob"
+  "domain": "testbrand.eth",
+  "name": "example"
 }
 headers:
 {
@@ -29,8 +29,8 @@ curl -X POST \
      -H 'Content-Type: application/json' \
      -H 'Authorization: YOUR_API_KEY' \
      -d '{
-          "domain": "example.xyz",
-          "name": "bob"
+          "domain": "testbrand.eth",
+          "name": "example"
         }' \
      https://namestone.xyz/api/public_v1/revoke-name
 ```

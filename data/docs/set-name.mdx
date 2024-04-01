@@ -1,15 +1,14 @@
 # Set Name
 
-This POST route is used to set a name for a given address and domain.  
-It will overwrite existing names.
+This POST route is used to set a name for a given address and domain. It will overwrite existing names.
 
 ## Parameters
 
-- `name` (string): The name being set, i.e., the "example" in example.testbrand.eth
-- `domain` (string): The domain ("testbrand.eth")
-- `address` (string): The ethereum address the name points to
-- `contenthash` (string)(Optional): The link for an ipfs or ipns website
-- `text_records` (object)(Optional): An object containing key-value pairs representing the text records to be set
+- `name` (string): The name being set, i.e., the "example" in example.testbrand.eth.
+- `domain` (string): The domain ("testbrand.eth").
+- `address` (string): The ethereum address the name points to.
+- `contenthash` (string)(Optional): The link for an ipfs or ipns website.
+- `text_records` (object)(Optional): An object containing key-value pairs representing the text records to be set.
 
 ## Example
 
@@ -17,19 +16,19 @@ It will overwrite existing names.
 POST https://namestone.xyz/api/public_v1/set-name
 
 {
-  "domain": "example.xyz",
-  "name": "slobo"
-  "address": "0xD4416b13d2b3a9aBae7AcD5D6C2BbDBE25686401",
+  "domain":"testbrand.eth",
+  "name":"example",
+  "address":"0xE997...3C57",
   "text_records": {
-      "com.twitter": "namestonehq",
-      "com.github":"nftyslobo",
+      "com.twitter":"namestonehq",
+      "com.github":"aslobodnik",
       "com.discord":"superslobo",
-      "url":"https://www.google.com",
-      "location":"new york",
+      "url":"https://www.namestone.xyz",
+      "location":"📍 nyc",
       "description":"APIs are cool",
-      "avatar":"https://raw.githubusercontent.com/aslobodnik/profile/main/pic.jpeg",
+      "avatar":"https://raw.githubusercontent.com/aslobodnik/profile/main/pic.jpeg"
   },
-  	"contenthash": "ipfs://bafybeib65htzaufd5en2o6tpety3ekxu7kpy4qxyooe5szphpyim3hrhia"
+  	"contenthash":"ipfs://bafybeib65htzaufd5en2o6tpety3ekxu7kpy4qxyooe5szphpyim3hrhia"
 }
 headers:
 {
@@ -42,21 +41,22 @@ headers:
 ```
 curl -X POST \
      -H 'Content-Type: application/json' \
-     -H 'Authorization: YOUR_API_KEY' \
+     -H 'Authorization: 16420e1e-e975-4204-b3df-65275b80e52a' \
      -d '{
-          "domain": "example.xyz",
-          "name": "bob",
-          "address": "0x123abc...",
+          "domain":"testbrand.eth",
+		  "name":"example",
+          "address":"0xE997...3C57",
           "text_records": {
-            "com.twitter": "namestonehq",
-            "com.github":"nftyslobo",
+            "com.twitter":"namestonehq",
+            "com.github":"aslobodnik",
             "com.discord":"superslobo",
-            "url":"https://www.google.com",
-            "location":"new york",
+			"email":"alex@namestone.xyz",
+            "url":"https://www.namestone.xyz",
+            "location":"📍 nyc",
             "description":"APIs are cool",
             "avatar":"https://raw.githubusercontent.com/aslobodnik/profile/main/pic.jpeg"
           },
-          "contenthash": "ipfs://bafybeib65htzaufd5en2o6tpety3ekxu7kpy4qxyooe5szphpyim3hrhia"
+          "contenthash":"ipfs://bafybeib65htzaufd5en2o6tpety3ekxu7kpy4qxyooe5szphpyim3hrhia"
         }' \
      https://namestone.xyz/api/public_v1/set-name
 ```
@@ -65,9 +65,9 @@ curl -X POST \
 
 Standard text records are those that the [ens app](https://app.ens.domains/namestone.testbrand.eth) will show.
 
-- description
-- com.discord
-- com.github
-- com.twitter
-- url
-- avatar
+- • description
+- • com.discord
+- • com.github
+- • com.twitter
+- • url
+- • avatar

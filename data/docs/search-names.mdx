@@ -1,14 +1,14 @@
 # Search Names
 
-This GET route fetches all names for a domain that start with a string. ordered alphabetically
+This GET route fetches all names for a domain that start with a string. Ordered alphabetically.
 
 ## Parameters
 
 - `domain` (string): The domain for the user name.
-- `name` (string): The string names will start with. 'ro' will return 'rob' and 'robert' and other names starting with 'ro'
+- `name` (string): The string names will start with. For example, 'ro' will return 'rob' and 'robert' and other names starting with 'ro'.
 - `text_records` (1 or 0)(Optional): Whether or not the the route returns text records. 1 by default.
-- `limit` (integer)(Optional): number of names returned in request. default 50
-- `offset` (integer)(Optional): offset the returned names window. default 0
+- `limit` (integer)(Optional): Number of names returned in request. Default 50.
+- `offset` (integer)(Optional): Offset the returned names window. Default 0.
 
 ## Example
 
@@ -40,8 +40,8 @@ curl -X GET \
       "textRecords":{
          "avatar":"https://imagedelivery.net/UJ5oN2ajUBrk2SVxlns2Aw/71cec612-fe0b-46a4-3d1c-e3eaf53d4600/public",
          "com.twitter":"namestonehq",
-         "com.discord":"",
-         "location":"ENS",
+         "com.discord":"superslobo",
+         "location":"📍 nyc",
          "url":"https://namestone.xyz",
          "description":"Brand Choice"
       }

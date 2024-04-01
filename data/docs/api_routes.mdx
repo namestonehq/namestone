@@ -1,7 +1,7 @@
 # API
 
-The API let’s you grant names, set text records, and retrieve information about domains.
-To use our API, you'll need an API key for authentication. You can request one by emailing api@namestone.xyz.
+The API lets you grant names, set text records, and retrieve information about domains.
+To use our API, you'll need an API key for authentication. Fill out the [form](https://namestone.xyz/try-namestone) to receive an API key via email, or request one by emailing [api@namestone.xyz](mailto:api@namestone.xyz).
 
 ## Authentication
 
@@ -11,10 +11,14 @@ To authenticate with the NameStone API, you need to provide your API key in the 
 
 Here are the endpoints that our API offers:
 
-1. [set-name](./set-name) - set a name + text_records for a given address and domain
-2. [claim-name](./claim-name) - claim a name + text_records for a given address and domain. If the name already exists the route will throw an error.
-3. [get-names](./get-names) - fetch names and text records for a given address and domain
-4. [revoke-name](./revoke-name) - remove a given name for an address and a name
-5. [set-domain](./set-domain) - set a domain + text_records for a given address
+[1] [set-name](./set-name): Set a name + text_records for a given address and domain.
+
+[2] [claim-name](./claim-name): Claim a name + text_records for a given address and domain. If the name already exists the route will throw an error.
+
+[3] [get-names](./get-names): Fetch names and text records for a given address and domain.
+
+[4] [revoke-name](./revoke-name): Remove a given name for an address and a name.
+
+[5] [set-domain](./set-domain): Set a domain + text_records for a given address.
 
 For detailed information about each endpoint, click on the endpoint name above or in the sidebar.
