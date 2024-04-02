@@ -38,7 +38,7 @@ export default async function handler(req, res) {
     // check if wallet is an ens name by checking for dot
     let address;
     if (wallet.includes(".")) {
-      let provider = new ethers.providers.JsonRpcProvider(providerUrl);
+      let provider = new ethers.JsonRpcProvider(providerUrl);
       // try to resolve the ens name
       address = await resolveENS(wallet, provider);
       if (!address) {
@@ -51,11 +51,12 @@ export default async function handler(req, res) {
       try {
         address = ethers.utils.getAddress(wallet);
       } catch (error) {
-        res.status(400).json({ error: "Invalid address" });
-        console.log("Try Namestone error: Invalid address");
+        res.status(400).json({ error: "Invalid wallet address" });
+        console.log("Try Namestone error: Invalid wallet address");
         return;
       }
     }
+    return;
 
     let insertDomain = { name: domain, name_limit: 1000 };
     domainQuery = await sql`
