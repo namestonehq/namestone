@@ -78,9 +78,7 @@ export default function Home() {
             router.push("/on-the-way?address=" + data.address);
           } else {
             setDisableSend(false);
-            setErrorMsg(
-              "Something went wrong. Please refresh and try again or email alex at alex@namestone.xyz"
-            );
+            setErrorMsg(data.error);
             console.log(data);
           }
           setApiPending(false);

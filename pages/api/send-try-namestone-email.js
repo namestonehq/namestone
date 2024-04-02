@@ -21,6 +21,7 @@ export default async function handler(req, res) {
 
     if (!name || !email || !domain || !wallet) {
       res.status(400).json({ error: "Missing parameters" });
+      console.log("Try Namestone error: Missing parameters");
       return;
     }
 
@@ -31,6 +32,7 @@ export default async function handler(req, res) {
     if (domainQuery.length > 0) {
       // if domain exists we return an error
       res.status(400).json({ error: "Domain already exists" });
+      console.log("Try Namestone error: Domain already exists");
       return;
     }
     // check if wallet is an ens name by checking for dot
@@ -41,6 +43,7 @@ export default async function handler(req, res) {
       address = await resolveENS(wallet, provider);
       if (!address) {
         res.status(400).json({ error: "Invalid ENS name" });
+        console.log("Try Namestone error: Invalid ENS name");
         return;
       }
     } else {
@@ -49,6 +52,7 @@ export default async function handler(req, res) {
         address = ethers.utils.getAddress(wallet);
       } catch (error) {
         res.status(400).json({ error: "Invalid address" });
+        console.log("Try Namestone error: Invalid address");
         return;
       }
     }
