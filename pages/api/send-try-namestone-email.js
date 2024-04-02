@@ -62,7 +62,6 @@ export default async function handler(req, res) {
         return;
       }
     }
-    return;
 
     let insertDomain = { name: domain, name_limit: 1000 };
     domainQuery = await sql`
