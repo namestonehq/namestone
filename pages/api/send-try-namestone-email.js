@@ -26,6 +26,12 @@ export default async function handler(req, res) {
     }
 
     // Create a new API key for the user
+    // check if domain is toplevel ( has no more than 1 dot)
+    if (domain.split(".").length > 2) {
+      res.status(400).json({ error: "Invalid domain -- must be top level" });
+      console.log("Try Namestone error: Invalid domain -- must be top level");
+      return;
+    }
     //Check if domain exists
     let domainQuery = await sql`
   select * from domain where name = ${domain.toLowerCase()} limit 1;`;
