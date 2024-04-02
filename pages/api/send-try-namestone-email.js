@@ -44,7 +44,7 @@ export default async function handler(req, res) {
     // check if wallet is an ens name by checking for dot
     let address;
     if (wallet.includes(".")) {
-      let provider = new ethers.JsonRpcProvider(providerUrl);
+      let provider = new ethers.providers.JsonRpcProvider(providerUrl);
       // try to resolve the ens name
       address = await resolveENS(wallet, provider);
       if (!address) {
