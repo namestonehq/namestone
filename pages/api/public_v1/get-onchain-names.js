@@ -31,9 +31,9 @@ async function handler(req, res) {
   }
 
   const result = [];
-  for (const { name, address, textRecordsPayload } of subDomainNames) {
+  for (const { name, address, tokenId, textRecordsPayload } of subDomainNames) {
     const textRecords = JSON.parse(textRecordsPayload);
-    result.push({ name, address, textRecords });
+    result.push({ name, address, tokenId, textRecords });
   }
 
   return res.status(200).json(result);
