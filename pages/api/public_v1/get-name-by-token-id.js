@@ -22,7 +22,7 @@ async function handler(req, res) {
   if (subDomainName.length === 0) {
     return res.status(404).json({ message: "Subdomain not found" });
   }
-  print("Get-name-by-tokenID subDomainName", subDomainName[0]);
+  console.log("Get-name-by-tokenID subDomainName", subDomainName[0]);
 
   return res.status(200).json(subDomainName[0]);
 }
