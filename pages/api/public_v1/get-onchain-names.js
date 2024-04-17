@@ -18,11 +18,11 @@ async function handler(req, res) {
   let subDomainNames;
   if (addresses && addresses.length > 0) {
     subDomainNames = await sql`
-      SELECT name, address, "tokenId", "textRecords" as "textRecordsPayload" FROM ponder."NftSubdomain" WHERE "domainName" = ${domain} AND "address" = ANY (${addresses}) order by "registeredAt" desc
+      SELECT name, address, owner,  "tokenId", "textRecords" as "textRecordsPayload" FROM ponder."NftSubdomain" WHERE "domainName" = ${domain} AND "address" = ANY (${addresses}) order by "registeredAt" desc
     `;
   } else {
     subDomainNames = await sql`
-      SELECT name, address, "tokenId", "textRecords" as "textRecordsPayload" FROM ponder."NftSubdomain" WHERE "domainName" = ${domain} order by "registeredAt" desc
+      SELECT name, address, owner, "tokenId", "textRecords" as "textRecordsPayload" FROM ponder."NftSubdomain" WHERE "domainName" = ${domain} order by "registeredAt" desc
     `;
   }
 
@@ -31,9 +31,15 @@ async function handler(req, res) {
   }
 
   const result = [];
-  for (const { name, address, tokenId, textRecordsPayload } of subDomainNames) {
+  for (const {
+    name,
+    address,
+    owner,
+    tokenId,
+    textRecordsPayload,
+  } of subDomainNames) {
     const textRecords = JSON.parse(textRecordsPayload);
-    result.push({ name, address, tokenId, textRecords });
+    result.push({ name, address, owner, tokenId, textRecords });
   }
 
   return res.status(200).json(result);

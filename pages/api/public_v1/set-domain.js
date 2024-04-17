@@ -1,5 +1,5 @@
 import sql from "../../../lib/db";
-import { checkApiKey } from "../../../utils/ServerUtils";
+import { checkApiKey, encodeContenthash } from "../../../utils/ServerUtils";
 import Cors from "micro-cors";
 
 const cors = Cors({
@@ -29,10 +29,25 @@ async function handler(req, res) {
   if (!data.domain) {
     return res.status(400).json({ error: "something went wrong" });
   }
+  // Get content hash and encode it
+  let contenthash = data.contenthash || null;
+  if (contenthash === "") {
+    contenthash = null;
+  }
+  // encode contenthash from link to contenthash
+  if (contenthash) {
+    try {
+      contenthash = encodeContenthash(contenthash);
+    } catch (e) {
+      console.log(e);
+      return res.status(400).json({ error: "Invalid contenthash" });
+    }
+  }
+
   let domainData = {
     name: data.domain.toLowerCase(),
     address: data.address || null,
-    contenthash: data.contenthash || null,
+    contenthash: contenthash || null,
   };
 
   // check if domain exists
