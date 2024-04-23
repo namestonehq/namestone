@@ -49,8 +49,8 @@ export default function Home() {
     resolverData &&
     (resolverData.toString() === "0x2291053F49Cd008306b92f84a61c6a1bC9B5CB65" ||
       resolverData.toString() ===
-        "0x84c5AdB77dd9f362A1a3480009992d8d47325dc3" ||
-      resolverData.toString() === "0x4976fb03C32e5B8cfe2b6cCB31c09Ba78EBaBa41");
+        "0x828ec5bDe537B8673AF98D77bCB275ae1CA26D1f" ||
+      resolverData.toString() === "0x84c5AdB77dd9f362A1a3480009992d8d47325dc3");
 
   // reenable send button on input changes
   useEffect(() => {
