@@ -5,6 +5,8 @@ import Footer from "../components/Footer";
 import NameStoneLogo from "../components/NameStoneLogo";
 import { useState, useEffect } from "react";
 import { useEnsResolver } from "wagmi";
+import { createConfig, configureChains, mainnet } from "wagmi";
+import { publicProvider } from "wagmi/providers/public";
 import XIcon from "../public/images/x-icon-red.png";
 import SuccessIcon from "../public/images/success-icon.png";
 import checkIcon from "../public/images/icon-orange-check.svg";
@@ -29,15 +31,26 @@ export default function Home() {
     return () => clearInterval(interval); // clear interval after component unmounts.
   }, [rerenderToggle]);
 
-  console.log(domainInput);
+  const { publicClient, webSocketPublicClient } = configureChains(
+    [mainnet],
+    [publicProvider()]
+  );
+
+  const config = createConfig({
+    publicClient,
+    webSocketPublicClient,
+  });
   const { data: resolverData } = useEnsResolver({
     name: domainInput,
+    config,
   });
 
   const validResolver =
     resolverData &&
     (resolverData.toString() === "0x2291053F49Cd008306b92f84a61c6a1bC9B5CB65" ||
-      resolverData.toString() === "0x84c5AdB77dd9f362A1a3480009992d8d47325dc3");
+      resolverData.toString() ===
+        "0x84c5AdB77dd9f362A1a3480009992d8d47325dc3" ||
+      resolverData.toString() === "0x4976fb03C32e5B8cfe2b6cCB31c09Ba78EBaBa41");
 
   // reenable send button on input changes
   useEffect(() => {
