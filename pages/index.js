@@ -134,8 +134,8 @@ export default function Home() {
                 Issue Free ENS Subnames
               </span>
               <span className="max-w-lg mt-3 text-sm md:text-base text-brownblack-700">
-                Reward your community, generate revenue, and enhance your brand
-                with ENS subnames.
+                NameStone’s API is trusted by web3 leaders for easy subname
+                management and issuance.
               </span>
               <div className="flex flex-wrap justify-center gap-4 mt-10 mb-16">
                 <button
@@ -202,7 +202,7 @@ export default function Home() {
             </div>
             <div className="text-sm md:text-base text-brownblack-700">
               Сlaiming an ENS name and changing text records, including an
-              avatar, requires zero gas fees
+              avatar, requires zero gas fees.
             </div>
 
             <div className="flex flex-row flex-wrap justify-start pt-16 md:gap-4">
