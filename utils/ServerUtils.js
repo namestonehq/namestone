@@ -254,6 +254,9 @@ export async function getEPSAddresses(hotAddress) {
 
 export async function checkApiKey(apiKey, domain) {
   console.log(apiKey, domain);
+  if (!apiKey) {
+    return false;
+  }
   const apiQuery = await sql`
     SELECT api_key.id, key, domain.name FROM api_key 
     join domain 
