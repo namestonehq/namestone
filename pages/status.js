@@ -14,7 +14,7 @@ const resolutionList = [
     gateway: "Offchain Gateway",
   },
   {
-    name: "converse.eth",
+    name: "slobo.converse.xyz",
     gateway: "Namestone Gateway",
   },
 ];
