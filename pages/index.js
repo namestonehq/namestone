@@ -83,7 +83,7 @@ export default function Home() {
     <div className="flex justify-center bg-neutral-50 ">
       <div className="w-full overflow-hidden flex flex-col max-w-[1536px]">
         <Head>
-          <title>NameStone</title>
+          <title>NameStone | ENS subdomains API </title>
           <meta
             name="description"
             content="Issue Free ENS Subnames"
