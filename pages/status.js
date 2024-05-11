@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import Header from "../components/Header";
 import { ethers } from "ethers";
+import checkIcon from "../public/images/icon-orange-check.svg";
+import Link from "next/link";
 
 const resolutionList = [
   {
@@ -13,7 +15,7 @@ const resolutionList = [
   },
   {
     name: "converse.eth",
-    gateway: "Namestone gateway",
+    gateway: "Namestone Gateway",
   },
 ];
 export const providerUrl =
@@ -21,7 +23,11 @@ export const providerUrl =
   process.env.NEXT_PUBLIC_ALCHEMY_API_KEY; // replace with your actual project ID
 
 export default function Status() {
-  const [status, setStatus] = useState(["pending", "pending", "pending"]);
+  const [status, setStatus] = useState([
+    "...checking",
+    "...checking",
+    "...checking",
+  ]);
   // use Effect to check name resolution on load
   useEffect(() => {
     async function checkEnsResolution(name) {
@@ -49,7 +55,7 @@ export default function Status() {
     <>
       <Header />
 
-      <div className="w-full h-full p-32 overflow-x-auto border rounded-lg border-1 border-neutral-200">
+      <div className="w-full h-full p-8 sm:p-32 overflow-x-auto border rounded-lg border-neutral-200">
         <div className="text-base font-bold text-brownblack-700">Status</div>
         <table className="min-w-full divide-y divide-neutral-200">
           <thead>
@@ -61,6 +67,9 @@ export default function Status() {
               </th>
               <th className="px-6 py-3 text-sm font-bold text-left text-brownblack-700">
                 Working?
+              </th>
+              <th className="px-6 py-3 text-sm font-bold text-left text-brownblack-700">
+                Test Case
               </th>
             </tr>
           </thead>
@@ -78,6 +87,15 @@ export default function Status() {
                   }`}
                 >
                   {status[index]}
+                </td>
+                <td className="px-6 py-4">
+                  <Link
+                    target="_blank"
+                    href={`https://app.ens.domains/${resolution.name}`}
+                    className="underline underline-offset-4"
+                  >
+                    {resolution.name}
+                  </Link>
                 </td>
               </tr>
             ))}
