@@ -40,7 +40,7 @@ async function handler(req, res) {
     registeredAt,
   } of subDomainNames) {
     const textRecords = JSON.parse(textRecordsPayload);
-    result.push({ name, address, owner, tokenId, textRecords });
+    result.push({ name, address, owner, tokenId, textRecords, registeredAt });
   }
 
   return res.status(200).json(result);
