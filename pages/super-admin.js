@@ -348,6 +348,7 @@ export default function SuperAdmin() {
           </div>
           <Button
             buttonText="Create Brand"
+            color="red"
             className={"my-8 float-left ml-0"}
             onClick={() => deleteBrand(selectedBrand.domain_id)}
           />
