@@ -24,6 +24,7 @@ export default function SuperAdmin() {
   const [savePending, setSavePending] = useState(false);
 
   const [brandModalOpen, setBrandModalOpen] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
   // fetch to get allowed domains after connect
   useEffect(() => {
@@ -236,11 +237,6 @@ export default function SuperAdmin() {
       });
   }
 
-  // Delete brand
-  function deleteBrand(domain_id) {
-    console.log("delete brand", domain_id);
-  }
-
   // if they haven't authenticated, they need to click connect
   if (authStatus !== "authenticated") {
     return (
@@ -278,16 +274,17 @@ export default function SuperAdmin() {
       {/*Left Bar*/}
       <div className="flex-grow flex-1 max-w-sm border-r-[1px] border-brownblack-20 ">
         <div className="ml-4 md:ml-16 mt-7">
-          <Button
-            buttonText="Create Brand"
-            className={"my-8 float-left ml-0"}
-            onClick={() => setBrandModalOpen(true)}
-          />
-          <div className="w-full mb-4 text-sm font-bold md:text-base text-brownblack-700">
-            Brands
-          </div>
           <div className="flex flex-col w-full ">
-            <div className="flex-col w-full pr-8 mb-6">
+            <div className="w-full text-sm font-bold md:text-base text-brownblack-700">
+              Brands
+            </div>
+
+            <Button
+              buttonText="+ Create Brand"
+              className={"float-left ml-0 mt-2 mb-6"}
+              onClick={() => setBrandModalOpen(true)}
+            />
+            <div className="flex-col w-full pr-8 mb-1">
               <Listbox
                 value={selectedBrand.name}
                 onChange={(brandUrl) => setSelectedBrand(brandDict[brandUrl])}
@@ -349,8 +346,8 @@ export default function SuperAdmin() {
           <Button
             buttonText="Delete Brand"
             color="red"
-            className={"my-8 float-left ml-0"}
-            onClick={() => deleteBrand(selectedBrand.domain_id)}
+            className={"mt-20 float-left ml-0"}
+            onClick={() => setDeleteModalOpen(true)}
           />
         </div>
       </div>
@@ -360,6 +357,11 @@ export default function SuperAdmin() {
         setOpen={setBrandModalOpen}
         open={brandModalOpen}
         createBrand={createBrand}
+      />
+      <DeleteModal
+        setOpen={setDeleteModalOpen}
+        open={deleteModalOpen}
+        selectedBrand={selectedBrand}
       />
       <div className="flex-grow max-w-3xl flex-2">
         {dataLoading && (
@@ -698,6 +700,81 @@ function BrandModal({ open, setOpen, createBrand }) {
               buttonText="Create Brand"
               onClick={() => {
                 createBrand(domain, name, url);
+              }}
+            />
+          </div>
+        </Dialog.Panel>
+      </div>
+    </Dialog>
+  );
+}
+
+function DeleteModal({ open, setOpen, selectedBrand }) {
+  const [errorMessages, setErrorMessages] = useState("");
+  // Clear error state on every open/close
+  useEffect(() => {
+    setErrorMessages("");
+  }, [open]);
+
+  // Delete brand
+  function deleteBrand(domain_id) {
+    fetch("/api/admin/delete-domain", {
+      method: "POST",
+      body: JSON.stringify({
+        domain_id,
+      }),
+    })
+      .then((res) => {
+        if (res.status === 200) {
+          setOpen(false);
+          window.location.reload();
+        } else {
+          res.json().then((json) => {
+            setErrorMessages(json.error);
+          });
+        }
+      })
+      .catch((err) => {
+        setErrorMessages(err);
+        console.log(err);
+      });
+  }
+  return (
+    <Dialog
+      className="relative z-50"
+      open={open}
+      onClose={() => setOpen(false)}
+    >
+      {/* The backdrop, rendered as a fixed sibling to the panel container */}
+      <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
+
+      <div className="fixed inset-0 flex items-center justify-center p-4">
+        <Dialog.Panel className="w-full max-w-sm px-6 py-4 bg-white border-2 rounded-lg border-brownblack-200">
+          <Dialog.Title className="text-base font-bold text-brownblack-700">
+            Delete Brand
+          </Dialog.Title>
+          <div className="flex flex-col mt-8">
+            <div className="text-sm font-bold text-brownblack-700">
+              Are you sure you want to delete this brand?
+            </div>
+            <div className="text-sm text-brownblack-700">
+              domain_id: {selectedBrand?.domain_id} <br />
+              domain: {selectedBrand?.domain} <br />
+              url_slug: {selectedBrand?.url_slug}
+              <br />
+              brand_name: {selectedBrand?.name}
+              <br />
+            </div>
+            <div className="text-sm font-bold text-red-500">
+              {errorMessages}
+            </div>
+          </div>
+          <div className="flex items-center justify-around mt-6">
+            <Button
+              buttonText="Delete"
+              color="red"
+              onClick={() => {
+                deleteBrand(selectedBrand.domain_id);
               }}
             />
           </div>

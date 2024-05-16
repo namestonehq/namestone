@@ -36,6 +36,8 @@ export default async function handler(req, res) {
   await sql` delete from api_key where domain_id = ${data.domain_id};`;
   // delete brand on domain_id
   await sql` delete from brand where domain_id = ${data.domain_id};`;
+  // delete domain text records
+  await sql` delete from domain_text_record where domain_id = ${data.domain_id};`;
   // delete domain
   await sql` delete from domain where id = ${data.domain_id};`;
 
