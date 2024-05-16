@@ -21,7 +21,8 @@ const resolveENS = async (name, provider) => {
 };
 async function handler(req, res) {
   if (req.method === "POST") {
-    const { name, email, wallet, domain } = JSON.parse(req.body);
+    console.log(req.body);
+    const { name, email, wallet, domain } = req.body;
 
     if (!name || !email || !domain || !wallet) {
       return res.status(400).json({ error: "Missing parameters" });
