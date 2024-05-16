@@ -24,28 +24,20 @@ export default async function handler(req, res) {
 
   // check if there are subdomains on domain
   let subdomains = await sql`
-  select * from subdomain where domain_id= ${data.domain_id};
-
-  let insertDomain = { name: data.domain };
-  const domainQuery = await sql`
-  insert into domain ${sql(insertDomain, "name")}
-  returning id;`;
-  let insertBrand = {
-    name: data.name,
-    url_slug: data.url,
-    domain_id: domainQuery[0].id,
-  };
-  await sql`
-  insert into brand ${sql(insertBrand, "name", "url_slug", "domain_id")}
-  `;
-  // create api key
-  let insertApiKey = {
-    key: uuidv4(),
-    domain_id: domainQuery[0].id,
-  };
-  await sql`
-  insert into api_key ${sql(insertApiKey, "key", "domain_id")}
-  `;
+  select * from subdomain where domain_id= ${data.domain_id};`;
+  if (subdomains.length > 0) {
+    return res
+      .status(400)
+      .json({ error: "There are subdomains on this domain" });
+  }
+  // delete admin on domain_id
+  await sql` delete from admin where domain_id = ${data.domain_id};`;
+  // delete api key on domain_id
+  await sql` delete from api_key where domain_id = ${data.domain_id};`;
+  // delete brand on domain_id
+  await sql` delete from brand where domain_id = ${data.domain_id};`;
+  // delete domain
+  await sql` delete from domain where id = ${data.domain_id};`;
 
   return res.status(200).json({ success: true });
 }
