@@ -1,8 +1,13 @@
 import nodemailer from "nodemailer";
-import sql from "../../lib/db";
+import sql from "../../../lib/db";
 import { v4 as uuidv4 } from "uuid";
 import { ethers } from "ethers";
-import { providerUrl } from "../../utils/ServerUtils";
+import { providerUrl } from "../../../utils/ServerUtils";
+
+const cors = Cors({
+  allowMethods: ["GET", "HEAD", "POST", "OPTIONS"],
+  origin: "*",
+});
 
 // Async function to resolve ENS name to address
 const resolveENS = async (name, provider) => {
@@ -14,8 +19,7 @@ const resolveENS = async (name, provider) => {
     return null;
   }
 };
-
-export default async function handler(req, res) {
+async function handler(req, res) {
   if (req.method === "POST") {
     const { name, email, wallet, domain } = JSON.parse(req.body);
 
@@ -130,3 +134,5 @@ export default async function handler(req, res) {
     res.status(405).json({ error: "Method not allowed" });
   }
 }
+
+export default cors(handler);
