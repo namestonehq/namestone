@@ -15,7 +15,6 @@ const resolveENS = async (name, provider) => {
     const address = await provider.resolveName(name);
     return address;
   } catch (error) {
-    console.error("Error resolving ENS name:", error);
     return null;
   }
 };
@@ -24,26 +23,22 @@ async function handler(req, res) {
     const { name, email, wallet, domain } = JSON.parse(req.body);
 
     if (!name || !email || !domain || !wallet) {
-      res.status(400).json({ error: "Missing parameters" });
-      console.log("Try Namestone error: Missing parameters");
-      return;
+      return res.status(400).json({ error: "Missing parameters" });
     }
 
     // Create a new API key for the user
     // check if domain is toplevel ( has no more than 1 dot)
     if (domain.split(".").length > 2) {
-      res.status(400).json({ error: "Invalid domain -- must be top level" });
-      console.log("Try Namestone error: Invalid domain -- must be top level");
-      return;
+      return res
+        .status(400)
+        .json({ error: "Invalid domain -- must be top level" });
     }
     //Check if domain exists
     let domainQuery = await sql`
   select * from domain where name = ${domain.toLowerCase()} limit 1;`;
     if (domainQuery.length > 0) {
       // if domain exists we return an error
-      res.status(400).json({ error: "Domain already exists" });
-      console.log("Try Namestone error: Domain already exists");
-      return;
+      return res.status(400).json({ error: "Domain already exists" });
     }
     // check if wallet is an ens name by checking for dot
     let address;
@@ -52,18 +47,14 @@ async function handler(req, res) {
       // try to resolve the ens name
       address = await resolveENS(wallet, provider);
       if (!address) {
-        res.status(400).json({ error: "Invalid ENS name" });
-        console.log("Try Namestone error: Invalid ENS name");
-        return;
+        return res.status(400).json({ error: "Invalid ENS name" });
       }
     } else {
       // check if wallet is a valid address
       try {
         address = ethers.utils.getAddress(wallet);
       } catch (error) {
-        res.status(400).json({ error: "Invalid wallet address" });
-        console.log("Try Namestone error: Invalid wallet address");
-        return;
+        return res.status(400).json({ error: "Invalid wallet address" });
       }
     }
 
@@ -125,13 +116,13 @@ async function handler(req, res) {
 
     try {
       await transporter.sendMail(mailOptions2);
-      res.status(200).json({ api_key: apiKey[0].key, domain: domain });
+      return res.status(200).json({ api_key: apiKey[0].key, domain: domain });
     } catch (error) {
       console.log(error);
-      res.status(500).json({ error: "Error sending email" });
+      return res.status(500).json({ error: "Error sending email" });
     }
   } else {
-    res.status(405).json({ error: "Method not allowed" });
+    return res.status(405).json({ error: "Method not allowed" });
   }
 }
 
