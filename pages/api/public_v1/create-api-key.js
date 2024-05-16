@@ -3,6 +3,7 @@ import sql from "../../../lib/db";
 import { v4 as uuidv4 } from "uuid";
 import { ethers } from "ethers";
 import { providerUrl } from "../../../utils/ServerUtils";
+import Cors from "micro-cors";
 
 const cors = Cors({
   allowMethods: ["GET", "HEAD", "POST", "OPTIONS"],
