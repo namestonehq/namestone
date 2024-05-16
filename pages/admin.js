@@ -33,8 +33,6 @@ export default function Admin() {
       fetch("/api/admin/allowed-brands").then((res) =>
         res.json().then((data) => {
           if (res.status === 200) {
-            // sort urls
-            data.brandUrls.sort((a, b) => a.localeCompare(b));
             setBrandUrls(data.brandUrls);
             setBrandDict(data.brandDict);
             setSelectedBrand(data.brandDict[data.brandUrls[0]]);

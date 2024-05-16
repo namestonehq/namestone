@@ -25,7 +25,7 @@ export default async function handler(req, res) {
       });
       brands = await sql`
       SELECT 
-      brand.name, brand.url_slug, domain.name as domain, brand.default_avatar
+      brand.domain_id, brand.name, brand.url_slug, domain.name as domain, brand.default_avatar
       FROM brand join domain on brand.domain_id = domain.id where domain.id = ANY(${domain_ids}) order by brand.id;
     `;
     }
@@ -35,7 +35,7 @@ export default async function handler(req, res) {
     superAdmin = true;
     brands = await sql`
     SELECT 
-    brand.name, brand.url_slug, domain.name as domain, brand.default_avatar
+    brand.domain_id, brand.name, brand.url_slug, domain.name as domain, brand.default_avatar
     FROM brand join domain on brand.domain_id = domain.id order by brand.id;
   `;
   }
@@ -45,7 +45,8 @@ export default async function handler(req, res) {
     result[key] = brand;
     return result;
   }, {});
-  const brandUrls = Object.keys(brandDict);
+  // sort brandUrls by name
+  const brandUrls = Object.keys(brandDict).sort();
 
   return res.status(200).json({
     superAdmin: superAdmin,
