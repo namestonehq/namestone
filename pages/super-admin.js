@@ -235,6 +235,12 @@ export default function SuperAdmin() {
         console.log(err);
       });
   }
+
+  // Delete brand
+  function deleteBrand(domain_id) {
+    console.log("delete brand", domain_id);
+  }
+
   // if they haven't authenticated, they need to click connect
   if (authStatus !== "authenticated") {
     return (
@@ -272,6 +278,11 @@ export default function SuperAdmin() {
       {/*Left Bar*/}
       <div className="flex-grow flex-1 max-w-sm border-r-[1px] border-brownblack-20 ">
         <div className="ml-4 md:ml-16 mt-7">
+          <Button
+            buttonText="Create Brand"
+            className={"my-8 float-left ml-0"}
+            onClick={() => setBrandModalOpen(true)}
+          />
           <div className="w-full mb-4 text-sm font-bold md:text-base text-brownblack-700">
             Brands
           </div>
@@ -334,12 +345,12 @@ export default function SuperAdmin() {
             >
               API Key
             </div>
-            <Button
-              buttonText="Create Brand"
-              className={"my-8 float-left ml-0"}
-              onClick={() => setBrandModalOpen(true)}
-            />
           </div>
+          <Button
+            buttonText="Create Brand"
+            className={"my-8 float-left ml-0"}
+            onClick={() => deleteBrand(selectedBrand.domain_id)}
+          />
         </div>
       </div>
 
