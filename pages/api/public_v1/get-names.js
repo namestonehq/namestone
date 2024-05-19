@@ -8,9 +8,19 @@ const cors = Cors({
 
 async function checkApiKey(apiKey, domain) {
   console.log(apiKey, domain);
-  const apiQuery = await sql`
+  let apiQuery;
+  if (!domain) {
+    apiQuery = await sql`
     SELECT api_key.id, key FROM api_key 
     where api_key.key = ${apiKey}`;
+  } else {
+    apiQuery = await sql`
+    SELECT api_key.id, key FROM api_key 
+    join domain 
+    on api_key.domain_id = domain.id
+    where domain.name = ${domain}
+    and api_key.key = ${apiKey}`;
+  }
   if (apiQuery.count >= 1) {
     return true;
   }
