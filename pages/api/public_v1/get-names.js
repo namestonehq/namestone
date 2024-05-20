@@ -21,6 +21,7 @@ async function checkApiKey(apiKey, domain) {
     where domain.name = ${domain}
     and api_key.key = ${apiKey}`;
   }
+  console.log(apiQuery);
   if (apiQuery.count >= 1) {
     return true;
   }
@@ -48,7 +49,7 @@ async function handler(req, res) {
   const includeTextRecords = req.query.text_records;
   const apiKey = headers.authorization || req.query.api_key;
   // Check API key
-  const allowedApi = await checkApiKey(apiKey);
+  const allowedApi = await checkApiKey(apiKey, domain);
   if (!allowedApi) {
     return res.status(401).json({
       error: "key error - You are not authorized to use this endpoint",
