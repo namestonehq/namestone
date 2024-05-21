@@ -86,7 +86,7 @@ export default function Home() {
           <title>NameStone | ENS subdomains API </title>
           <meta
             name="description"
-            content="Issue Free ENS Subnames"
+            content="Issue Free ENS Subdomains | NameStone"
             key="desc"
           />
           <link rel="icon" href="/favicon.ico" />
@@ -131,10 +131,10 @@ export default function Home() {
               </div>
               {/* TITLE */}
               <span className="max-w-lg font-bold text-md sm:text-lg md:text-xl md:leading-tight text-brownblack-700">
-                Issue Free ENS Subnames
+                Issue Free ENS Subdomains
               </span>
               <span className="max-w-lg mt-3 text-sm md:text-base text-brownblack-700">
-                NameStone’s API is trusted by web3 leaders for easy subname
+                NameStone’s API is trusted by web3 leaders for easy subdomain
                 management and issuance.
               </span>
               <div className="flex flex-wrap justify-center gap-4 mt-10 mb-16">
@@ -153,7 +153,11 @@ export default function Home() {
           <div className="mb-10 text-base font-bold text-neutral-900">
             Serving web3 leaders
           </div>
-          <Image src={logoList} height={36} alt="Logos" />
+          <Image
+            src={logoList}
+            height={36}
+            alt="Logos of web3 companies 'Pooltogether', 'POAP', 'Obvious', 'Mailchain', 'dappling', 'GreenPill', and Azurbala'  "
+          />
         </div>
         {/* Product Section */}
         <div className="w-full px-6 pb-20 text-center bg-white lg:px-32">
@@ -172,7 +176,11 @@ export default function Home() {
               </div>
             </div>
             <div className="flex flex-col items-center justify-center min-w-[280px] flex-1">
-              <Image src={landingProductImage1} width={472} alt="API access" />
+              <Image
+                src={landingProductImage1}
+                width={472}
+                alt="NameStone logo connected to integrations via API"
+              />
             </div>
           </div>
           {/* ITEM 2 */}
@@ -182,15 +190,19 @@ export default function Home() {
                 Admin Panel
               </div>
               <div className="font-bold leading-tight text-md md:text-lg text-brownblack-700">
-                Manage names with Admin Panel{" "}
+                Manage subdomains with Admin Panel{" "}
               </div>
               <div className="mt-3 text-sm md:text-base">
-                Add, revoke, and edit who can claim names. Create blocklists to
-                safeguard your community.
+                Add, revoke, and edit who can claim subnames. Create blocklists
+                to safeguard your community.
               </div>
             </div>
             <div className="flex flex-col items-center justify-center min-w-[280px] flex-1">
-              <Image src={landingProductImage2} width={472} alt="API access" />
+              <Image
+                src={landingProductImage2}
+                width={472}
+                alt="Managing subdomains in NameStone admin panel"
+              />
             </div>
           </div>
         </div>
@@ -201,7 +213,7 @@ export default function Home() {
               Gasless User Benefits
             </div>
             <div className="text-sm md:text-base text-brownblack-700">
-              Сlaiming an ENS name and changing text records, including an
+              Сlaiming an ENS subdomain and changing text records, including an
               avatar, requires zero gas fees.
             </div>
 
@@ -231,7 +243,11 @@ export default function Home() {
               </div>
             </div>
             <div className="flex flex-col items-center justify-center min-w-[280px] flex-1">
-              <Image src={blackProductImage1} width={440} alt="API access" />
+              <Image
+                src={blackProductImage1}
+                width={440}
+                alt="ENS domain connecting a network of subdomains"
+              />
             </div>
           </div>
           {/* ITEM 2 */}
@@ -241,12 +257,16 @@ export default function Home() {
                 Enable community virality
               </div>
               <div className="mt-3 text-sm text-white md:text-base ">
-                Names get shared on social media sites, drawing more attention
-                to your brand.
+                Subnames get shared on social media sites, drawing more
+                attention to your brand.
               </div>
             </div>
             <div className="flex flex-col items-center justify-center min-w-[280px] flex-1">
-              <Image src={blackProductImage2} width={440} alt="API access" />
+              <Image
+                src={blackProductImage2}
+                width={440}
+                alt="Person with ENS subdomain on Twitter"
+              />
             </div>
           </div>
           {/* ITEM 3 */}
@@ -261,7 +281,11 @@ export default function Home() {
               </div>
             </div>
             <div className="flex flex-col items-center justify-center min-w-[280px] flex-1">
-              <Image src={blackProductImage3} width={440} alt="API access" />
+              <Image
+                src={blackProductImage3}
+                width={440}
+                alt="A list of names connect to an ENS domain and create unique ENS subdomains"
+              />
             </div>
           </div>
         </div>
