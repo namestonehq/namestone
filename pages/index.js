@@ -172,7 +172,6 @@ export default function Home() {
               </div>
               <div className="mt-3 text-sm md:text-base">
                 Streamline bulk registration and name management with our API.
-                Contact us for pricing.
               </div>
             </div>
             <div className="flex flex-col items-center justify-center min-w-[280px] flex-1">

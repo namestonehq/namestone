@@ -17,6 +17,10 @@ const resolutionList = [
     name: "slobo.converse.xyz",
     gateway: "Namestone Gateway",
   },
+  {
+    name: "slobo.nfty.eth",
+    gateway: "Namestone Gateway - .eth",
+  },
 ];
 export const providerUrl =
   "https://eth-mainnet.g.alchemy.com/v2/" +
