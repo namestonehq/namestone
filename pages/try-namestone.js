@@ -110,8 +110,11 @@ export default function Home() {
   return (
     <div>
       <Head>
-        <title>Try NameStone</title>
-        <meta name="description" content="Contact Us" />
+        <title>Try for Free | Namestone</title>
+        <meta
+          name="description"
+          content="Try NameStone for free. Sign up to get a free API key to issue gasless subdomains on any ENS domain. "
+        />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
@@ -131,9 +134,9 @@ export default function Home() {
           {/* side text */}
           <div className="flex-1 hidden lg:flex">
             <div className="flex flex-col items-start w-full max-w-md ">
-              <span className="font-bold text-md text-brownblack-700">
+              <h1 className="font-bold text-md text-brownblack-700">
                 Get a free API Key
-              </span>
+              </h1>
               <div className="mb-6 text-sm ftext-center text-neutral-700">
                 API key will be sent to your inbox.
               </div>
