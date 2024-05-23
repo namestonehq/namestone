@@ -51,8 +51,11 @@ export default function Home() {
   return (
     <div>
       <Head>
-        <title>Contact Us</title>
-        <meta name="description" content="Contact Us" />
+        <title>Contact Us | Namestone</title>
+        <meta
+          name="description"
+          content="Questions about ENS subdomains or our API? Our team is here to help. Get in touch with us today."
+        />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
