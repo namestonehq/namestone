@@ -83,10 +83,10 @@ export default function Home() {
     <div className="flex justify-center bg-neutral-50 ">
       <div className="w-full overflow-hidden flex flex-col max-w-[1536px]">
         <Head>
-          <title>NameStone | ENS subdomains API </title>
+          <title> Issue Free ENS Subdomains via API | NameStone</title>
           <meta
             name="description"
-            content="Issue Free ENS Subdomains | NameStone"
+            content="Issue free ENS subdomains via API. Get started today with a free API key. Trusted by web3 leaders with support from ENS DAO."
             key="desc"
           />
           <link rel="icon" href="/favicon.ico" />
@@ -130,9 +130,9 @@ export default function Home() {
                 </div>
               </div>
               {/* TITLE */}
-              <span className="max-w-lg font-bold text-md sm:text-lg md:text-xl md:leading-tight text-brownblack-700">
+              <h1 className="max-w-lg font-bold text-md sm:text-lg md:text-xl md:leading-tight text-brownblack-700">
                 Issue Free ENS Subdomains
-              </span>
+              </h1>
               <span className="max-w-lg mt-3 text-sm md:text-base text-brownblack-700">
                 NameStone’s API is trusted by web3 leaders for easy subdomain
                 management and issuance.
@@ -167,9 +167,9 @@ export default function Home() {
               <div className="text-base font-bold leading-7 text-orange-400 ">
                 API{" "}
               </div>
-              <div className="font-bold leading-tight text-md md:text-lg text-brownblack-700">
+              <h2 className="font-bold leading-tight text-md md:text-lg text-brownblack-700">
                 Simple API Integration{" "}
-              </div>
+              </h2>
               <div className="mt-3 text-sm md:text-base">
                 Streamline bulk registration and name management with our API.
               </div>
@@ -188,9 +188,9 @@ export default function Home() {
               <div className="text-base font-bold leading-7 text-orange-400">
                 Admin Panel
               </div>
-              <div className="font-bold leading-tight text-md md:text-lg text-brownblack-700">
+              <h2 className="font-bold leading-tight text-md md:text-lg text-brownblack-700">
                 Manage subdomains with Admin Panel{" "}
-              </div>
+              </h2>
               <div className="mt-3 text-sm md:text-base">
                 Add, revoke, and edit who can claim subnames. Create blocklists
                 to safeguard your community.
@@ -208,9 +208,9 @@ export default function Home() {
         {/* Gasless Section */}
         <div className="w-full px-6 bg-white lg:px-32 pb-36">
           <div className="px-10 py-10 bg-white  rounded-[20px] shadow border border-neutral-200 flex-col justify-center items-start flex">
-            <div className="flex flex-col items-center font-bold text-md md:text-lg text-brownblack-700">
+            <h2 className="flex flex-col items-center font-bold text-md md:text-lg text-brownblack-700">
               Gasless User Benefits
-            </div>
+            </h2>
             <div className="text-sm md:text-base text-brownblack-700">
               Сlaiming an ENS subdomain and changing text records, including an
               avatar, requires zero gas fees.
@@ -233,9 +233,9 @@ export default function Home() {
           {/* ITEM 1 */}
           <div className="flex flex-wrap items-center gap-10 mt-16">
             <div className="flex flex-col justify-start flex-1 text-left min-w-[280px]">
-              <div className="font-bold leading-tight text-white text-md md:text-lg">
+              <h2 className="font-bold leading-tight text-white text-md md:text-lg">
                 Web3 usernames without the cost
-              </div>
+              </h2>
               <div className="mt-3 text-sm text-white md:text-base ">
                 Remove the price barrier of an ENS name with CCIP-read and
                 NameStone.
@@ -252,9 +252,9 @@ export default function Home() {
           {/* ITEM 2 */}
           <div className="flex flex-wrap items-center gap-10 mt-16">
             <div className="flex flex-col justify-start flex-1 text-left min-w-[280px]">
-              <div className="font-bold leading-tight text-white text-md md:text-lg">
+              <h2 className="font-bold leading-tight text-white text-md md:text-lg">
                 Enable community virality
-              </div>
+              </h2>
               <div className="mt-3 text-sm text-white md:text-base ">
                 Subnames get shared on social media sites, drawing more
                 attention to your brand.
@@ -271,9 +271,9 @@ export default function Home() {
           {/* ITEM 3 */}
           <div className="flex flex-wrap items-center gap-10 mt-16">
             <div className="flex flex-col justify-start flex-1 text-left min-w-[280px]">
-              <div className="font-bold leading-tight text-white text-md md:text-lg">
+              <h2 className="font-bold leading-tight text-white text-md md:text-lg">
                 A shared identity
-              </div>
+              </h2>
               <div className="mt-3 text-sm text-white md:text-base ">
                 People who share the same subname can easily find and connect
                 with each other.
@@ -292,9 +292,9 @@ export default function Home() {
         {/* Stats */}
         <div className="inline-flex flex-col items-start justify-center w-full gap-20 px-6 pb-20 mt-32 text-center bg-white lg:px-32">
           <div className="flex flex-col items-start justify-start gap-3 ">
-            <div className=" text-neutral-900  text-base md:text-[40px] font-bold text-left">
+            <h2 className=" text-neutral-900  text-md md:text-lg font-bold text-left">
               The backbone for web3 names
-            </div>
+            </h2>
             <div className="text-base font-normal leading-7 text-left text-neutral-900">
               No matter the project size, NameStone makes issuing and managing
               ENS subdomains a breeze.
@@ -337,9 +337,9 @@ export default function Home() {
         </div>
         {/*  Integrations section */}
         <div className="flex flex-col items-start justify-start w-full px-6 py-16 bg-white lg:px-32">
-          <div className="font-bold text-md md:text-lg brownblack-700">
+          <h2 className="font-bold text-md md:text-lg brownblack-700">
             Hundreds of integrations <br /> powered by ENS
-          </div>
+          </h2>
           <div className="flex flex-wrap items-center justify-start w-full gap-[38px] mt-16 ">
             <Image src={imageCoinbase} width={80} height={80} alt="coinbase" />
             <Image
@@ -374,9 +374,9 @@ export default function Home() {
 
         {/* Trust Section */}
         <div className="relative flex flex-col items-start justify-start w-full px-6 py-16 pt-16 text-left bg-white lg:px-32">
-          <div className="flex flex-col items-start font-bold text-md md:text-lg text-brownblack-700">
+          <h2 className="flex flex-col items-start font-bold text-md md:text-lg text-brownblack-700">
             Trusted by web3 natives
-          </div>
+          </h2>
           <div className="flex flex-wrap justify-center pb-20">
             {testimonyData.map((data) => (
               <Fragment key={data.key}>
@@ -395,9 +395,9 @@ export default function Home() {
         <div className="flex flex-col items-start justify-start w-full px-6 py-16 bg-neutral-50 lg:px-32">
           <div className="inline-flex items-center self-stretch justify-start gap-20">
             <div className="inline-flex flex-col items-start self-stretch justify-center gap-8 grow shrink basis-0">
-              <div className="self-stretch text-neutral-900 text-[32px] font-bold">
+              <h2 className="self-stretch text-neutral-900 text-[32px] font-bold">
                 Builders
-              </div>
+              </h2>
               <div className="w-[336px] justify-start items-center gap-6 inline-flex">
                 <Image width={88} src={sloboCoin} alt="slobo" />
                 <div className="inline-flex flex-col items-start justify-center gap-2 grow shrink basis-0">
@@ -427,7 +427,7 @@ export default function Home() {
                     churina.eth
                   </div>
                   <div className="self-stretch text-sm font-normal leading-normal text-neutral-900">
-                    Designer
+                    UI/UX Designer
                   </div>
                 </div>
               </div>
@@ -453,9 +453,9 @@ export default function Home() {
         </div>
         {/* Final Call section */}
         <div className="flex flex-col items-start justify-start w-full px-6 py-16 text-left lg:px-32 bg-neutral-900 ">
-          <div className="mt-16 font-bold text-white text-md md:text-lg">
+          <h2 className="mt-16 font-bold text-white text-md md:text-lg">
             Ready to get started?{" "}
-          </div>
+          </h2>
           <div className="max-w-xl mt-3 text-sm text-left text-white md:text-base ">
             Our team is standing by to answer your questions and find the right
             solution for you
