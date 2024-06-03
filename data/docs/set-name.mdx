@@ -9,6 +9,7 @@ This POST route is used to set a name for a given address and domain. It will ov
 - `address` (string): The ethereum address the name points to.
 - `contenthash` (string)(Optional): The link for an ipfs or ipns website.
 - `text_records` (object)(Optional): An object containing key-value pairs representing the text records to be set.
+- `coin_types` (object)(Optional): An object containing key-value pairs representing L2 chains and their resolved address.
 
 ## Example
 
@@ -18,7 +19,7 @@ POST https://namestone.xyz/api/public_v1/set-name
 {
   "domain":"testbrand.eth",
   "name":"example",
-  "address":"0xE997...3C57",
+  "address":"0xE997d9b785Dd99832d21b3Ce5A34fCacC6D53C57",
   "text_records": {
       "com.twitter":"namestonehq",
       "com.github":"aslobodnik",
@@ -41,16 +42,16 @@ headers:
 ```
 curl -X POST \
      -H 'Content-Type: application/json' \
-     -H 'Authorization: 16420e1e-e975-4204-b3df-65275b80e52a' \
+     -H 'Authorization: YOUR_API_KEY' \
      -d '{
           "domain":"testbrand.eth",
 		  "name":"example",
-          "address":"0xE997...3C57",
+          "address":"0xE997d9b785Dd99832d21b3Ce5A34fCacC6D53C57",
           "text_records": {
             "com.twitter":"namestonehq",
             "com.github":"aslobodnik",
             "com.discord":"superslobo",
-			"email":"alex@namestone.xyz",
+			      "email":"alex@namestone.xyz",
             "url":"https://www.namestone.xyz",
             "location":"📍 nyc",
             "description":"APIs are cool",
@@ -61,13 +62,37 @@ curl -X POST \
      https://namestone.xyz/api/public_v1/set-name
 ```
 
-## Standard Text Records
+## Multichain Address Resolution
 
-Standard text records are those that the [ens app](https://app.ens.domains/namestone.testbrand.eth) will show.
+NameStone supports multichain address resolution to any L2 chain permitted within [ENS](https://github.com/satoshilabs/slips/blob/master/slip-0044.md). To convert chain ID into coin type, use the following [typescript template](https://stackblitz.com/edit/stackblitz-starters-mfk6i5?file=src%2Findex.ts).
 
-- • description
-- • com.discord
-- • com.github
-- • com.twitter
-- • url
-- • avatar
+## Curl Example (coin_types)
+
+```
+curl -X POST \
+     -H 'Content-Type: application/json' \
+     -H 'Authorization: YOUR_API_KEY' \
+     -d '{
+          "domain": "namestone.xyz",
+          "name": "multichain",
+          "address": "0x534631Bcf33BDb069fB20A93d2fdb9e4D4dD42CF",
+          "coin_types": {
+            "2147483785": "0x534631Bcf33BDb069fB20A93d2fdb9e4D4dD42CF",
+            "2147492101": "0x534631Bcf33BDb069fB20A93d2fdb9e4D4dD42CF",
+            "2147525809": "0x534631Bcf33BDb069fB20A93d2fdb9e4D4dD42CF",
+            "2147483658": "0x534631Bcf33BDb069fB20A93d2fdb9e4D4dD42CF"
+          },
+          "text_records": {
+            "com.twitter": "namestonehq",
+            "com.github": "resolverworks",
+            "url": "https://www.namestone.xyz",
+            "description": "Multichain Example",
+            "avatar": "https://imagedelivery.net/UJ5oN2ajUBrk2SVxlns2Aw/e52988ee-9840-48a2-d8d9-8a92594ab200/public"
+          }
+        }' \
+     https://namestone.xyz/api/public_v1/set-name
+```
+
+## Example: See [multichain.namestone.xyz](https://app.ens.domains/multichain.namestone.xyz) on ENS app.
+
+![Image](https://imagedelivery.net/UJ5oN2ajUBrk2SVxlns2Aw/d47a6f8a-8884-4b68-4f11-8f7e7cf90200/public)
