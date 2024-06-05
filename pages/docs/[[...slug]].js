@@ -169,37 +169,37 @@ export default function Docs({ content, fileName }) {
                       // Map `h1` (`# heading`)
                       h1: ({ node, ...props }) => (
                         <div
-                          className="mb-6 text-[32px] font-semibold whitespace-normal break-all"
+                          className="mb-5 text-[32px] font-semibold whitespace-normal break-all"
                           {...props}
                         />
                       ),
                       h2: ({ node, ...props }) => (
                         <div
-                          className="mb-6  text-[20px] font-bold whitespace-normal break-all"
+                          className="mb-5  text-[20px] font-bold whitespace-normal break-all"
                           {...props}
                         />
                       ),
                       h3: ({ node, ...props }) => (
                         <div
-                          className="mb-6 whitespace-normal text-[16px] font-bold break-word"
+                          className="mb-5 whitespace-normal text-[16px] font-bold break-word"
                           {...props}
                         />
                       ),
                       h4: ({ node, ...props }) => (
                         <div
-                          className="mb-6 text-[16px] font-bold whitespace-normal break-word"
+                          className="mb-5 text-[16px] font-bold whitespace-normal break-word"
                           {...props}
                         />
                       ),
                       p: ({ node, ...props }) => (
                         <div
-                          className="mb-6 text-[16px] whitespace-normal break-word leading-5"
+                          className="mb-5 text-[16px] whitespace-normal break-word leading-7"
                           {...props}
                         />
                       ),
                       a: ({ node, ...props }) => (
                         <a
-                          className="text-orange-500 break-all whitespace-normal"
+                          className="text-orange-800 break-all whitespace-normal"
                           {...props}
                         />
                       ),
@@ -219,7 +219,7 @@ export default function Docs({ content, fileName }) {
                             props.inline = props.inline.toString();
                           return (
                             <code
-                              className="px-2 py-1 whitespace-break-spaces flex-wrap  border-neutral-200 border bg-neutral-100 rounded-lg break-all text-[16px]  leading-5 "
+                              className="px-2 py-1 whitespace-break-spaces flex-wrap  border-neutral-200 border bg-neutral-100 rounded-lg break-all text-[14px]  leading-5 "
                               {...props}
                             />
                           );

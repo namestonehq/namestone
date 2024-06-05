@@ -240,7 +240,7 @@ export default function Home() {
                 *The resolver must be changed to the following:
                 <br />
                 <div className="px-3 my-2 font-mono rounded-md bg-neutral-200">
-                  0x2291053F49Cd008306b92f84a61c6a1bC9B5CB65
+                  0xd17347fA0a6eeC89a226c96a9ae354F785e94241
                 </div>{" "}
                 To change the resolver: <br />
                 1. Go to{" "}
