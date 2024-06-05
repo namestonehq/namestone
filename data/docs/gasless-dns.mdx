@@ -2,44 +2,40 @@
 
 ## Overview
 
-With NameStone you can create gasless ENS subnames on your DNS domain (e.g., name.testbrand.xyz). This means you can create as many subnames as you want without a single on-chain transcation.
+With NameStone, you can create gasless ENS subdomains on your DNS domain (e.g., name.testbrand.xyz). No onchain transaction is required.
 
-NameStone works best with Cloudflare. If you are using a different domain registrar you can [transfer your domain to Cloudflare](https://developers.cloudflare.com/registrar/get-started/transfer-domain-to-cloudflare/#set-up-a-domain-transfer).
+NameStone works best with Cloudflare. If you are using a different domain registrar, you can [transfer your domain to Cloudflare](https://developers.cloudflare.com/registrar/get-started/transfer-domain-to-cloudflare/#set-up-a-domain-transfer).
 
-## 1. Turn on DNSSEC
+## 1. Enable DNSSEC
 
 ![](https://imagedelivery.net/UJ5oN2ajUBrk2SVxlns2Aw/c2dbe3fd-5fa5-4aa3-2faf-fdf90e916100/public)
 
-Log in to the Cloudflare dashboard and select your account and domain.
+[1] Login to Cloudflare's dashboard and select your domain.
 
-[1] Go to DNS > Settings.
+[2] Go to **DNS** > **Settings**.
 
-[2] For DNSSEC, click Enable DNSSEC.
+[3] For DNSSEC, click **Enable DNSSEC**.
 
-[Cloudflare Instructions for Enabling DNSSEC](https://developers.cloudflare.com/dns/dnssec/)
+**\*Please note:** It may take up to 24 hours for DNSSEC to be enabled. Check the status [here](https://dnssec-debugger.verisignlabs.com/).
 
-#### \* Please note: It may take up to 24 hours for DNSSEC to be enabled. Check the status [here](https://dnssec-debugger.verisignlabs.com/).
+For additional help, visit [Cloudflare's instructions](https://developers.cloudflare.com/dns/dnssec/) for enabling DNSSEC.
 
-## 3. Add a new TXT Record
+## 3. Add a new TXT record
 
-![](https://imagedelivery.net/UJ5oN2ajUBrk2SVxlns2Aw/4d660d93-51cb-41a8-f269-eb506a71fa00/public)
+![](https://imagedelivery.net/UJ5oN2ajUBrk2SVxlns2Aw/62bb106c-9606-40c6-ee17-d7285a280c00/highres)
 
-For Type, select '"TXT".
+For Type, select **TXT**.
 
-For Name, type an asterisk: \*
+For Name, type an asterisk: **\***
 
-For Content Field, copy and paste the following record:
+For Content Field, copy and paste the following record. This contains NameStone's resolver:
 
 ```
-ENS1 0x84c5AdB77dd9f362A1a3480009992d8d47325dc3 0x1E0B906b2350aABE06e8051670b083CCe03287FD https://gateway.namestone.xyz/namestone-pg
+ENS1 0xd17347fA0a6eeC89a226c96a9ae354F785e94241
 ```
 
-Each segment in the content field should be separated with a space.
-
-![](https://imagedelivery.net/UJ5oN2ajUBrk2SVxlns2Aw/134dd536-f50b-4b7c-f04f-2dd65ac86600/public)
-
-## 4. Confirm that DNSSEC setup is complete
+## 4. Confirm DNSSEC setup is complete
 
 ![](https://imagedelivery.net/UJ5oN2ajUBrk2SVxlns2Aw/16fe4428-89ae-47a4-29ee-ad6f4fd86b00/public)
 
-Now your domain name is ready to issue ENS subnames. Email [alex@namestone.xyz](mailto:alex@namestone.xyz) to get your API key and start issuing subnames.
+Your domain name is now ready to issue ENS subnames. Email [alex@namestone.xyz](mailto:alex@namestone.xyz) to get your free API key and start issuing subnames.
