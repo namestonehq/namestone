@@ -110,182 +110,184 @@ export default function Home() {
   };
 
   return (
-    <div>
-      <Head>
-        <title>Try for Free | Namestone</title>
-        <meta
-          name="description"
-          content="Try NameStone for free. Sign up to get a free API key to issue gasless subdomains on any ENS domain. "
-        />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+    <div className="flex justify-center bg-neutral-50 ">
+      <div className="w-full overflow-hidden flex flex-col max-w-[1536px]">
+        <Head>
+          <title>Try for Free | Namestone</title>
+          <meta
+            name="description"
+            content="Try NameStone for free. Sign up to get a free API key to issue gasless subdomains on any ENS domain. "
+          />
+          <link rel="icon" href="/favicon.ico" />
+        </Head>
 
-      {/* Nav Bar */}
-      <div className="fixed z-40 flex flex-col w-full ">
-        <div className="flex w-full bg-gradient-to-r  h-[8px] from-[#FF8B36] to-[#FF4429]"></div>
-        <div className="flex justify-between w-full px-8 py-4 lg:px-32 backdrop-blur-sm">
-          <div className="flex items-center">
-            <NameStoneLogo />
+        {/* Nav Bar */}
+        <div className="fixed z-40 flex flex-col w-full ">
+          <div className="flex w-full bg-gradient-to-r  h-[8px] from-[#FF8B36] to-[#FF4429]"></div>
+          <div className="flex justify-between w-full px-8 py-4 lg:px-32 backdrop-blur-sm">
+            <div className="flex items-center">
+              <NameStoneLogo />
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Form Section */}
-      <div className="flex items-center justify-center w-full min-h-screen px-8 overflow-hidden text-center bg-white lg:px-32 ">
-        <div className="flex justify-center w-full mt-16 lg:justify-between lg:mt-[140px] ">
-          {/* side text */}
-          <div className="flex-1 hidden lg:flex">
-            <div className="flex flex-col items-start w-full max-w-md ">
-              <h1 className="font-bold text-md text-brownblack-700">
-                Get a free API Key
-              </h1>
-              <div className="mb-6 text-sm ftext-center text-neutral-700">
-                API key will be sent to your inbox.
-              </div>
+        {/* Form Section */}
+        <div className="flex items-center justify-center w-full min-h-screen px-8 overflow-hidden text-center bg-white lg:px-32 ">
+          <div className="flex justify-center w-full mt-16 lg:justify-between lg:mt-[140px] ">
+            {/* side text */}
+            <div className="flex-1 hidden lg:flex">
+              <div className="flex flex-col items-start w-full max-w-md ">
+                <h1 className="font-bold text-md text-brownblack-700">
+                  Get a free API Key
+                </h1>
+                <div className="mb-6 text-sm ftext-center text-neutral-700">
+                  API key will be sent to your inbox.
+                </div>
 
-              <div className="inline-flex flex-col items-start justify-start gap-7">
-                <div className="inline-flex items-center justify-start gap-4 ">
-                  <Image
-                    src={checkIcon}
-                    className="relative w-6 h-6"
-                    alt="check icon"
-                  />
-                  <div className="text-base font-bold leading-normal grow shrink basis-0 text-neutral-900">
-                    Admin Panel
+                <div className="inline-flex flex-col items-start justify-start gap-7">
+                  <div className="inline-flex items-center justify-start gap-4 ">
+                    <Image
+                      src={checkIcon}
+                      className="relative w-6 h-6"
+                      alt="check icon"
+                    />
+                    <div className="text-base font-bold leading-normal grow shrink basis-0 text-neutral-900">
+                      Admin Panel
+                    </div>
                   </div>
-                </div>
-                <div className="inline-flex items-center justify-start gap-4 ">
-                  <Image
-                    src={checkIcon}
-                    className="relative w-6 h-6"
-                    alt="check icon"
-                  />
-                  <div className="text-base font-bold leading-normal grow shrink basis-0 text-neutral-900">
-                    Add, edit, and remove subnames
+                  <div className="inline-flex items-center justify-start gap-4 ">
+                    <Image
+                      src={checkIcon}
+                      className="relative w-6 h-6"
+                      alt="check icon"
+                    />
+                    <div className="text-base font-bold leading-normal grow shrink basis-0 text-neutral-900">
+                      Add, edit, and remove subnames
+                    </div>
                   </div>
-                </div>
-                <div className="inline-flex items-center justify-start gap-4">
-                  <Image
-                    src={checkIcon}
-                    className="relative w-6 h-6"
-                    alt="check icon"
-                  />
-                  <div className="text-base font-bold grow shrink basis-0 text-neutral-900 fleading-normal">
-                    Gasless Edits
+                  <div className="inline-flex items-center justify-start gap-4">
+                    <Image
+                      src={checkIcon}
+                      className="relative w-6 h-6"
+                      alt="check icon"
+                    />
+                    <div className="text-base font-bold grow shrink basis-0 text-neutral-900 fleading-normal">
+                      Gasless Edits
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          {/* Main content */}
-          <div className="flex flex-col items-center justify-start flex-1 ">
-            <div className="flex flex-col items-start w-full max-w-md lg:hidden ">
-              <span className="mt-8 font-bold text-md text-brownblack-700">
-                Get a free API Key
-              </span>
-              <div className="mb-6 text-sm ftext-center text-neutral-700">
-                API key will be sent to your inbox.
+            {/* Main content */}
+            <div className="flex flex-col items-center justify-start flex-1 ">
+              <div className="flex flex-col items-start w-full max-w-md lg:hidden ">
+                <span className="mt-8 font-bold text-md text-brownblack-700">
+                  Get a free API Key
+                </span>
+                <div className="mb-6 text-sm ftext-center text-neutral-700">
+                  API key will be sent to your inbox.
+                </div>
               </div>
+
+              <WhiteInput
+                labelText="Your Name"
+                placeholderText="e.g. Alex Slobodnik"
+                onChange={(e) => setNameInput(e.target.value)}
+                value={nameInput}
+              />
+              <WhiteInput
+                labelText="Wallet Address"
+                placeholderText="0x1232...  or slobo.eth"
+                onChange={(e) => setWalletInput(e.target.value)}
+                value={walletInput}
+              />
+              <WhiteInput
+                labelText="Email"
+                placeholderText="e.g. youremail@email.com"
+                onChange={(e) => setEmailInput(e.target.value)}
+                value={emailInput}
+              />
+              <WhiteInput
+                labelText="Domain Name"
+                placeholderText="e.g. boredapes.eth"
+                onChange={(e) => setDomainInput(e.target.value)}
+                value={domainInput}
+              />
+              <div className="flex flex-col items-start w-full max-w-md mb-6">
+                <div className="flex items-center justify-between w-full">
+                  <label
+                    htmlFor="name-input"
+                    className="mb-1 text-sm font-bold text-brownblack-500"
+                  >
+                    Resolver
+                  </label>
+                  {domainInput !== "" && !validResolver && (
+                    <Image src={XIcon} alt="X" className="w-5 h-5" />
+                  )}
+                  {validResolver && (
+                    <Image
+                      src={SuccessIcon}
+                      alt="success"
+                      height={20}
+                      className="w-5 h-5"
+                    />
+                  )}
+                </div>
+                <div className="flex justify-start w-full p-4 border border-solid rounded-lg border-brownblack-200">
+                  {resolverData ? resolverData : "Waiting for domain"}
+                </div>
+                <div className="text-xs leading-6 text-left text-brownblack-500">
+                  *The resolver must be changed to the following:
+                  <br />
+                  <div className="px-3 my-2 font-mono rounded-md bg-neutral-200">
+                    0xd17347fA0a6eeC89a226c96a9ae354F785e94241
+                  </div>{" "}
+                  To change the resolver: <br />
+                  1. Go to{" "}
+                  <a
+                    href="https://app.ens.domains"
+                    className="underline"
+                    target="_blank"
+                  >
+                    app.ens.domains
+                  </a>{" "}
+                  and connect wallet <br /> 2. Select your domain <br />
+                  3. Under the “More” tab, scroll to Resolver and select “Edit”{" "}
+                  <br />
+                  4. Copy and paste the NameStone resolver <br />
+                  5. Save and pay the gas fee <br />
+                  6. Resolver will update in box above <br />
+                  Find more information on resolvers{" "}
+                  <a
+                    href="https://support.ens.domains/en/articles/7900622-the-resolver-record"
+                    className="underline"
+                    target="_blank"
+                  >
+                    here
+                  </a>
+                  .
+                </div>
+              </div>
+
+              {errorMsg && (
+                <div className="h-6 mt-2 text-xs font-bold text-red-400">
+                  {errorMsg}
+                </div>
+              )}
+              <Button
+                buttonText="Get a key"
+                onClick={handleClick}
+                disabled={disableSend}
+                className="mt-4 mb-24"
+                pending={apiPending}
+              />
             </div>
-
-            <WhiteInput
-              labelText="Your Name"
-              placeholderText="e.g. Alex Slobodnik"
-              onChange={(e) => setNameInput(e.target.value)}
-              value={nameInput}
-            />
-            <WhiteInput
-              labelText="Wallet Address"
-              placeholderText="0x1232...  or slobo.eth"
-              onChange={(e) => setWalletInput(e.target.value)}
-              value={walletInput}
-            />
-            <WhiteInput
-              labelText="Email"
-              placeholderText="e.g. youremail@email.com"
-              onChange={(e) => setEmailInput(e.target.value)}
-              value={emailInput}
-            />
-            <WhiteInput
-              labelText="Domain Name"
-              placeholderText="e.g. boredapes.eth"
-              onChange={(e) => setDomainInput(e.target.value)}
-              value={domainInput}
-            />
-            <div className="flex flex-col items-start w-full max-w-md mb-6">
-              <div className="flex items-center justify-between w-full">
-                <label
-                  htmlFor="name-input"
-                  className="mb-1 text-sm font-bold text-brownblack-500"
-                >
-                  Resolver
-                </label>
-                {domainInput !== "" && !validResolver && (
-                  <Image src={XIcon} alt="X" className="w-5 h-5" />
-                )}
-                {validResolver && (
-                  <Image
-                    src={SuccessIcon}
-                    alt="success"
-                    height={20}
-                    className="w-5 h-5"
-                  />
-                )}
-              </div>
-              <div className="flex justify-start w-full p-4 border border-solid rounded-lg border-brownblack-200">
-                {resolverData ? resolverData : "Waiting for domain"}
-              </div>
-              <div className="text-xs leading-6 text-left text-brownblack-500">
-                *The resolver must be changed to the following:
-                <br />
-                <div className="px-3 my-2 font-mono rounded-md bg-neutral-200">
-                  0xd17347fA0a6eeC89a226c96a9ae354F785e94241
-                </div>{" "}
-                To change the resolver: <br />
-                1. Go to{" "}
-                <a
-                  href="https://app.ens.domains"
-                  className="underline"
-                  target="_blank"
-                >
-                  app.ens.domains
-                </a>{" "}
-                and connect wallet <br /> 2. Select your domain <br />
-                3. Under the “More” tab, scroll to Resolver and select “Edit”{" "}
-                <br />
-                4. Copy and paste the NameStone resolver <br />
-                5. Save and pay the gas fee <br />
-                6. Resolver will update in box above <br />
-                Find more information on resolvers{" "}
-                <a
-                  href="https://support.ens.domains/en/articles/7900622-the-resolver-record"
-                  className="underline"
-                  target="_blank"
-                >
-                  here
-                </a>
-                .
-              </div>
-            </div>
-
-            {errorMsg && (
-              <div className="h-6 mt-2 text-xs font-bold text-red-400">
-                {errorMsg}
-              </div>
-            )}
-            <Button
-              buttonText="Get a key"
-              onClick={handleClick}
-              disabled={disableSend}
-              className="mt-4 mb-24"
-              pending={apiPending}
-            />
           </div>
         </div>
+        {/* Footer */}
+        <Footer />
       </div>
-      {/* Footer */}
-      <Footer />
     </div>
   );
 }
