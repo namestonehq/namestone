@@ -28,7 +28,7 @@ export default function Home() {
       </div>
 
       {/* Form Section */}
-      <div className="flex items-center justify-center w-full min-h-screen px-8 overflow-hidden text-center bg-gradient-to-b from-orange-200 to-red-200 ">
+      <div className="flex items-center justify-center w-full min-h-screen px-8 overflow-hidden text-center bg-neutral-50 ">
         <div className="flex flex-col items-center w-screen">
           <Image
             className="h-[60px] w-[60px] mb-6"
@@ -36,10 +36,10 @@ export default function Home() {
             src={confirmationCheckIcon}
             alt="Forging Commmunity Identity"
           />
-          <span className="text-[30px] font-bold text-brownblack-700">
+          <span className="text-[30px] max-w-md font-bold text-brownblack-700 text-start">
             Thank You
           </span>
-          <span className="max-w-md mt-3 mb-8 font-bold text-center text-s text-brownblack-500">
+          <span className="max-w-md mt-3 mb-8 font text-center text-sm text-brownblack-700">
             Thank you for reaching out to NameStone. <br></br> We will be in
             touch with you soon!
           </span>
