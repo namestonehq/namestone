@@ -80,8 +80,8 @@ export default function Home() {
                   Contact Us
                 </h1>
                 <div className="mb-6 text-sm text-start text-neutral-700">
-                  Questions? Tell us about you and your brand/project and we'll
-                  get in touch.
+                  Questions? Tell us about you and your brand/project and
+                  we&apos;ll get in touch.
                 </div>
               </div>
             </div>
@@ -93,8 +93,8 @@ export default function Home() {
                   Contact Us
                 </span>
                 <div className="mb-6 text-sm text-start text-neutral-700">
-                  Questions? Tell us about you and your brand/project and we'll
-                  get in touch.
+                  Questions? Tell us about you and your brand/project and
+                  we&apos;ll get in touch.
                 </div>
               </div>
 
