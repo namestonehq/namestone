@@ -100,7 +100,7 @@ async function handler(req, res) {
     });
 
     // Alert the team that a new API key has been created
-    const email_subject2 = `Namestone API Key Created: ${name} - ${email}`;
+    const email_subject2 = `Namestone API Key Created: ${name} - ${domain} - ${email}`;
     const email_message2 = `
     API Key Created For
     Name: ${name}
