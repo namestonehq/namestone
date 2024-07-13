@@ -55,7 +55,7 @@ async function handler(req, res) {
   if (domain) {
     // Get domain from db
     let domainQuery;
-    if (apiKey) {
+    if (allowedApi) {
       domainQuery = await sql`
     select id from domain where name = ${domain} limit 1`;
     } else {
@@ -73,7 +73,7 @@ async function handler(req, res) {
   } else {
     // Get all domains from db for api key
     let domainQuery;
-    if (apiKey) {
+    if (allowedApi) {
       // if apiKey get all apikey domains
       domainQuery = await sql`
     select domain.id from domain join api_key on api_key.domain_id = domain.id where api_key.key = ${apiKey}`;
