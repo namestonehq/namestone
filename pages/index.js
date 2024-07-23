@@ -303,15 +303,15 @@ export default function Home() {
           <div className="inline-flex flex-wrap items-start justify-start gap-6">
             <div className="inline-flex flex-col items-start justify-start gap-3  w-[278px]">
               <div className=" text-neutral-900 text-[32px] font-bold  border-l-[6px] border-solid border-orange-500 rounded-sm pl-[12px]">
-                10,000+
+                15,000+
               </div>
               <div className="text-base font-normal text-neutral-900 pl-[18px]">
-                Names issued
+                Subnames issued
               </div>
             </div>
             <div className="inline-flex flex-col items-start justify-start gap-3  w-[278px]">
               <div className=" text-neutral-900 text-[32px] font-bold border-l-[6px] border-solid border-orange-500 rounded-sm pl-[12px]">
-                30
+                114
               </div>
               <div className="text-base font-normal text-neutral-900 pl-[18px]">
                 Domains
@@ -319,7 +319,7 @@ export default function Home() {
             </div>
             <div className="inline-flex flex-col items-start justify-start gap-3  w-[278px]">
               <div className=" text-neutral-900 text-[32px] font-bold border-l-[6px] border-solid border-orange-500 rounded-sm pl-[12px]">
-                400k+
+                800k+
               </div>
               <div className="text-base font-normal text-neutral-900 pl-[18px]">
                 Resolutions
@@ -330,7 +330,7 @@ export default function Home() {
                 2,000+
               </div>
               <div className="text-base font-normal text-neutral-900 pl-[18px]">
-                L2 names issued
+                L2 subnames issued
               </div>
             </div>
           </div>
