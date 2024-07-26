@@ -4,13 +4,33 @@
 
 With NameStone, you can create gasless ENS subdomains on your DNS domain (e.g., name.testbrand.xyz). No onchain transaction is required.
 
-NameStone works best with Cloudflare. If you are using a different domain registrar, you can [transfer your domain to Cloudflare](https://developers.cloudflare.com/registrar/get-started/transfer-domain-to-cloudflare/#set-up-a-domain-transfer).
+NameStone works best with Cloudflare. If you are using another registrar, we've provided instructions for connecting your domain to Cloudflare.
 
-## 1. Enable DNSSEC
+## 1. Connect domain to Cloudflare
+
+[1] Login to Cloudfare or create a free account.
+
+[2] Go to **Websites** > **Add a site.**
+
+![](https://imagedelivery.net/UJ5oN2ajUBrk2SVxlns2Aw/9cd7c006-d3bb-4b08-f481-e35074f38300/highres)
+
+[3] Follow all activation steps, be sure to:
+
+- Disable DNSSEC (if currently enabled)
+
+- Update your domain’s current nameservers to your assigned Cloudflare nameservers
+
+![](https://imagedelivery.net/UJ5oN2ajUBrk2SVxlns2Aw/5b2c002e-c570-421d-72dc-8479ff07f800/highres)
+
+[4] Complete the activation process. Activation could take a few minutes to 24 hours.
+
+Need help? See [more instructions](https://developers.cloudflare.com/registrar/get-started/transfer-domain-to-cloudflare/#set-up-a-domain-transfer).
+
+## 2. Enable DNSSEC on Cloudflare
 
 ![](https://imagedelivery.net/UJ5oN2ajUBrk2SVxlns2Aw/c2dbe3fd-5fa5-4aa3-2faf-fdf90e916100/public)
 
-[1] Login to Cloudflare's dashboard and select your domain.
+[1] Head to Cloudflare's dashboard and select your domain.
 
 [2] Go to **DNS** > **Settings**.
 
@@ -34,8 +54,6 @@ For Content Field, copy and paste the following record. This contains NameStone'
 ENS1 0xd17347fA0a6eeC89a226c96a9ae354F785e94241
 ```
 
-## 4. Confirm DNSSEC setup is complete
+## 4. Get your free API key
 
-![](https://imagedelivery.net/UJ5oN2ajUBrk2SVxlns2Aw/16fe4428-89ae-47a4-29ee-ad6f4fd86b00/public)
-
-Your domain name is now ready to issue ENS subnames. Email [alex@namestone.xyz](mailto:alex@namestone.xyz) to get your free API key and start issuing subnames.
+Once DNSSEC setup is complete and you've added the correct TXT record, your domain name is ready to issue ENS subnames! Email [alex@namestone.xyz](mailto:alex@namestone.xyz) to get your free API key and start issuing subnames.
