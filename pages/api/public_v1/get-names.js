@@ -117,11 +117,20 @@ async function handler(req, res) {
       textRecords.forEach((record) => {
         textRecordDict[record.key] = record.value;
       });
+      // get coin types from db
+      const coinTypes = await sql`
+      SELECT * FROM subdomain_coin_type WHERE subdomain_id = ${entry.id}`;
+
+      const coinTypeDict = {};
+      coinTypes.forEach((coin) => {
+        coinTypeDict[coin.coin_type] = coin.address;
+      });
 
       delete entry.id;
       const subDomainPayload = {
         ...entry,
         text_records: textRecordDict,
+        coin_types: coinTypeDict,
       };
       subDomainPayloads.push(subDomainPayload);
     }
