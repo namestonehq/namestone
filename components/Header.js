@@ -66,7 +66,7 @@ export default function Header({ subtitle }) {
                 onClick={() => router.push("/try-namestone")}
                 className="z-20 px-6 py-3 text-sm font-bold bg-orange-500 rounded-lg hover:bg-orange-700 text-brownblack-700 active:bg-orange-800"
               >
-                Try for Free
+                Get Started
               </button>
             </div>
           </>
@@ -142,7 +142,7 @@ export default function Header({ subtitle }) {
                   onClick={() => router.push("/try-namestone")}
                   className="z-20 px-6 py-3 text-sm font-bold bg-orange-500 rounded-lg hover:bg-orange-700 text-brownblack-700 active:bg-orange-800"
                 >
-                  Try for Free
+                  Get Started
                 </button>
               </div>
             </div>

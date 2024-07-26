@@ -114,7 +114,7 @@ export default function Home() {
           <div className="z-10 flex flex-wrap items-center justify-start mb-8 ">
             <div className="z-20 flex flex-col items-center md:items-start">
               {/* CHIPS */}
-              <div className="inline-flex items-center justify-start gap-3 mb-4">
+              <div className="inline-flex flex-wrap items-center justify-center md:justify-start gap-3 mb-4">
                 <div className="px-3 py-0.5 bg-neutral-200  rounded-[99px] justify-center items-center gap-2 flex">
                   <div className="text-sm font-normal leading-none text-neutral-900">
                     Supported by
@@ -142,7 +142,7 @@ export default function Home() {
                   onClick={() => router.push("/try-namestone")}
                   className="px-8 py-3 text-sm font-bold bg-orange-500 rounded-lg cursor-pointer hover:bg-orange-700 text-brownblack-700 w-fit active:bg-orange-800"
                 >
-                  Try For Free
+                  Get Started
                 </button>
               </div>
             </div>
@@ -465,7 +465,7 @@ export default function Home() {
               onClick={() => router.push("/try-namestone")}
               className="px-8 py-3 text-sm font-bold bg-orange-500 rounded-lg cursor-pointer hover:bg-orange-700 text-brownblack-700 w-fit active:bg-orange-800"
             >
-              Try For Free
+              Get Started
             </button>
             <button
               onClick={learnMoreClick}
