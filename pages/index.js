@@ -22,7 +22,7 @@ import imageEtherscan from "../public/images/image-etherscan.png";
 import imageMailchain from "../public/images/image-mailchain.png";
 import logoList from "../public/images/logos.png";
 import ensLogo from "../public/images/ens_logo_purple.svg";
-import airstackLogo from "../public/images/airstack-logo.svg";
+import airstackLogo from "../public/images/airstack-logo.png";
 
 import darianCoin from "../public/images/darian-coin.png";
 import sloboCoin from "../public/images/slobo-coin.png";
@@ -126,7 +126,7 @@ export default function Home() {
                   <div className="text-sm font-normal leading-none text-neutral-900">
                     Integrated with
                   </div>
-                  <Image src={airstackLogo} width={72} alt="airstack Logo" />
+                  <Image src={airstackLogo} width={73} alt="airstack Logo" />
                 </div>
               </div>
               {/* TITLE */}
