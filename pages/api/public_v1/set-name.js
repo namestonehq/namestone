@@ -88,11 +88,11 @@ async function handler(req, res) {
 
     const subdomainQuery = await sql`
     insert into subdomain (
-      name, address, domain_id, contenthash
+      name, address, domain_id, contenthash, contenthash_raw
     ) values (
       ${body.name.toLowerCase()}, ${body.address}, ${
       domainQuery[0].id
-    }, ${contenthash}
+    }, ${contenthash}, ${contenthashRaw}
     )
     returning id;`;
 
