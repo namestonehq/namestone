@@ -61,7 +61,7 @@ async function handler(req, res) {
     // Update subdomain
     await sql`
     update subdomain set address = ${body.address},
-    contenthash = ${contenthash}
+    contenthash = ${contenthash},
     constenthash_raw = ${contenthashRaw}
     where id = ${subdomainQuery[0].id}`;
 
