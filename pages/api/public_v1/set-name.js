@@ -46,6 +46,7 @@ async function handler(req, res) {
   if (contenthash === "") {
     contenthash = null;
   }
+  let contenthashRaw = contenthash;
   // encode contenthash from link to contenthash
   if (contenthash) {
     try {
@@ -61,6 +62,7 @@ async function handler(req, res) {
     await sql`
     update subdomain set address = ${body.address},
     contenthash = ${contenthash}
+    constenthash_raw = ${contenthashRaw}
     where id = ${subdomainQuery[0].id}`;
 
     subdomainId = subdomainQuery[0].id;
@@ -118,7 +120,6 @@ async function handler(req, res) {
   where subdomain_id = ${subdomainId}`;
 
   // Insert text coin
-  console.log(body.coin_types);
   if (body.coin_types) {
     for (const coin_type in body.coin_types) {
       await sql`

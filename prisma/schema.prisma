@@ -46,6 +46,7 @@ model subdomain {
   domain_id    Int
   domain       domain                  @relation(fields: [domain_id], references: [id])
   contenthash  String?
+  contenthash_raw String?
   text_records subdomain_text_record[]
   coin_types   subdomain_coin_type[]
 

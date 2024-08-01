@@ -79,7 +79,7 @@ async function handler(req, res) {
   let subdomainEntries;
   if (address === undefined) {
     subdomainEntries = await sql`
-    SELECT subdomain.id AS id, subdomain.name AS name, subdomain.address AS address, domain.name AS domain, subdomain.created_at, subdomain.contenthash
+    SELECT subdomain.id AS id, subdomain.name AS name, subdomain.address AS address, domain.name AS domain, subdomain.created_at, subdomain.contenthash_raw as contenthash
     FROM subdomain
     JOIN domain ON subdomain.domain_id = domain.id
     WHERE domain_id = ANY(${domainIds})
@@ -91,7 +91,7 @@ async function handler(req, res) {
     // lowercase all addresses
     addresses = addresses.map((address) => address.toLowerCase());
     subdomainEntries = await sql`
-    SELECT subdomain.id AS id, subdomain.name AS name, subdomain.address AS address, domain.name AS domain, subdomain.created_at, subdomain.contenthash
+    SELECT subdomain.id AS id, subdomain.name AS name, subdomain.address AS address, domain.name AS domain, subdomain.created_at, subdomain.contenthash_raw as contenthash
     FROM subdomain
     JOIN domain ON subdomain.domain_id = domain.id
     WHERE LOWER(subdomain.address) = ANY(${addresses})
