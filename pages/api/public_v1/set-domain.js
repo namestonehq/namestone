@@ -31,6 +31,7 @@ async function handler(req, res) {
   }
   // Get content hash and encode it
   let contenthash = data.contenthash || null;
+  let rawContenthash = contenthash;
   if (contenthash === "") {
     contenthash = null;
   }
@@ -48,6 +49,7 @@ async function handler(req, res) {
     name: data.domain.toLowerCase(),
     address: data.address || null,
     contenthash: contenthash || null,
+    contenthash_raw: rawContenthash || null,
   };
 
   // check if domain exists
@@ -65,14 +67,25 @@ async function handler(req, res) {
 
     //update domain data
     domainQuery = await sql`
-    update domain set ${sql(domainData, "address", "contenthash")}
+    update domain set ${sql(
+      domainData,
+      "address",
+      "contenthash",
+      "contenthash_raw"
+    )}
     where name = ${data.domain.toLowerCase()}
     returning id;`;
   } else {
     //// iF domain doesn't exist we insert
     // insert domain data
     domainQuery = await sql`
-    insert into domain ${sql(domainData, "name", "address", "contenthash")}
+    insert into domain ${sql(
+      domainData,
+      "name",
+      "address",
+      "contenthash",
+      "contenthash_raw"
+    )}
     returning id;`;
     let insertBrand = {
       name: data.domain.toLowerCase(),
