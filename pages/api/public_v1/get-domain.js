@@ -46,13 +46,14 @@ async function handler(req, res) {
   }
 
   const domainQuery = await sql`
-    select id, address, name from domain where name = ${domain} limit 1`;
+    select id, address, name, contenthash_raw from domain where name = ${domain} limit 1`;
   if (domainQuery.length === 0) {
     return res.status(400).json({ error: "Domain does not exist" });
   }
   const domainId = [domainQuery[0].id];
   const address = domainQuery[0].address;
   const domainName = domainQuery[0].name;
+  const contenthashRaw = domainQuery[0].contenthash_raw;
 
   // Get text records from db
   const textRecords = await sql`
@@ -66,6 +67,7 @@ async function handler(req, res) {
     address: address,
     domain: domainName,
     text_records: textRecordDict,
+    contenthash: contenthashRaw,
   };
   return res.status(200).json(domainPayload);
 }
