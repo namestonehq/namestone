@@ -1,16 +1,16 @@
-# Revoke Name
+# Delete Name
 
-This POST route is used to revoke a name for a given domain.
+This POST route is used to delete a name for a given domain.
 
 ## Parameters
 
-- `name` (string): The name being revoked, i.e., the "example" in example.testbrand.eth.
+- `name` (string): The name being deleted, i.e., the "example" in example.testbrand.eth.
 - `domain` (string): The domain ("testbrand.eth").
 
 ## Example
 
 ```
-POST https://namestone.xyz/api/public_v1/revoke-name
+POST https://namestone.xyz/api/public_v1/delete-name
 
 {
   "domain": "testbrand.eth",
@@ -32,5 +32,5 @@ curl -X POST \
           "domain": "testbrand.eth",
           "name": "example"
         }' \
-     https://namestone.xyz/api/public_v1/revoke-name
+     https://namestone.xyz/api/public_v1/delete-name
 ```
