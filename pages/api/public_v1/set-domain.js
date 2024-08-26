@@ -137,13 +137,13 @@ async function handler(req, res) {
   where domain_id = ${domainQuery[0].id}`;
 
   // Insert text coin
-  if (body.coin_types) {
-    for (const coin_type in body.coin_types) {
+  if (data.coin_types) {
+    for (const coin_type in data.coin_types) {
       await sql`
       insert into domain_coin_type (
         domain_id, coin_type, address
       ) values (
-         ${domainQuery[0].id}, ${coin_type}, ${body.coin_types[coin_type]}
+         ${domainQuery[0].id}, ${coin_type}, ${data.coin_types[coin_type]}
       )`;
     }
   }
