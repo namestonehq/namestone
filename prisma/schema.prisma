@@ -39,6 +39,14 @@ model domain_text_record {
   @@index([domain_id], map: "domain_text_record__domain_id")
 }
 
+model domain_coin_type {
+  id           Int       @id @default(autoincrement())
+  domain_id Int
+  domain       domain @relation(fields: [domain_id], references: [id])
+  coin_type    String?
+  address      String?
+}
+
 model subdomain {
   id           Int                     @id @default(autoincrement())
   created_at   DateTime                @default(now())
@@ -64,6 +72,14 @@ model subdomain_text_record {
   value        String?
 
   @@index([subdomain_id], map: "subdomain_text_record__subdomain_id")
+}
+
+model subdomain_coin_type {
+  id           Int       @id @default(autoincrement())
+  subdomain_id Int
+  subdomain    subdomain @relation(fields: [subdomain_id], references: [id])
+  coin_type    String?
+  address      String?
 }
 
 model eligibility_item {
@@ -121,14 +137,6 @@ model name_resolution {
   id              Int      @id @default(autoincrement())
   resolution_time DateTime @default(now())
   subdomain_id    Int
-}
-
-model subdomain_coin_type {
-  id           Int       @id @default(autoincrement())
-  subdomain_id Int
-  subdomain    subdomain @relation(fields: [subdomain_id], references: [id])
-  coin_type    String?
-  address      String?
 }
 
 model data_provider {

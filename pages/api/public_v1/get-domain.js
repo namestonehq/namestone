@@ -63,10 +63,21 @@ async function handler(req, res) {
   textRecords.forEach((record) => {
     textRecordDict[record.key] = record.value;
   });
+
+  // get coin types from db
+  const coinTypes = await sql`
+      SELECT * FROM domain_coin_type WHERE domain_id = ${entry.id}`;
+
+  const coinTypeDict = {};
+  coinTypes.forEach((coin) => {
+    coinTypeDict[coin.coin_type] = coin.address;
+  });
+
   const domainPayload = {
     address: address,
     domain: domainName,
     text_records: textRecordDict,
+    coin_types: coinTypeDict,
     contenthash: contenthashRaw,
   };
   return res.status(200).json(domainPayload);

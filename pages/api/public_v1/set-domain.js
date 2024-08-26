@@ -132,6 +132,22 @@ async function handler(req, res) {
     }
   }
 
+  // Delete existing coin types
+  await sql`delete from domain_coin_type
+  where domain_id = ${domainQuery[0].id}`;
+
+  // Insert text coin
+  if (body.coin_types) {
+    for (const coin_type in body.coin_types) {
+      await sql`
+      insert into domain_coin_type (
+        domain_id, coin_type, address
+      ) values (
+         ${domainQuery[0].id}, ${coin_type}, ${body.coin_types[coin_type]}
+      )`;
+    }
+  }
+
   // log user engagement
   const jsonPayload = JSON.stringify({
     body: data,
