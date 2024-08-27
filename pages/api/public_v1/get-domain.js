@@ -66,7 +66,7 @@ async function handler(req, res) {
 
   // get coin types from db
   const coinTypes = await sql`
-      SELECT * FROM domain_coin_type WHERE domain_id = ${entry.id}`;
+      SELECT * FROM domain_coin_type WHERE domain_id = ${domainId}`;
 
   const coinTypeDict = {};
   coinTypes.forEach((coin) => {
