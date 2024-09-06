@@ -20,6 +20,7 @@ async function handler(req, res) {
     return res.status(400).json({ error: "Missing name" });
   }
   const includeTextRecords = req.query.text_records;
+  const exactMatch = req.query.exact_match;
   // Check API key
   const allowedApi = await checkApiKey(
     headers.authorization || req.query.api_key,
@@ -50,7 +51,18 @@ async function handler(req, res) {
   }
 
   // Get subdomains from db
-  let subdomainEntries = await sql`
+  let subdomainEntries;
+  if (exactMatch === "1") {
+    subdomainEntries = await sql`
+    SELECT subdomain.id AS id, subdomain.name AS name, subdomain.address AS address, domain.name AS domain, subdomain.created_at
+    FROM subdomain
+    JOIN domain ON subdomain.domain_id = domain.id
+    WHERE domain_id = ${domainQuery[0].id}
+    AND Lower(subdomain.name) LIKE ${searchString.toLowerCase()} 
+    order by subdomain.name ASC
+    LIMIT ${limit} OFFSET ${offset}`;
+  } else {
+    subdomainEntries = await sql`
     SELECT subdomain.id AS id, subdomain.name AS name, subdomain.address AS address, domain.name AS domain, subdomain.created_at
     FROM subdomain
     JOIN domain ON subdomain.domain_id = domain.id
@@ -58,6 +70,7 @@ async function handler(req, res) {
     AND Lower(subdomain.name) LIKE ${searchString.toLowerCase() + "%"} 
     order by subdomain.name ASC
     LIMIT ${limit} OFFSET ${offset}`;
+  }
 
   const subDomainPayloads = [];
 

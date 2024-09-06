@@ -8,6 +8,7 @@ This GET route fetches all names for a domain that start with a string. Ordered 
 - `name` (string): The string names will start with. For example, 'ro' will return 'rob' and 'robert' and other names starting with 'ro'.
 - `text_records` (1 or 0)(Optional): Whether or not the the route returns text records. 1 by default.
 - `limit` (integer)(Optional): Number of names returned in request. Default 50.
+- `exact_match` (1 or 0)(Optional): route will only return names that are an exact match
 - `offset` (integer)(Optional): Offset the returned names window. Default 0.
 
 ## Example

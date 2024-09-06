@@ -21,6 +21,10 @@ const resolutionList = [
     name: "slobo.nfty.eth",
     gateway: "Namestone Gateway - .eth",
   },
+  {
+    name: "slobo.xyz",
+    gateway: "Namestone Gateway - gasless dns",
+  },
 ];
 export const providerUrl =
   "https://eth-mainnet.g.alchemy.com/v2/" +
@@ -59,7 +63,7 @@ export default function Status() {
     <>
       <Header />
 
-      <div className="w-full h-full p-8 sm:p-32 overflow-x-auto border rounded-lg border-neutral-200">
+      <div className="w-full h-full p-8 overflow-x-auto border rounded-lg sm:p-32 border-neutral-200">
         <div className="text-base font-bold text-brownblack-700">Status</div>
         <table className="min-w-full divide-y divide-neutral-200">
           <thead>
