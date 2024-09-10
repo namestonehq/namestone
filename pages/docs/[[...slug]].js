@@ -17,6 +17,7 @@ const navDict = {
       "Search Names": { file: "search-names" },
       "Delete Name": { file: "delete-name" },
       "Set Domain": { file: "set-domain" },
+      "Get Domain": { file: "get-domain" },
     },
   },
   "Admin Panel": { file: "admin_panel" },
@@ -31,6 +32,7 @@ const fileNameLookup = {
   "search-names": "Search Names",
   "delete-name": "Delete Name",
   "set-domain": "Set Domain",
+  "get-domain": "Get Domain",
   admin_panel: "Admin Panel",
 };
 
