@@ -1,7 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import namestoneLogoWhite from "../public/images/namestone-logo-white.svg";
-import logoTwitterWhite from "../public/images/logo-twitter-white.svg";
+import logoXWhite from "../public/images/logo-x-white.svg";
 import logoGithubWhite from "../public/images/logo-github-white.svg";
 import ensLogo from "../public/images/ens-logo.png";
 import Link from "next/link";
@@ -40,8 +40,8 @@ export default function Footer() {
             <Link href="https://twitter.com/namestonehq">
               <Image
                 className="h-[20px] flex-shrink-0 mx-4"
-                src={logoTwitterWhite}
-                alt="NameStone Twitter"
+                src={logoXWhite}
+                alt="NameStone X"
               />
             </Link>
             <Link href="https://github.com/resolverworks">
