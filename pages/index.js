@@ -119,14 +119,7 @@ export default function Home() {
                   <div className="text-sm font-normal leading-none text-neutral-900">
                     Supported by
                   </div>
-
                   <Image src={ensLogo} width={46} alt="ens Logo" />
-                </div>
-                <div className="flex items-center justify-start gap-2">
-                  <div className="text-sm font-normal leading-none text-neutral-900">
-                    Integrated with
-                  </div>
-                  <Image src={airstackLogo} width={73} alt="airstack Logo" />
                 </div>
               </div>
               {/* TITLE */}
