@@ -15,7 +15,7 @@ async function handler(req, res) {
   // get all subdomain names
   let subdomainNames = await sql`select name from subdomain`;
 
-  returnObj = [];
+  let returnObj = [];
 
   // for each domain name, normalize it, and print both if normalized name is different
   for (let domainName of domainNames) {
