@@ -9,30 +9,6 @@ This POST route is used to set a domain for a given address. If the domain doesn
 - `contenthash` (string)(Optional): The link for an ipfs or ipns website.
 - `text_records` (object)(Optional): An object containing key-value pairs representing the text records to be set.
 
-## Example
-
-```
-POST https://namestone.xyz/api/public_v1/set-domain
-
-{
-  "domain":"testbrand.eth",
-  "address":"0xE997d9b785Dd99832d21b3Ce5A34fCacC6D53C57",
-  "text_records": {
-      "com.twitter":"namestonehq",
-      "com.github":"aslobodnik",
-      "com.discord":"superslobo",
-      "url":"https://www.namestone.xyz",
-      "location":"📍 nyc",
-      "description":"APIs are cool",
-      "avatar":"https://raw.githubusercontent.com/aslobodnik/profile/main/pic.jpeg"
-  }
-}
-headers:
-{
-  `Authorization: YOUR_API_KEY`
-}
-```
-
 ## Curl Example
 
 ```
@@ -40,7 +16,7 @@ curl -X POST \
      -H 'Content-Type: application/json' \
      -H 'Authorization: YOUR_API_KEY' \
      -d '{
-          "name":"example",
+           "domain":"testbrand.eth",
           "address":"0xE997d9b785Dd99832d21b3Ce5A34fCacC6D53C57",
           "text_records": {
             "com.twitter":"namestonehq",
