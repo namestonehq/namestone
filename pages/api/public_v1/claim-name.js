@@ -22,8 +22,15 @@ async function handler(req, res) {
   if (!body.name) {
     return res.status(400).json({ error: "Missing name" });
   }
-  let domain = normalize(body.domain);
-  let name = normalize(body.name);
+
+  let domain;
+  let name;
+  try {
+    domain = normalize(body.domain);
+    name = normalize(body.name);
+  } catch (e) {
+    return res.status(400).json({ error: "Invalid ens name" });
+  }
 
   // Check API key
   const allowedApi = await checkApiKey(

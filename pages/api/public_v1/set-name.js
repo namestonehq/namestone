@@ -34,9 +34,14 @@ async function handler(req, res) {
       .json({ error: "You are not authorized to use this endpoint" });
   }
 
-  let name = normalize(body.name);
-  let domain = normalize(body.domain);
-
+  let domain;
+  let name;
+  try {
+    domain = normalize(body.domain);
+    name = normalize(body.name);
+  } catch (e) {
+    return res.status(400).json({ error: "Invalid ens name" });
+  }
   let subdomainId;
   // Check if subdomain exists
   const subdomainQuery = await sql`

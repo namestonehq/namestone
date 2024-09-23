@@ -31,8 +31,8 @@ async function handler(req, res) {
       .json({ error: "You are not authorized to use this endpoint" });
   }
 
-  let name = normalize(body.name);
-  let domain = normalize(body.domain);
+  let domain = body.domain.toLowerCase();
+  let name = body.name.toLowerCase();
 
   const subdomainQuery = await sql`
   select subdomain.id 

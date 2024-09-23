@@ -18,8 +18,14 @@ export default async function handler(req, res) {
   if (!body.name) {
     return res.status(400).json({ error: "Name is required" });
   }
-  const domain = normalize(body.domain);
-  const name = normalize(body.name);
+  let domain;
+  let name;
+  try {
+    domain = normalize(body.domain);
+    name = normalize(body.name);
+  } catch (e) {
+    return res.status(400).json({ error: "Invalid ens name" });
+  }
 
   // Check user eligibility
   const payload = await getEligibility(token, domain);

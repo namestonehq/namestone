@@ -20,8 +20,8 @@ async function handler(req, res) {
     return res.status(400).json({ error: "Missing name" });
   }
 
-  let name = normalize(body.name);
-  let domain = normalize(body.domain);
+  let domain = body.domain.toLowerCase();
+  let name = body.name.toLowerCase();
 
   // Check API key
   const allowedApi = await checkApiKey(

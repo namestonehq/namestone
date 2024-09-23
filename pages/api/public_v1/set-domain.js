@@ -46,8 +46,12 @@ async function handler(req, res) {
     }
   }
 
-  let domainName = normalize(data.domain);
-
+  let domainName;
+  try {
+    domainName = normalize(data.domain);
+  } catch (e) {
+    return res.status(400).json({ error: "Invalid ens name" });
+  }
   let domainData = {
     name: domainName,
     address: data.address || null,
