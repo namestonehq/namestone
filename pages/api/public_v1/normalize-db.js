@@ -10,10 +10,10 @@ const cors = Cors({
 async function handler(req, res) {
   const { headers } = req;
   // get all domain names
-  domainNames = await sql`select name from domain`;
+  let domainNames = await sql`select name from domain`;
 
   // get all subdomain names
-  subdomainNames = await sql`select name from subdomain`;
+  let subdomainNames = await sql`select name from subdomain`;
 
   returnObj = [];
 
