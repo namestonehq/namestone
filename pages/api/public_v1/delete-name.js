@@ -1,6 +1,7 @@
 import sql from "../../../lib/db";
 import { checkApiKey } from "../../../utils/ServerUtils";
 import Cors from "micro-cors";
+import { normalize } from "viem/ens";
 
 const cors = Cors({
   allowMethods: ["GET", "HEAD", "POST"],
@@ -30,11 +31,14 @@ async function handler(req, res) {
       .json({ error: "You are not authorized to use this endpoint" });
   }
 
+  let name = normalize(body.name);
+  let domain = normalize(body.domain);
+
   const subdomainQuery = await sql`
   select subdomain.id 
   from subdomain 
-  where name = ${body.name} and domain_id in 
-  (select id from domain where name = ${body.domain} limit 1)`;
+  where name = ${name} and domain_id in 
+  (select id from domain where name = ${domain} limit 1)`;
 
   if (subdomainQuery.length === 0) {
     return res.status(400).json({ error: "Name does not exist" });
@@ -47,7 +51,7 @@ async function handler(req, res) {
   where id = ${subdomainQuery[0].id}`;
 
   // log user engagement
-  const jsonPayload = JSON.stringify({ name: body.name, domain: body.domain });
+  const jsonPayload = JSON.stringify({ name: name, domain: domain });
   await sql`
   insert into user_engagement (address, name, details)
   values ('api_key','revoke_name', ${jsonPayload})`;

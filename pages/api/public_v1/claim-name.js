@@ -1,6 +1,7 @@
 import sql from "../../../lib/db";
 import { checkApiKey, encodeContenthash } from "../../../utils/ServerUtils";
 import Cors from "micro-cors";
+import { normalize } from "viem/ens";
 
 const cors = Cors({
   allowMethods: ["GET", "HEAD", "POST"],
@@ -21,11 +22,13 @@ async function handler(req, res) {
   if (!body.name) {
     return res.status(400).json({ error: "Missing name" });
   }
+  let domain = normalize(body.domain);
+  let name = normalize(body.name);
 
   // Check API key
   const allowedApi = await checkApiKey(
     headers.authorization || req.query.api_key,
-    body.domain
+    domain
   );
   if (!allowedApi) {
     return res
@@ -38,8 +41,8 @@ async function handler(req, res) {
   const subdomainQuery = await sql`
   select subdomain.id, subdomain.address
   from subdomain
-  where subdomain.name = ${body.name.toLowerCase()} and subdomain.domain_id in
-  (select id from domain where name = ${body.domain} limit 1)`;
+  where subdomain.name = ${name} and subdomain.domain_id in
+  (select id from domain where name = ${domain} limit 1)`;
 
   // single_claim check
   if (req.query.single_claim === "1") {
@@ -48,7 +51,7 @@ async function handler(req, res) {
     select subdomain.id, subdomain.address
     from subdomain
     where subdomain.address = ${body.address} and subdomain.domain_id in
-    (select id from domain where name = ${body.domain} limit 1)`;
+    (select id from domain where name = ${domain} limit 1)`;
     // if so, return error
     if (claimedSubdomainQuery.length > 0) {
       return res
@@ -98,9 +101,7 @@ async function handler(req, res) {
     insert into subdomain (
       name, address, domain_id, contenthash
     ) values (
-      ${body.name.toLowerCase()}, ${body.address}, ${
-      domainQuery[0].id
-    }, ${contenthash}
+      ${name}, ${body.address}, ${domainQuery[0].id}, ${contenthash}
     )
     returning id;`;
 
