@@ -1,6 +1,7 @@
 import sql from "../../../lib/db";
 import { checkApiKey, encodeContenthash } from "../../../utils/ServerUtils";
 import Cors from "micro-cors";
+import { normalize } from "viem/ens";
 
 const cors = Cors({
   allowMethods: ["GET", "HEAD", "POST"],
@@ -33,13 +34,21 @@ async function handler(req, res) {
       .json({ error: "You are not authorized to use this endpoint" });
   }
 
+  let domain;
+  let name;
+  try {
+    domain = normalize(body.domain);
+    name = normalize(body.name);
+  } catch (e) {
+    return res.status(400).json({ error: "Invalid ens name" });
+  }
   let subdomainId;
   // Check if subdomain exists
   const subdomainQuery = await sql`
   select subdomain.id, subdomain.address
   from subdomain
-  where subdomain.name = ${body.name.toLowerCase()} and subdomain.domain_id in
-  (select id from domain where name = ${body.domain} limit 1)`;
+  where subdomain.name = ${name} and subdomain.domain_id in
+  (select id from domain where name = ${domain} limit 1)`;
 
   // Get content hash and encode it
   let contenthash = body.contenthash || null;
@@ -69,7 +78,7 @@ async function handler(req, res) {
   } else {
     // Insert subdomain
     const domainQuery = await sql`
-    select id, name_limit from domain where name = ${body.domain} limit 1`;
+    select id, name_limit from domain where name = ${domain} limit 1`;
 
     if (domainQuery.length === 0) {
       return res.status(400).json({ error: "Domain does not exist" });
@@ -90,9 +99,7 @@ async function handler(req, res) {
     insert into subdomain (
       name, address, domain_id, contenthash, contenthash_raw
     ) values (
-      ${body.name.toLowerCase()}, ${body.address}, ${
-      domainQuery[0].id
-    }, ${contenthash}, ${contenthashRaw}
+      ${name}, ${body.address}, ${domainQuery[0].id}, ${contenthash}, ${contenthashRaw}
     )
     returning id;`;
 

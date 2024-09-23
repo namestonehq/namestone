@@ -1,11 +1,7 @@
 import { getToken } from "next-auth/jwt";
 import sql from "../../lib/db";
-import {
-  getAvailability,
-  getEligibility,
-  getEPSAddresses,
-  getNFTs,
-} from "../../utils/ServerUtils";
+import { getAvailability, getEligibility } from "../../utils/ServerUtils";
+import { normalize } from "viem/ens";
 
 export default async function handler(req, res) {
   const token = await getToken({ req });
@@ -22,8 +18,14 @@ export default async function handler(req, res) {
   if (!body.name) {
     return res.status(400).json({ error: "Name is required" });
   }
-  const domain = body.domain;
-  const name = body.name;
+  let domain;
+  let name;
+  try {
+    domain = normalize(body.domain);
+    name = normalize(body.name);
+  } catch (e) {
+    return res.status(400).json({ error: "Invalid ens name" });
+  }
 
   // Check user eligibility
   const payload = await getEligibility(token, domain);
@@ -49,7 +51,7 @@ export default async function handler(req, res) {
   insert into subdomain (
     name, address, domain_id
   ) values (
-    ${name.toLowerCase()}, ${userAddress}, ${domainQuery[0].id}
+    ${name}, ${userAddress}, ${domainQuery[0].id}
   )
   returning id;`;
   // insert avatar into db

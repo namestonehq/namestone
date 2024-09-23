@@ -1,6 +1,7 @@
 import sql from "../../../lib/db";
 import { checkApiKey, encodeContenthash } from "../../../utils/ServerUtils";
 import Cors from "micro-cors";
+import { normalize } from "viem/ens";
 
 const cors = Cors({
   allowMethods: ["GET", "HEAD", "POST"],
@@ -45,8 +46,14 @@ async function handler(req, res) {
     }
   }
 
+  let domainName;
+  try {
+    domainName = normalize(data.domain);
+  } catch (e) {
+    return res.status(400).json({ error: "Invalid ens name" });
+  }
   let domainData = {
-    name: data.domain.toLowerCase(),
+    name: domainName,
     address: data.address || null,
     contenthash: contenthash || null,
     contenthash_raw: rawContenthash || null,
@@ -54,7 +61,7 @@ async function handler(req, res) {
 
   // check if domain exists
   let domainQuery = await sql`
-  select * from domain where name = ${data.domain.toLowerCase()} limit 1;`;
+  select * from domain where name = ${domainName} limit 1;`;
 
   if (domainQuery.length > 0) {
     //// if Domain exists we update
@@ -73,7 +80,7 @@ async function handler(req, res) {
       "contenthash",
       "contenthash_raw"
     )}
-    where name = ${data.domain.toLowerCase()}
+    where name = ${domainName}
     returning id;`;
   } else {
     //// iF domain doesn't exist we insert
@@ -88,8 +95,8 @@ async function handler(req, res) {
     )}
     returning id;`;
     let insertBrand = {
-      name: data.domain.toLowerCase(),
-      url_slug: data.domain.toLowerCase(),
+      name: domainName,
+      url_slug: domainName,
       domain_id: domainQuery[0].id,
     };
     // create brand
