@@ -10,20 +10,27 @@ async function handler(req, res) {
   // Check required parameters
   const domain = req.query.domain;
   const addresses = req.query.addresses?.split(","); // Assuming addresses are comma-separated
+  const name = req.query.name;
 
   if (!domain) {
     return res.status(400).json({ message: "Missing required parameters" });
   }
 
   let subDomainNames;
-  if (addresses && addresses.length > 0) {
+  if (name) {
     subDomainNames = await sql`
-      SELECT name, address, owner,  "tokenId", "textRecords" as "textRecordsPayload", "registeredAt" FROM ponder."NftSubdomain" WHERE "domainName" = ${domain} AND "address" = ANY (${addresses}) order by "registeredAt" desc
+      SELECT name, address, owner,  "tokenId", "textRecords" as "textRecordsPayload", "registeredAt" FROM ponder."NftSubdomain" WHERE "domainName" = ${domain} AND "name" = ${name} order by "registeredAt" desc
     `;
   } else {
-    subDomainNames = await sql`
+    if (addresses && addresses.length > 0) {
+      subDomainNames = await sql`
+      SELECT name, address, owner,  "tokenId", "textRecords" as "textRecordsPayload", "registeredAt" FROM ponder."NftSubdomain" WHERE "domainName" = ${domain} AND "address" = ANY (${addresses}) order by "registeredAt" desc
+    `;
+    } else {
+      subDomainNames = await sql`
       SELECT name, address, owner, "tokenId", "textRecords" as "textRecordsPayload", "registeredAt" FROM ponder."NftSubdomain" WHERE "domainName" = ${domain} order by "registeredAt" desc
     `;
+    }
   }
 
   if (subDomainNames.length === 0) {

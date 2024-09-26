@@ -18,6 +18,7 @@ export default async function handler(req, res) {
   if (!body.name) {
     return res.status(400).json({ error: "Name is required" });
   }
+  
   let domain;
   let name;
   try {
