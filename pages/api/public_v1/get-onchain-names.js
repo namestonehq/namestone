@@ -19,16 +19,16 @@ async function handler(req, res) {
   let subDomainNames;
   if (name) {
     subDomainNames = await sql`
-      SELECT name, address, owner,  "tokenId", "textRecords" as "textRecordsPayload", "registeredAt" FROM ponder_prod."NftSubdomain" WHERE "domainName" = ${domain} AND "name" = ${name} order by "registeredAt" desc
+      SELECT name, address, owner,  "tokenId", "textRecords" as "textRecordsPayload", "registeredAt" FROM ponder_prod_2."NftSubdomain" WHERE "domainName" = ${domain} AND "name" = ${name} order by "registeredAt" desc
     `;
   } else {
     if (addresses && addresses.length > 0) {
       subDomainNames = await sql`
-      SELECT name, address, owner,  "tokenId", "textRecords" as "textRecordsPayload", "registeredAt" FROM ponder_prod."NftSubdomain" WHERE "domainName" = ${domain} AND "address" = ANY (${addresses}) order by "registeredAt" desc
+      SELECT name, address, owner,  "tokenId", "textRecords" as "textRecordsPayload", "registeredAt" FROM ponder_prod_2."NftSubdomain" WHERE "domainName" = ${domain} AND "address" = ANY (${addresses}) order by "registeredAt" desc
     `;
     } else {
       subDomainNames = await sql`
-      SELECT name, address, owner, "tokenId", "textRecords" as "textRecordsPayload", "registeredAt" FROM ponder_prod."NftSubdomain" WHERE "domainName" = ${domain} order by "registeredAt" desc
+      SELECT name, address, owner, "tokenId", "textRecords" as "textRecordsPayload", "registeredAt" FROM ponder_prod_2."NftSubdomain" WHERE "domainName" = ${domain} order by "registeredAt" desc
     `;
     }
   }
