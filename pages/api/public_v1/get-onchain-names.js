@@ -19,16 +19,16 @@ async function handler(req, res) {
   let subDomainNames;
   if (name) {
     subDomainNames = await sql`
-      SELECT name, address, owner,  "tokenId", "textRecords" as "textRecordsPayload", "registeredAt" FROM ponder_prod."NftSubdomain" WHERE "domainName" = ${domain} AND "name" = ${name} order by "registeredAt" desc
+      SELECT name, address, owner,  "tokenId", "textRecords" as "textRecordsPayload", "coinTypes" as "coinTypesPayload", "registeredAt" FROM ponder_prod."NftSubdomain" WHERE "domainName" = ${domain} AND "name" = ${name} order by "registeredAt" desc
     `;
   } else {
     if (addresses && addresses.length > 0) {
       subDomainNames = await sql`
-      SELECT name, address, owner,  "tokenId", "textRecords" as "textRecordsPayload", "registeredAt" FROM ponder_prod."NftSubdomain" WHERE "domainName" = ${domain} AND "address" = ANY (${addresses}) order by "registeredAt" desc
+      SELECT name, address, owner,  "tokenId", "textRecords" as "textRecordsPayload", "coinTypes" as "coinTypesPayload", "registeredAt" FROM ponder_prod."NftSubdomain" WHERE "domainName" = ${domain} AND "address" = ANY (${addresses}) order by "registeredAt" desc
     `;
     } else {
       subDomainNames = await sql`
-      SELECT name, address, owner, "tokenId", "textRecords" as "textRecordsPayload", "registeredAt" FROM ponder_prod."NftSubdomain" WHERE "domainName" = ${domain} order by "registeredAt" desc
+      SELECT name, address, owner, "tokenId", "textRecords" as "textRecordsPayload", "coinTypes" as "coinTypesPayload", registeredAt" FROM ponder_prod."NftSubdomain" WHERE "domainName" = ${domain} order by "registeredAt" desc
     `;
     }
   }
@@ -44,10 +44,20 @@ async function handler(req, res) {
     owner,
     tokenId,
     textRecordsPayload,
+    coinTypesPayload,
     registeredAt,
   } of subDomainNames) {
     const text_records = JSON.parse(textRecordsPayload);
-    result.push({ name, address, owner, tokenId, text_records, registeredAt });
+    const coin_types = JSON.parse(coinTypesPayload);
+    result.push({
+      name,
+      address,
+      owner,
+      tokenId,
+      text_records,
+      coin_types,
+      registeredAt,
+    });
   }
 
   return res.status(200).json(result);
