@@ -19,16 +19,16 @@ async function handler(req, res) {
   let subDomainNames;
   if (name) {
     subDomainNames = await sql`
-      SELECT name, address, owner,  "tokenId", "textRecords" as "textRecordsPayload", "coinTypes" as "coinTypesPayload", "registeredAt" FROM ponder_prod."NftSubdomain" WHERE "domainName" = ${domain} AND "name" = ${name} order by "registeredAt" desc
+      SELECT name, address, owner,  "tokenId", "textRecords" as "textRecordsPayload", "coinTypes" as "coinTypesPayload", "registeredAt", contenthash FROM ponder_prod."NftSubdomain" WHERE "domainName" = ${domain} AND "name" = ${name} order by "registeredAt" desc
     `;
   } else {
     if (addresses && addresses.length > 0) {
       subDomainNames = await sql`
-      SELECT name, address, owner,  "tokenId", "textRecords" as "textRecordsPayload", "coinTypes" as "coinTypesPayload", "registeredAt" FROM ponder_prod."NftSubdomain" WHERE "domainName" = ${domain} AND "address" = ANY (${addresses}) order by "registeredAt" desc
+      SELECT name, address, owner,  "tokenId", "textRecords" as "textRecordsPayload", "coinTypes" as "coinTypesPayload", "registeredAt", contenthash FROM ponder_prod."NftSubdomain" WHERE "domainName" = ${domain} AND "address" = ANY (${addresses}) order by "registeredAt" desc
     `;
     } else {
       subDomainNames = await sql`
-      SELECT name, address, owner, "tokenId", "textRecords" as "textRecordsPayload", "coinTypes" as "coinTypesPayload", registeredAt" FROM ponder_prod."NftSubdomain" WHERE "domainName" = ${domain} order by "registeredAt" desc
+      SELECT name, address, owner, "tokenId", "textRecords" as "textRecordsPayload", "coinTypes" as "coinTypesPayload", registeredAt", contenthash FROM ponder_prod."NftSubdomain" WHERE "domainName" = ${domain} order by "registeredAt" desc
     `;
     }
   }
@@ -46,6 +46,7 @@ async function handler(req, res) {
     textRecordsPayload,
     coinTypesPayload,
     registeredAt,
+    contenthash,
   } of subDomainNames) {
     const text_records = JSON.parse(textRecordsPayload);
     const coin_types = JSON.parse(coinTypesPayload);
@@ -57,6 +58,7 @@ async function handler(req, res) {
       text_records,
       coin_types,
       registeredAt,
+      contenthash,
     });
   }
 
