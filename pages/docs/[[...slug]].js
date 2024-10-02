@@ -5,6 +5,8 @@ import Link from "next/link";
 import Header from "../../components/Header";
 import { Icon } from "@iconify/react";
 import { useState } from "react";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { vscDarkPlus } from "react-syntax-highlighter/dist/cjs/styles/prism";
 
 const navDict = {
   Introduction: { file: "index" },
@@ -218,7 +220,29 @@ export default function Docs({ content, fileName }) {
                         );
                       },
                       code: ({ node, ...props }) => {
-                        if (props.inline) {
+                        const match = /language-(\w+)/.exec(
+                          props.className || ""
+                        );
+                        const language = match ? match[1] : "";
+
+                        const codeString = String(props.children).replace(
+                          /\n$/,
+                          ""
+                        );
+                        console.log("language:", language);
+                        console.log("Code content:", codeString);
+                        if (match) {
+                          return (
+                            <SyntaxHighlighter
+                              style={vscDarkPlus}
+                              language={language}
+                              PreTag="div"
+                              {...props}
+                            >
+                              {codeString}
+                            </SyntaxHighlighter>
+                          );
+                        } else if (props.inline) {
                           if (typeof props.inline === "boolean")
                             props.inline = props.inline.toString();
                           return (
