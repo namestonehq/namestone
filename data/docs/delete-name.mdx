@@ -19,3 +19,33 @@ curl -X POST \
         }' \
      https://namestone.xyz/api/public_v1/delete-name
 ```
+
+## SDK Example
+
+```
+import { NameStone, AuthenticationError, NetworkError } from './namestone-sdk';
+
+// Initialize the NameStone instance
+const ns = new NameStone(<YOUR_API_KEY_HERE>);
+
+// Define the domain and name to delete
+const domain = "testbrand.eth";
+const name = "example";
+
+// Use an immediately invoked async function to allow top-level await
+(async () => {
+  try {
+    const response = await ns.deleteName(name, domain);
+
+    console.log("Name deleted successfully", response);
+  } catch (error) {
+    if (error instanceof AuthenticationError) {
+      console.error("Authentication failed:", error.message);
+    } else if (error instanceof NetworkError) {
+      console.error("Network error:", error.message);
+    } else {
+      console.error("An unexpected error occurred:", error);
+    }
+  }
+})();
+```

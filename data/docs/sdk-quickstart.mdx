@@ -1,0 +1,28 @@
+# SDK Quickstart
+
+We have a [typescript SDK](https://github.com/ncale/namestone-sdk) for users who prefer to interact with our api through typesafe methods.
+
+Install the SDK through npm
+
+```
+npm install namestone-sdk
+```
+
+Initialize the Namestone client.
+
+```
+import NameStone from "namestone-sdk";
+
+const ns = new NameStone(<YOUR_API_KEY_HERE>);
+```
+
+Then call with the relevant methods.
+
+```
+async function getData() {
+  const data = await ns.getNames();
+  console.log(data);
+}
+```
+
+Each of our api pages includes an SDK example and you can visit the [SDK github](https://github.com/ncale/namestone-sdk) for more information.

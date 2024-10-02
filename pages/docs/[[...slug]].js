@@ -8,8 +8,9 @@ import { useState } from "react";
 
 const navDict = {
   Introduction: { file: "index" },
+  "SDK Quickstart": { file: "sdk-quickstart" },
   API: {
-    file: "api_routes",
+    file: "api-routes",
     children: {
       "Set Name": { file: "set-name" },
       "Claim Name": { file: "claim-name" },
@@ -25,7 +26,8 @@ const navDict = {
 };
 const fileNameLookup = {
   index: "Introduction",
-  api_routes: "API",
+  "sdk-quickstart": "SDK Quickstart",
+  "api-routes": "API",
   "set-name": "Set Name",
   "claim-name": "Claim Name",
   "get-names": "Get Names",

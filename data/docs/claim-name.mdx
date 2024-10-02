@@ -36,3 +36,47 @@ curl -X POST \
         }' \
      https://namestone.xyz/api/public_v1/claim-name
 ```
+
+## SDK Example
+
+```
+import { NameStone, AuthenticationError, NetworkError, TextRecords } from './namestone-sdk';
+
+// Initialize the NameStone instance
+const ns = new NameStone(<YOUR_API_KEY_HERE>);
+
+// Define the text records
+const textRecords: TextRecords = {
+  "com.twitter": "namestonehq",
+  "com.github": "aslobodnik",
+  "com.discord": "superslobo",
+  "url": "https://www.namestone.xyz",
+  "location": "📍 nyc",
+  "description": "APIs are cool",
+  "avatar": "https://raw.githubusercontent.com/aslobodnik/profile/main/pic.jpeg"
+};
+
+// Use an immediately invoked async function to allow top-level await
+(async () => {
+  try {
+    const response = await ns.setName(
+      "example",
+      "testbrand.eth",
+      "0xE997d9b785Dd99832d21b3Ce5A34fCacC6D53C57",
+      undefined,
+      textRecords,
+      undefined
+    );
+
+    console.log("Name set successfully", response);
+  } catch (error) {
+    if (error instanceof AuthenticationError) {
+      console.error("Authentication failed:", error.message);
+    } else if (error instanceof NetworkError) {
+      console.error("Network error:", error.message);
+    } else {
+      console.error("An unexpected error occurred:", error);
+    }
+  }
+})();
+```

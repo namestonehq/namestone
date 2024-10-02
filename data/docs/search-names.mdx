@@ -17,8 +17,47 @@ This GET route fetches all names for a domain that start with a string. Ordered 
 curl -X GET \
      -H 'Authorization: YOUR_API_KEY' \
      'https://namestone.xyz/api/public_v1/search-names?domain=example.xyz&name=ro'
+```
+
+## SDK Example
 
 ```
+import { NameStone, AuthenticationError, NetworkError, NameData } from './namestone-sdk';
+
+// Initialize the NameStone instance
+const ns = new NameStone(<YOUR_API_KEY_HERE>);
+
+// Define the search parameters
+const domain = "example.xyz";
+const name = "ro";
+
+// Use an immediately invoked async function to allow top-level await
+(async () => {
+  try {
+    const response: NameData[] = await ns.searchNames(domain, name);
+
+    if (response.length > 0) {
+      console.log(`Found ${response.length} name(s) matching the search criteria:`);
+      response.forEach((nameData, index) => {
+        console.log(`\nResult ${index + 1}:`);
+        console.log(JSON.stringify(nameData, null, 2));
+      });
+    } else {
+      console.log(`No names found matching '${name}' in the domain '${domain}'.`);
+    }
+  } catch (error) {
+    if (error instanceof AuthenticationError) {
+      console.error("Authentication failed:", error.message);
+    } else if (error instanceof NetworkError) {
+      console.error("Network error:", error.message);
+    } else {
+      console.error("An unexpected error occurred:", error);
+    }
+  }
+})();
+```
+
+(The SDK also has a searchName method if you want just one name)
 
 ## Example Return
 

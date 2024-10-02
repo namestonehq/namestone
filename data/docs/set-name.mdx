@@ -12,36 +12,11 @@ If a name does not exist this route will create it.
 - `text_records` (object)(Optional): An object containing key-value pairs representing the text records to be set.
 - `coin_types` (object)(Optional): An object containing key-value pairs representing L2 chains and their resolved address.
 
-## Curl Example
-
-```
-curl -X POST \
-     -H 'Content-Type: application/json' \
-     -H 'Authorization: YOUR_API_KEY' \
-     -d '{
-          "domain":"testbrand.eth",
-		  "name":"example",
-          "address":"0xE997d9b785Dd99832d21b3Ce5A34fCacC6D53C57",
-          "text_records": {
-            "com.twitter":"namestonehq",
-            "com.github":"aslobodnik",
-            "com.discord":"superslobo",
-			      "email":"alex@namestone.xyz",
-            "url":"https://www.namestone.xyz",
-            "location":"📍 nyc",
-            "description":"APIs are cool",
-            "avatar":"https://raw.githubusercontent.com/aslobodnik/profile/main/pic.jpeg"
-          },
-          "contenthash":"ipfs://bafybeib65htzaufd5en2o6tpety3ekxu7kpy4qxyooe5szphpyim3hrhia"
-        }' \
-     https://namestone.xyz/api/public_v1/set-name
-```
-
 ## Multichain Address Resolution
 
 NameStone supports multichain address resolution to any L2 chain permitted within [ENS](https://github.com/satoshilabs/slips/blob/master/slip-0044.md). To convert chain ID into coin type, use the following [typescript template](https://stackblitz.com/edit/stackblitz-starters-mfk6i5?file=src%2Findex.ts).
 
-## Curl Example (coin_types)
+## Curl Example with coin_types
 
 ```
 curl -X POST \
@@ -68,6 +43,61 @@ curl -X POST \
      https://namestone.xyz/api/public_v1/set-name
 ```
 
-**Example: See [multichain.namestone.xyz](https://app.ens.domains/multichain.namestone.xyz) on the ENS app.**
+## SDK Example with coin_types
+
+```
+import { NameStone, AuthenticationError, NetworkError, TextRecords, CoinTypes } from './namestone-sdk';
+
+// Initialize the NameStone instance
+const ns = new NameStone(<YOUR_API_KEY_HERE>);
+
+// Define the name parameters
+const domain = "namestone.xyz";
+const name = "multichain";
+const address = "0x534631Bcf33BDb069fB20A93d2fdb9e4D4dD42CF";
+
+// Define the coin types
+const coinTypes: CoinTypes = {
+  "2147483785": "0x534631Bcf33BDb069fB20A93d2fdb9e4D4dD42CF",
+  "2147492101": "0x534631Bcf33BDb069fB20A93d2fdb9e4D4dD42CF",
+  "2147525809": "0x534631Bcf33BDb069fB20A93d2fdb9e4D4dD42CF",
+  "2147483658": "0x534631Bcf33BDb069fB20A93d2fdb9e4D4dD42CF"
+};
+
+// Define the text records
+const textRecords: TextRecords = {
+  "com.twitter": "namestonehq",
+  "com.github": "resolverworks",
+  "url": "https://www.namestone.xyz",
+  "description": "Multichain Example",
+  "avatar": "https://imagedelivery.net/UJ5oN2ajUBrk2SVxlns2Aw/e52988ee-9840-48a2-d8d9-8a92594ab200/public"
+};
+
+// Use an immediately invoked async function to allow top-level await
+(async () => {
+  try {
+    const response = await ns.setName(
+      name,
+      domain,
+      address,
+      undefined, // contenthash is not provided in this example
+      textRecords,
+      coinTypes
+    );
+
+    console.log("Name set successfully:", response);
+  } catch (error) {
+    if (error instanceof AuthenticationError) {
+      console.error("Authentication failed:", error.message);
+    } else if (error instanceof NetworkError) {
+      console.error("Network error:", error.message);
+    } else {
+      console.error("An unexpected error occurred:", error);
+    }
+  }
+})();
+```
+
+**Live Example: See [multichain.namestone.xyz](https://app.ens.domains/multichain.namestone.xyz) on the ENS app.**
 
 ![Image](https://imagedelivery.net/UJ5oN2ajUBrk2SVxlns2Aw/05c36ee0-86f5-4875-4720-da70a1ae8600/highres)

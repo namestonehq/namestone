@@ -15,6 +15,40 @@ curl -X GET \
 
 ```
 
+## SDK Example
+
+```
+import { NameStone, AuthenticationError, NetworkError, DomainData } from './namestone-sdk';
+
+// Initialize the NameStone instance
+const ns = new NameStone(<YOUR_API_KEY_HERE>);
+
+// Define the domain to query
+const domain = "testbrand.eth";
+
+// Use an immediately invoked async function to allow top-level await
+(async () => {
+  try {
+    const response: DomainData[] = await ns.getDomain(domain);
+
+    if (response.length > 0) {
+      console.log("Domain data retrieved successfully:");
+      console.log(JSON.stringify(response[0], null, 2));
+    } else {
+      console.log("No data found for the specified domain.");
+    }
+  } catch (error) {
+    if (error instanceof AuthenticationError) {
+      console.error("Authentication failed:", error.message);
+    } else if (error instanceof NetworkError) {
+      console.error("Network error:", error.message);
+    } else {
+      console.error("An unexpected error occurred:", error);
+    }
+  }
+})();
+```
+
 ## Example Return
 
 ```
