@@ -57,7 +57,7 @@ const textRecords: TextRecords = {
 // Use an immediately invoked async function to allow top-level await
 (async () => {
   try {
-    const response = await ns.setDomain(domain, address, undefined, textRecords);
+    const response = await ns.setDomain({domain:domain, address:address, text_records:textRecords});
 
     console.log("Domain set successfully:", response);
   } catch (error) {

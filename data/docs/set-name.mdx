@@ -76,14 +76,13 @@ const textRecords: TextRecords = {
 // Use an immediately invoked async function to allow top-level await
 (async () => {
   try {
-    const response = await ns.setName(
-      name,
-      domain,
-      address,
-      undefined, // contenthash is not provided in this example
-      textRecords,
-      coinTypes
-    );
+    const response = await ns.setName({
+      name:name,
+      domain:domain,
+      address:address,
+      text_records:textRecords,
+      coin_types:coinTypes
+  });
 
     console.log("Name set successfully:", response);
   } catch (error) {

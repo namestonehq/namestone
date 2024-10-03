@@ -29,7 +29,7 @@ const domain = "testbrand.eth";
 // Use an immediately invoked async function to allow top-level await
 (async () => {
   try {
-    const response: DomainData[] = await ns.getDomain(domain);
+    const response: DomainData[] = await ns.getDomain({domain:domain});
 
     if (response.length > 0) {
       console.log("Domain data retrieved successfully:");

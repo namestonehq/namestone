@@ -60,12 +60,12 @@ const textRecords: TextRecords = {
 (async () => {
   try {
     const response = await ns.setName(
-      "example",
-      "testbrand.eth",
-      "0xE997d9b785Dd99832d21b3Ce5A34fCacC6D53C57",
-      undefined,
-      textRecords,
-      undefined
+      {
+      domain: "example",
+      name: "testbrand.eth",
+      address: "0xE997d9b785Dd99832d21b3Ce5A34fCacC6D53C57",
+      text_records:textRecords,
+      }
     );
 
     console.log("Name set successfully", response);
