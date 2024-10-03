@@ -20,10 +20,9 @@ Then call with the relevant methods.
 
 ```ts
 const domain = "testbrand.eth";
-const address = "0x57632Ba9A844af0AB7d5cdf98b0056c8d87e3A85";
 
 async function getData() {
-  const data = await ns.getNames({ domain: domain, address: address });
+  const data = await ns.getNames({ domain: domain });
   console.log(data);
 }
 ```
