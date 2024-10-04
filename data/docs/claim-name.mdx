@@ -61,11 +61,11 @@ const textRecords: TextRecords = {
   try {
     const response = await ns.claimName(
       {
-      domain: "example",
-      name: "testbrand.eth",
+      name: "example",
+      domain: "testbrand.eth",
       address: "0xE997d9b785Dd99832d21b3Ce5A34fCacC6D53C57",
       text_records:textRecords,
-      single_claim=0
+      single_claim:0
       }
     );
 
