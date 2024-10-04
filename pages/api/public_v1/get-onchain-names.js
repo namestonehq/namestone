@@ -28,7 +28,7 @@ async function handler(req, res) {
     `;
     } else {
       subDomainNames = await sql`
-      SELECT name, address, owner, "tokenId", "textRecords" as "textRecordsPayload", "coinTypes" as "coinTypesPayload", registeredAt", contenthash FROM ponder_prod."NftSubdomain" WHERE "domainName" = ${domain} order by "registeredAt" desc
+      SELECT name, address, owner, "tokenId", "textRecords" as "textRecordsPayload", "coinTypes" as "coinTypesPayload", "registeredAt", contenthash FROM ponder_prod."NftSubdomain" WHERE "domainName" = ${domain} order by "registeredAt" desc
     `;
     }
   }
