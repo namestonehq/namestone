@@ -30,13 +30,7 @@ const domain = "testbrand.eth";
 (async () => {
   try {
     const response: DomainData[] = await ns.getDomain({domain:domain});
-
-    if (response.length > 0) {
-      console.log("Domain data retrieved successfully:");
-      console.log(JSON.stringify(response[0], null, 2));
-    } else {
-      console.log("No data found for the specified domain.");
-    }
+    console.log(response);
   } catch (error) {
     if (error instanceof AuthenticationError) {
       console.error("Authentication failed:", error.message);
