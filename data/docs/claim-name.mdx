@@ -59,12 +59,13 @@ const textRecords: TextRecords = {
 // Use an immediately invoked async function to allow top-level await
 (async () => {
   try {
-    const response = await ns.setName(
+    const response = await ns.claimName(
       {
       domain: "example",
       name: "testbrand.eth",
       address: "0xE997d9b785Dd99832d21b3Ce5A34fCacC6D53C57",
       text_records:textRecords,
+      single_claim=0
       }
     );
 
