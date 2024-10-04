@@ -163,8 +163,8 @@ export default function Docs({ content, fileName }) {
                 </div>
               )}
 
-              <div className="justify-start flex-1 border-t sm:border-l border-brownblack-50 ">
-                <div className="w-full py-6 sm:py-10 sm:pl-10 ">
+              <div className="justify-start flex-1 border-t sm:border-l border-brownblack-50">
+                <div className="w-full max-w-full py-6 sm:py-10 sm:pl-10 ">
                   <ReactMarkdown
                     components={{
                       li: ({ node, ...props }) => {
@@ -233,14 +233,23 @@ export default function Docs({ content, fileName }) {
                         console.log("Code content:", codeString);
                         if (match) {
                           return (
-                            <SyntaxHighlighter
-                              style={vscDarkPlus}
-                              language={language}
-                              PreTag="div"
-                              {...props}
-                            >
-                              {codeString}
-                            </SyntaxHighlighter>
+                            <div className="relative max-w-full overflow-hidden">
+                              <SyntaxHighlighter
+                                style={vscDarkPlus}
+                                language={language}
+                                PreTag="pre"
+                                {...props}
+                                customStyle={{}}
+                                codeTagProps={{
+                                  className: "whitespace-pre break-words",
+                                }}
+                                wrapLines={true}
+                                wrapLongLines={true}
+                                className="!mt-0 !mb-0 p-4"
+                              >
+                                {codeString}
+                              </SyntaxHighlighter>
+                            </div>
                           );
                         } else if (props.inline) {
                           if (typeof props.inline === "boolean")
