@@ -1,10 +1,17 @@
 import sql from "../lib/db.js";
 import { ethers } from "ethers";
 import contentHash from "@ensdomains/content-hash";
+import { createPublicClient, http } from "viem";
+import { mainnet } from "viem/chains";
 
 export const providerUrl =
   "https://eth-mainnet.g.alchemy.com/v2/" +
   process.env.NEXT_PUBLIC_ALCHEMY_API_KEY; // replace with your actual project ID
+
+const client = createPublicClient({
+  chain: mainnet,
+  transport: http(providerUrl),
+});
 
 // get whether a user is eligible to claim a name
 // Takes a user token and returns a payload with eligibility information
@@ -332,4 +339,21 @@ export function encodeContenthash(text) {
     }
   }
   return encoded;
+}
+
+const resolverList = [
+  "0x2291053F49Cd008306b92f84a61c6a1bC9B5CB65",
+  "0x828ec5bDe537B8673AF98D77bCB275ae1CA26D1f",
+  "0x84c5AdB77dd9f362A1a3480009992d8d47325dc3",
+  "0xd17347fA0a6eeC89a226c96a9ae354F785e94241",
+];
+
+export async function checkResolver(ensName) {
+  try {
+    const resolver = await client.getEnsResolver({ name: ensName });
+    return resolverList.includes(resolver.toLowerCase());
+  } catch (error) {
+    console.error("Error checking ENS resolver:", error);
+    return false;
+  }
 }

@@ -2,7 +2,7 @@ import nodemailer from "nodemailer";
 import sql from "../../../lib/db";
 import { v4 as uuidv4 } from "uuid";
 import { ethers } from "ethers";
-import { providerUrl } from "../../../utils/ServerUtils";
+import { checkResolver, providerUrl } from "../../../utils/ServerUtils";
 import Cors from "micro-cors";
 
 const cors = Cors({
@@ -42,6 +42,13 @@ async function handler(req, res) {
       // if domain exists we return an error
       return res.status(400).json({ error: "Domain already exists" });
     }
+
+    // check if domain has a good resolver
+    let goodResolver = await checkResolver(domain);
+    if (!goodResolver) {
+      return res.status(400).json({ error: "Invalid domain resolver" });
+    }
+
     // check if wallet is an ens name by checking for dot
     let address;
     if (wallet.includes(".")) {
