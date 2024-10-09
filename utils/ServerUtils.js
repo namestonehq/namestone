@@ -351,6 +351,7 @@ const resolverList = [
 export async function checkResolver(ensName) {
   try {
     const resolver = await client.getEnsResolver({ name: ensName });
+    console.log("Resolver:", resolver);
     return resolverList.includes(resolver.toLowerCase());
   } catch (error) {
     console.error("Error checking ENS resolver:", error);
