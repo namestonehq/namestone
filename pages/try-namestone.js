@@ -10,7 +10,12 @@ import { publicProvider } from "wagmi/providers/public";
 import XIcon from "../public/images/x-icon-red.png";
 import SuccessIcon from "../public/images/success-icon.png";
 import checkIcon from "../public/images/icon-orange-check.svg";
+import searchIcon from "../public/images/search-icon.svg";
+import bgGraphic from "../public/images/bg-trynamestone.svg";
 import Image from "next/image";
+import CustomConnectButton from "../components/CustomConnectButton";
+import Link from "next/link";
+import namestoneIcon from "../public/images/namestone-icon.svg";
 
 export default function Home() {
   const router = useRouter();
@@ -111,6 +116,13 @@ export default function Home() {
 
   return (
     <div className="flex justify-center bg-neutral-50 ">
+      {/* Background Image */}
+      <Image
+        src={bgGraphic}
+        alt="Background Graphic"
+        fill
+        className="-z-6 object-right"
+      />
       <div className="w-full overflow-hidden flex flex-col max-w-[1536px]">
         <Head>
           <title>Try for Free | Namestone</title>
@@ -125,62 +137,55 @@ export default function Home() {
         <div className="fixed z-40 flex flex-col w-full ">
           <div className="flex w-full bg-gradient-to-r  h-[8px] from-[#FF8B36] to-[#FF4429]"></div>
           <div className="flex justify-between w-full px-8 py-4 lg:px-32 backdrop-blur-sm">
-            <div className="flex items-center">
-              <NameStoneLogo />
+            <div className="flex items-center text-2xl font-bold">
+              <Link href="/" className="flex">
+                <Image
+                  className="h-[30px] mr-1  my-auto"
+                  priority
+                  src={namestoneIcon}
+                  alt="Forging Commmunity Identity"
+                />{" "}
+                <span className={`mr-1`}> NameStone </span>
+              </Link>
             </div>
+            <CustomConnectButton />
           </div>
         </div>
-
         {/* Form Section */}
-        <div className="flex items-center justify-center w-full min-h-screen px-8 overflow-hidden text-center bg-white lg:px-32 ">
-          <div className="flex justify-center w-full mt-16 lg:justify-between lg:mt-[140px] ">
+        <div className="flex justify-center w-full min-h-screen px-8 overflow-hidden text-center bg-white lg:px-32 mt-16">
+          <div className="flex justify-center w-full lg:justify-between lg:mt-[140px] ">
             {/* side text */}
             <div className="flex-1 hidden lg:flex">
               <div className="flex flex-col items-start w-full max-w-md ">
                 <h1 className="font-bold text-md text-brownblack-700">
                   Get a free API Key
                 </h1>
-                <div className="mb-6 text-sm ftext-center text-neutral-700">
-                  API key will be sent to your inbox.
+                <div className="mb-6 text-sm ftext-center text-neutral-700 font-bold mt-6">
+                  How it works
                 </div>
-
-                <div className="inline-flex flex-col items-start justify-start gap-7">
-                  <div className="inline-flex items-center justify-start gap-4 ">
-                    <Image
-                      src={checkIcon}
-                      className="relative w-6 h-6"
-                      alt="check icon"
-                    />
-                    <div className="text-base font-bold leading-normal grow shrink basis-0 text-neutral-900">
-                      Admin Panel
-                    </div>
+                <div className="flex flex-col gap-4">
+                  <div className="flex gap-3">
+                    <div className="bg-neutral-200 rounded-full w-6 h-6">1</div>
+                    <div>Connect your wallet to list names you own</div>
                   </div>
-                  <div className="inline-flex items-center justify-start gap-4 ">
-                    <Image
-                      src={checkIcon}
-                      className="relative w-6 h-6"
-                      alt="check icon"
-                    />
-                    <div className="text-base font-bold leading-normal grow shrink basis-0 text-neutral-900">
-                      Add, edit, and remove subnames
-                    </div>
+                  <div className="flex gap-3">
+                    <div className="bg-neutral-200 rounded-full w-6 h-6">2</div>
+                    <div>Update the name’s resolver </div>
                   </div>
-                  <div className="inline-flex items-center justify-start gap-4">
-                    <Image
-                      src={checkIcon}
-                      className="relative w-6 h-6"
-                      alt="check icon"
-                    />
-                    <div className="text-base font-bold grow shrink basis-0 text-neutral-900 fleading-normal">
-                      Gasless Edits
-                    </div>
+                  <div className="flex gap-3">
+                    <div className="bg-neutral-200 rounded-full w-6 h-6">3</div>
+                    <div>Prove ownership of name via signing</div>
+                  </div>
+                  <div className="flex gap-3">
+                    <div className="bg-neutral-200 rounded-full w-6 h-6">4</div>
+                    <div>Done. API key will be emailed to you</div>
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Main content */}
-            <div className="flex flex-col items-center justify-start flex-1 ">
+            <div className="flex flex-col items-center justify-start z-10 flex-1 ">
               <div className="flex flex-col items-start w-full max-w-md lg:hidden ">
                 <span className="mt-8 font-bold text-md text-brownblack-700">
                   Get a free API Key
@@ -197,38 +202,51 @@ export default function Home() {
                 value={nameInput}
               />
               <WhiteInput
-                labelText="Wallet Address"
-                placeholderText="0x1232...  or slobo.eth"
-                onChange={(e) => setWalletInput(e.target.value)}
-                value={walletInput}
-              />
-              <WhiteInput
                 labelText="Email"
                 placeholderText="e.g. youremail@email.com"
                 onChange={(e) => setEmailInput(e.target.value)}
                 value={emailInput}
               />
-              <WhiteInput
-                labelText="Domain Name"
-                placeholderText="e.g. boredapes.eth"
-                onChange={(e) => setDomainInput(e.target.value)}
-                value={domainInput}
-              />
-              <div className="flex flex-col items-start w-full max-w-md mb-6">
-                <div className="flex items-center justify-between w-full">
+              {/* Select Domain Box */}
+              <div className="border rounded-lg bg-white shadow-lg w-full max-w-md pt-4 px-4 ">
+                <div className="flex relative ">
+                  <WhiteInput
+                    labelText="Select Domain"
+                    placeholderText="slobo.eth"
+                    className="pr-10" // Adding padding to the right for the icon space
+                    // onChange={}
+                    // value={}
+                  />
+                  <Image
+                    src={searchIcon}
+                    alt="search icon"
+                    width={24}
+                    height={24}
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2"
+                  />
+                </div>
+
+                <div className="flex justify-between w-full h-fit ">
                   <label
                     htmlFor="name-input"
-                    className="mb-1 text-sm font-bold text-brownblack-500"
+                    className="mb-2 text-sm font-bold text-neutral-900"
                   >
-                    Resolver
+                    Update Resolver
                   </label>
                   {domainInput !== "" && !validResolver && (
-                    <Image src={XIcon} alt="X" className="w-5 h-5" />
+                    <Image
+                      src="/path-to/XIcon.svg"
+                      alt="X"
+                      width={20}
+                      height={20}
+                      className="w-5 h-5"
+                    />
                   )}
                   {validResolver && (
                     <Image
-                      src={SuccessIcon}
+                      src="/path-to/SuccessIcon.svg"
                       alt="success"
+                      width={20}
                       height={20}
                       className="w-5 h-5"
                     />
@@ -237,36 +255,14 @@ export default function Home() {
                 <div className="flex justify-start w-full p-4 border border-solid rounded-lg border-brownblack-200">
                   {resolverData ? resolverData : "Waiting for domain"}
                 </div>
-                <div className="text-xs leading-6 text-left text-brownblack-500">
-                  *The resolver must be changed to the following:
-                  <br />
-                  <div className="px-3 my-2 font-mono rounded-md bg-neutral-200">
-                    0xd17347fA0a6eeC89a226c96a9ae354F785e94241
-                  </div>{" "}
-                  To change the resolver: <br />
-                  1. Go to{" "}
-                  <a
-                    href="https://app.ens.domains"
-                    className="underline"
-                    target="_blank"
+                <div className="w-full flex my-4">
+                  <button
+                    onClick={handleClick}
+                    disabled={disableSend}
+                    className="font-bold bg-neutral-200 px-6 py-2 rounded-lg"
                   >
-                    app.ens.domains
-                  </a>{" "}
-                  and connect wallet <br /> 2. Select your domain <br />
-                  3. Under the “More” tab, scroll to Resolver and select “Edit”{" "}
-                  <br />
-                  4. Copy and paste the NameStone resolver <br />
-                  5. Save and pay the gas fee <br />
-                  6. Resolver will update in box above <br />
-                  Find more information on resolvers{" "}
-                  <a
-                    href="https://support.ens.domains/en/articles/7900622-the-resolver-record"
-                    className="underline"
-                    target="_blank"
-                  >
-                    here
-                  </a>
-                  .
+                    Update
+                  </button>
                 </div>
               </div>
 
@@ -296,7 +292,7 @@ function WhiteInput({ labelText, placeholderText, value, onChange }) {
     <div className="flex flex-col items-start w-full max-w-md mb-6">
       <label
         htmlFor="name-input"
-        className="mb-1 text-sm font-bold text-brownblack-500"
+        className="mb-1 text-sm font-bold text-neutral-900"
       >
         {labelText}
       </label>
