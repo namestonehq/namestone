@@ -11,7 +11,11 @@ npm install namestone-sdk
 Initialize the Namestone client.
 
 ```ts
-import NameStone from "namestone-sdk";
+import NameStone, {
+  AuthenticationError,
+  NetworkError,
+  NameData,
+} from "namestone-sdk";
 
 const ns = new NameStone("YOUR_API_KEY_HERE");
 ```
@@ -21,12 +25,21 @@ Then call with the relevant methods.
 ```ts
 const domain = "testbrand.eth";
 
-async function getData() {
-  const data = await ns.getNames({ domain: domain });
-  console.log(data);
-}
-
-getData();
+// Use an immediately invoked async function to allow top-level await
+(async () => {
+  try {
+    const response: NameData[] = await ns.getNames({ domain: domain });
+    console.log(response);
+  } catch (error) {
+    if (error instanceof AuthenticationError) {
+      console.error("Authentication failed:", error.message);
+    } else if (error instanceof NetworkError) {
+      console.error("Network error:", error.message);
+    } else {
+      console.error("An unexpected error occurred:", error);
+    }
+  }
+})();
 ```
 
 Each of our api pages includes an SDK example and you can visit the [SDK github](https://github.com/resolverworks/namestone-sdk) for more information.

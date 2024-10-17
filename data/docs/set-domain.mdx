@@ -1,6 +1,6 @@
 # Set Domain
 
-This POST route is used to set a domain for a given address. If the domain doesn't exist, it will be created with the API key and admins that match the first domain created by the API key. If the domain exists, and the API key has access, the endpoint will overwrite existing domain data.
+This POST route is used to set domain records. It should only be used for domains already enabled in namestone. To enable a new domain use enable-domain.
 
 ## Parameters
 
@@ -34,7 +34,7 @@ curl -X POST \
 ## SDK Example
 
 ```ts
-import { NameStone, AuthenticationError, NetworkError, TextRecords } from './namestone-sdk';
+import NameStone, { AuthenticationError, NetworkError, TextRecords } from 'namestone-sdk';
 
 // Initialize the NameStone instance
 const ns = new NameStone(<YOUR_API_KEY_HERE>);

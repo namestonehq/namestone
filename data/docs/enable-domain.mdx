@@ -1,0 +1,34 @@
+# Enable Domain
+
+This POST route is used to enable a new domain for namestone programatically.
+
+## Parameters
+
+- `company_name` (string): the name of your company
+- `email` (string): The link for an ipfs or ipns website.
+- `address` (string): The ethereum address that owns the domain
+- `domain` (string): The domain ("testbrand.eth").
+- `signature` (string): the message from get-siwe-message signed with your wallet address
+- `api_key` (string)(optional):
+
+## Curl Example
+
+```
+curl -X POST \
+     -H 'Content-Type: application/json' \
+     -H 'Authorization: YOUR_API_KEY' \
+     -d '{
+           "domain":"testbrand.eth",
+          "address":"0xE997d9b785Dd99832d21b3Ce5A34fCacC6D53C57",
+          "text_records": {
+            "com.twitter":"namestonehq",
+            "com.github":"aslobodnik",
+            "com.discord":"superslobo",
+            "url":"https://www.namestone.xyz",
+            "location":"📍 nyc",
+            "description":"APIs are cool",
+            "avatar":"https://raw.githubusercontent.com/aslobodnik/profile/main/pic.jpeg"
+          }
+        }' \
+     https://namestone.xyz/api/public_v1/set-domain
+```

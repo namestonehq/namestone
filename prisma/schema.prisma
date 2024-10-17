@@ -151,3 +151,9 @@ model blocklist {
   uid   String?
   words Json
 }
+
+model siwe {
+  id Int  @id @default(autoincrement()) 
+  address String
+  message String
+}

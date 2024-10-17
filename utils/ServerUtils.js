@@ -3,6 +3,8 @@ import { ethers } from "ethers";
 import contentHash from "@ensdomains/content-hash";
 import { createPublicClient, http } from "viem";
 import { mainnet } from "viem/chains";
+import { SiweMessage } from "siwe";
+import getOwner from "@ensdomains/ensjs/public";
 
 export const providerUrl =
   "https://eth-mainnet.g.alchemy.com/v2/" +
@@ -356,5 +358,51 @@ export async function checkResolver(ensName) {
   } catch (error) {
     console.error("Error checking ENS resolver:", error);
     return false;
+  }
+}
+
+export async function generateSiweMessage(address) {
+  const nonce = generateNonce();
+  const message = new SiweMessage({
+    domain: "https://namestone.xyz",
+    address,
+    statement: "Sign in this message to access protected endpoints.",
+    uri: "https://namestone.xyz/api/public_v1/get-siwe-message",
+    version: "1",
+    chainId: 1,
+    nonce: nonce,
+  });
+  return message;
+}
+
+export async function verifySignature(address, signature) {
+  try {
+    // get siwe message from sql
+    const siweQuery = await sql`
+    SELECT message FROM siwe WHERE address = ${address} limit 1`;
+    if (siweQuery.length === 0) {
+      return { success: false, error: "Invalid address" };
+    }
+    const siweMessage = new SiweMessage(siweQuery[0].message);
+    // check signature
+    await siweMessage.verify({ signature });
+  } catch (error) {
+    return { success: false, error: "Invalid signature" };
+  }
+  // delete siwe message
+  await sql`DELETE FROM siwe WHERE address = ${address}`;
+  // return success
+  return { success: true, error: "" };
+}
+
+export async function getDomainOwner(domain) {
+  // resolve owner of domain using ens
+  try {
+    const result = await getOwner(client, { name: domain });
+    const ensAddress = result.owner;
+    return ensAddress;
+  } catch (error) {
+    console.error("Error resolving domain owner:", error);
+    return "";
   }
 }
