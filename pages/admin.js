@@ -265,38 +265,23 @@ export default function Admin() {
         <div className="flex-col items-start w-full p-6">
           {/* Brand Name */}
           <div className="flex items-center text-base font-bold text-brownblack-700">
-            <div className="flex overflow-hidden rounded-full  w-[24px] h-[24px] mr-2">
+            <div className="flex overflow-hidden rounded-full  w-[48px] h-[48px] mr-2">
               <Image
                 src={selectedBrand.default_avatar || placeholderImage}
-                width={24}
-                height={24}
+                width={48}
+                height={48}
                 alt={selectedBrand.name}
               />
             </div>
-            <div>{selectedBrand.name}</div>
+            <div className="text-2xl">{selectedBrand.name}</div>
           </div>
           {/* Tab selection */}
-          <div className="flex items-center justify-between w-full">
-            <div className="flex flex-row my-3 text-sm">
-              <div className="py-[2px] px-[6px] border-b-4 border-neutral-300 rounded-b-sm">
-                Claimed Names
-              </div>
 
-              {/* <div className="flex flex-row items-center">
-                <div className="w-[16px] h-[16px] mr-1 ">
-                  <Image
-                    src={BlockIcon}
-                    width={14}
-                    height={14}
-                    alt="blockIcon"
-                  />
-                </div>
-                Blocked
-              </div> */}
-            </div>
+          <div className="flex items-center justify-between w-full">
+            <InputField />
             <button
               className={
-                "py-1 px-3 mr-0 text-sm h-fit text-brownblack-700 bg-orange-500 hover:bg-orange-700 active:bg-orange-800 disabled:bg-orange-500/[0.50] flex items-center justify-center min-w-[150px] mx-auto rounded-lg disabled:cursor-not-allowed md:block"
+                "py-1 px-3 mr-0 h-11 font-bold text-sm  text-brownblack-700 bg-orange-500 hover:bg-orange-700 active:bg-orange-800 disabled:bg-orange-500/[0.50] flex items-center justify-center min-w-[150px] mx-auto rounded-lg disabled:cursor-not-allowed md:block"
               }
               onClick={() => openAddNameModal()}
             >
@@ -344,11 +329,13 @@ function AddNameModal({
       <div className="fixed inset-0 flex items-center justify-center p-4">
         <Dialog.Panel className="w-full max-w-sm px-6 py-4 bg-white border-2 rounded-lg border-brownblack-200">
           <Dialog.Title className="text-base font-bold text-brownblack-700">
-            {modalType === "add" ? "Add a Name" : "Edit Name"}
+            {modalType === "add" ? "Add a subname" : "Edit Subname"}
           </Dialog.Title>
           <div className="flex flex-col mt-8">
             <div className="flex flex-row justify-between">
-              <div className="text-sm font-bold text-brownblack-700">Name</div>
+              <div className="text-sm font-bold text-brownblack-700">
+                Subname
+              </div>
               <div className="text-sm text-red-500">{nameErrorMsg}</div>
             </div>
             <input
@@ -383,5 +370,21 @@ function AddNameModal({
         </Dialog.Panel>
       </div>
     </Dialog>
+  );
+}
+
+function InputField() {
+  const [isObscured, setIsObscured] = useState(true);
+
+  return (
+    <div className="flex relative items-center my-6">
+      <div className="ml-2 font-bold absolute text-xs">API Key</div>
+      <input
+        className="pl-16 border w-80 h-10 rounded-lg border-neutral-200  pr-2"
+        type={isObscured ? "password" : "text"}
+        onFocus={() => setIsObscured(false)}
+        onBlur={() => setIsObscured(true)}
+      />
+    </div>
   );
 }
