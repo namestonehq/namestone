@@ -31,7 +31,7 @@ async function handler(req, res) {
     //// OWNERSHIP CHECKS
     // check if address is valid
     try {
-      address = thers.utils.getAddress(address);
+      address = ethers.utils.getAddress(address);
     } catch (error) {
       return res.status(400).json({ error: "Invalid wallet address" });
     }
