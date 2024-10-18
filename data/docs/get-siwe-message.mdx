@@ -1,6 +1,8 @@
 # Get Siwe Message
 
-This GET route returns a [Siwe Message](https://docs.ens.domains/web/siwe) that you can sign for auth purposes
+This GET route returns a [Siwe Message](https://docs.ens.domains/web/siwe) that you can sign for auth purposes.
+
+You can use a library like [viem](https://viem.sh/docs/actions/wallet/signMessage.html) or a tool like [etherscan](https://etherscan.io/verifiedsignatures#) to sign the message and recieve a signature
 
 ## Parameters
 
@@ -28,5 +30,3 @@ Chain ID: 1
 Nonce: b10ffd444b0a2d810377a3900ba6cd0422141306d158520f24b2805952ea589f9bd1bcbf2e353a14105830183472de5f
 Issued At: 2024-10-18T17:05:37.933Z
 ```
-
-You can then use a library like [viem](https://viem.sh/docs/actions/wallet/signMessage.html) or a tool like [etherscan](https://etherscan.io/verifiedsignatures#) to sign the message and recieve a signature
