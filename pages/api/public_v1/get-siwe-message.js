@@ -1,4 +1,3 @@
-import { generateNonce, SiweMessage } from "siwe";
 import sql from "../../../lib/db";
 import Cors from "micro-cors";
 import { generateSiweMessage } from "../../../utils/ServerUtils";
@@ -23,9 +22,11 @@ const handler = async (req, res) => {
     ON CONFLICT (address) DO UPDATE SET message = ${message};
   `;
 
-  // return message
+  // Set the Content-Type header to text/plain
   res.setHeader("Content-Type", "text/plain");
-  res.send(message);
+
+  // Return the message as plain text
+  return res.status(200).send(message);
 };
 
 export default cors(handler);

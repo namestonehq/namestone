@@ -2,6 +2,7 @@ import nodemailer from "nodemailer";
 import sql from "../../../lib/db";
 import { v4 as uuidv4 } from "uuid";
 import { ethers } from "ethers";
+import { normalize } from "viem/ens";
 import { checkResolver, providerUrl } from "../../../utils/ServerUtils";
 import Cors from "micro-cors";
 import { verifySignature, getDomainOwner } from "../../../utils/ServerUtils";
@@ -13,11 +14,10 @@ const cors = Cors({
 
 async function handler(req, res) {
   if (req.method === "POST") {
-    console.log(req.body);
     const { company_name, email, address, domain, signature, api_key } =
       req.body;
 
-    if (!company_name || !email || !domain || !wallet || !signature) {
+    if (!company_name || !email || !domain || !address || !signature) {
       return res.status(400).json({ error: "Missing parameters" });
     }
     // Check domain is valid
@@ -25,6 +25,7 @@ async function handler(req, res) {
     try {
       domainName = normalize(domain);
     } catch (e) {
+      console.log(e);
       return res.status(400).json({ error: "Invalid ens domain" });
     }
 
@@ -37,7 +38,7 @@ async function handler(req, res) {
     }
 
     // check if domain is owned by the wallet
-    const domainOwner = await getDomainOwner(address, domainName);
+    const domainOwner = await getDomainOwner(domainName);
     if (domainOwner !== address) {
       return res
         .status(400)
@@ -59,10 +60,16 @@ async function handler(req, res) {
     }
     //Check if domain exists
     let domainQuery = await sql`
-  select * from domain where name = ${domainName.toLowerCase()} limit 1;`;
+     select * from domain where name = ${domainName.toLowerCase()} limit 1;`;
     if (domainQuery.length > 0) {
-      // if domain exists we return an error
-      return res.status(400).json({ error: "Domain already enabled" });
+      // if domain exists we return existing api_key
+      let existingApiKeyQuery = await sql` 
+      select * from api_key where domain_id = ${domainQuery[0].id} limit 1;`;
+      return res.status(200).json({
+        message: "Domain already enabled!",
+        api_key: existingApiKeyQuery[0].key,
+        domain: domainName,
+      });
     }
 
     // check if domain has a good resolver
@@ -87,13 +94,19 @@ async function handler(req, res) {
     // check if api_key sent in request
     let apiKey;
     if (api_key) {
+      // check if api_key is valid
+      let apiKeyQuery = await sql`
+    select * from api_key where key = ${api_key} limit 1;`;
+      if (apiKeyQuery.length > 0) {
+        return res.status(400).json({ error: "Invalid API key" });
+      }
       apiKey = api_key;
     } else {
       // else make a new key
       apiKey = uuidv4();
     }
     // Insert api key
-    insertApiKey = {
+    const insertApiKey = {
       key: apiKey,
       domain_id: domainQuery[0].id,
     };
@@ -120,7 +133,7 @@ async function handler(req, res) {
     });
 
     // Alert the team that a new API key has been created
-    const email_subject = `Namestone API Key Created: ${name} - ${domain} - ${email}`;
+    const email_subject = `Namestone API Key Created: ${company_name} - ${domain} - ${email}`;
     const email_message = `
     API Key Created For
     Name: ${company_name}

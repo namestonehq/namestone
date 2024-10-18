@@ -1,6 +1,8 @@
 # Enable Domain
 
-This POST route is used to enable a new domain for namestone programatically.
+This POST route is used to enable a new domain for namestone programatically. It returns an api key.  
+In order to use it you must sign a message from [get-siwe-message](./get-siwe-message)  
+and switch your domains resolver to ours: `0xd17347fA0a6eeC89a226c96a9ae354F785e94241`
 
 ## Parameters
 
@@ -8,27 +10,20 @@ This POST route is used to enable a new domain for namestone programatically.
 - `email` (string): The link for an ipfs or ipns website.
 - `address` (string): The ethereum address that owns the domain
 - `domain` (string): The domain ("testbrand.eth").
-- `signature` (string): the message from get-siwe-message signed with your wallet address
-- `api_key` (string)(optional):
+- `signature` (string): the message from [get-siwe-message](./get-siwe-message). signed with your ethereum address
+- `api_key` (string)(optional): If you want to use an existing namestone api key that your wallet has access to, you can add it here.
 
-## Curl Example
+## Curl Example for Enable domain
 
 ```
 curl -X POST \
      -H 'Content-Type: application/json' \
-     -H 'Authorization: YOUR_API_KEY' \
      -d '{
-           "domain":"testbrand.eth",
-          "address":"0xE997d9b785Dd99832d21b3Ce5A34fCacC6D53C57",
-          "text_records": {
-            "com.twitter":"namestonehq",
-            "com.github":"aslobodnik",
-            "com.discord":"superslobo",
-            "url":"https://www.namestone.xyz",
-            "location":"📍 nyc",
-            "description":"APIs are cool",
-            "avatar":"https://raw.githubusercontent.com/aslobodnik/profile/main/pic.jpeg"
-          }
+       "company_name": "your_company_name",
+       "email": "your_email@company.com"
+       "domain":"testbrand.eth",
+      "address":"0xE997d9b785Dd99832d21b3Ce5A34fCacC6D53C57",
+      "signature": "signed_siwe_message"
         }' \
-     https://namestone.xyz/api/public_v1/set-domain
+     https://namestone.xyz/api/public_v1/enable-domain
 ```

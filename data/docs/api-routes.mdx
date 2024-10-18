@@ -11,16 +11,20 @@ To authenticate with the NameStone API, you need to provide your API key in the 
 
 Here are the endpoints that our API offers:
 
-[1] [set-name](./set-name): Set a name + text_records for a given address and domain.
+- [enable-domain](./enable-domain): Enable your domain on namestone. Requires a signed message from [get-siwe-message](./get-siwe-message)
 
-[2] [claim-name](./claim-name): Claim a name + text_records for a given address and domain. If the name already exists the route will throw an error.
+- [get-siwe-message](./get-siwe-message): Get a signable siwe message for accessing protected routes like [enable-domain](./enable-domain)
 
-[3] [get-names](./get-names): Fetch names and text records for a given address and domain.
+- [set-name](./set-name): Set a name + text_records for a given address and domain.
 
-[4] [delete-name](./delete-name): Remove a given name for an address and a name.
+- [claim-name](./claim-name): Claim a name + text_records for a given address and domain. If the name already exists the route will throw an error.
 
-[5] [set-domain](./set-domain): Set a domain + text_records for a given address.
+- [get-names](./get-names): Fetch names and text records for a given address and domain.
 
-[5] [get-domain](./get-domain): Get text records and address for a given domain
+- [delete-name](./delete-name): Remove a given name for an address and a name.
+
+- [set-domain](./set-domain): Set a domain + text_records for a given address.
+
+- [get-domain](./get-domain): Get text records and address for a given domain
 
 For detailed information about each endpoint, click on the endpoint name above or in the sidebar.

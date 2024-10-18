@@ -3,15 +3,20 @@ import { ethers } from "ethers";
 import contentHash from "@ensdomains/content-hash";
 import { createPublicClient, http } from "viem";
 import { mainnet } from "viem/chains";
-import { SiweMessage } from "siwe";
-import getOwner from "@ensdomains/ensjs/public";
+import {
+  createSiweMessage,
+  generateSiweNonce,
+  parseSiweMessage,
+} from "viem/siwe";
+import { getOwner } from "@ensdomains/ensjs/public";
+import { addEnsContracts } from "@ensdomains/ensjs";
 
 export const providerUrl =
   "https://eth-mainnet.g.alchemy.com/v2/" +
   process.env.NEXT_PUBLIC_ALCHEMY_API_KEY; // replace with your actual project ID
 
 const client = createPublicClient({
-  chain: mainnet,
+  chain: addEnsContracts(mainnet),
   transport: http(providerUrl),
 });
 
@@ -361,12 +366,12 @@ export async function checkResolver(ensName) {
   }
 }
 
-export async function generateSiweMessage(address) {
-  const nonce = generateNonce();
-  const message = new SiweMessage({
-    domain: "https://namestone.xyz",
+export function generateSiweMessage(address) {
+  const nonce = generateSiweNonce();
+  const message = createSiweMessage({
+    domain: "namestone.xyz",
     address,
-    statement: "Sign in this message to access protected endpoints.",
+    statement: "Sign this message to access protected endpoints.",
     uri: "https://namestone.xyz/api/public_v1/get-siwe-message",
     version: "1",
     chainId: 1,
@@ -383,11 +388,23 @@ export async function verifySignature(address, signature) {
     if (siweQuery.length === 0) {
       return { success: false, error: "Invalid address" };
     }
-    const siweMessage = new SiweMessage(siweQuery[0].message);
+    console.log("Siwe message:", siweQuery[0].message);
+    console.log("Signature:", signature);
+    const message = siweQuery[0].message;
+    const preparedMessage = createSiweMessage(parseSiweMessage(message));
+    console.log("Prepared message:", preparedMessage);
+    const valid = await client.verifySiweMessage({
+      address: address,
+      message: preparedMessage,
+      signature,
+    });
     // check signature
-    await siweMessage.verify({ signature });
+    if (!valid) {
+      return { success: false, error: "Invalid signature" };
+    }
   } catch (error) {
-    return { success: false, error: "Invalid signature" };
+    console.log("Error validating signature:", error);
+    return { success: false, error: "Error validating signature" };
   }
   // delete siwe message
   await sql`DELETE FROM siwe WHERE address = ${address}`;

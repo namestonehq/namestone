@@ -1,0 +1,33 @@
+# Get Siwe Message
+
+This GET route returns a siwe message that you can sign for auth purposes
+
+## Parameters
+
+- `address` (string)(Optional): Your ethereum address. It should be the same address your planning to use for other routes. (It should own your domain name)
+- `text_records` (1 or 0)(Optional): Whether or not the the route returns text records. 1 by default.
+
+## Curl Example
+
+```
+curl -X GET \
+     'https://namestone.xyz/api/public_v1/get-siwe-message?address=0x57632Ba9A844af0AB7d5cdf98b0056c8d87e3A85'
+
+```
+
+## Example Return
+
+```
+Siwe message: namestone.xyz wants you to sign in with your Ethereum account:
+0x57632Ba9A844af0AB7d5cdf98b0056c8d87e3A85
+
+Sign this message to access protected endpoints.
+
+URI: https://namestone.xyz/api/public_v1/get-siwe-message
+Version: 1
+Chain ID: 1
+Nonce: b10ffd444b0a2d810377a3900ba6cd0422141306d158520f24b2805952ea589f9bd1bcbf2e353a14105830183472de5f
+Issued At: 2024-10-18T17:05:37.933Z
+```
+
+You can then use a library like [viem](https://viem.sh/docs/actions/wallet/signMessage.html) or a tool like [etherscan](https://etherscan.io/verifiedsignatures#) to sign the message and recieve a signature

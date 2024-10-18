@@ -21,6 +21,8 @@ const navDict = {
       "Delete Name": { file: "delete-name" },
       "Set Domain": { file: "set-domain" },
       "Get Domain": { file: "get-domain" },
+      "Get Siwe Message": { file: "get-siwe-message" },
+      "Enable Domain": { file: "enable-domain" },
     },
   },
   "Admin Panel": { file: "admin_panel" },
@@ -38,6 +40,8 @@ const fileNameLookup = {
   "set-domain": "Set Domain",
   "get-domain": "Get Domain",
   admin_panel: "Admin Panel",
+  "get-siwe-message": "Get Siwe Message",
+  "enable-domain": "Enable Domain",
 };
 
 export async function getStaticPaths() {
@@ -167,10 +171,17 @@ export default function Docs({ content, fileName }) {
                 <div className="w-full max-w-full py-6 sm:py-10 sm:pl-10 ">
                   <ReactMarkdown
                     components={{
-                      li: ({ node, ...props }) => {
+                      li: ({ node, ordered, ...props }) => {
                         if (typeof props.inline === "boolean")
                           props.inline = props.inline.toString();
-                        return <li className="mb-6" {...props} />;
+                        return (
+                          <li
+                            className={`mb-6 ${
+                              ordered ? "" : "list-disc"
+                            } ml-6`}
+                            {...props}
+                          />
+                        );
                       },
                       // Map `h1` (`# heading`)
                       h1: ({ node, ...props }) => (
