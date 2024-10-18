@@ -137,7 +137,7 @@ async function handler(req, res) {
     API Key Created For
     Name: ${company_name}
     Email: ${email}
-    Wallet Address: ${wallet}
+    Wallet Address: ${address}
     Domain: ${domain}
     `;
 
