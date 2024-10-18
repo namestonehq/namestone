@@ -15,6 +15,9 @@ const handler = async (req, res) => {
     res.setHeader("Allow", ["GET"]);
     res.status(405).end(`Method ${method} Not Allowed`);
   }
+  if (!address) {
+    return res.status(400).json({ error: "Missing address" });
+  }
   const message = generateSiweMessage(address);
   // Save siwe to sql
   await sql`

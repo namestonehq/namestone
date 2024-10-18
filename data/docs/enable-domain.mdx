@@ -1,8 +1,9 @@
 # Enable Domain
 
-This POST route is used to enable a new domain for namestone programatically. It returns an api key.  
+This POST route is used to enable new domains for NameStone programatically.  
+It returns a NameStone api key.  
 In order to use it you must sign a message from [get-siwe-message](./get-siwe-message)  
-and switch your domains resolver to ours: `0xd17347fA0a6eeC89a226c96a9ae354F785e94241`
+and switch your domain's resolver to ours: `0xd17347fA0a6eeC89a226c96a9ae354F785e94241`
 
 ## Parameters
 
@@ -11,7 +12,7 @@ and switch your domains resolver to ours: `0xd17347fA0a6eeC89a226c96a9ae354F785e
 - `address` (string): The ethereum address that owns the domain
 - `domain` (string): The domain ("testbrand.eth").
 - `signature` (string): the message from [get-siwe-message](./get-siwe-message). signed with your ethereum address
-- `api_key` (string)(optional): If you want to use an existing namestone api key that your wallet has access to, you can add it here.
+- `api_key` (string)(optional): If you want to use an existing NameStone api key that your wallet has access to, you can add it here.
 
 ## Curl Example for Enable domain
 
