@@ -14,8 +14,7 @@ const cors = Cors({
 
 async function handler(req, res) {
   if (req.method === "POST") {
-    const { company_name, email, address, domain, signature, api_key } =
-      req.body;
+    let { company_name, email, address, domain, signature, api_key } = req.body;
 
     if (!company_name || !email || !domain || !address || !signature) {
       return res.status(400).json({ error: "Missing parameters" });
@@ -32,7 +31,7 @@ async function handler(req, res) {
     //// OWNERSHIP CHECKS
     // check if address is valid
     try {
-      ethers.utils.getAddress(address);
+      address = thers.utils.getAddress(address);
     } catch (error) {
       return res.status(400).json({ error: "Invalid wallet address" });
     }
@@ -43,12 +42,6 @@ async function handler(req, res) {
       return res
         .status(400)
         .json({ error: "Your wallet needs to own the domain" });
-    }
-
-    // check if signature is valid
-    const validSignature = await verifySignature(address, signature);
-    if (!validSignature.success) {
-      return res.status(400).json({ error: validSignature.error });
     }
 
     // Other DOMAIN CHECKS
@@ -76,6 +69,12 @@ async function handler(req, res) {
     let goodResolver = await checkResolver(domainName);
     if (!goodResolver) {
       return res.status(400).json({ error: "Invalid domain resolver" });
+    }
+
+    // check if signature is valid
+    const validSignature = await verifySignature(address, signature);
+    if (!validSignature.success) {
+      return res.status(400).json({ error: validSignature.error });
     }
 
     let insertDomain = { name: domainName, name_limit: 1000 };

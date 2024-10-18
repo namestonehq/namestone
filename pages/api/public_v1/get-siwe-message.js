@@ -1,6 +1,7 @@
 import sql from "../../../lib/db";
 import Cors from "micro-cors";
 import { generateSiweMessage } from "../../../utils/ServerUtils";
+import { ethers } from "ethers";
 
 const cors = Cors({
   allowMethods: ["GET", "HEAD", "POST", "OPTIONS"],
@@ -9,7 +10,7 @@ const cors = Cors({
 
 const handler = async (req, res) => {
   const { method } = req;
-  const address = req.query.address;
+  let address = req.query.address;
 
   if (method !== "GET") {
     res.setHeader("Allow", ["GET"]);
@@ -18,6 +19,13 @@ const handler = async (req, res) => {
   if (!address) {
     return res.status(400).json({ error: "Missing address" });
   }
+  // check if address is valid
+  try {
+    address = ethers.utils.getAddress(address);
+  } catch (error) {
+    return res.status(400).json({ error: "Invalid wallet address" });
+  }
+
   const message = generateSiweMessage(address);
   // Save siwe to sql
   await sql`

@@ -386,7 +386,11 @@ export async function verifySignature(address, signature) {
     const siweQuery = await sql`
     SELECT message FROM siwe WHERE address = ${address} limit 1`;
     if (siweQuery.length === 0) {
-      return { success: false, error: "Invalid address" };
+      return {
+        success: false,
+        error:
+          "Invalid Siwe message - Either it doesn't exist or has been used. Please request another.",
+      };
     }
     console.log("Siwe message:", siweQuery[0].message);
     console.log("Signature:", signature);
