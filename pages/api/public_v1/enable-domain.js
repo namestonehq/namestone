@@ -152,7 +152,7 @@ async function handler(req, res) {
       await transporter.sendMail(mailOptions);
       return res.status(200).json({
         message: "Domain enabled!",
-        api_key: apiKey[0].key,
+        api_key: apiKey,
         domain: domainName,
       });
     } catch (error) {
