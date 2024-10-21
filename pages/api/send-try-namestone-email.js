@@ -3,7 +3,7 @@ import sql from "../../lib/db";
 import { v4 as uuidv4 } from "uuid";
 import { ethers } from "ethers";
 import { getToken } from "next-auth/jwt";
-import { getDomainOwner } from "../../../utils/ServerUtils";
+import { getDomainOwner } from "../../utils/ServerUtils";
 
 // Async function to resolve ENS name to address
 const resolveENS = async (name, provider) => {
