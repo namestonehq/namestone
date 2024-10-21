@@ -39,6 +39,9 @@ export default async function handler(req, res) {
   await sql`delete from subdomain_text_record
   where subdomain_id = ${subdomainQuery[0].id}`;
 
+  await sql`delete from subdomain_coin_type
+  where subdomain_id = ${subdomainQuery[0].id}`;
+
   await sql`delete from subdomain 
   where id = ${subdomainQuery[0].id}`;
 

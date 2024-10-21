@@ -49,7 +49,7 @@ export default function CustomConnectButton() {
                 return (
                   <Button
                     onClick={openConnectModal}
-                    className="px-6"
+                    className="px-6 cursor-pointer"
                     buttonText="Connect"
                   />
                 );
@@ -61,7 +61,7 @@ export default function CustomConnectButton() {
                     onClick={openChainModal}
                     type="button"
                     buttonText="Wrong network"
-                    className="px-6"
+                    className="px-6 cursor-pointer"
                   />
                 );
               }
