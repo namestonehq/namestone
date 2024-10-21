@@ -15,7 +15,7 @@ export default function Header({ subtitle }) {
   return (
     <div className="z-40 flex flex-col fixed justify-center w-full max-w-[1536px]">
       <div className="relative w-full h-2 bg-gradient-to-r from-orange-400 via-red-500 to-red-500"></div>
-      <div className="flex justify-between w-full px-6 py-4  backdrop-blur-sm lg:px-32">
+      <div className="flex justify-between w-full px-6 py-4 backdrop-blur-sm lg:px-32">
         {!menuOpen ? (
           <>
             <div className="flex items-center text-2xl font-bold">
@@ -46,7 +46,7 @@ export default function Header({ subtitle }) {
               </Link>
 
               <Link
-                className={`text-xs font-bold md:text-sm ${
+                className={`text-xs font-bold md:text-sm cursor-pointer ${
                   subtitle === "Blog" ? "text-orange-800" : ""
                 }`}
                 href="/blog"
@@ -54,17 +54,23 @@ export default function Header({ subtitle }) {
                 {" "}
                 Blog
               </Link>
-              <Link className="text-xs font-bold md:text-sm" href="/admin">
+              <Link
+                className="text-xs font-bold cursor-pointer md:text-sm"
+                href="/admin"
+              >
                 {" "}
                 Admin Login
               </Link>
-              <Link className="text-xs font-bold md:text-sm" href="/contact-us">
+              <Link
+                className="text-xs font-bold cursor-pointer md:text-sm"
+                href="/contact-us"
+              >
                 {" "}
                 Contact Us
               </Link>
               <button
                 onClick={() => router.push("/try-namestone")}
-                className="z-20 px-6 py-3 text-sm font-bold bg-orange-500 rounded-lg hover:bg-orange-700 text-brownblack-700 active:bg-orange-800"
+                className="z-20 px-6 py-3 text-sm font-bold bg-orange-500 rounded-lg cursor-pointer hover:bg-orange-700 text-brownblack-700 active:bg-orange-800"
               >
                 Get Started
               </button>

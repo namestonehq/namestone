@@ -2,7 +2,8 @@ import nodemailer from "nodemailer";
 import sql from "../../lib/db";
 import { v4 as uuidv4 } from "uuid";
 import { ethers } from "ethers";
-import { providerUrl } from "../../utils/ServerUtils";
+import { getToken } from "next-auth/jwt";
+import { getDomainOwner } from "../../../utils/ServerUtils";
 
 // Async function to resolve ENS name to address
 const resolveENS = async (name, provider) => {
@@ -17,9 +18,16 @@ const resolveENS = async (name, provider) => {
 
 export default async function handler(req, res) {
   if (req.method === "POST") {
-    const { name, email, wallet, domain } = JSON.parse(req.body);
+    const token = await getToken({ req });
 
-    if (!name || !email || !domain || !wallet) {
+    if (!token) {
+      return res.status(401).json({ error: "Unauthorized. Please refresh." });
+    }
+
+    const wallet = token.sub;
+    const { name, email, domain } = JSON.parse(req.body);
+
+    if (!name || !email || !domain) {
       res.status(400).json({ error: "Missing parameters" });
       console.log("Try Namestone error: Missing parameters");
       return;
@@ -41,31 +49,28 @@ export default async function handler(req, res) {
       console.log("Try Namestone error: Domain already exists");
       return;
     }
-    // check if wallet is an ens name by checking for dot
+
+    // check if wallet is a valid address
     let address;
-    if (wallet.includes(".")) {
-      let provider = new ethers.providers.JsonRpcProvider(providerUrl);
-      // try to resolve the ens name
-      address = await resolveENS(wallet, provider);
-      if (!address) {
-        res.status(400).json({ error: "Invalid ENS name" });
-        console.log("Try Namestone error: Invalid ENS name");
-        return;
-      }
-    } else {
-      // check if wallet is a valid address
-      try {
-        address = ethers.utils.getAddress(wallet);
-      } catch (error) {
-        res.status(400).json({ error: "Invalid wallet address" });
-        console.log("Try Namestone error: Invalid wallet address");
-        return;
-      }
+    try {
+      address = ethers.utils.getAddress(wallet);
+    } catch (error) {
+      res.status(400).json({ error: "Invalid wallet address" });
+      console.log("Try Namestone error: Invalid wallet address");
+      return;
     }
 
-    let insertDomain = { name: domain, name_limit: 1000 };
+    //Check if user Owns the domain
+    const domainOwner = await getDomainOwner(domain);
+    if (domainOwner !== address) {
+      return res
+        .status(400)
+        .json({ error: "Your wallet needs to own the domain" });
+    }
+
+    let insertDomain = { name: domain, name_limit: 1000, address: address };
     domainQuery = await sql`
-  insert into domain ${sql(insertDomain, "name", "name_limit")}
+  insert into domain ${sql(insertDomain, "name", "name_limit", "address")}
   returning id;`;
     let insertBrand = {
       name: domain,

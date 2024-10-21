@@ -278,7 +278,7 @@ export default function Admin() {
           {/* Tab selection */}
 
           <div className="flex items-center justify-between w-full">
-            <InputField />
+            <ApiKeyDisplay />
             <button
               className={
                 "py-1 px-3 mr-0 h-11 font-bold text-sm  text-brownblack-700 bg-orange-500 hover:bg-orange-700 active:bg-orange-800 disabled:bg-orange-500/[0.50] flex items-center justify-center min-w-[150px] mx-auto rounded-lg disabled:cursor-not-allowed md:block"
@@ -373,14 +373,14 @@ function AddNameModal({
   );
 }
 
-function InputField() {
+function ApiKeyDisplay() {
   const [isObscured, setIsObscured] = useState(true);
 
   return (
-    <div className="flex relative items-center my-6">
-      <div className="ml-2 font-bold absolute text-xs">API Key</div>
+    <div className="relative flex items-center my-6">
+      <div className="absolute ml-2 text-xs font-bold">API Key</div>
       <input
-        className="pl-16 border w-80 h-10 rounded-lg border-neutral-200  pr-2"
+        className="h-10 pl-16 pr-2 border rounded-lg w-80 border-neutral-200"
         type={isObscured ? "password" : "text"}
         onFocus={() => setIsObscured(false)}
         onBlur={() => setIsObscured(true)}

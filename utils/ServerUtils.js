@@ -9,16 +9,23 @@ import {
   parseSiweMessage,
 } from "viem/siwe";
 import { getOwner } from "@ensdomains/ensjs/public";
-import { addEnsContracts } from "@ensdomains/ensjs";
+import { addEnsContracts, ensSubgraphActions } from "@ensdomains/ensjs";
 
 export const providerUrl =
   "https://eth-mainnet.g.alchemy.com/v2/" +
   process.env.NEXT_PUBLIC_ALCHEMY_API_KEY; // replace with your actual project ID
 
-const client = createPublicClient({
-  chain: addEnsContracts(mainnet),
-  transport: http(providerUrl),
-});
+export const client = createPublicClient({
+  chain: {
+    ...addEnsContracts(mainnet),
+    subgraphs: {
+      ens: {
+        url: process.env.SUBGRAPH_URL || "",
+      },
+    },
+  },
+  transport: http(providerUrl || ""),
+}).extend(ensSubgraphActions);
 
 // get whether a user is eligible to claim a name
 // Takes a user token and returns a payload with eligibility information
@@ -426,4 +433,54 @@ export async function getDomainOwner(domain) {
     console.error("Error resolving domain owner:", error);
     return "";
   }
+}
+
+export async function getOnchainDomainInfo(basename) {
+  console.log("Fetching domain for", basename);
+  const address = await client.getEnsAddress({
+    name: normalize(basename),
+  });
+  console.log("Address:", address);
+  const description = await client.getEnsText({
+    name: normalize(basename),
+    key: "description",
+  });
+  const ensAvatar = await client.getEnsAvatar({
+    name: normalize(basename),
+  });
+  const location = await client.getEnsText({
+    name: normalize(basename),
+    key: "location",
+  });
+  const twitter = await client.getEnsText({
+    name: normalize(basename),
+    key: "com.twitter",
+  });
+  const discord = await client.getEnsText({
+    name: normalize(basename),
+    key: "com.discord",
+  });
+  const github = await client.getEnsText({
+    name: normalize(basename),
+    key: "com.github",
+  });
+  const website = await client.getEnsText({
+    name: normalize(basename),
+    key: "url",
+  });
+
+  const result = {
+    domain: basename,
+    address: address,
+    text_records: {
+      avatar: ensAvatar,
+      description: description,
+      location: location,
+      "com.twitter": twitter,
+      "com.github": github,
+      "com.discord": discord,
+      url: website,
+    },
+  };
+  return result;
 }
