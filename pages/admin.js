@@ -9,6 +9,7 @@ import Button from "../components/Button";
 import { Dialog } from "@headlessui/react";
 import { ethers } from "ethers";
 import placeholderImage from "../public/images/placeholder-icon-image.png";
+import { Icon } from "@iconify/react";
 
 export default function Admin() {
   const { data: session, status: authStatus } = useSession();
@@ -26,6 +27,8 @@ export default function Admin() {
   const [nameId, setNameId] = useState(null); // id of name to edit
   //add or edit
   const [modalType, setModalType] = useState("add");
+
+  const [activeTab, setActiveTab] = useState("Subnames");
 
   // fetch to get allowed domains after connect
   useEffect(() => {
@@ -276,25 +279,91 @@ export default function Admin() {
             <div className="text-2xl">{selectedBrand.name}</div>
           </div>
           {/* Tab selection */}
-
-          <div className="flex items-center justify-between w-full">
-            <ApiKeyDisplay />
-            <button
-              className={
-                "py-1 px-3 mr-0 h-11 font-bold text-sm  text-brownblack-700 bg-orange-500 hover:bg-orange-700 active:bg-orange-800 disabled:bg-orange-500/[0.50] flex items-center justify-center min-w-[150px] mx-auto rounded-lg disabled:cursor-not-allowed md:block"
-              }
-              onClick={() => openAddNameModal()}
-            >
-              + Add Name
-            </button>
+          <div className="relative">
+            <div className="flex mt-8 gap-8">
+              <button
+                onClick={() => setActiveTab("Subnames")}
+                className={`relative border-b-2 transition-colors duration-300 pb-2 
+                ${
+                  activeTab === "Subnames"
+                    ? "border-orange-500" // Selected state
+                    : "border-transparent hover:border-orange-400" // Unselected with hover effect
+                }`}
+              >
+                Subnames
+              </button>
+              <button
+                onClick={() => setActiveTab("Settings")}
+                className={`relative border-b-2 transition-colors duration-300 pb-2 
+                  ${
+                    activeTab === "Settings"
+                      ? "border-orange-500" // Selected state
+                      : "border-transparent hover:border-orange-400" // Unselected with hover effect
+                  }`}
+              >
+                Settings
+              </button>
+            </div>
+            <hr className=" bg-neutral-200 "></hr>
           </div>
+
           {/* Table */}
-          <SubdomainsTable
-            subdomains={subdomains}
-            setSubdomains={setSubdomains}
-            openEditNameModal={openEditNameModal}
-            admin={true}
-          />
+          {activeTab === "Subnames" && (
+            <>
+              <div className="flex w-full">
+                <button
+                  className={
+                    "py-1 px-3 mr-0 my-4 h-11 font-bold text-sm  text-brownblack-700 bg-orange-500 hover:bg-orange-700 active:bg-orange-800 disabled:bg-orange-500/[0.50] flex items-center justify-center min-w-[150px] mx-auto rounded-lg disabled:cursor-not-allowed md:block"
+                  }
+                  onClick={() => openAddNameModal()}
+                >
+                  + Add Name
+                </button>
+              </div>
+              <SubdomainsTable
+                subdomains={subdomains}
+                setSubdomains={setSubdomains}
+                openEditNameModal={openEditNameModal}
+                admin={true}
+              />
+            </>
+          )}
+          {activeTab === "Settings" && (
+            <div className="flex flex-col gap-4 ">
+              <ApiKeyDisplay />
+              <div className="text-sm font-bold text-brownblack-700 mb-2">
+                Domain Admins
+              </div>
+              <div className="flex w-full">
+                <div className="mb-1 text-base font-bold text-brownblack-700"></div>
+                <div className="flex w-full items-center">
+                  <input
+                    className="max-w-lg w-full px-4 select-none py-2 border rounded-md border-brownblack-50 mr-2
+                                focus:outline-none focus:ring-2 focus:ring-orange-300 focus:border-orange-300
+                                transition-colors duration-200"
+                  />
+                  <Icon
+                    icon="bi:trash"
+                    className="right-0 text-red-500 cursor-pointer w-6 h-6  hover:text-red-600"
+                  />
+                </div>
+              </div>
+              <div className="flex w-full items-center">
+                <input
+                  className="max-w-lg w-full px-4 select-none py-2 border rounded-md border-brownblack-50 mr-2
+                                focus:outline-none focus:ring-2 focus:ring-orange-300 focus:border-orange-300
+                                transition-colors duration-200"
+                />
+                <Icon
+                  icon="bi:trash"
+                  className="right-0 text-red-500 cursor-pointer w-6 h-6 hover:text-red-600"
+                />
+              </div>
+              <button className="text-orange-500 hover:text-orange-400 transition-colors duration-300 text-left font-bold">
+                + Add Admin
+              </button>
+            </div>
+          )}
         </div>
       </div>
       {/*Right Bar*/}
@@ -375,16 +444,76 @@ function AddNameModal({
 
 function ApiKeyDisplay() {
   const [isObscured, setIsObscured] = useState(true);
+  const [isCopied, setIsCopied] = useState(false);
+  const apiKey = "your-api-key-here"; // Replace with actual API key
+
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(apiKey).then(() => {
+      setIsCopied(true);
+      setTimeout(() => setIsCopied(false), 2000); // Reset after 2 seconds
+    });
+  };
 
   return (
-    <div className="relative flex items-center my-6">
-      <div className="absolute ml-2 text-xs font-bold">API Key</div>
-      <input
-        className="h-10 pl-16 pr-2 border rounded-lg w-80 border-neutral-200"
-        type={isObscured ? "password" : "text"}
-        onFocus={() => setIsObscured(false)}
-        onBlur={() => setIsObscured(true)}
-      />
+    <div className="flex flex-col w-80 my-6">
+      <label className="text-sm font-bold text-brownblack-700 mb-2">
+        API Key
+      </label>
+      <div className="relative">
+        <div
+          className="border w-80 h-10 rounded-lg border-neutral-200 hover:cursor-pointer flex items-center pr-10 pl-3 bg-gray-50"
+          onMouseEnter={() => setIsObscured(false)}
+          onMouseLeave={() => setIsObscured(true)}
+        >
+          <span className="text-sm text-gray-700 font-mono truncate">
+            {isObscured ? "••••••••••••••••" : apiKey}
+          </span>
+        </div>
+        <button
+          onClick={copyToClipboard}
+          className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
+          aria-label="Copy API key"
+        >
+          {isCopied ? (
+            <CheckIcon size={20} className="text-green-500" />
+          ) : (
+            <ClipboardIcon size={20} />
+          )}
+        </button>
+      </div>
     </div>
   );
 }
+
+const ClipboardIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+  </svg>
+);
+
+const CheckIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <polyline points="20 6 9 17 4 12"></polyline>
+  </svg>
+);

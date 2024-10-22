@@ -234,44 +234,24 @@ export default function TryNamestone() {
             />
             {/* side text */}
             <div className="flex-1 hidden lg:flex">
-              <div className="flex flex-col items-start w-full max-w-md ">
-                <h1 className="font-bold text-md text-brownblack-700">
-                  Get a free API Key
-                </h1>
-                <div className="mt-6 mb-6 text-sm font-bold ftext-center text-neutral-700">
-                  How it works
-                </div>
-                <div className="flex flex-col gap-4">
-                  <div className="flex gap-3">
-                    <div className="w-6 h-6 rounded-full bg-neutral-200">1</div>
-                    <div>Connect your wallet to list names you own</div>
-                  </div>
-                  <div className="flex gap-3">
-                    <div className="w-6 h-6 rounded-full bg-neutral-200">2</div>
-                    <div>Select a name and fill out your information</div>
-                  </div>
-                  <div className="flex gap-3">
-                    <div className="w-6 h-6 rounded-full bg-neutral-200">3</div>
-                    <div>Update the name’s resolver </div>
-                  </div>
-                  <div className="flex gap-3">
-                    <div className="w-6 h-6 rounded-full bg-neutral-200">4</div>
-                    <div>Done. API key will be emailed to you</div>
-                  </div>
-                </div>
-              </div>
+              <SideText />
             </div>
 
             {/* Main content */}
 
             <div className="z-10 flex flex-col items-center justify-start flex-1 ">
               {!fullyConnected && (
-                <div className="mt-20">
-                  <CustomConnectButton />
-                  <div className="mt-4 text-sm text-center text-neutral-700">
-                    Connect your wallet to get started.
+                <>
+                  <div className="mt-20 border px-20 rounded-lg bg-white border-neutral-200 shadow-lg h-60 flex flex-col justify-center items-center">
+                    <CustomConnectButton />
+                    <div className="mt-4 text-sm text-center text-neutral-700">
+                      Connect your wallet to get started.
+                    </div>
                   </div>
-                </div>
+                  <div className="flex lg:hidden mb-10 first-letter:items-center justify-center w-full mt-10">
+                    <SideText />
+                  </div>
+                </>
               )}
               {fullyConnected && (
                 <>
@@ -441,3 +421,35 @@ function WhiteInput({ labelText, placeholderText, value, onChange }) {
     </div>
   );
 }
+
+{
+  /* SideText Component */
+}
+const SideText = () => (
+  <div className="flex flex-col items-start w-full max-w-md">
+    <h1 className="font-bold text-md text-brownblack-700">
+      Get a free API Key
+    </h1>
+    <div className="mt-6 mb-6 text-sm font-bold text-neutral-700">
+      How it works
+    </div>
+    <div className="flex flex-col gap-4">
+      <div className="flex gap-3">
+        <div className="w-6 h-6 rounded-full bg-neutral-200">1</div>
+        <div>Connect your wallet to list names you own</div>
+      </div>
+      <div className="flex gap-3">
+        <div className="w-6 h-6 rounded-full bg-neutral-200">2</div>
+        <div>Select a name and fill out your information</div>
+      </div>
+      <div className="flex gap-3">
+        <div className="w-6 h-6 rounded-full bg-neutral-200">3</div>
+        <div>Update the name’s resolver</div>
+      </div>
+      <div className="flex gap-3">
+        <div className="w-6 h-6 rounded-full bg-neutral-200">4</div>
+        <div>Done. API key will be emailed to you</div>
+      </div>
+    </div>
+  </div>
+);
