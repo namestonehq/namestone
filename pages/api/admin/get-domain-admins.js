@@ -7,17 +7,24 @@ export default async function handler(req, res) {
   if (!token) {
     return res.status(401).json({ error: "Unauthorized. Please refresh." });
   }
-
-  const superAdminQuery = await sql`
-  SELECT * FROM super_admin WHERE address = ${token.sub};
-`;
-  if (superAdminQuery.length === 0) {
-    return res.status(401).json({ error: "Unauthorized. Please refresh." });
-  }
   // Get Domain && Name
   if (!req.query.domain) {
     return res.status(400).json({ error: "Domain is required" });
   }
+
+  const superAdminQuery = await sql`
+  SELECT * FROM super_admin WHERE address = ${token.sub};
+`;
+  const adminQuery = await sql`
+  SELECT * FROM admin
+  join domain on admin.domain_id = domain.id
+  WHERE admin.address = ${token.sub}
+  and domain.name = ${req.query.domain};`;
+
+  if (superAdminQuery.length === 0 && adminQuery.length === 0) {
+    return res.status(401).json({ error: "Unauthorized. Please refresh." });
+  }
+
   const domainQuery = await sql`
   select domain.id
   from domain

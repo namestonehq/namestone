@@ -10,6 +10,7 @@ import { Dialog } from "@headlessui/react";
 import { ethers } from "ethers";
 import placeholderImage from "../public/images/placeholder-icon-image.png";
 import { Icon } from "@iconify/react";
+import { normalize } from "viem/ens";
 
 export default function Admin() {
   const { data: session, status: authStatus } = useSession();
@@ -25,9 +26,14 @@ export default function Admin() {
   const [nameErrorMsg, setNameErrorMsg] = useState("");
   const [addressErrorMsg, setAddressErrorMsg] = useState("");
   const [nameId, setNameId] = useState(null); // id of name to edit
+  const [admins, setAdmins] = useState([]);
+  const [domainId, setDomainId] = useState(null);
+  const [saveSettingsDisabled, setSaveSettingsDisabled] = useState(true);
+  const [saveSettingsPending, setSaveSettingsPending] = useState(false);
+  const [apiKey, setApiKey] = useState("loading");
+  const [adminErrorMsg, setAdminErrorMsg] = useState("");
   //add or edit
   const [modalType, setModalType] = useState("add");
-
   const [activeTab, setActiveTab] = useState("Subnames");
 
   // fetch to get allowed domains after connect
@@ -58,6 +64,31 @@ export default function Admin() {
       res.json().then((data) => {
         if (res.status === 200) {
           setSubdomains(data);
+        } else {
+          console.log(data);
+        }
+      })
+    );
+    fetch(
+      "/api/admin/get-domain-admins?" +
+        new URLSearchParams({ domain: selectedBrand?.domain })
+    ).then((res) =>
+      res.json().then((data) => {
+        if (res.status === 200) {
+          setAdmins(data.admins);
+          setDomainId(data.domain_id);
+        } else {
+          console.log(data);
+        }
+      })
+    );
+    fetch(
+      "/api/admin/get-api-key?" +
+        new URLSearchParams({ domain: selectedBrand?.domain })
+    ).then((res) =>
+      res.json().then((data) => {
+        if (res.status === 200) {
+          setApiKey(data.api_key);
         } else {
           console.log(data);
         }
@@ -95,6 +126,13 @@ export default function Admin() {
       setAddressErrorMsg("*Invalid address");
       return;
     }
+    // check if name is valid
+    try {
+      name = normalize(name);
+    } catch (e) {
+      setNameErrorMsg("*Invalid name");
+      return;
+    }
 
     fetch("/api/admin/add-subdomain", {
       method: "POST",
@@ -113,7 +151,7 @@ export default function Admin() {
           setNameInput("");
           setAddressInput("");
         } else {
-          if (data.error.includes("claimed")) {
+          if (data.error.includes("claimed") || data.error.includes("ens")) {
             setNameErrorMsg(data.error);
           }
           console.log(data);
@@ -136,6 +174,13 @@ export default function Admin() {
       address = ethers.utils.getAddress(address);
     } catch (e) {
       setAddressErrorMsg("*Invalid address");
+      return;
+    }
+    // check if name is valid
+    try {
+      name = normalize(name);
+    } catch (e) {
+      setNameErrorMsg("*Invalid name");
       return;
     }
 
@@ -163,13 +208,64 @@ export default function Admin() {
           setNameInput("");
           setAddressInput("");
         } else {
-          if (data.error.includes("claimed")) {
+          if (data.error.includes("claimed") || data.error.includes("ens")) {
             setNameErrorMsg(data.error);
           }
+
           console.log(data);
         }
       });
     });
+  }
+
+  // admins
+  function addAdmin() {
+    setAdmins((prevState) => {
+      return [...prevState, ""];
+    });
+    setSaveSettingsDisabled(false);
+  }
+  function deleteAdmin(index) {
+    let tempAdmins = admins;
+    tempAdmins.splice(index, 1);
+    setAdmins([...tempAdmins]);
+    setSaveSettingsDisabled(false);
+  }
+  function changeAdmin(index, address) {
+    let tempAdmins = admins;
+    tempAdmins.splice(index, 1);
+    tempAdmins[index] = address;
+    setAdmins([...tempAdmins]);
+    setSaveSettingsDisabled(false);
+  }
+  function saveSettings() {
+    setSaveSettingsPending(true);
+    const brandData = {
+      admins: admins,
+      domain_id: domainId,
+    };
+    fetch("/api/admin/save-admins", {
+      method: "POST",
+      body: JSON.stringify({ brandData: brandData }),
+    })
+      .then((res) => {
+        setSaveSettingsPending(false);
+        res.json().then((data) => {
+          if (res.status === 200) {
+            setAdminErrorMsg("");
+            setSaveSettingsDisabled(true);
+          } else {
+            console.log(data);
+            setAdminErrorMsg(data.error);
+          }
+        });
+      })
+      .catch((err) => {
+        setSaveSettingsPending(false);
+        setSaveSettingsDisabled(false);
+        setAdminErrorMsg(err);
+      });
+    return;
   }
 
   // useEffect to wipe inputs and errors when modal is closed
@@ -280,7 +376,7 @@ export default function Admin() {
           </div>
           {/* Tab selection */}
           <div className="relative">
-            <div className="flex mt-8 gap-8">
+            <div className="flex gap-8 mt-8">
               <button
                 onClick={() => setActiveTab("Subnames")}
                 className={`relative border-b-2 transition-colors duration-300 pb-2 
@@ -304,7 +400,7 @@ export default function Admin() {
                 Settings
               </button>
             </div>
-            <hr className=" bg-neutral-200 "></hr>
+            <hr className=" bg-neutral-200"></hr>
           </div>
 
           {/* Table */}
@@ -330,38 +426,41 @@ export default function Admin() {
           )}
           {activeTab === "Settings" && (
             <div className="flex flex-col gap-4 ">
-              <ApiKeyDisplay />
-              <div className="text-sm font-bold text-brownblack-700 mb-2">
+              <ApiKeyDisplay apiKey={apiKey} />
+              <div className="mb-2 text-sm font-bold text-brownblack-700">
                 Domain Admins
               </div>
-              <div className="flex w-full">
-                <div className="mb-1 text-base font-bold text-brownblack-700"></div>
-                <div className="flex w-full items-center">
-                  <input
-                    className="max-w-lg w-full px-4 select-none py-2 border rounded-md border-brownblack-50 mr-2
-                                focus:outline-none focus:ring-2 focus:ring-orange-300 focus:border-orange-300
-                                transition-colors duration-200"
-                  />
-                  <Icon
-                    icon="bi:trash"
-                    className="right-0 text-red-500 cursor-pointer w-6 h-6  hover:text-red-600"
-                  />
-                </div>
-              </div>
-              <div className="flex w-full items-center">
-                <input
-                  className="max-w-lg w-full px-4 select-none py-2 border rounded-md border-brownblack-50 mr-2
-                                focus:outline-none focus:ring-2 focus:ring-orange-300 focus:border-orange-300
-                                transition-colors duration-200"
-                />
-                <Icon
-                  icon="bi:trash"
-                  className="right-0 text-red-500 cursor-pointer w-6 h-6 hover:text-red-600"
-                />
-              </div>
-              <button className="text-orange-500 hover:text-orange-400 transition-colors duration-300 text-left font-bold">
-                + Add Admin
-              </button>
+              {admins &&
+                admins.map((address, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-start mb-4"
+                  >
+                    <input
+                      className="w-[80%] px-4 py-2 border rounded-md border-brownblack-50"
+                      value={address}
+                      onChange={(e) => changeAdmin(index, e.target.value)}
+                    />
+                    <Icon
+                      icon="bi:trash"
+                      className="w-6 h-6 mx-4 text-red-500 cursor-pointer"
+                      onClick={() => deleteAdmin(index)}
+                    />
+                  </div>
+                ))}
+              <Button
+                buttonText="Add Admin"
+                className={"mb-8"}
+                onClick={addAdmin}
+              />
+              <div className="text-sm text-red-500">{adminErrorMsg}</div>
+              <Button
+                buttonText="Save"
+                disabled={saveSettingsDisabled}
+                pending={saveSettingsPending}
+                className={"mb-16"}
+                onClick={saveSettings}
+              />
             </div>
           )}
         </div>
@@ -442,10 +541,9 @@ function AddNameModal({
   );
 }
 
-function ApiKeyDisplay() {
+function ApiKeyDisplay({ apiKey }) {
   const [isObscured, setIsObscured] = useState(true);
   const [isCopied, setIsCopied] = useState(false);
-  const apiKey = "your-api-key-here"; // Replace with actual API key
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(apiKey).then(() => {
@@ -455,23 +553,22 @@ function ApiKeyDisplay() {
   };
 
   return (
-    <div className="flex flex-col w-80 my-6">
-      <label className="text-sm font-bold text-brownblack-700 mb-2">
+    <div className="flex flex-col my-6">
+      <label className="mb-2 text-sm font-bold text-brownblack-700">
         API Key
       </label>
-      <div className="relative">
-        <div
-          className="border w-80 h-10 rounded-lg border-neutral-200 hover:cursor-pointer flex items-center pr-10 pl-3 bg-gray-50"
-          onMouseEnter={() => setIsObscured(false)}
-          onMouseLeave={() => setIsObscured(true)}
-        >
-          <span className="text-sm text-gray-700 font-mono truncate">
-            {isObscured ? "••••••••••••••••" : apiKey}
-          </span>
-        </div>
+      <div
+        className="relative flex items-center h-10 pl-3 border rounded-lg border-neutral-200 hover:cursor-pointer bg-gray-50 w-[28rem]"
+        onMouseEnter={() => setIsObscured(false)}
+        onMouseLeave={() => setIsObscured(true)}
+      >
+        <span className="font-mono text-sm text-gray-700 truncate">
+          {isObscured ? "•••••••••••••••••••••••••••••••••" : apiKey}
+        </span>
+
         <button
           onClick={copyToClipboard}
-          className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
+          className="absolute text-gray-500 transform -translate-y-1/2 right-2 top-1/2 hover:text-gray-700 focus:outline-none"
           aria-label="Copy API key"
         >
           {isCopied ? (

@@ -1,5 +1,6 @@
 import { getToken } from "next-auth/jwt";
 import sql from "../../../lib/db";
+import { normalize } from "viem/ens";
 
 export default async function handler(req, res) {
   const token = await getToken({ req });
@@ -19,14 +20,25 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: "Domain is required" });
   }
 
+  console.log("body", body);
+  let domain;
+  let name;
+  try {
+    domain = normalize(body.domain);
+    name = normalize(body.name);
+  } catch (e) {
+    console.log(e);
+    return res.status(400).json({ error: "Invalid ens name" });
+  }
+
   let subdomainQuery;
   let subdomainId;
   // Check if subdomain exists
   subdomainQuery = await sql`
   select subdomain.id, subdomain.address
   from subdomain
-  where subdomain.name = ${body.name} and subdomain.domain_id in
-  (select id from domain where name = ${body.domain} limit 1)`;
+  where subdomain.name = ${name} and subdomain.domain_id in
+  (select id from domain where name = ${domain} limit 1)`;
 
   if (subdomainQuery.length > 0) {
     // if it exists we warn user
@@ -36,7 +48,7 @@ export default async function handler(req, res) {
   } else {
     // Insert subdomain
     const domainQuery = await sql`
-    select id from domain where name = ${body.domain} limit 1`;
+    select id from domain where name = ${domain} limit 1`;
 
     if (domainQuery.length === 0) {
       return res.status(400).json({ error: "Domain does not exist" });
@@ -45,16 +57,16 @@ export default async function handler(req, res) {
     insert into subdomain (
       name, address, domain_id
     ) values (
-      ${body.name.toLowerCase()}, ${body.address}, ${domainQuery[0].id}
+      ${name}, ${body.address}, ${domainQuery[0].id}
     )
     returning id;`;
     subdomainId = subdomainQuery[0].id;
   }
   // log user engagement
   const jsonPayload = JSON.stringify({
-    name: body.name,
+    name: name,
     address: body.address,
-    domain: body.domain,
+    domain: domain,
   });
   await sql`
   insert into user_engagement (address, name, details)

@@ -1,5 +1,6 @@
 import { getToken } from "next-auth/jwt";
 import sql from "../../../lib/db";
+import { normalize } from "viem/ens";
 
 export default async function handler(req, res) {
   const token = await getToken({ req });
@@ -22,14 +23,24 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: "Domain is required" });
   }
 
+  let domain;
+  let name;
+  try {
+    domain = normalize(body.domain);
+    name = normalize(body.name);
+  } catch (e) {
+    console.log(e);
+    return res.status(400).json({ error: "Invalid ens name" });
+  }
+
   let subdomainQuery;
   let subdomainId = body.id;
   // Check if subdomain exists already
   subdomainQuery = await sql`
   select subdomain.id, subdomain.address
   from subdomain
-  where subdomain.name = ${body.name} and subdomain.domain_id in
-  (select id from domain where name = ${body.domain} limit 1)`;
+  where subdomain.name = ${name} and subdomain.domain_id in
+  (select id from domain where name = ${domain} limit 1)`;
   // If subdomain exists and is different than current, warn user
   if (subdomainQuery.length == 1 && subdomainQuery[0].id != subdomainId) {
     return res.status(400).json({
@@ -39,15 +50,15 @@ export default async function handler(req, res) {
   // update subdomain
   await sql`
   update subdomain
-  set name = ${body.name},
+  set name = ${name},
   address = ${body.address}
   where id = ${subdomainId}`;
 
   // log user engagement
   const jsonPayload = JSON.stringify({
-    name: body.name,
+    name: name,
     address: body.address,
-    domain: body.domain,
+    domain: domain,
   });
   await sql`
   insert into user_engagement (address, name, details)

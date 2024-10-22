@@ -642,7 +642,7 @@ export default function SuperAdmin() {
           pending={savePending}
           className={"mb-16"}
           onClick={saveChanges}
-        ></Button>
+        />
       </div>
       {/*Right Bar*/}
       <div className="flex-1 bg-white"></div>
