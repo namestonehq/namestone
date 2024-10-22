@@ -443,7 +443,6 @@ function AddNameModal({
 }
 
 function ApiKeyDisplay() {
-function ApiKeyDisplay() {
   const [isObscured, setIsObscured] = useState(true);
   const [isCopied, setIsCopied] = useState(false);
   const apiKey = "your-api-key-here"; // Replace with actual API key
