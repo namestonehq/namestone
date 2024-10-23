@@ -400,7 +400,7 @@ export default function Admin() {
                 Settings
               </button>
             </div>
-            <hr className=" bg-neutral-200"></hr>
+            <hr className="bg-neutral-200"></hr>
           </div>
 
           {/* Table */}
@@ -454,7 +454,7 @@ export default function Admin() {
               >
                 + Add Admin
               </button>
-              <hr className="bg-zinc-100 w-[28rem]"></hr>
+              <hr className="bg-zinc-100"></hr>
 
               <div className="flex items-center self-start mb-16">
                 <Button
