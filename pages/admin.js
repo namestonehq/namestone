@@ -437,7 +437,7 @@ export default function Admin() {
                     className="flex items-center justify-start mb-4"
                   >
                     <input
-                      className="w-[80%] px-4 py-2 border rounded-md border-brownblack-50"
+                      className="w-[28rem] px-4 py-2 border rounded-md border-brownblack-50"
                       value={address}
                       onChange={(e) => changeAdmin(index, e.target.value)}
                     />
@@ -448,19 +448,22 @@ export default function Admin() {
                     />
                   </div>
                 ))}
-              <Button
-                buttonText="Add Admin"
-                className={"mb-8"}
+              <button
+                className="mb-8 font-bold text-left text-orange-700 transition-colors duration-300 w-fit hover:text-orange-400"
                 onClick={addAdmin}
-              />
+              >
+                + Add Admin
+              </button>
+              <hr className="bg-zinc-100 w-[28rem]"></hr>
               <div className="text-sm text-red-500">{adminErrorMsg}</div>
-              <Button
-                buttonText="Save"
-                disabled={saveSettingsDisabled}
-                pending={saveSettingsPending}
-                className={"mb-16"}
-                onClick={saveSettings}
-              />
+              <div className="self-start mb-16">
+                <Button
+                  buttonText="Save"
+                  disabled={saveSettingsDisabled}
+                  pending={saveSettingsPending}
+                  onClick={saveSettings}
+                />
+              </div>
             </div>
           )}
         </div>
