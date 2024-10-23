@@ -7,6 +7,8 @@ You can use a library like [viem](https://viem.sh/docs/actions/wallet/signMessag
 ## Parameters
 
 - `address` (string): Your ethereum address. It should own the domain name you're planning to use with namestone.
+- `domain` (string)(optional): The domain sending the siwe message. If you don't fill it out it will be namestone.xyz. Needs to follow the format: yourdomain.tld
+- `uri` (string)(optional): The uri sending the siwe message. If you don't fill it out it will be "https://namestone.xyz/api/public_v1/get-siwe-message"
 
 ## Curl Example
 

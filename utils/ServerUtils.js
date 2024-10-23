@@ -373,20 +373,6 @@ export async function checkResolver(ensName) {
   }
 }
 
-export function generateSiweMessage(address) {
-  const nonce = generateSiweNonce();
-  const message = createSiweMessage({
-    domain: "namestone.xyz",
-    address,
-    statement: "Sign this message to access protected endpoints.",
-    uri: "https://namestone.xyz/api/public_v1/get-siwe-message",
-    version: "1",
-    chainId: 1,
-    nonce: nonce,
-  });
-  return message;
-}
-
 export async function verifySignature(address, signature) {
   try {
     // get siwe message from sql

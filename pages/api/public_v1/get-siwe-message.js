@@ -1,7 +1,7 @@
 import sql from "../../../lib/db";
 import Cors from "micro-cors";
-import { generateSiweMessage } from "../../../utils/ServerUtils";
 import { ethers } from "ethers";
+import { createSiweMessage, generateSiweNonce } from "viem/siwe";
 
 const cors = Cors({
   allowMethods: ["GET", "HEAD", "POST", "OPTIONS"],
@@ -11,6 +11,10 @@ const cors = Cors({
 const handler = async (req, res) => {
   const { method } = req;
   let address = req.query.address;
+
+  let domain = req.query.address || "namestone.xyz";
+  let uri =
+    req.query.uri || "https://namestone.xyz/api/public_v1/get-siwe-message";
 
   if (method !== "GET") {
     res.setHeader("Allow", ["GET"]);
@@ -26,7 +30,7 @@ const handler = async (req, res) => {
     return res.status(400).json({ error: "Invalid wallet address" });
   }
 
-  const message = generateSiweMessage(address);
+  const message = generateSiweMessage(address, domain, uri);
   // Save siwe to sql
   await sql`
     INSERT INTO siwe (address, message) VALUES (${address}, ${message})
@@ -41,3 +45,17 @@ const handler = async (req, res) => {
 };
 
 export default cors(handler);
+
+function generateSiweMessage(address, domain, uri) {
+  const nonce = generateSiweNonce();
+  const message = createSiweMessage({
+    domain: domain,
+    address,
+    statement: "Sign this message to access protected endpoints.",
+    uri: uri,
+    version: "1",
+    chainId: 1,
+    nonce: nonce,
+  });
+  return message;
+}
