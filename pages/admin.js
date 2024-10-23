@@ -449,20 +449,21 @@ export default function Admin() {
                   </div>
                 ))}
               <button
-                className="mb-8 font-bold text-left text-orange-700 transition-colors duration-300 w-fit hover:text-orange-400"
+                className="mb-4 font-bold text-left text-orange-700 transition-colors duration-300 w-fit hover:text-orange-400"
                 onClick={addAdmin}
               >
                 + Add Admin
               </button>
               <hr className="bg-zinc-100 w-[28rem]"></hr>
-              <div className="text-sm text-red-500">{adminErrorMsg}</div>
-              <div className="self-start mb-16">
+
+              <div className="flex items-center self-start mb-16">
                 <Button
                   buttonText="Save"
                   disabled={saveSettingsDisabled}
                   pending={saveSettingsPending}
                   onClick={saveSettings}
                 />
+                <div className="ml-6 text-sm text-red-500">{adminErrorMsg}</div>
               </div>
             </div>
           )}
