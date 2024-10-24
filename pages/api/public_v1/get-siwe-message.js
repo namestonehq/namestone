@@ -12,7 +12,7 @@ const handler = async (req, res) => {
   const { method } = req;
   let address = req.query.address;
 
-  let domain = req.query.address || "namestone.xyz";
+  let domain = req.query.domain || "namestone.xyz";
   let uri =
     req.query.uri || "https://namestone.xyz/api/public_v1/get-siwe-message";
 
