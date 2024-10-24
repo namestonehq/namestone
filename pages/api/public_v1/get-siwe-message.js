@@ -29,8 +29,13 @@ const handler = async (req, res) => {
   } catch (error) {
     return res.status(400).json({ error: "Invalid wallet address" });
   }
+  let message;
+  try {
+    message = generateSiweMessage(address, domain, uri);
+  } catch (error) {
+    return res.status(500).json({ error: error });
+  }
 
-  const message = generateSiweMessage(address, domain, uri);
   // Save siwe to sql
   await sql`
     INSERT INTO siwe (address, message) VALUES (${address}, ${message})
