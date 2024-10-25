@@ -22,7 +22,7 @@ const navDict = {
       "Set Domain": { file: "set-domain" },
       "Get Domain": { file: "get-domain" },
       "Enable Domain": { file: "enable-domain" },
-      "Get Siwe Message": { file: "get-siwe-message" },
+      "Get SIWE Message": { file: "get-siwe-message" },
     },
   },
   "Admin Panel": { file: "admin_panel" },
