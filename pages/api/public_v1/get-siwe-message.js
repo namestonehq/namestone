@@ -45,6 +45,13 @@ const handler = async (req, res) => {
   // Set the Content-Type header to text/plain
   res.setHeader("Content-Type", "text/plain");
 
+  // insert user engagement
+  await sql`insert into user_engagement (
+    address, name
+  ) values (
+    ${address}, 'get-siwe'
+  )`;
+
   // Return the message as plain text
   return res.status(200).send(message);
 };

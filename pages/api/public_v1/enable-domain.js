@@ -14,7 +14,15 @@ const cors = Cors({
 
 async function handler(req, res) {
   if (req.method === "POST") {
-    let { company_name, email, address, domain, signature, api_key } = req.body;
+    let {
+      company_name,
+      email,
+      address,
+      domain,
+      signature,
+      api_key,
+      cycle_key,
+    } = req.body;
 
     if (!company_name || !email || !domain || !address || !signature) {
       return res.status(400).json({ error: "Missing parameters" });
@@ -54,8 +62,19 @@ async function handler(req, res) {
     //Check if domain exists
     let domainQuery = await sql`
      select * from domain where name = ${domainName.toLowerCase()} limit 1;`;
-    if (domainQuery.length > 0) {
-      // if domain exists we return existing api_key
+
+    if (domainQuery.length > 0 && cycle_key === "1") {
+      // if domain exists and cycle key is true we change the api_key
+      let apiKey = uuidv4();
+      await sql`
+      update api_key set key = ${apiKey} where domain_id = ${domainQuery[0].id};`;
+      return res.status(200).json({
+        message: "API key cycled!",
+        api_key: apiKey,
+        domain: domainName,
+      });
+    } else if (domainQuery.length > 0) {
+      // if domain exists and cycle key is false we return existing api_key
       let existingApiKeyQuery = await sql` 
       select * from api_key where domain_id = ${domainQuery[0].id} limit 1;`;
       return res.status(200).json({
@@ -160,6 +179,16 @@ async function handler(req, res) {
       return res.status(500).json({ error: "Error sending email" });
     }
   } else {
+    // log user engagement
+    const jsonPayload = JSON.stringify({
+      email: email,
+      domain: domain,
+      company_name: company_name,
+    });
+    await sql`
+  insert into user_engagement (address, name, details)
+  values (${address},'enable_domain', ${jsonPayload})`;
+
     return res.status(405).json({ error: "Method not allowed" });
   }
 }
