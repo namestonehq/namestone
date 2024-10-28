@@ -1,21 +1,19 @@
-# Get Siwe Message
+# Get SIWE Message
 
-This GET route returns a [Siwe Message](https://docs.ens.domains/web/siwe) that you can sign for auth purposes.
-
-You can use a library like [viem](https://viem.sh/docs/actions/wallet/signMessage.html) or a tool like [etherscan](https://etherscan.io/verifiedsignatures#) to sign the message and recieve a signature
+This GET route returns a [SIWE Message](https://docs.ens.domains/web/siwe) that users sign for authentication purposes.
+Libraries such as [viem](https://viem.sh/docs/actions/wallet/signMessage.html) or tools like [Etherscan](https://etherscan.io/verifiedsignatures#) can be used to sign the message. Once signed, the message returns a signature that authenticates the user.
 
 ## Parameters
 
-- `address` (string): Your ethereum address. It should own the domain name you're planning to use with namestone.
-- `domain` (string)(optional): The domain sending the siwe message. If you don't fill it out it will be namestone.xyz. Needs to follow the format: yourdomain.tld
-- `uri` (string)(optional): The uri sending the siwe message. If you don't fill it out it will be "https://namestone.xyz/api/public_v1/get-siwe-message"
+- `address` (string): Your Ethereum address. This address should own the domain name you plan to use with NameStone.
+- `domain` (string)(optional): The domain sending the SIWE message. If not filled out, it defaults to namestone.xyz. The format should be "yourdomain.tld".
+- `uri` (string)(optional): The URI sending the SIWE message. If not filled out, it defaults to "https://namestone.xyz/api/public_v1/get-siwe-message"
 
 ## Curl Example
 
 ```
 curl -X GET \
      'https://namestone.xyz/api/public_v1/get-siwe-message?address=0x57632Ba9A844af0AB7d5cdf98b0056c8d87e3A85'
-
 ```
 
 ## Example Return
