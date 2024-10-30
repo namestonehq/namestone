@@ -28,7 +28,7 @@ export const providerUrl =
 const client = createPublicClient({
   transport: http(providerUrl || ""),
 });
-const HYBRID_RESOLVER = "0xd17347fA0a6eeC89a226c96a9ae354F785e94241";
+const HYBRID_RESOLVER = "0xA87361C4E58B619c390f469B9E6F27d759715125";
 const NAMEWRAPPER = "0xD4416b13d2b3a9aBae7AcD5D6C2BbDBE25686401";
 
 export default function TryNamestone() {
@@ -242,13 +242,13 @@ export default function TryNamestone() {
             <div className="z-10 flex flex-col items-center justify-start flex-1 ">
               {!fullyConnected && (
                 <>
-                  <div className="mt-20 border px-20 rounded-lg bg-white border-neutral-200 shadow-lg h-60 flex flex-col justify-center items-center">
+                  <div className="flex flex-col items-center justify-center px-20 mt-20 bg-white border rounded-lg shadow-lg border-neutral-200 h-60">
                     <CustomConnectButton />
                     <div className="mt-4 text-sm text-center text-neutral-700">
                       Connect your wallet to get started.
                     </div>
                   </div>
-                  <div className="flex lg:hidden mb-10 first-letter:items-center justify-center w-full mt-10">
+                  <div className="flex justify-center w-full mt-10 mb-10 lg:hidden first-letter:items-center">
                     <SideText />
                   </div>
                 </>

@@ -360,6 +360,7 @@ const resolverList = [
   "0x828ec5bDe537B8673AF98D77bCB275ae1CA26D1f",
   "0x84c5AdB77dd9f362A1a3480009992d8d47325dc3",
   "0xd17347fA0a6eeC89a226c96a9ae354F785e94241",
+  "0xA87361C4E58B619c390f469B9E6F27d759715125",
 ];
 
 export async function checkResolver(ensName) {
