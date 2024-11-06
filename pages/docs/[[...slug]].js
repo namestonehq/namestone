@@ -15,7 +15,6 @@ const navDict = {
     file: "api-routes",
     children: {
       "Set Name": { file: "set-name" },
-      "Claim Name": { file: "claim-name" },
       "Get Names": { file: "get-names" },
       "Search Names": { file: "search-names" },
       "Delete Name": { file: "delete-name" },
@@ -33,7 +32,6 @@ const fileNameLookup = {
   "sdk-quickstart": "SDK Quickstart",
   "api-routes": "API",
   "set-name": "Set Name",
-  "claim-name": "Claim Name",
   "get-names": "Get Names",
   "search-names": "Search Names",
   "delete-name": "Delete Name",
