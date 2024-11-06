@@ -29,3 +29,70 @@ curl -X POST \
         }' \
      https://namestone.xyz/api/public_v1/enable-domain
 ```
+
+## SDK Example with getSiweMessage
+
+```
+import NameStone, { AuthenticationError, NetworkError } from 'namestone-sdk';
+import { createWalletClient, custom } from 'viem';  // if using viem for signing
+
+// Initialize the NameStone instance (no API key needed for initial setup)
+const ns = new NameStone();
+
+// Define the parameters
+const address = "0xE997d9b785Dd99832d21b3Ce5A34fCacC6D53C57";
+const domain = "testbrand.eth";
+const email = "your_email@company.com";
+const company_name = "Your Company Name";
+
+// Use an immediately invoked async function to allow top-level await
+(async () => {
+  try {
+    // Step 1: Get the SIWE message
+    const siweMessage = await ns.getSiweMessage({
+      address: address
+    });
+
+    console.log("SIWE message received:", siweMessage);
+
+    // Step 2: Sign the message (example using viem)
+    const walletClient = createWalletClient({
+      transport: custom(window.ethereum)
+    });
+
+    const signature = await walletClient.signMessage({
+      message: siweMessage
+    });
+
+    console.log("Message signed:", signature);
+
+    // Step 3: Enable domain with the signed message
+    const response = await ns.enableDomain({
+      company_name: company_name,
+      email: email,
+      domain: domain,
+      address: address,
+      signature: signature,
+      // Optional parameters:
+      // api_key: "existing_api_key",  // if you want to use an existing key
+      // cycle_key: "1"                // if you want to cycle an existing key
+    });
+
+    console.log("Domain enabled successfully! New API key:", response.api_key);
+
+    // Step 4: You can now initialize a new NameStone instance with the API key
+    const nsWithAuth = new NameStone(response.api_key);
+
+    // Now you can use other endpoints that require authentication...
+
+  } catch (error) {
+    if (error instanceof AuthenticationError) {
+      console.error("Authentication failed:", error.message);
+    } else if (error instanceof NetworkError) {
+      console.error("Network error:", error.message);
+    } else {
+      console.error("An unexpected error occurred:", error);
+    }
+  }
+})();
+```

@@ -16,6 +16,49 @@ curl -X GET \
      'https://namestone.xyz/api/public_v1/get-siwe-message?address=0x57632Ba9A844af0AB7d5cdf98b0056c8d87e3A85'
 ```
 
+## SDK Example
+
+```
+mport NameStone, { AuthenticationError, NetworkError } from "namestone-sdk";
+
+// Initialize the NameStone instance
+const ns = new NameStone();
+
+// Define the SIWE message parameters
+const address = "0x57632Ba9A844af0AB7d5cdf98b0056c8d87e3A85";
+const domain = "yourdomain.tld"; // optional
+const uri = "https://yourdomain.tld/api"; // optional
+
+// Use an immediately invoked async function to allow top-level await
+(async () => {
+  try {
+    const response = await ns.getSiweMessage({
+      address: address,
+      domain: domain, // optional parameter
+      uri: uri, // optional parameter
+    });
+
+    console.log("SIWE message received:", response);
+
+    // Example response message will look like:
+    // namestone.xyz wants you to sign in with your Ethereum account:
+    // 0x57632Ba9A844af0AB7d5cdf98b0056c8d87e3A85
+    // Sign this message to access protected endpoints.
+    // URI: https://namestone.xyz/api/public_v1/get-siwe-message
+    // Version: 1
+    // Chain ID: 1
+    // Nonce: b10ffd444b0a2d810377a3900ba6cd0422141306d158520f24b2805952ea589f9bd1bcbf2e353a14105830183472de5f
+    // Issued At: 2024-10-18T17:05:37.933Z
+  } catch (error) {
+    if (error instanceof NetworkError) {
+      console.error("Network error:", error.message);
+    } else {
+      console.error("An unexpected error occurred:", error);
+    }
+  }
+})();
+```
+
 ## Example Return
 
 ```
