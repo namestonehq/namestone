@@ -32,9 +32,9 @@ curl -X POST \
 
 ## SDK Example with getSiweMessage
 
-```
-import NameStone, { AuthenticationError, NetworkError } from 'namestone-sdk';
-import { createWalletClient, custom } from 'viem';  // if using viem for signing
+```typescript
+import NameStone, { AuthenticationError, NetworkError } from "namestone-sdk";
+import { createWalletClient, custom } from "viem"; // if using viem for signing
 
 // Initialize the NameStone instance (no API key needed for initial setup)
 const ns = new NameStone();
@@ -50,18 +50,18 @@ const company_name = "Your Company Name";
   try {
     // Step 1: Get the SIWE message
     const siweMessage = await ns.getSiweMessage({
-      address: address
+      address: address,
     });
 
     console.log("SIWE message received:", siweMessage);
 
     // Step 2: Sign the message (example using viem)
     const walletClient = createWalletClient({
-      transport: custom(window.ethereum)
+      transport: custom(window.ethereum),
     });
 
     const signature = await walletClient.signMessage({
-      message: siweMessage
+      message: siweMessage,
     });
 
     console.log("Message signed:", signature);
@@ -84,7 +84,6 @@ const company_name = "Your Company Name";
     const nsWithAuth = new NameStone(response.api_key);
 
     // Now you can use other endpoints that require authentication...
-
   } catch (error) {
     if (error instanceof AuthenticationError) {
       console.error("Authentication failed:", error.message);
