@@ -491,7 +491,7 @@ function AddNameModal({
 }) {
   const [activeTab, setActiveTab] = useState("profile");
   const [showSubname, setShowSubname] = useState(false);
-  const tabs = ["profile", "links", "addresses", "custom"];
+  const tabs = ["profile", "links", "addresses"];
 
   const TAB_CONTENT = {
     profile: (
@@ -628,6 +628,9 @@ function AddNameModal({
             placeholder="@namestonehq"
           />
         </div>
+        <button className="text-xs text-left text-orange-800">
+          + Text Record
+        </button>
       </div>
     ),
     addresses: (
@@ -722,9 +725,9 @@ function AddNameModal({
             placeholder="0x5346...D42CF"
           />
         </div>
+        <button className="text-xs text-left text-orange-800">+ Address</button>
       </div>
     ),
-    custom: <div className="flex flex-col mt-4">{/* Custom content */}</div>,
   };
 
   const SUBNAME_CONTENT = (
@@ -733,6 +736,12 @@ function AddNameModal({
         {modalType === "add" ? "Add a subname" : "Edit Subname"}
       </Dialog.Title>
       <hr className="border-0 h-[0.5px] bg-brownblack-200/50 my-4"></hr>
+      <button
+        className="flex items-center gap-1 mt-2 ml-auto text-xs text-orange-800 hover:text-orange-600"
+        onClick={() => {}}
+      >
+        More Records <span className="text-sm">&gt;</span>
+      </button>
       <div className="flex flex-col">
         <div className="flex flex-row justify-between">
           <div className="text-sm font-bold text-brownblack-700">Subname</div>
@@ -752,6 +761,25 @@ function AddNameModal({
           value={addressInput}
           onChange={(e) => setAddressInput(e.target.value)}
         />
+      </div>
+      <div className="flex justify-between w-full">
+        <button className="flex items-end mb-2 ml-1 text-sm font-bold text-red-500 transition-colors duration-300 hover:text-red-600 hover:cursor-pointer">
+          Delete
+        </button>
+        <div className="flex items-center justify-around mt-6">
+          <button
+            className="flex bg-orange-500 items-center justify-center py-2 min-w-[100px] mx-auto text-sm font-bold rounded-lg disabled:cursor-not-allowed text-brownblack-700 md:block"
+            onClick={() => {
+              if (modalType === "edit") {
+                editName(nameInput, addressInput, nameId);
+              } else {
+                addName(nameInput, addressInput);
+              }
+            }}
+          >
+            Save
+          </button>
+        </div>
       </div>
     </>
   );
@@ -797,26 +825,6 @@ function AddNameModal({
           ) : (
             SUBNAME_CONTENT
           )}
-
-          <div className="flex justify-between w-full">
-            <button className="flex items-end mb-2 ml-1 text-sm font-bold text-red-500 transition-colors duration-300 hover:text-red-600 hover:cursor-pointer">
-              Delete
-            </button>
-            <div className="flex items-center justify-around mt-6">
-              <button
-                className="flex bg-orange-500 items-center justify-center py-2 min-w-[100px] mx-auto text-sm font-bold rounded-lg disabled:cursor-not-allowed text-brownblack-700 md:block"
-                onClick={() => {
-                  if (modalType === "edit") {
-                    editName(nameInput, addressInput, nameId);
-                  } else {
-                    addName(nameInput, addressInput);
-                  }
-                }}
-              >
-                Save
-              </button>
-            </div>
-          </div>
         </Dialog.Panel>
       </div>
     </Dialog>
