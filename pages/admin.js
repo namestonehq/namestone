@@ -583,7 +583,7 @@ function AddNameModal({
           ></Image>
           <input
             className="w-full px-4 py-2 pl-10 mb-4 border rounded-md ring-1 ring-gray-300 border-brownblack-50 focus:ring-2 focus:ring-orange-400 focus:outline-none"
-            placeholder="@resolverworks"
+            placeholder="resolverworks"
           />
         </div>
         {/* Discord */}
@@ -597,7 +597,7 @@ function AddNameModal({
           ></Image>
           <input
             className="w-full px-4 py-2 pl-10 mb-4 border rounded-md ring-1 ring-gray-300 border-brownblack-50 focus:ring-2 focus:ring-orange-400 focus:outline-none"
-            placeholder="@namestonehq"
+            placeholder="slobo.eth"
           />
         </div>
         {/* Telegram */}
@@ -611,7 +611,7 @@ function AddNameModal({
           ></Image>
           <input
             className="w-full px-4 py-2 pl-10 mb-4 border rounded-md ring-1 ring-gray-300 border-brownblack-50 focus:ring-2 focus:ring-orange-400 focus:outline-none"
-            placeholder="@namestonehq"
+            placeholder="superslobo"
           />
         </div>
         {/* IPFS */}
@@ -625,7 +625,7 @@ function AddNameModal({
           ></Image>
           <input
             className="w-full px-4 py-2 pl-10 mb-4 border rounded-md ring-1 ring-gray-300 border-brownblack-50 focus:ring-2 focus:ring-orange-400 focus:outline-none"
-            placeholder="@namestonehq"
+            placeholder="ipfs://bafyb...."
           />
         </div>
         <button className="text-xs text-left text-orange-800">
