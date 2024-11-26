@@ -499,11 +499,18 @@ function AddNameModal({
       <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
 
       <div className="fixed inset-0 flex items-center justify-center p-4">
-        <Dialog.Panel className="w-full max-w-sm px-6 py-4 bg-white border-2 rounded-lg border-brownblack-200">
+        <Dialog.Panel className="w-full max-w-[496px] px-6 py-4 bg-white rounded-lg ">
           <Dialog.Title className="text-base font-bold text-brownblack-700">
             {modalType === "add" ? "Add a subname" : "Edit Subname"}
           </Dialog.Title>
-          <div className="flex flex-col mt-8">
+          <hr className="border-0 h-[0.5px] bg-brownblack-200/50 my-4"></hr>
+          <button
+            className="flex items-center gap-1 mt-2 ml-auto text-xs text-orange-800 transition-colors duration-300 hover:text-orange-600"
+            onClick={() => {}}
+          >
+            More Records <span className="text-sm">&gt;</span>
+          </button>
+          <div className="flex flex-col">
             <div className="flex flex-row justify-between">
               <div className="text-sm font-bold text-brownblack-700">
                 Subname
@@ -522,22 +529,29 @@ function AddNameModal({
               <div className="text-sm text-red-500">{addressErrorMsg}</div>
             </div>
             <input
-              className="w-full px-4 py-2 mb-4 border rounded-md border-brownblack-50"
+              className="w-full px-4 py-2 mb-4 font-mono text-sm border rounded-md border-brownblack-50"
               value={addressInput}
               onChange={(e) => setAddressInput(e.target.value)}
             />
           </div>
-          <div className="flex items-center justify-around mt-6">
-            <Button
-              buttonText="Save"
-              onClick={() => {
-                if (modalType === "edit") {
-                  editName(nameInput, addressInput, nameId);
-                } else {
-                  addName(nameInput, addressInput);
-                }
-              }}
-            />
+          <div className="flex justify-between w-full">
+            <button className="flex items-end mb-2 ml-1 text-sm font-bold text-red-500 transition-colors duration-300 hover:text-red-600 hover:cursor-pointer">
+              Delete
+            </button>
+            <div className="flex items-center justify-around mt-6">
+              <button
+                className="flex bg-orange-500 items-center justify-center py-2 min-w-[100px] mx-auto text-sm font-bold rounded-lg disabled:cursor-not-allowed text-brownblack-700 md:block"
+                onClick={() => {
+                  if (modalType === "edit") {
+                    editName(nameInput, addressInput, nameId);
+                  } else {
+                    addName(nameInput, addressInput);
+                  }
+                }}
+              >
+                Save
+              </button>
+            </div>
           </div>
         </Dialog.Panel>
       </div>
