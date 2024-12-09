@@ -10,6 +10,7 @@ import {
 } from "viem/siwe";
 import { getOwner } from "@ensdomains/ensjs/public";
 import { addEnsContracts, ensSubgraphActions } from "@ensdomains/ensjs";
+import { getToken } from "next-auth/jwt";
 
 export const providerUrl =
   "https://eth-mainnet.g.alchemy.com/v2/" +
@@ -290,6 +291,25 @@ export async function checkApiKey(apiKey, domain) {
     return true;
   }
   return false;
+}
+
+// function to check if user is an admin of the domain
+export async function getAdminToken(req, domain) {
+  const token = await getToken({ req });
+  if (!token) {
+    return false;
+  }
+  const superAdminQuery = await sql`
+  SELECT * FROM super_admin WHERE address = ${token.sub}`;
+  const adminQuery = await sql`
+  SELECT * FROM admin
+  join domain on admin.domain_id = domain.id
+  WHERE admin.address = ${token.sub}
+  and domain.name = ${domain}`;
+  if (superAdminQuery.length === 0 && adminQuery.length === 0) {
+    return false;
+  }
+  return true;
 }
 
 function matchProtocol(text) {

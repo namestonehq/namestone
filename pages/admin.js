@@ -3,14 +3,21 @@ import Image from "next/image";
 import AuthContentContainer from "../components/Admin/AuthContentContainer";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import SubdomainsTable from "../components/Admin/SubdomainTable";
+import SubdomainTable from "../components/Admin/SubdomainTable";
 import { useSession } from "next-auth/react";
 import Button from "../components/Button";
-import { Dialog } from "@headlessui/react";
 import { ethers } from "ethers";
 import placeholderImage from "../public/images/placeholder-icon-image.png";
 import { Icon } from "@iconify/react";
-import { normalize } from "viem/ens";
+import AddNameModal from "../components/Admin/AddNameModal";
+
+const blankNameData = {
+  name: "",
+  address: "",
+  contenthash: "",
+  textRecords: [],
+  coinTypes: [],
+};
 
 export default function Admin() {
   const { data: session, status: authStatus } = useSession();
@@ -21,8 +28,6 @@ export default function Admin() {
   const [subdomains, setSubdomains] = useState([]);
 
   const [addNameModalOpen, setAddNameModalOpen] = useState(false);
-  const [nameInput, setNameInput] = useState("");
-  const [addressInput, setAddressInput] = useState("");
   const [nameErrorMsg, setNameErrorMsg] = useState("");
   const [addressErrorMsg, setAddressErrorMsg] = useState("");
   const [nameId, setNameId] = useState(null); // id of name to edit
@@ -35,6 +40,19 @@ export default function Admin() {
   //add or edit
   const [modalType, setModalType] = useState("add");
   const [activeTab, setActiveTab] = useState("Subnames");
+  const [currentNameData, setCurrentNameData] = useState(blankNameData);
+
+  //funtion to help set current name data
+  function setCurrentNameHelper(value, key1, key2 = null) {
+    if (key2) {
+      setCurrentNameData({
+        ...currentNameData,
+        [key1]: { ...currentNameData[key1], [key2]: value },
+      });
+    } else {
+      setCurrentNameData({ ...currentNameData, [key1]: value });
+    }
+  }
 
   // fetch to get allowed domains after connect
   useEffect(() => {
@@ -57,18 +75,19 @@ export default function Admin() {
   // fetch to populate table
   useEffect(() => {
     if (!selectedBrand) return;
+    // get names and replace data
     fetch(
       "/api/admin/list-subdomains?" +
         new URLSearchParams({ domain: selectedBrand?.domain })
-    ).then((res) =>
+    ).then((res) => {
       res.json().then((data) => {
         if (res.status === 200) {
           setSubdomains(data);
         } else {
           console.log(data);
         }
-      })
-    );
+      });
+    });
     fetch(
       "/api/admin/get-domain-admins?" +
         new URLSearchParams({ domain: selectedBrand?.domain })
@@ -99,122 +118,132 @@ export default function Admin() {
   function openAddNameModal() {
     setModalType("add");
     setAddNameModalOpen(true);
+    const tempBlankNameData = blankNameData;
+    tempBlankNameData.domain = selectedBrand.domain;
+    setCurrentNameData(blankNameData);
   }
 
-  function openEditNameModal(id, name, address) {
-    setNameId(id);
-    setNameInput(name);
-    setAddressInput(address);
-    setModalType("edit");
-    setAddNameModalOpen(true);
-  }
-
-  // function to add a name
-  function addName(name, address) {
-    if (!name) {
-      setNameErrorMsg("*Name cannot be blank");
-      return;
-    }
-    if (!address) {
-      setAddressErrorMsg("*Address cannot be blank");
-      return;
-    }
-    // check if address is valid ethereum address using ethers and convert to checksum
-    try {
-      address = ethers.utils.getAddress(address);
-    } catch (e) {
-      setAddressErrorMsg("*Invalid address");
-      return;
-    }
-    // check if name is valid
-    try {
-      name = normalize(name);
-    } catch (e) {
-      setNameErrorMsg("*Invalid name");
-      return;
-    }
-
-    fetch("/api/admin/add-subdomain", {
-      method: "POST",
-      body: JSON.stringify({
-        name: name,
-        address: address,
-        domain: selectedBrand.domain,
-      }),
-    }).then((res) => {
+  function openEditNameModal(index) {
+    // set currectNameData to what we know already
+    const tempNameData = blankNameData;
+    tempNameData.name = subdomains[index].name;
+    tempNameData.address = subdomains[index].address;
+    tempNameData.domain = selectedBrand.domain;
+    // fetch name
+    fetch(
+      "/api/public_v1/search-names?" +
+        new URLSearchParams({
+          domain: selectedBrand?.domain,
+          name: subdomains[index].name,
+        })
+    ).then((res) => {
       res.json().then((data) => {
         if (res.status === 200) {
-          setAddNameModalOpen(false);
-          setSubdomains([...subdomains, data]);
-          setNameErrorMsg("");
-          setAddressErrorMsg("");
-          setNameInput("");
-          setAddressInput("");
+          setCurrentNameData(data[0]);
         } else {
-          if (data.error.includes("claimed") || data.error.includes("ens")) {
-            setNameErrorMsg(data.error);
-          }
           console.log(data);
         }
       });
     });
+
+    setModalType("edit");
+    setAddNameModalOpen(true);
   }
-  // function to edit a name
-  function editName(name, address, id) {
-    if (!name) {
+
+  // function to add and edit a name
+  function setName(nameData) {
+    if (!nameData.name) {
       setNameErrorMsg("*Name cannot be blank");
       return;
     }
-    if (!address) {
+    if (!nameData.address) {
       setAddressErrorMsg("*Address cannot be blank");
       return;
     }
     // check if address is valid ethereum address using ethers and convert to checksum
+    let address;
     try {
-      address = ethers.utils.getAddress(address);
+      address = ethers.utils.getAddress(nameData.address);
     } catch (e) {
       setAddressErrorMsg("*Invalid address");
       return;
     }
-    // check if name is valid
-    try {
-      name = normalize(name);
-    } catch (e) {
-      setNameErrorMsg("*Invalid name");
-      return;
-    }
 
-    fetch("/api/admin/edit-subdomain", {
+    fetch("/api/public_v1/set-name", {
+      method: "POST",
+      body: JSON.stringify({
+        name: nameData.name,
+        address: address,
+        contenthash: nameData.contenthash,
+        domain: selectedBrand.domain,
+        text_records: nameData.text_records,
+        coin_types: nameData.coin_types,
+      }),
+    }).then((res) => {
+      res
+        .json()
+        .then((data) => {
+          if (res.status === 200) {
+            setAddNameModalOpen(false);
+            setNameErrorMsg("");
+            setAddressErrorMsg("");
+          } else {
+            if (data.error.includes("claimed") || data.error.includes("ens")) {
+              setNameErrorMsg(data.error);
+            }
+            console.log(data);
+          }
+        })
+        .finally(() => {
+          // get names and replace data
+          fetch(
+            "/api/admin/list-subdomains?" +
+              new URLSearchParams({ domain: selectedBrand?.domain })
+          ).then((res) => {
+            res.json().then((data) => {
+              if (res.status === 200) {
+                setSubdomains(data);
+              } else {
+                console.log(data);
+              }
+            });
+          });
+        });
+    });
+  }
+  // function to delete a name
+  function deleteName(name) {
+    fetch("/api/public_v1/delete-name", {
       method: "POST",
       body: JSON.stringify({
         name: name,
-        address: address,
         domain: selectedBrand.domain,
-        id: id,
       }),
     }).then((res) => {
-      res.json().then((data) => {
-        if (res.status === 200) {
-          setAddNameModalOpen(false);
-          // get index of old name
-          let index = subdomains.findIndex((sub) => sub.id === id);
-          // replace old name with data
-          let tempSubdomains = subdomains;
-          tempSubdomains[index] = data;
-          setSubdomains(tempSubdomains);
-          // clear inputs
-          setNameErrorMsg("");
-          setAddressErrorMsg("");
-          setNameInput("");
-          setAddressInput("");
-        } else {
-          if (data.error.includes("claimed") || data.error.includes("ens")) {
-            setNameErrorMsg(data.error);
+      res
+        .json()
+        .then((data) => {
+          if (res.status === 200) {
+            // get names and replace data
+            fetch(
+              "/api/admin/list-subdomains?" +
+                new URLSearchParams({ domain: selectedBrand?.domain })
+            ).then((res) => {
+              res.json().then((data) => {
+                if (res.status === 200) {
+                  setSubdomains(data);
+                } else {
+                  console.log(data);
+                }
+              });
+            });
+          } else {
+            console.log(data);
           }
-
-          console.log(data);
-        }
-      });
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     });
   }
 
@@ -273,8 +302,7 @@ export default function Admin() {
     if (!addNameModalOpen) {
       setNameErrorMsg("");
       setAddressErrorMsg("");
-      setNameInput("");
-      setAddressInput("");
+      setCurrentNameData(blankNameData);
     }
   }, [addNameModalOpen]);
   // if they haven't authenticated, they need to click connect
@@ -315,13 +343,10 @@ export default function Admin() {
         modalType={modalType}
         open={addNameModalOpen}
         setOpen={setAddNameModalOpen}
-        nameId={nameId}
-        addName={addName}
-        editName={editName}
-        nameInput={nameInput}
-        setNameInput={setNameInput}
-        addressInput={addressInput}
-        setAddressInput={setAddressInput}
+        currentNameData={currentNameData}
+        setCurrentNameHelper={setCurrentNameHelper}
+        deleteName={deleteName}
+        setName={setName}
         nameErrorMsg={nameErrorMsg}
         addressErrorMsg={addressErrorMsg}
       />
@@ -329,7 +354,7 @@ export default function Admin() {
       <div className="flex-grow flex-1 max-w-sm border-r-[1px] border-brownblack-20 ">
         <div className="ml-4 md:ml-16 mt-7">
           <div className="w-full mb-4 text-sm font-bold md:text-base text-brownblack-700">
-            Brands
+            Names
           </div>
           <div className="flex flex-col w-full ">
             {brandUrls.map((brandUrl) => {
@@ -416,9 +441,9 @@ export default function Admin() {
                   + Add Name
                 </button>
               </div>
-              <SubdomainsTable
+              <SubdomainTable
                 subdomains={subdomains}
-                setSubdomains={setSubdomains}
+                deleteName={deleteName}
                 openEditNameModal={openEditNameModal}
                 admin={true}
               />
@@ -472,362 +497,6 @@ export default function Admin() {
       {/*Right Bar*/}
       <div className="flex-1 bg-white"></div>
     </AuthContentContainer>
-  );
-}
-
-function AddNameModal({
-  modalType,
-  open,
-  setOpen,
-  nameId,
-  addName,
-  editName,
-  nameInput,
-  setNameInput,
-  addressInput,
-  setAddressInput,
-  nameErrorMsg,
-  addressErrorMsg,
-}) {
-  const [activeTab, setActiveTab] = useState("profile");
-  const [showSubname, setShowSubname] = useState(false);
-  const tabs = ["profile", "links", "addresses"];
-
-  const TAB_CONTENT = {
-    profile: (
-      <div className="flex flex-col mt-4">
-        {/* Avatar */}
-        <div className="flex flex-row justify-between">
-          <div className="mb-2 text-sm font-bold text-brownblack-700">
-            Avatar
-          </div>
-          <div className="text-sm text-red-500">{nameErrorMsg}</div>
-        </div>
-        <input
-          className="w-full px-4 py-2 mb-4 border rounded-md ring-1 ring-gray-300 border-brownblack-50 focus:ring-2 focus:ring-orange-400 focus:outline-none"
-          value={nameInput}
-          onChange={(e) => setNameInput(e.target.value)}
-          placeholder="https://"
-        />
-        {/* Description */}
-        <div className="flex flex-row justify-between">
-          <div className="mb-2 text-sm font-bold text-brownblack-700">
-            Description
-          </div>
-          <div className="text-sm text-red-500">{nameErrorMsg}</div>
-        </div>
-        <input
-          className="w-full px-4 py-2 mb-4 border rounded-md ring-1 ring-gray-300 border-brownblack-50 focus:ring-2 focus:ring-orange-400 focus:outline-none"
-          value={nameInput}
-          onChange={(e) => setNameInput(e.target.value)}
-          placeholder="Open source developer coding on ens"
-        />
-        {/* Location */}
-        <div className="flex flex-row justify-between">
-          <div className="mb-2 text-sm font-bold text-brownblack-700">
-            Location
-          </div>
-          <div className="text-sm text-red-500">{nameErrorMsg}</div>
-        </div>
-        <input
-          className="w-full px-4 py-2 mb-4 border rounded-md ring-1 ring-gray-300 border-brownblack-50 focus:ring-2 focus:ring-orange-400 focus:outline-none"
-          value={nameInput}
-          onChange={(e) => setNameInput(e.target.value)}
-          placeholder="New York City"
-        />
-      </div>
-    ),
-    links: (
-      <div className="flex flex-col gap-2 mt-4">
-        <div className="flex flex-row justify-between ">
-          <div className="mb-2 text-sm font-bold text-brownblack-700">
-            Links
-          </div>
-        </div>
-        {/* Website */}
-        <div className="relative">
-          <Image
-            src="/images/icon-link.png"
-            width={18}
-            height={18}
-            alt="x"
-            className="absolute top-3 left-3"
-          ></Image>
-          <input
-            className="w-full px-4 py-2 pl-10 mb-4 border rounded-md ring-1 ring-gray-300 border-brownblack-50 focus:ring-2 focus:ring-orange-400 focus:outline-none"
-            placeholder="https://"
-          />
-        </div>
-        {/* X */}
-        <div className="relative">
-          <Image
-            src="/images/logo-x-black.png"
-            width={18}
-            height={18}
-            alt="x"
-            className="absolute top-3 left-3"
-          ></Image>
-          <input
-            className="w-full px-4 py-2 pl-10 mb-4 border rounded-md ring-1 ring-gray-300 border-brownblack-50 focus:ring-2 focus:ring-orange-400 focus:outline-none"
-            placeholder="@namestonehq"
-          />
-        </div>
-        {/* Github */}
-        <div className="relative">
-          <Image
-            src="/images/logo-github-brown.svg"
-            width={18}
-            height={18}
-            alt="x"
-            className="absolute top-3 left-3"
-          ></Image>
-          <input
-            className="w-full px-4 py-2 pl-10 mb-4 border rounded-md ring-1 ring-gray-300 border-brownblack-50 focus:ring-2 focus:ring-orange-400 focus:outline-none"
-            placeholder="resolverworks"
-          />
-        </div>
-        {/* Discord */}
-        <div className="relative">
-          <Image
-            src="/images/logo-discord.png"
-            width={18}
-            height={18}
-            alt="x"
-            className="absolute top-3 left-3"
-          ></Image>
-          <input
-            className="w-full px-4 py-2 pl-10 mb-4 border rounded-md ring-1 ring-gray-300 border-brownblack-50 focus:ring-2 focus:ring-orange-400 focus:outline-none"
-            placeholder="slobo.eth"
-          />
-        </div>
-        {/* Telegram */}
-        <div className="relative">
-          <Image
-            src="/images/logo-telegram.png"
-            width={18}
-            height={18}
-            alt="x"
-            className="absolute top-3 left-3"
-          ></Image>
-          <input
-            className="w-full px-4 py-2 pl-10 mb-4 border rounded-md ring-1 ring-gray-300 border-brownblack-50 focus:ring-2 focus:ring-orange-400 focus:outline-none"
-            placeholder="superslobo"
-          />
-        </div>
-        {/* IPFS */}
-        <div className="relative">
-          <Image
-            src="/images/logo-ipfs.png"
-            width={18}
-            height={18}
-            alt="x"
-            className="absolute top-3 left-3"
-          ></Image>
-          <input
-            className="w-full px-4 py-2 pl-10 mb-4 border rounded-md ring-1 ring-gray-300 border-brownblack-50 focus:ring-2 focus:ring-orange-400 focus:outline-none"
-            placeholder="ipfs://bafyb...."
-          />
-        </div>
-        <button className="text-xs text-left text-orange-800">
-          + Text Record
-        </button>
-      </div>
-    ),
-    addresses: (
-      <div className="flex flex-col gap-2 mt-4">
-        <div className="text-sm font-bold text-brownblack-700">Bitcoin</div>
-        {/* Bitcoin */}
-        <div className="relative">
-          <Image
-            src="/images/logo-bitcoin.svg"
-            width={18}
-            height={18}
-            alt="x"
-            className="absolute top-3 left-3"
-          ></Image>
-          <input
-            className="w-full px-4 py-2 pl-10 mb-4 border rounded-md ring-1 ring-gray-300 border-brownblack-50 focus:ring-2 focus:ring-orange-400 focus:outline-none"
-            placeholder="bc1q...aw4n"
-          />
-        </div>
-        {/* Solana */}
-        <div className="text-sm font-bold text-brownblack-700">Solana</div>
-        <div className="relative">
-          <Image
-            src="/images/logo-solana.svg"
-            width={18}
-            height={18}
-            alt="x"
-            className="absolute top-3 left-3"
-          ></Image>
-          <input
-            className="w-full px-4 py-2 pl-10 mb-4 border rounded-md ring-1 ring-gray-300 border-brownblack-50 focus:ring-2 focus:ring-orange-400 focus:outline-none"
-            placeholder="Ge83...S2bh"
-          />
-        </div>
-        {/* Base */}
-        <div className="text-sm font-bold text-brownblack-700">Base</div>
-        <div className="relative">
-          <Image
-            src="/images/logo-base.svg"
-            width={18}
-            height={18}
-            alt="x"
-            className="absolute top-3 left-3"
-          ></Image>
-          <input
-            className="w-full px-4 py-2 pl-10 mb-4 border rounded-md ring-1 ring-gray-300 border-brownblack-50 focus:ring-2 focus:ring-orange-400 focus:outline-none"
-            placeholder="0x5346...D42CF"
-          />
-        </div>
-        {/* Optimism */}
-        <div className="text-sm font-bold text-brownblack-700">Optimism</div>
-        <div className="relative">
-          <Image
-            src="/images/logo-op.svg"
-            width={18}
-            height={18}
-            alt="x"
-            className="absolute top-3 left-3"
-          ></Image>
-          <input
-            className="w-full px-4 py-2 pl-10 mb-4 border rounded-md ring-1 ring-gray-300 border-brownblack-50 focus:ring-2 focus:ring-orange-400 focus:outline-none"
-            placeholder="0x5346...D42CF"
-          />
-        </div>
-        {/* Scroll */}
-        <div className="text-sm font-bold text-brownblack-700">Scroll</div>
-        <div className="relative">
-          <Image
-            src="/images/logo-scroll.svg"
-            width={18}
-            height={18}
-            alt="x"
-            className="absolute top-3 left-3"
-          ></Image>
-          <input
-            className="w-full px-4 py-2 pl-10 mb-4 border rounded-md ring-1 ring-gray-300 border-brownblack-50 focus:ring-2 focus:ring-orange-400 focus:outline-none"
-            placeholder="0x5346...D42CF"
-          />
-        </div>
-        {/* Optimism */}
-        <div className="text-sm font-bold text-brownblack-700">arbitrum</div>
-        <div className="relative">
-          <Image
-            src="/images/logo-arb.svg"
-            width={18}
-            height={18}
-            alt="x"
-            className="absolute top-3 left-3"
-          ></Image>
-          <input
-            className="w-full px-4 py-2 pl-10 mb-4 border rounded-md ring-1 ring-gray-300 border-brownblack-50 focus:ring-2 focus:ring-orange-400 focus:outline-none"
-            placeholder="0x5346...D42CF"
-          />
-        </div>
-        <button className="text-xs text-left text-orange-800">+ Address</button>
-      </div>
-    ),
-  };
-
-  const SUBNAME_CONTENT = (
-    <>
-      <Dialog.Title className="text-base font-bold text-brownblack-700">
-        {modalType === "add" ? "Add a subname" : "Edit Subname"}
-      </Dialog.Title>
-      <hr className="border-0 h-[0.5px] bg-brownblack-200/50 my-4"></hr>
-      <button
-        className="flex items-center gap-1 mt-2 ml-auto text-xs text-orange-800 hover:text-orange-600"
-        onClick={() => {}}
-      >
-        More Records <span className="text-sm">&gt;</span>
-      </button>
-      <div className="flex flex-col">
-        <div className="flex flex-row justify-between">
-          <div className="text-sm font-bold text-brownblack-700">Subname</div>
-          <div className="text-sm text-red-500">{nameErrorMsg}</div>
-        </div>
-        <input
-          className="w-full px-4 py-2 mb-4 border rounded-md border-brownblack-50"
-          value={nameInput}
-          onChange={(e) => setNameInput(e.target.value)}
-        />
-        <div className="flex flex-row justify-between">
-          <div className="text-sm font-bold text-brownblack-700">Address</div>
-          <div className="text-sm text-red-500">{addressErrorMsg}</div>
-        </div>
-        <input
-          className="w-full px-4 py-2 mb-4 font-mono text-sm border rounded-md border-brownblack-50"
-          value={addressInput}
-          onChange={(e) => setAddressInput(e.target.value)}
-        />
-      </div>
-      <div className="flex justify-between w-full">
-        <button className="flex items-end mb-2 ml-1 text-sm font-bold text-red-500 transition-colors duration-300 hover:text-red-600 hover:cursor-pointer">
-          Delete
-        </button>
-        <div className="flex items-center justify-around mt-6">
-          <button
-            className="flex bg-orange-500 items-center justify-center py-2 min-w-[100px] mx-auto text-sm font-bold rounded-lg disabled:cursor-not-allowed text-brownblack-700 md:block"
-            onClick={() => {
-              if (modalType === "edit") {
-                editName(nameInput, addressInput, nameId);
-              } else {
-                addName(nameInput, addressInput);
-              }
-            }}
-          >
-            Save
-          </button>
-        </div>
-      </div>
-    </>
-  );
-
-  return (
-    <Dialog
-      className="relative z-50"
-      open={open}
-      onClose={() => setOpen(false)}
-    >
-      <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
-      <div className="fixed inset-0 flex items-center justify-center p-4">
-        <Dialog.Panel className="w-full max-w-[496px] px-6 py-4 bg-white rounded-lg">
-          {!showSubname ? (
-            <>
-              <button
-                className="flex items-center gap-1 mt-2 mb-8 mr-auto text-xs text-orange-800 transition-colors duration-300 hover:text-orange-400"
-                onClick={() => setShowSubname(true)}
-              >
-                <span className="text-sm">&lt;</span> name.name.eth
-              </button>
-
-              <div className="flex gap-6 mt-2 text-neutral-400">
-                {tabs.map((tab) => (
-                  <button
-                    key={tab}
-                    className={`relative border-b-2 transition-colors duration-300 pb-2
-                      ${
-                        activeTab === tab
-                          ? "text-orange-500 border-orange-500"
-                          : "border-transparent hover:border-orange-400 hover:text-orange-400"
-                      }`}
-                    onClick={() => setActiveTab(tab)}
-                  >
-                    {tab.charAt(0).toUpperCase() + tab.slice(1)}
-                  </button>
-                ))}
-              </div>
-              <hr className="-mt-[1px] bg-neutral-200" />
-
-              {TAB_CONTENT[activeTab]}
-            </>
-          ) : (
-            SUBNAME_CONTENT
-          )}
-        </Dialog.Panel>
-      </div>
-    </Dialog>
   );
 }
 
