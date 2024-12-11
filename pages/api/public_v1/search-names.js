@@ -27,7 +27,7 @@ async function handler(req, res) {
     domain
   );
   const adminToken = await getAdminToken(req, domain);
-  if ((!allowedApi, !adminToken)) {
+  if (!allowedApi && !adminToken) {
     return res.status(401).json({
       error: "key error - You are not authorized to use this endpoint",
     });
