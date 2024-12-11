@@ -309,7 +309,7 @@ export async function getAdminToken(req, domain) {
   if (superAdminQuery.length === 0 && adminQuery.length === 0) {
     return false;
   }
-  return true;
+  return token;
 }
 
 function matchProtocol(text) {
