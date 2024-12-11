@@ -4,6 +4,8 @@ import { normalize } from "viem/ens";
 import { getAdminToken } from "../../../utils/ServerUtils";
 
 export default async function handler(req, res) {
+  const body = JSON.parse(req.body);
+
   const adminToken = await getAdminToken(req, body.domain);
   if (!adminToken) {
     return res
@@ -11,7 +13,6 @@ export default async function handler(req, res) {
       .json({ error: "You are not authorized to use this endpoint" });
   }
 
-  const body = JSON.parse(req.body);
   if (!body.name) {
     return res.status(400).json({ error: "Name is required" });
   }
