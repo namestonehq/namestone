@@ -13,7 +13,7 @@ export default function AddNameModal({
   nameErrorMsg,
   addressErrorMsg,
 }) {
-  const [activeTab, setActiveTab] = useState("text"); // subname, text, address
+  const [activeTab, setActiveTab] = useState("subname"); // subname, text, address
   const tabs = ["text", "addresses"];
 
   const TAB_CONTENT = {
