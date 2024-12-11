@@ -1,12 +1,14 @@
 import { getToken } from "next-auth/jwt";
 import sql from "../../../lib/db";
 import { normalize } from "viem/ens";
+import { getAdminToken } from "../../../utils/ServerUtils";
 
 export default async function handler(req, res) {
-  const token = await getToken({ req });
-
-  if (!token) {
-    return res.status(401).json({ error: "Unauthorized. Please refresh." });
+  const adminToken = await getAdminToken(req, body.domain);
+  if (!adminToken) {
+    return res
+      .status(401)
+      .json({ error: "You are not authorized to use this endpoint" });
   }
 
   const body = JSON.parse(req.body);
