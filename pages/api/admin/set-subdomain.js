@@ -1,4 +1,3 @@
-import { getToken } from "next-auth/jwt";
 import sql from "../../../lib/db";
 import { normalize } from "viem/ens";
 import { getAdminToken } from "../../../utils/ServerUtils";
@@ -114,7 +113,7 @@ export default async function handler(req, res) {
   });
   await sql`
   insert into user_engagement (address, name, details)
-  values (${token.sub},'admin_set_name', ${jsonPayload})`;
+  values (${adminToken.sub},'admin_set_name', ${jsonPayload})`;
 
   return res.status(200).json({ success: true });
 }
