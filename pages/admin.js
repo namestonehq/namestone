@@ -10,6 +10,8 @@ import { ethers } from "ethers";
 import placeholderImage from "../public/images/placeholder-icon-image.png";
 import { Icon } from "@iconify/react";
 import AddNameModal from "../components/Admin/AddNameModal";
+import toast from "react-hot-toast";
+import _ from "lodash";
 
 const blankNameData = {
   name: "",
@@ -38,9 +40,9 @@ export default function Admin() {
   const [apiKey, setApiKey] = useState("loading");
   const [adminErrorMsg, setAdminErrorMsg] = useState("");
   //add or edit
-  const [modalType, setModalType] = useState("add");
   const [activeTab, setActiveTab] = useState("Subnames");
   const [currentNameData, setCurrentNameData] = useState(blankNameData);
+  const [saveNamePending, setSaveNamePending] = useState(false);
 
   //funtion to help set current name data
   function setCurrentNameHelper(value, key1, key2 = null) {
@@ -116,19 +118,24 @@ export default function Admin() {
   }, [selectedBrand]);
 
   function openAddNameModal() {
-    setModalType("add");
     setAddNameModalOpen(true);
-    const tempBlankNameData = blankNameData;
+    let tempBlankNameData = _.cloneDeep(blankNameData);
     tempBlankNameData.domain = selectedBrand.domain;
-    setCurrentNameData(blankNameData);
+    tempBlankNameData.id = 0;
+    console.log(tempBlankNameData);
+    setCurrentNameData(tempBlankNameData);
   }
 
   function openEditNameModal(index) {
     // set currectNameData to what we know already
-    const tempNameData = blankNameData;
+    let tempNameData = _.cloneDeep(blankNameData);
     tempNameData.name = subdomains[index].name;
     tempNameData.address = subdomains[index].address;
+    tempNameData.id = subdomains[index].id;
     tempNameData.domain = selectedBrand.domain;
+    setCurrentNameData(tempNameData);
+    // prevent saving when text records havent loaded
+    setSaveNamePending(true);
     // fetch name
     fetch(
       "/api/public_v1/search-names?" +
@@ -139,14 +146,21 @@ export default function Admin() {
     ).then((res) => {
       res.json().then((data) => {
         if (res.status === 200) {
-          setCurrentNameData(data[0]);
+          // Get the latest currentNameData state to preserve any user changes
+          setCurrentNameData((prevNameData) => ({
+            ...data[0],
+            // Preserve the latest user-editable fields from the current state
+            name: prevNameData.name,
+            address: prevNameData.address,
+            id: subdomains[index].id,
+          }));
         } else {
           console.log(data);
         }
+        setSaveNamePending(false);
       });
     });
 
-    setModalType("edit");
     setAddNameModalOpen(true);
   }
 
@@ -168,10 +182,12 @@ export default function Admin() {
       setAddressErrorMsg("*Invalid address");
       return;
     }
+    setSaveNamePending(true);
 
-    fetch("/api/public_v1/set-name", {
+    fetch("/api/admin/set-subdomain", {
       method: "POST",
       body: JSON.stringify({
+        id: nameData.id,
         name: nameData.name,
         address: address,
         contenthash: nameData.contenthash,
@@ -187,14 +203,18 @@ export default function Admin() {
             setAddNameModalOpen(false);
             setNameErrorMsg("");
             setAddressErrorMsg("");
+            toast.success("Subdomain set successfully");
           } else {
-            if (data.error.includes("claimed") || data.error.includes("ens")) {
-              setNameErrorMsg(data.error);
-            }
+            setNameErrorMsg(data.error);
             console.log(data);
           }
         })
+        .catch((err) => {
+          console.log(err);
+          console.res;
+        })
         .finally(() => {
+          setSaveNamePending(false);
           // get names and replace data
           fetch(
             "/api/admin/list-subdomains?" +
@@ -232,6 +252,7 @@ export default function Admin() {
               res.json().then((data) => {
                 if (res.status === 200) {
                   setSubdomains(data);
+                  toast.success("Subdomain deleted successfully");
                 } else {
                   console.log(data);
                 }
@@ -340,11 +361,11 @@ export default function Admin() {
   return (
     <AuthContentContainer>
       <AddNameModal
-        modalType={modalType}
         open={addNameModalOpen}
         setOpen={setAddNameModalOpen}
         currentNameData={currentNameData}
         setCurrentNameHelper={setCurrentNameHelper}
+        savePending={saveNamePending}
         deleteName={deleteName}
         setName={setName}
         nameErrorMsg={nameErrorMsg}

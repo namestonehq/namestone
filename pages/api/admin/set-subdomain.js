@@ -16,11 +16,12 @@ export default async function handler(req, res) {
   if (!body.address) {
     return res.status(400).json({ error: "Address is required" });
   }
+  if (typeof body.id !== "number") {
+    return res.status(400).json({ error: "Id is required" });
+  }
   if (!body.domain) {
     return res.status(400).json({ error: "Domain is required" });
   }
-
-  console.log("body", body);
   let domain;
   let name;
   try {
@@ -32,20 +33,21 @@ export default async function handler(req, res) {
   }
 
   let subdomainQuery;
-  let subdomainId;
-  // Check if subdomain exists
+  let subdomainId = body.id;
+  // Check if subdomain exists already
   subdomainQuery = await sql`
   select subdomain.id, subdomain.address
   from subdomain
   where subdomain.name = ${name} and subdomain.domain_id in
   (select id from domain where name = ${domain} limit 1)`;
-
-  if (subdomainQuery.length > 0) {
-    // if it exists we warn user
+  // If subdomain exists and is different than current, warn user
+  if (subdomainQuery.length == 1 && subdomainQuery[0].id != subdomainId) {
     return res.status(400).json({
       error: `Name claimed by another address`,
     });
-  } else {
+  }
+  // update subdomain
+  if (subdomainId == 0) {
     // Insert subdomain
     const domainQuery = await sql`
     select id from domain where name = ${domain} limit 1`;
@@ -61,7 +63,46 @@ export default async function handler(req, res) {
     )
     returning id;`;
     subdomainId = subdomainQuery[0].id;
+  } else {
+    await sql`
+  update subdomain
+  set name = ${name},
+  address = ${body.address}
+  where id = ${subdomainId}`;
   }
+
+  // Delete existing text records
+  await sql`delete from subdomain_text_record
+  where subdomain_id = ${subdomainId}`;
+
+  // Insert text records
+  if (body.text_records) {
+    for (const record in body.text_records) {
+      await sql`
+      insert into subdomain_text_record (
+        subdomain_id, key, value
+      ) values (
+        ${subdomainId}, ${record}, ${body.text_records[record]}
+      )`;
+    }
+  }
+
+  // Delete existing coin types
+  await sql`delete from subdomain_coin_type
+  where subdomain_id = ${subdomainId}`;
+
+  // Insert text coin
+  if (body.coin_types) {
+    for (const coin_type in body.coin_types) {
+      await sql`
+      insert into subdomain_coin_type (
+        subdomain_id, coin_type, address
+      ) values (
+        ${subdomainId}, ${coin_type}, ${body.coin_types[coin_type]}
+      )`;
+    }
+  }
+
   // log user engagement
   const jsonPayload = JSON.stringify({
     name: name,
@@ -72,13 +113,5 @@ export default async function handler(req, res) {
   insert into user_engagement (address, name, details)
   values (${token.sub},'admin_set_name', ${jsonPayload})`;
 
-  // get subdomain info
-  subdomainQuery = await sql`
-  select subdomain.id, subdomain.name, subdomain.address, domain.name as domain
-  from subdomain join domain
-  on subdomain.domain_id = domain.id
-  where subdomain.id = ${subdomainId}
-  limit 1`;
-
-  return res.status(200).json(subdomainQuery[0]);
+  return res.status(200).json({ success: true });
 }

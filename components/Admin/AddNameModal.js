@@ -3,13 +3,13 @@ import Image from "next/image";
 import { useState } from "react";
 
 export default function AddNameModal({
-  modalType,
   open,
   setOpen,
   currentNameData,
   setCurrentNameHelper,
   setName,
   deleteName,
+  savePending,
   nameErrorMsg,
   addressErrorMsg,
 }) {
@@ -331,7 +331,7 @@ export default function AddNameModal({
   const SUBNAME_CONTENT = (
     <>
       <Dialog.Title className="text-base font-bold text-brownblack-700">
-        {modalType === "add" ? "Add a subname" : "Edit Subname"}
+        {currentNameData === 0 ? "Add a subname" : "Edit Subname"}
       </Dialog.Title>
       <hr className="border-0 h-[0.5px] bg-brownblack-200/50 my-4"></hr>
       <button
@@ -410,9 +410,7 @@ export default function AddNameModal({
           <ButtonRow
             currentNameData={currentNameData}
             setName={setName}
-            setOpen={setOpen}
-            deleteName={deleteName}
-            modalType={modalType}
+            savePending={savePending}
           />
         </Dialog.Panel>
       </div>
@@ -420,36 +418,20 @@ export default function AddNameModal({
   );
 }
 
-function ButtonRow({
-  currentNameData,
-  setOpen,
-  setName,
-  deleteName,
-  modalType,
-}) {
+function ButtonRow({ currentNameData, setName, savePending }) {
   return (
     <div className="flex flex-row-reverse justify-between w-full">
       <button
-        className="flex bg-orange-500 items-center justify-center py-2 min-w-[100px] text-sm font-bold rounded-lg disabled:cursor-not-allowed text-brownblack-700 md:block"
+        className={`flex  items-center justify-center py-2 min-w-[100px] text-sm font-bold rounded-lg disabled:cursor-not-allowed text-brownblack-700 md:block ${
+          savePending ? "bg-orange-300" : "bg-orange-500"
+        }`}
         onClick={() => {
-          console.log(currentNameData);
           setName(currentNameData);
-          setOpen(false);
         }}
+        disabled={savePending}
       >
-        Save
+        {savePending ? "..." : "Save"}
       </button>
-      {/* {modalType === "edit" && (
-        <button
-          onClick={() => {
-            deleteName(currentNameData.name);
-            setOpen(false);
-          }}
-          className="flex items-end mb-2 ml-1 text-sm font-bold text-red-500 transition-colors duration-300 hover:text-red-600 hover:cursor-pointer"
-        >
-          Delete
-        </button>
-      )} */}
     </div>
   );
 }

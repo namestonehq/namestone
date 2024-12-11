@@ -1,9 +1,5 @@
 import sql from "../../../lib/db";
-import {
-  checkApiKey,
-  getAdminToken,
-  encodeContenthash,
-} from "../../../utils/ServerUtils";
+import { checkApiKey, encodeContenthash } from "../../../utils/ServerUtils";
 import Cors from "micro-cors";
 import { normalize } from "viem/ens";
 
@@ -31,13 +27,12 @@ async function handler(req, res) {
     return res.status(400).json({ error: "Missing name" });
   }
 
-  // Check Admin token and API key
-  const adminToken = await getAdminToken(req, body.domain);
+  // Check  API key
   const allowedApi = await checkApiKey(
     headers.authorization || req.query.api_key,
     body.domain
   );
-  if (!allowedApi && !adminToken) {
+  if (!allowedApi) {
     return res
       .status(401)
       .json({ error: "You are not authorized to use this endpoint" });

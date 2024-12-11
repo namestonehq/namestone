@@ -143,7 +143,6 @@ export default function TryNamestone() {
   async function updateResolver() {
     if (fullyConnected) {
       if (!walletClient) {
-        toast.error("Wallet not connected");
         return;
       }
       if (selectedDomain?.resolver !== HYBRID_RESOLVER) {
