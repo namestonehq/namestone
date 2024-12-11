@@ -1,5 +1,5 @@
 import sql from "../../../lib/db";
-import { checkApiKey } from "../../../utils/ServerUtils";
+import { checkApiKey, getAdminToken } from "../../../utils/ServerUtils";
 import Cors from "micro-cors";
 
 const cors = Cors({
@@ -26,7 +26,8 @@ async function handler(req, res) {
     headers.authorization || req.query.api_key,
     domain
   );
-  if (!allowedApi) {
+  const adminToken = await getAdminToken(req, domain);
+  if (!allowedApi && !adminToken) {
     return res.status(401).json({
       error: "key error - You are not authorized to use this endpoint",
     });

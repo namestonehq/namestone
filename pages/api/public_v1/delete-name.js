@@ -1,5 +1,5 @@
 import sql from "../../../lib/db";
-import { checkApiKey } from "../../../utils/ServerUtils";
+import { checkApiKey, getAdminToken } from "../../../utils/ServerUtils";
 import Cors from "micro-cors";
 import { normalize } from "viem/ens";
 
@@ -12,7 +12,10 @@ async function handler(req, res) {
   const { headers } = req;
 
   // Check required parameters
-  const body = req.body;
+  let body = req.body;
+  if (typeof body === "string") {
+    body = JSON.parse(body);
+  }
   if (!body.domain) {
     return res.status(400).json({ error: "Missing domain" });
   }
@@ -21,11 +24,12 @@ async function handler(req, res) {
   }
 
   // Check API key
+  const adminToken = await getAdminToken(req, body.domain);
   const allowedApi = await checkApiKey(
     headers.authorization || req.query.api_key,
     body.domain
   );
-  if (!allowedApi) {
+  if (!allowedApi && !adminToken) {
     return res
       .status(401)
       .json({ error: "You are not authorized to use this endpoint" });
