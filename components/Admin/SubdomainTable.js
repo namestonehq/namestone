@@ -86,12 +86,21 @@ export default function SubdomainTable({
             {subdomains.map((subdomain, index) => (
               <tr key={index}>
                 <td className="px-6 py-4">
-                  {subdomain.name}.{subdomain.domain}
+                  <Link
+                    href={`https://app.ens.domains/${subdomain.name}.${subdomain.domain}`}
+                    className="underline "
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    {subdomain.name}.{subdomain.domain}
+                  </Link>
                 </td>
                 <td className="px-6 py-4">
                   <Link
                     href={`https://etherscan.io/address/${subdomain.address}`}
                     className="underline "
+                    target="_blank"
+                    rel="noreferrer"
                   >
                     {shortenAddress(subdomain.address)}
                   </Link>

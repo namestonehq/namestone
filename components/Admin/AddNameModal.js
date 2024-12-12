@@ -2,6 +2,49 @@ import { Dialog } from "@headlessui/react";
 import Image from "next/image";
 import { useState } from "react";
 
+function convertEVMChainIdToCoinType(chainId) {
+  return (0x80000000 | chainId) >>> 0;
+}
+
+const chains = [
+  {
+    name: "Bitcoin",
+    chain_id: 0,
+    logo: "/images/logo-bitcoin.svg",
+    placeholder: "bc1q...aw4n",
+  },
+  {
+    name: "Solana",
+    chain_id: 501,
+    logo: "/images/logo-solana.svg",
+    placeholder: "Ge83...S2bh",
+  },
+  {
+    name: "Base",
+    chain_id: 8453,
+    logo: "/images/logo-base.svg",
+    placeholder: "0x5346...D42CF",
+  },
+  {
+    name: "Optimism",
+    chain_id: 10,
+    logo: "/images/logo-op.svg",
+    placeholder: "0x5346...D42CF",
+  },
+  {
+    name: "Scroll",
+    chain_id: 534352,
+    logo: "/images/logo-scroll.svg",
+    placeholder: "0x5346...D42CF",
+  },
+  {
+    name: "Arbitrum",
+    chain_id: 42161,
+    logo: "/images/logo-arb.svg",
+    placeholder: "0x5346...D42CF",
+  },
+];
+
 export default function AddNameModal({
   open,
   setOpen,
@@ -209,120 +252,38 @@ export default function AddNameModal({
     ),
     addresses: (
       <div className="flex flex-col gap-2 mt-4 h-[66vh] overflow-y-scroll">
-        <div className="text-sm font-bold text-brownblack-700">Bitcoin</div>
-        {/* Bitcoin */}
-        <div className="relative">
-          <Image
-            src="/images/logo-bitcoin.svg"
-            width={18}
-            height={18}
-            alt="x"
-            className="absolute top-3 left-3"
-          ></Image>
-          <input
-            className="w-full px-4 py-2 pl-10 mb-4 border rounded-md ring-1 ring-gray-300 border-brownblack-50 focus:ring-2 focus:ring-orange-400 focus:outline-none"
-            placeholder="bc1q...aw4n"
-            value={currentNameData.coin_types?.["0"] || ""}
-            onChange={(e) =>
-              setCurrentNameHelper(e.target.value, "coin_types", "0")
-            }
-          />
-        </div>
-        {/* Solana */}
-        <div className="text-sm font-bold text-brownblack-700">Solana</div>
-        <div className="relative">
-          <Image
-            src="/images/logo-solana.svg"
-            width={18}
-            height={18}
-            alt="x"
-            className="absolute top-3 left-3"
-          ></Image>
-          <input
-            className="w-full px-4 py-2 pl-10 mb-4 border rounded-md ring-1 ring-gray-300 border-brownblack-50 focus:ring-2 focus:ring-orange-400 focus:outline-none"
-            placeholder="Ge83...S2bh"
-            value={currentNameData.coin_types?.["501"] || ""}
-            onChange={(e) =>
-              setCurrentNameHelper(e.target.value, "coin_types", "501")
-            }
-          />
-        </div>
-        {/* Base */}
-        <div className="text-sm font-bold text-brownblack-700">Base</div>
-        <div className="relative">
-          <Image
-            src="/images/logo-base.svg"
-            width={18}
-            height={18}
-            alt="x"
-            className="absolute top-3 left-3"
-          ></Image>
-          <input
-            className="w-full px-4 py-2 pl-10 mb-4 border rounded-md ring-1 ring-gray-300 border-brownblack-50 focus:ring-2 focus:ring-orange-400 focus:outline-none"
-            placeholder="0x5346...D42CF"
-            value={currentNameData.coin_types?.["8453"] || ""}
-            onChange={(e) =>
-              setCurrentNameHelper(e.target.value, "coin_types", "8453")
-            }
-          />
-        </div>
-        {/* Optimism */}
-        <div className="text-sm font-bold text-brownblack-700">Optimism</div>
-        <div className="relative">
-          <Image
-            src="/images/logo-op.svg"
-            width={18}
-            height={18}
-            alt="x"
-            className="absolute top-3 left-3"
-          ></Image>
-          <input
-            className="w-full px-4 py-2 pl-10 mb-4 border rounded-md ring-1 ring-gray-300 border-brownblack-50 focus:ring-2 focus:ring-orange-400 focus:outline-none"
-            placeholder="0x5346...D42CF"
-            value={currentNameData.coin_types?.["614"] || ""}
-            onChange={(e) =>
-              setCurrentNameHelper(e.target.value, "coin_types", "614")
-            }
-          />
-        </div>
-        {/* Scroll */}
-        <div className="text-sm font-bold text-brownblack-700">Scroll</div>
-        <div className="relative">
-          <Image
-            src="/images/logo-scroll.svg"
-            width={18}
-            height={18}
-            alt="x"
-            className="absolute top-3 left-3"
-          ></Image>
-          <input
-            className="w-full px-4 py-2 pl-10 mb-4 border rounded-md ring-1 ring-gray-300 border-brownblack-50 focus:ring-2 focus:ring-orange-400 focus:outline-none"
-            placeholder="0x5346...D42CF"
-            value={currentNameData.coin_types?.["534352"] || ""}
-            onChange={(e) =>
-              setCurrentNameHelper(e.target.value, "coin_types", "534352")
-            }
-          />
-        </div>
-        {/* Arbitrum */}
-        <div className="text-sm font-bold text-brownblack-700">Arbitrum</div>
-        <div className="relative">
-          <Image
-            src="/images/logo-arb.svg"
-            width={18}
-            height={18}
-            alt="x"
-            className="absolute top-3 left-3"
-          ></Image>
-          <input
-            className="w-full px-4 py-2 pl-10 mb-4 border rounded-md ring-1 ring-gray-300 border-brownblack-50 focus:ring-2 focus:ring-orange-400 focus:outline-none"
-            placeholder="0x5346...D42CF"
-            value={currentNameData.coin_types?.["42161"] || ""}
-            onChange={(e) =>
-              setCurrentNameHelper(e.target.value, "coin_types", "42161")
-            }
-          />
-        </div>
+        {chains.map((chain) => (
+          <div key={chain.chain_id}>
+            <div className="text-sm font-bold text-brownblack-700">
+              {chain.name}
+            </div>
+            <div className="relative">
+              <Image
+                src={chain.logo}
+                width={18}
+                height={18}
+                alt="x"
+                className="absolute top-3 left-3"
+              ></Image>
+              <input
+                className="w-full px-4 py-2 pl-10 mb-4 border rounded-md ring-1 ring-gray-300 border-brownblack-50 focus:ring-2 focus:ring-orange-400 focus:outline-none"
+                placeholder={chain.placeholder}
+                value={
+                  currentNameData.coin_types?.[
+                    convertEVMChainIdToCoinType(chain.chain_id)
+                  ] || ""
+                }
+                onChange={(e) =>
+                  setCurrentNameHelper(
+                    e.target.value,
+                    "coin_types",
+                    convertEVMChainIdToCoinType(chain.chain_id)
+                  )
+                }
+              />
+            </div>
+          </div>
+        ))}
         {/* <button className="text-xs text-left text-orange-800">+ Address</button> */}
       </div>
     ),
