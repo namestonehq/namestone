@@ -2,44 +2,40 @@ import { Dialog } from "@headlessui/react";
 import Image from "next/image";
 import { useState } from "react";
 
-function convertEVMChainIdToCoinType(chainId) {
-  return (0x80000000 | chainId) >>> 0;
-}
-
 const chains = [
   {
     name: "Bitcoin",
-    chain_id: 0,
+    coin_type: 0,
     logo: "/images/logo-bitcoin.svg",
     placeholder: "bc1q...aw4n",
   },
   {
     name: "Solana",
-    chain_id: 501,
+    coin_type: 501,
     logo: "/images/logo-solana.svg",
     placeholder: "Ge83...S2bh",
   },
   {
     name: "Base",
-    chain_id: 8453,
+    coin_type: 2147492101,
     logo: "/images/logo-base.svg",
     placeholder: "0x5346...D42CF",
   },
   {
     name: "Optimism",
-    chain_id: 10,
+    coin_type: 2147483658,
     logo: "/images/logo-op.svg",
     placeholder: "0x5346...D42CF",
   },
   {
     name: "Scroll",
-    chain_id: 534352,
+    coin_type: 2148018000,
     logo: "/images/logo-scroll.svg",
     placeholder: "0x5346...D42CF",
   },
   {
     name: "Arbitrum",
-    chain_id: 42161,
+    coin_type: 2147525809,
     logo: "/images/logo-arb.svg",
     placeholder: "0x5346...D42CF",
   },
@@ -253,7 +249,7 @@ export default function AddNameModal({
     addresses: (
       <div className="flex flex-col gap-2 mt-4 h-[66vh] overflow-y-scroll">
         {chains.map((chain) => (
-          <div key={chain.chain_id}>
+          <div key={chain.coin_type}>
             <div className="text-sm font-bold text-brownblack-700">
               {chain.name}
             </div>
@@ -268,16 +264,12 @@ export default function AddNameModal({
               <input
                 className="w-full px-4 py-2 pl-10 mb-4 border rounded-md ring-1 ring-gray-300 border-brownblack-50 focus:ring-2 focus:ring-orange-400 focus:outline-none"
                 placeholder={chain.placeholder}
-                value={
-                  currentNameData.coin_types?.[
-                    convertEVMChainIdToCoinType(chain.chain_id)
-                  ] || ""
-                }
+                value={currentNameData.coin_types?.[chain.coin_type] || ""}
                 onChange={(e) =>
                   setCurrentNameHelper(
                     e.target.value,
                     "coin_types",
-                    convertEVMChainIdToCoinType(chain.chain_id)
+                    chain.coin_type
                   )
                 }
               />

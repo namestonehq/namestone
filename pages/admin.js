@@ -45,8 +45,8 @@ export default function Admin() {
   const [saveNamePending, setSaveNamePending] = useState(false);
 
   //funtion to help set current name data
-  function setCurrentNameHelper(value, key1, key2 = null) {
-    if (key2) {
+  function setCurrentNameHelper(value, key1, key2 = undefined) {
+    if (key2 !== undefined) {
       setCurrentNameData({
         ...currentNameData,
         [key1]: { ...currentNameData[key1], [key2]: value },
