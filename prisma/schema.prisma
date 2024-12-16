@@ -14,6 +14,7 @@ model user_engagement {
 model domain {
   id               Int                  @id @default(autoincrement())
   created_at       DateTime             @default(now())
+  network          String               @default("mainnet")
   address          String?
   name             String?
   contract         String?
