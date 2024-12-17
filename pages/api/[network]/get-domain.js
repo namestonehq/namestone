@@ -1,5 +1,6 @@
 import sql from "../../../lib/db";
 import Cors from "micro-cors";
+import { getNetwork } from "../../../utils/ServerUtils";
 
 const cors = Cors({
   allowMethods: ["GET", "HEAD", "POST", "OPTIONS"],
@@ -7,6 +8,11 @@ const cors = Cors({
 });
 
 async function checkApiKey(apiKey, domain) {
+  const network = getNetwork(req);
+  if (!network) {
+    return res.status(400).json({ error: "Invalid network" });
+  }
+
   console.log("Get domain", apiKey, domain);
   if (!apiKey) {
     return false;
@@ -22,6 +28,7 @@ async function checkApiKey(apiKey, domain) {
     join domain 
     on api_key.domain_id = domain.id
     where domain.name = ${domain}
+    and domain.network = ${network}
     and api_key.key = ${apiKey}`;
   }
   console.log(apiQuery);
@@ -49,7 +56,7 @@ async function handler(req, res) {
   }
 
   const domainQuery = await sql`
-    select id, address, name, contenthash_raw from domain where name = ${domain} limit 1`;
+    select id, address, name, contenthash_raw from domain where name = ${domain} and network = ${network} limit 1`;
   if (domainQuery.length === 0) {
     return res.status(400).json({ error: "Domain does not exist" });
   }

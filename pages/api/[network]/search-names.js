@@ -1,5 +1,9 @@
 import sql from "../../../lib/db";
-import { checkApiKey, getAdminToken } from "../../../utils/ServerUtils";
+import {
+  checkApiKey,
+  getAdminToken,
+  getNetwork,
+} from "../../../utils/ServerUtils";
 import Cors from "micro-cors";
 
 const cors = Cors({
@@ -8,6 +12,10 @@ const cors = Cors({
 });
 
 async function handler(req, res) {
+  const network = getNetwork(req);
+  if (!network) {
+    return res.status(400).json({ error: "Invalid network" });
+  }
   const { headers } = req;
 
   // Check required parameters
@@ -45,7 +53,7 @@ async function handler(req, res) {
   }
 
   const domainQuery = await sql`
-  select id from domain where name = ${domain} limit 1`;
+  select id from domain where name = ${domain} and network=${network} limit 1`;
 
   if (domainQuery.length === 0) {
     return res.status(400).json({ error: "Domain does not exist" });

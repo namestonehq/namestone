@@ -1,5 +1,9 @@
 import sql from "../../../lib/db";
-import { checkApiKey, encodeContenthash } from "../../../utils/ServerUtils";
+import {
+  checkApiKey,
+  encodeContenthash,
+  getNetwork,
+} from "../../../utils/ServerUtils";
 import Cors from "micro-cors";
 import { normalize } from "viem/ens";
 
@@ -10,13 +14,13 @@ const cors = Cors({
 
 async function handler(req, res) {
   const { headers } = req;
+  const network = getNetwork(req);
+  if (network !== "mainnet") {
+    return res.status(400).json({ error: "Invalid network" });
+  }
 
   // Check required parameters
-  let body = req.body;
-  console.log(body);
-  if (typeof body === "string") {
-    body = JSON.parse(body);
-  }
+  const body = req.body;
   if (!body.domain) {
     return res.status(400).json({ error: "Missing domain" });
   }
@@ -27,17 +31,6 @@ async function handler(req, res) {
     return res.status(400).json({ error: "Missing name" });
   }
 
-  // Check  API key
-  const allowedApi = await checkApiKey(
-    headers.authorization || req.query.api_key,
-    body.domain
-  );
-  if (!allowedApi) {
-    return res
-      .status(401)
-      .json({ error: "You are not authorized to use this endpoint" });
-  }
-
   let domain;
   let name;
   try {
@@ -46,6 +39,18 @@ async function handler(req, res) {
   } catch (e) {
     return res.status(400).json({ error: "Invalid ens name" });
   }
+
+  // Check API key
+  const allowedApi = await checkApiKey(
+    headers.authorization || req.query.api_key,
+    domain
+  );
+  if (!allowedApi) {
+    return res
+      .status(401)
+      .json({ error: "You are not authorized to use this endpoint" });
+  }
+
   let subdomainId;
   // Check if subdomain exists
   const subdomainQuery = await sql`
@@ -54,39 +59,33 @@ async function handler(req, res) {
   where subdomain.name = ${name} and subdomain.domain_id in
   (select id from domain where name = ${domain} limit 1)`;
 
-  // Get content hash and encode it
-  let contenthash = body.contenthash || null;
-  if (contenthash === "") {
-    contenthash = null;
-  }
-  let contenthashRaw = contenthash;
-  // encode contenthash from link to contenthash
-  if (contenthash) {
-    try {
-      contenthash = encodeContenthash(contenthash);
-    } catch (e) {
-      console.log(e);
-      return res.status(400).json({ error: "Invalid contenthash" });
+  // single_claim check
+  if (req.query.single_claim === "1") {
+    // check to see if this address has already claimed a subdomain at this domain
+    const claimedSubdomainQuery = await sql`
+    select subdomain.id, subdomain.address
+    from subdomain
+    where subdomain.address = ${body.address} and subdomain.domain_id in
+    (select id from domain where name = ${domain} limit 1)`;
+    // if so, return error
+    if (claimedSubdomainQuery.length > 0) {
+      return res
+        .status(400)
+        .json({ error: "Address has already claimed subdomain" });
     }
   }
 
   if (subdomainQuery.length > 0) {
-    // Update subdomain
-    await sql`
-    update subdomain set address = ${body.address},
-    contenthash = ${contenthash},
-    contenthash_raw = ${contenthashRaw}
-    where id = ${subdomainQuery[0].id}`;
-
-    subdomainId = subdomainQuery[0].id;
+    return res.status(400).json({ error: "Name already claimed" });
   } else {
     // Insert subdomain
     const domainQuery = await sql`
-    select id, name_limit from domain where name = ${domain} limit 1`;
+    select id, name_limit from domain where name = ${body.domain} limit 1`;
 
     if (domainQuery.length === 0) {
       return res.status(400).json({ error: "Domain does not exist" });
     }
+
     // check limit
     if (domainQuery[0].name_limit > 0) {
       const subdomainCount = await sql`
@@ -99,11 +98,25 @@ async function handler(req, res) {
       }
     }
 
+    let contenthash = body.contenthash || null;
+    if (contenthash === "") {
+      contenthash = null;
+    }
+    // encode contenthash from link to contenthash
+    if (contenthash) {
+      try {
+        contenthash = encodeContenthash(contenthash);
+      } catch (e) {
+        console.log(e);
+        return res.status(400).json({ error: "Invalid contenthash" });
+      }
+    }
+
     const subdomainQuery = await sql`
     insert into subdomain (
-      name, address, domain_id, contenthash, contenthash_raw
+      name, address, domain_id, contenthash
     ) values (
-      ${name}, ${body.address}, ${domainQuery[0].id}, ${contenthash}, ${contenthashRaw}
+      ${name}, ${body.address}, ${domainQuery[0].id}, ${contenthash}
     )
     returning id;`;
 

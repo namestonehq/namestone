@@ -491,3 +491,15 @@ export async function getOnchainDomainInfo(basename) {
   };
   return result;
 }
+
+export function getNetwork(req) {
+  const network = req.query.network.toLowerCase();
+  if (network === "public_v1") {
+    return "mainnet";
+  }
+  if (network === "public_v1_sepolia") {
+    return "sepolia";
+  } else {
+    return false;
+  }
+}
