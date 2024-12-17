@@ -14,6 +14,7 @@ const cors = Cors({
 
 async function handler(req, res) {
   const { headers } = req;
+  // Claim name deprecated so only mainnet
   const network = getNetwork(req);
   if (network !== "mainnet") {
     return res.status(400).json({ error: "Invalid network" });
