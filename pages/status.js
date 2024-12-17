@@ -15,15 +15,15 @@ const resolutionList = [
   },
   {
     name: "slobo.converse.xyz",
-    gateway: "Namestone Gateway",
+    gateway: "Namestone Gateway (Legacy) - converse",
   },
   {
     name: "slobo.nfty.eth",
-    gateway: "Namestone Gateway - .eth",
+    gateway: "Namestone Gateway (Legacy) - .eth",
   },
   {
     name: "slobo.xyz",
-    gateway: "Namestone Gateway - gasless dns",
+    gateway: "Namestone Gateway (Legacy) - gasless dns",
   },
 ];
 export const providerUrl =
