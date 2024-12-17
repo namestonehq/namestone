@@ -7,12 +7,7 @@ const cors = Cors({
   origin: "*",
 });
 
-async function checkApiKey(apiKey, domain) {
-  const network = getNetwork(req);
-  if (!network) {
-    return res.status(400).json({ error: "Invalid network" });
-  }
-
+async function checkApiKey(apiKey, domain, network) {
   console.log("Get domain", apiKey, domain);
   if (!apiKey) {
     return false;
@@ -39,6 +34,11 @@ async function checkApiKey(apiKey, domain) {
 }
 
 async function handler(req, res) {
+  const network = getNetwork(req);
+  if (!network) {
+    return res.status(400).json({ error: "Invalid network" });
+  }
+
   const { headers } = req;
 
   // Check required parameters
@@ -48,7 +48,7 @@ async function handler(req, res) {
   }
   const apiKey = headers.authorization || req.query.api_key;
   // Check API key
-  const allowedApi = await checkApiKey(apiKey, domain);
+  const allowedApi = await checkApiKey(apiKey, domain, network);
   if (!allowedApi) {
     return res.status(401).json({
       error: "key error - You are not authorized to use this endpoint",
@@ -90,6 +90,7 @@ async function handler(req, res) {
     coin_types: coinTypeDict,
     contenthash: contenthashRaw,
   };
+  console.log("Get domain", domainPayload);
   return res.status(200).json(domainPayload);
 }
 

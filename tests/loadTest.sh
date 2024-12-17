@@ -9,8 +9,8 @@ else
 fi
 
 # Check for required API key
-if [ -z "$DEMO_API_KEY" ]; then
-    echo "Error: DEMO_API_KEY not found in .env file"
+if [ -z "$TEST_API_KEY" ]; then
+    echo "Error: TEST_API_KEY not found in .env file"
     exit 1
 fi
 
@@ -36,7 +36,7 @@ run_test() {
         (
             response=$(curl -s -w "\nSTATUS:%{http_code}\nTIME:%{time_total}\n" -X POST \
                 -H 'Content-Type: application/json' \
-                -H "Authorization: $DEMO_API_KEY" \
+                -H "Authorization: $TEST_API_KEY" \
                 -d '{
                     "domain": "defec7.eth",
                     "name": "demo",

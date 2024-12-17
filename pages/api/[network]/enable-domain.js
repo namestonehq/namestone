@@ -50,7 +50,7 @@ async function handler(req, res) {
     }
 
     // check if domain is owned by the wallet
-    const domainOwner = await getDomainOwner(domainName);
+    const domainOwner = await getDomainOwner(domainName, network);
     if (domainOwner !== address) {
       return res
         .status(400)
@@ -90,7 +90,7 @@ async function handler(req, res) {
     }
 
     // check if domain has a good resolver
-    let goodResolver = await checkResolver(domainName);
+    let goodResolver = await checkResolver(domainName, network);
     if (!goodResolver) {
       return res.status(400).json({ error: "Invalid domain resolver" });
     }

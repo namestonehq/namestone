@@ -28,6 +28,22 @@ export const client = createPublicClient({
   transport: http(providerUrl || ""),
 }).extend(ensSubgraphActions);
 
+export const sepoliaProviderUrl =
+  "https://eth-sepolia.g.alchemy.com/v2/" +
+  process.env.NEXT_PUBLIC_ALCHEMY_API_KEY; // replace with your actual project ID
+
+export const sepoliaClient = createPublicClient({
+  chain: {
+    ...addEnsContracts(mainnet),
+    subgraphs: {
+      ens: {
+        url: process.env.SUBGRAPH_URL_SEPOLIA || "",
+      },
+    },
+  },
+  transport: http(providerUrl || ""),
+}).extend(ensSubgraphActions);
+
 // get whether a user is eligible to claim a name
 // Takes a user token and returns a payload with eligibility information
 export async function getEligibility(token, domain) {
@@ -383,9 +399,13 @@ const resolverList = [
   "0xA87361C4E58B619c390f469B9E6F27d759715125",
 ];
 
-export async function checkResolver(ensName) {
+export async function checkResolver(ensName, network = "mainnet") {
   try {
-    const resolver = await client.getEnsResolver({ name: ensName });
+    let resolver;
+    if (network === "sepolia") {
+      resolver = await sepoliaClient.getEnsResolver({ name: ensName });
+    }
+    resolver = await client.getEnsResolver({ name: ensName });
     console.log("Resolver:", resolver);
     return resolverList.includes(resolver);
   } catch (error) {
@@ -430,10 +450,15 @@ export async function verifySignature(address, signature) {
   return { success: true, error: "" };
 }
 
-export async function getDomainOwner(domain) {
+export async function getDomainOwner(domain, network = "mainnet") {
   // resolve owner of domain using ens
   try {
-    const result = await getOwner(client, { name: domain });
+    let result;
+    if (network === "sepolia") {
+      result = await getOwner(sepoliaClient, { name: domain });
+    } else {
+      result = await getOwner(client, { name: domain });
+    }
     const ensAddress = result.owner;
     return ensAddress;
   } catch (error) {

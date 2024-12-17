@@ -8,7 +8,6 @@ const cors = Cors({
 });
 
 async function checkApiKey(apiKey, domain) {
-  console.log(apiKey, domain);
   if (!apiKey) {
     return false;
   }
@@ -25,7 +24,6 @@ async function checkApiKey(apiKey, domain) {
     where domain.name = ${domain}
     and api_key.key = ${apiKey}`;
   }
-  console.log(apiQuery);
   if (apiQuery.count >= 1) {
     return true;
   }

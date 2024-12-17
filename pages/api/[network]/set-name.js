@@ -21,7 +21,6 @@ async function handler(req, res) {
 
   // Check required parameters
   let body = req.body;
-  console.log(body);
   if (typeof body === "string") {
     body = JSON.parse(body);
   }
