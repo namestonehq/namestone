@@ -2,7 +2,7 @@ import sql from "../lib/db.js";
 import { ethers } from "ethers";
 import contentHash from "@ensdomains/content-hash";
 import { createPublicClient, http } from "viem";
-import { mainnet } from "viem/chains";
+import { mainnet, sepolia } from "viem/chains";
 import {
   createSiweMessage,
   generateSiweNonce,
@@ -34,14 +34,14 @@ export const sepoliaProviderUrl =
 
 export const sepoliaClient = createPublicClient({
   chain: {
-    ...addEnsContracts(mainnet),
+    ...addEnsContracts(sepolia),
     subgraphs: {
       ens: {
         url: process.env.SUBGRAPH_URL_SEPOLIA || "",
       },
     },
   },
-  transport: http(providerUrl || ""),
+  transport: http(sepoliaProviderUrl || ""),
 }).extend(ensSubgraphActions);
 
 // get whether a user is eligible to claim a name
@@ -397,6 +397,7 @@ const resolverList = [
   "0x84c5AdB77dd9f362A1a3480009992d8d47325dc3",
   "0xd17347fA0a6eeC89a226c96a9ae354F785e94241",
   "0xA87361C4E58B619c390f469B9E6F27d759715125",
+  "0x467893bFE201F8EfEa09BBD53fB69282e6001595", //Sepolia
 ];
 
 export async function checkResolver(ensName, network = "mainnet") {
@@ -404,8 +405,9 @@ export async function checkResolver(ensName, network = "mainnet") {
     let resolver;
     if (network === "sepolia") {
       resolver = await sepoliaClient.getEnsResolver({ name: ensName });
+    } else {
+      resolver = await client.getEnsResolver({ name: ensName });
     }
-    resolver = await client.getEnsResolver({ name: ensName });
     console.log("Resolver:", resolver);
     return resolverList.includes(resolver);
   } catch (error) {
@@ -459,6 +461,7 @@ export async function getDomainOwner(domain, network = "mainnet") {
     } else {
       result = await getOwner(client, { name: domain });
     }
+    console.log(result);
     const ensAddress = result.owner;
     return ensAddress;
   } catch (error) {
