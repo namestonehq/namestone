@@ -1,6 +1,6 @@
 import { Dialog } from "@headlessui/react";
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const chains = [
   {
@@ -54,6 +54,11 @@ export default function AddNameModal({
 }) {
   const [activeTab, setActiveTab] = useState("subname"); // subname, text, address
   const tabs = ["text", "addresses"];
+
+  // reset active tab when modal is opened or closed
+  useEffect(() => {
+    setActiveTab("subname");
+  }, [open]);
 
   const TAB_CONTENT = {
     text: (
