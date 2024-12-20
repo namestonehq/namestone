@@ -43,6 +43,8 @@ export default function Admin() {
   const [activeTab, setActiveTab] = useState("Subnames");
   const [currentNameData, setCurrentNameData] = useState(blankNameData);
   const [saveNamePending, setSaveNamePending] = useState(false);
+  const [mainnetOpen, setMainnetOpen] = useState(false);
+  const [sepoliaOpen, setSepoliaOpen] = useState(false);
 
   //funtion to help set current name data
   function setCurrentNameHelper(value, key1, key2 = undefined) {
@@ -377,72 +379,91 @@ export default function Admin() {
           <div className="w-full mb-4 text-sm font-bold md:text-base text-brownblack-700">
             Names
           </div>
-          <div className="w-full my-1 text-xs font-bold md:text-base text-brownblack-700">
-            Mainnet
+          <div
+            className="flex pr-2 cursor-pointer"
+            onClick={() => setMainnetOpen(!mainnetOpen)}
+          >
+            <div className="w-full my-1 text-xs text-brownblack-700">
+              Mainnet
+            </div>
+            {mainnetOpen ? "-" : "+"}
           </div>
-          <div className="flex flex-col w-full ">
-            {brandUrls
-              .filter((brandUrl) => {
-                return brandDict[brandUrl].network === "mainnet";
-              })
-              .map((brandUrl) => {
-                const brand = brandDict[brandUrl];
-                return (
-                  <div
-                    key={brand.url_slug}
-                    className={`flex items-center h-10 mb-2 mr-6 md:text-sm text-xs rounded-lg text-brownblack-700 cursor-pointer ${
-                      selectedBrand?.url_slug === brand.url_slug
-                        ? " bg-neutral-100"
-                        : ""
-                    }`}
-                    onClick={() => setSelectedBrand(brand)}
-                  >
-                    <div className="flex  overflow-hidden rounded-full  w-[24px] h-[24px] mx-2">
-                      <Image
-                        src={brand.default_avatar || placeholderImage}
-                        width={24}
-                        height={24}
-                        alt={brand.name}
-                      />
+          {mainnetOpen && (
+            <div className="flex flex-col w-full ">
+              {brandUrls
+                .filter((brandUrl) => {
+                  return brandDict[brandUrl].network === "mainnet";
+                })
+                .map((brandUrl) => {
+                  const brand = brandDict[brandUrl];
+                  return (
+                    <div
+                      key={brand.url_slug}
+                      className={`flex items-center h-10 mb-2 mr-6 md:text-sm text-xs rounded-lg text-brownblack-700 cursor-pointer ${
+                        selectedBrand?.url_slug === brand.url_slug
+                          ? " bg-neutral-100"
+                          : ""
+                      }`}
+                      onClick={() => setSelectedBrand(brand)}
+                    >
+                      <div className="flex  overflow-hidden rounded-full  w-[24px] h-[24px] mx-2">
+                        <Image
+                          src={brand.default_avatar || placeholderImage}
+                          width={24}
+                          height={24}
+                          alt={brand.name}
+                        />
+                      </div>
+                      <span className="hidden md:block">{brand.name}</span>
                     </div>
-                    <span className="hidden md:block">{brand.name}</span>
-                  </div>
-                );
-              })}
+                  );
+                })}
+            </div>
+          )}
+          {/* Divider */}
+          <hr className="my-4 bg-neutral-200"></hr>
+          <div
+            className="flex pr-2 cursor-pointer"
+            onClick={() => setSepoliaOpen(!sepoliaOpen)}
+          >
+            <div className="w-full my-1 text-xs text-brownblack-700">
+              Sepolia
+            </div>
+            {sepoliaOpen ? "-" : "+"}
           </div>
-          <div className="w-full my-1 text-xs font-bold md:text-base text-brownblack-700">
-            Sepolia
-          </div>
-          <div className="flex flex-col w-full ">
-            {brandUrls
-              .filter((brandUrl) => {
-                return brandDict[brandUrl].network === "sepolia";
-              })
-              .map((brandUrl) => {
-                const brand = brandDict[brandUrl];
-                return (
-                  <div
-                    key={brand.url_slug}
-                    className={`flex items-center h-10 mb-2 mr-6 md:text-sm text-xs rounded-lg text-brownblack-700 cursor-pointer ${
-                      selectedBrand?.url_slug === brand.url_slug
-                        ? " bg-neutral-100"
-                        : ""
-                    }`}
-                    onClick={() => setSelectedBrand(brand)}
-                  >
-                    <div className="flex  overflow-hidden rounded-full  w-[24px] h-[24px] mx-2">
-                      <Image
-                        src={brand.default_avatar || placeholderImage}
-                        width={24}
-                        height={24}
-                        alt={brand.name}
-                      />
+
+          {sepoliaOpen && (
+            <div className="flex flex-col w-full ">
+              {brandUrls
+                .filter((brandUrl) => {
+                  return brandDict[brandUrl].network === "sepolia";
+                })
+                .map((brandUrl) => {
+                  const brand = brandDict[brandUrl];
+                  return (
+                    <div
+                      key={brand.url_slug}
+                      className={`flex items-center h-10 mb-2 mr-6 md:text-sm text-xs rounded-lg text-brownblack-700 cursor-pointer ${
+                        selectedBrand?.url_slug === brand.url_slug
+                          ? " bg-neutral-100"
+                          : ""
+                      }`}
+                      onClick={() => setSelectedBrand(brand)}
+                    >
+                      <div className="flex  overflow-hidden rounded-full  w-[24px] h-[24px] mx-2">
+                        <Image
+                          src={brand.default_avatar || placeholderImage}
+                          width={24}
+                          height={24}
+                          alt={brand.name}
+                        />
+                      </div>
+                      <span className="hidden md:block">{brand.name}</span>
                     </div>
-                    <span className="hidden md:block">{brand.name}</span>
-                  </div>
-                );
-              })}
-          </div>
+                  );
+                })}
+            </div>
+          )}
         </div>
       </div>
       {/*Main Content*/}
