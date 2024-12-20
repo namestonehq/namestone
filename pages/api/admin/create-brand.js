@@ -22,9 +22,9 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: "something went wrong" });
   }
 
-  let insertDomain = { name: data.domain };
+  let insertDomain = { name: data.domain, network: data.network };
   const domainQuery = await sql`
-  insert into domain ${sql(insertDomain, "name")}
+  insert into domain ${sql(insertDomain, "name", "network")}
   returning id;`;
   let insertBrand = {
     name: data.name,
