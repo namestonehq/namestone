@@ -179,16 +179,6 @@ async function handler(req, res) {
       return res.status(500).json({ error: "Error sending email" });
     }
   } else {
-    // log user engagement
-    const jsonPayload = JSON.stringify({
-      email: email,
-      domain: domain,
-      company_name: company_name,
-    });
-    await sql`
-  insert into user_engagement (address, name, details)
-  values (${address},'enable_domain', ${jsonPayload})`;
-
     return res.status(405).json({ error: "Method not allowed" });
   }
 }
