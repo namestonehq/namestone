@@ -12,6 +12,9 @@ import landingProductImage3 from "../public/images/landing-product-image4.png";
 import blackProductImage1 from "../public/images/product-image-black1.png";
 import blackProductImage2 from "../public/images/product-image-black2.png";
 import blackProductImage3 from "../public/images/product-image-black3.png";
+import quote from "../public/images/quote.svg";
+import burner from "../public/images/burner.svg";
+import burnerSite from "../public/images/burnersite.svg";
 
 import noGasImage from "../public/images/no-gas-icon.png";
 import imageCoinbase from "../public/images/image-coinbase-wallet.png";
@@ -219,6 +222,54 @@ export default function Home() {
                 src={landingProductImage3}
                 width={472}
                 alt="Managing subdomains in NameStone admin panel"
+              />
+            </div>
+          </div>
+        </div>
+        {/* Fancy divider */}
+        <div className="flex w-full h-8">
+          <div className="w-8 h-full bg-neutral-900"></div>
+          <div className="w-0 h-0 border-r-[50px] border-r-white border-b-[50px] border-b-neutral-900"></div>
+          <div className="flex-1 h-full bg-white"></div>
+          <div className="w-0 h-0 border-l-[50px] border-b-neutral-900 border-b-[50px] border-l-white"></div>
+          <div className="w-8 h-full bg-neutral-900"></div>
+        </div>
+        <div className="w-full px-6 pb-20 text-center h-fit bg-neutral-900 lg:px-32">
+          <div className="flex flex-col gap-4 mt-32 xl:gap-0 xl:flex-row">
+            <div className="flex flex-col flex-1 p-8 text-white bg-neutral-800 mx-auto w-full sm:w-[600px] xl:w-auto">
+              <Image
+                src={quote}
+                width={48}
+                height={48}
+                alt="Quote Icon"
+                className="mb-4"
+              />
+              <p className="text-[24px] text-left leading-relaxed">
+                <span className="text-orange-500">NameStone</span> makes it
+                incredibly easy for any{" "}
+                <span className="text-emerald-600">
+                  <Link href={"https://burner.pro/"}>Burner</Link>
+                </span>{" "}
+                owner to claim a<strong> brnr.eth </strong> ENS subdomain during
+                setup. And, with thousands of Burners shipped, NameStone&apos;s
+                offchain registration is crucial to save gas and enable an
+                otherwise costly feature.
+              </p>
+              <span className="self-end mt-4 text-right text-neutral-300">
+                Cameron
+              </span>
+              <Image src={burner} width={120} alt="burner Logo" />
+              <span className="mt-4 text-left">
+                Easy to use, low cost hardware wallet designed for gifting
+                stablecoins.
+              </span>
+            </div>
+
+            <div className="flex items-center justify-center flex-1">
+              <Image
+                src={burnerSite}
+                alt="burner site"
+                className="w-full sm:w-[600px]"
               />
             </div>
           </div>
