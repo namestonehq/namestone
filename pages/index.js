@@ -83,10 +83,10 @@ export default function Home() {
     <div className="flex justify-center bg-neutral-50 ">
       <div className="w-full overflow-hidden flex flex-col max-w-[1536px]">
         <Head>
-          <title> Issue Free ENS Subdomains via API | NameStone</title>
+          <title> Create ENS Subdomains via API | NameStone</title>
           <meta
             name="description"
-            content="Issue free ENS subdomains via API. Get started today with a free API key. Trusted by web3 leaders with support from ENS DAO."
+            content="Create and issue free ENS subdomains via a REST API. Trusted by web3 leaders. Supported by ENS DAO."
             key="desc"
           />
           <link rel="icon" href="/favicon.ico" />
@@ -113,22 +113,15 @@ export default function Home() {
           </video>
           <div className="z-10 flex flex-wrap items-center justify-start mb-8 ">
             <div className="z-20 flex flex-col items-center md:items-start">
-              {/* CHIPS */}
-              <div className="inline-flex flex-wrap items-center justify-center md:justify-start gap-3 mb-4">
-                <div className="px-3 py-0.5 bg-neutral-200  rounded-[99px] justify-center items-center gap-2 flex">
-                  <div className="text-sm font-normal leading-none text-neutral-900">
-                    Supported by
-                  </div>
-                  <Image src={ensLogo} width={46} alt="ens Logo" />
-                </div>
-              </div>
               {/* TITLE */}
-              <h1 className="max-w-lg font-bold text-md sm:text-lg md:text-xl md:leading-tight text-brownblack-700">
-                Issue Free ENS Subdomains
+              <h1 className="max-w-lg font-bold text-md sm:text-lg md:text-5xl md:leading-tight text-brownblack-700">
+                Create ENS Subdomains
               </h1>
-              <span className="max-w-lg mt-3 text-sm md:text-base text-brownblack-700">
-                NameStone’s API is trusted by web3 leaders for easy subdomain
-                management and issuance.
+              <span className="max-w-lg mt-3 text-sm text-left md:text-base text-brownblack-700">
+                NameStone&apos;s API is trusted by Web3{" "}
+                <span className="font-bold">businesses and developers</span> for
+                seamless, gasless subdomain management and issuance. Get started
+                today with a free API key.
               </span>
               <div className="flex flex-wrap justify-center gap-4 mt-10 mb-16">
                 <button
@@ -285,7 +278,7 @@ export default function Home() {
         {/* Stats */}
         <div className="inline-flex flex-col items-start justify-center w-full gap-20 px-6 pb-20 mt-32 text-center bg-white lg:px-32">
           <div className="flex flex-col items-start justify-start gap-3 ">
-            <h2 className=" text-neutral-900  text-md md:text-lg font-bold text-left">
+            <h2 className="font-bold text-left text-neutral-900 text-md md:text-lg">
               The backbone for web3 names
             </h2>
             <div className="text-base font-normal leading-7 text-left text-neutral-900">
