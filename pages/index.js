@@ -140,6 +140,14 @@ export default function Home() {
             </div>
           </div>
         </div>
+        {/* Fancy divider */}
+        <div className="flex w-full h-8">
+          <div className="w-8 h-full"></div>
+          <div className="w-0 h-0 border-l-[50px] border-l-transparent border-b-[50px] border-b-white"></div>
+          <div className="flex-1 h-full bg-white"></div>
+          <div className="w-0 h-0 border-b-[50px] border-b-white border-r-[50px] border-r-transparent"></div>
+          <div className="w-8 h-full"></div>
+        </div>
         {/* Logos section */}
         <div className="flex flex-col w-full px-6 pt-16 bg-white lg:pl-32">
           <Image
@@ -182,9 +190,7 @@ export default function Home() {
                   View Docs
                 </Link>
               </div>
-
               {/* Proof Points */}
-
               <div className="flex flex-col gap-6 mt-10">
                 <div className="flex gap-2">
                   {" "}
