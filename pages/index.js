@@ -20,7 +20,7 @@ import imageEns from "../public/images/image-ens.png";
 import imageShowtime from "../public/images/image-showtime.png";
 import imageEtherscan from "../public/images/image-etherscan.png";
 import imageMailchain from "../public/images/image-mailchain.png";
-import logoList from "../public/images/logos.png";
+import logoList from "../public/images/logos1.png";
 import ensLogo from "../public/images/ens_logo_purple.svg";
 import airstackLogo from "../public/images/airstack-logo.png";
 
@@ -135,20 +135,18 @@ export default function Home() {
           </div>
         </div>
         {/* Logos section */}
-        <div className="flex flex-col w-full pt-16 pb-32 pl-6 bg-white lg:pl-32">
-          <div className="mb-10 text-base font-bold text-neutral-900">
-            Serving web3 leaders
-          </div>
+        <div className="flex flex-col w-full px-6 pt-16 bg-white lg:pl-32">
           <Image
             src={logoList}
-            height={36}
+            height={64}
+            className="mx-auto"
             alt="Logos of web3 companies 'Pooltogether', 'POAP', 'Obvious', 'Mailchain', 'dappling', 'GreenPill', and Azurbala'  "
           />
         </div>
         {/* Product Section */}
         <div className="w-full px-6 pb-20 text-center bg-white lg:px-32">
           {/* ITEM 1 */}
-          <div className="flex flex-wrap items-center gap-10 mt-16">
+          <div className="flex flex-wrap items-center gap-10">
             <div className="flex flex-col justify-start flex-1 text-left min-w-[280px]">
               <div className="text-base font-bold leading-7 text-orange-400 ">
                 API{" "}
