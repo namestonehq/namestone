@@ -235,6 +235,7 @@ export default function Home() {
           <div className="w-8 h-full bg-neutral-900"></div>
         </div>
         <div className="w-full px-6 pb-20 text-center h-fit bg-neutral-900 lg:px-32">
+          {/* Testimonial Burner */}
           <div className="flex flex-col gap-4 mt-32 xl:gap-0 xl:flex-row">
             <div className="flex flex-col flex-1 p-8 text-white bg-neutral-800 mx-auto w-full sm:w-[600px] xl:w-auto">
               <Image
@@ -265,7 +266,7 @@ export default function Home() {
               </span>
             </div>
 
-            <div className="flex items-center justify-center flex-1">
+            <div className="flex items-center justify-center flex-1 xl:bg-neutral-800">
               <Image
                 src={burnerSite}
                 alt="burner site"
