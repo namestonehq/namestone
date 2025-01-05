@@ -15,6 +15,11 @@ import blackProductImage3 from "../public/images/product-image-black3.png";
 import quote from "../public/images/quote.svg";
 import burner from "../public/images/burner.svg";
 import burnerSite from "../public/images/burnersite.svg";
+import divider from "../public/images/divider-orangespot.svg";
+import durinLogo from "../public/images/durin-logo.png";
+import ethIcon from "../public/images/eth-icon.svg";
+import rocketIcon from "../public/images/rocket-icon.svg";
+import writeIcon from "../public/images/write-icon.svg";
 
 import noGasImage from "../public/images/no-gas-icon.png";
 import imageCoinbase from "../public/images/image-coinbase-wallet.png";
@@ -298,7 +303,68 @@ export default function Home() {
           <div className="w-0 h-0 border-r-[50px] border-r-neutral-900 border-b-[50px] border-b-white"></div>
           <div className="w-8 h-full bg-neutral-900"></div>
         </div>
-        <div className="w-full px-6 pb-20 text-center bg-white h-fit lg:px-32"></div>
+        <div className="w-full px-6 pb-20 text-center bg-white h-fit lg:px-32">
+          <div className="mt-10 mb-6 text-[32px] font-bold text-left">
+            Building onchain?
+          </div>
+          <Image src={divider} alt="divider" />
+          <div className="flex flex-wrap items-center gap-10 mt-16">
+            <div className="flex flex-col justify-start flex-1 text-left min-w-[280px]">
+              <div className="px-4 py-1 mb-8 font-light border shadow-inner rounded-xl text-neutral-900 border-neutral-200 drop-shadow bg-neutral-50 w-fit">
+                For {"{"}developers{"}"}
+              </div>
+              <Image
+                className="mb-2 mr-3"
+                src={durinLogo}
+                width={196}
+                alt="NameStone Icon"
+              ></Image>{" "}
+              <div className="mt-3 text-sm md:text-base">
+                Issue subdomains on the L2 of your choice. Project docs,
+                contracts, and architecture can be found on{" "}
+                <Link
+                  className="text-orange-500"
+                  href={"https://github.com/namestonehq/durin"}
+                >
+                  GitHub
+                </Link>
+                .
+              </div>
+              <div className="flex gap-3 mt-5">
+                <Link
+                  className="px-8 py-2 text-sm font-bold transition-all duration-200 bg-orange-500 border border-black rounded-lg shadow-xl cursor-pointer drop--sm md:text-sm hover:bg-orange-700 text-brownblack-700 active:bg-orange-800 "
+                  href="/try-namestone"
+                >
+                  Durin{" "}
+                </Link>
+              </div>
+              {/* Proof Points */}
+              <div className="flex flex-col gap-6 mt-10">
+                <div className="flex gap-2">
+                  {" "}
+                  <Image src={rocketIcon} alt="admin panel icon" /> Deploy L2
+                  subdomains in minutes
+                </div>
+                <div className="flex gap-2">
+                  {" "}
+                  <Image src={writeIcon} alt="connection icon" /> Helpful
+                  factory and template contracts
+                </div>
+                <div className="flex gap-2">
+                  <Image src={ethIcon} alt="gasless icon" /> Zero Supports ENS
+                  resolution on Sepolia and Mainnet
+                </div>
+              </div>
+            </div>
+            <div className="flex flex-col items-center justify-center min-w-[280px] flex-1">
+              <Image
+                src={landingProductImage3}
+                width={472}
+                alt="Managing subdomains in NameStone admin panel"
+              />
+            </div>
+          </div>
+        </div>
         {/* Gasless Section */}
         <div className="w-full px-6 bg-white lg:px-32 pb-36">
           <div className="px-10 py-10 bg-white  rounded-[20px] shadow border border-neutral-200 flex-col justify-center items-start flex">
