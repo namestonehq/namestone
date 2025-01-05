@@ -274,7 +274,31 @@ export default function Home() {
               />
             </div>
           </div>
+          {/* Statistics */}
+          <div className="flex justify-between gap-12 mt-40 text-white">
+            <div className="flex flex-col items-center gap-4">
+              <div className="text-5xl font-bold">20,000</div>
+              <div>Subdomains Issued</div>
+            </div>
+            <div className="flex flex-col items-center gap-4">
+              <div className="text-5xl font-bold">190</div>
+              <div>Domains Managed</div>
+            </div>
+            <div className="flex flex-col items-center gap-4">
+              <div className="text-5xl font-bold">100,000</div>
+              <div>Resolutions Per Month</div>
+            </div>
+          </div>
         </div>
+        {/* Fancy Divider */}
+        <div className="flex w-full h-8 ">
+          <div className="w-8 h-full bg-neutral-900"></div>
+          <div className="w-0 h-0 border-l-[50px] border-l-neutral-900 border-b-[50px] border-b-white"></div>
+          <div className="flex-1 h-full bg-white"></div>
+          <div className="w-0 h-0 border-r-[50px] border-r-neutral-900 border-b-[50px] border-b-white"></div>
+          <div className="w-8 h-full bg-neutral-900"></div>
+        </div>
+        <div className="w-full px-6 pb-20 text-center bg-white h-fit lg:px-32"></div>
         {/* Gasless Section */}
         <div className="w-full px-6 bg-white lg:px-32 pb-36">
           <div className="px-10 py-10 bg-white  rounded-[20px] shadow border border-neutral-200 flex-col justify-center items-start flex">
