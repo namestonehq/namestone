@@ -1,5 +1,6 @@
 import Head from "next/head";
 import Image from "next/image";
+import Link from "next/link";
 
 import obviousLogo from "../public/images/obvious-logo.svg";
 import poolLogo from "../public/images/pooltogether-landing-logo.png";
@@ -7,6 +8,7 @@ import owockiImg from "../public/images/owocki-img.png";
 import { Fragment } from "react";
 import landingProductImage1 from "../public/images/landing-product-image1.png";
 import landingProductImage2 from "../public/images/landing-product-image2.png";
+import landingProductImage3 from "../public/images/landing-product-image4.png";
 import blackProductImage1 from "../public/images/product-image-black1.png";
 import blackProductImage2 from "../public/images/product-image-black2.png";
 import blackProductImage3 from "../public/images/product-image-black3.png";
@@ -22,7 +24,11 @@ import imageEtherscan from "../public/images/image-etherscan.png";
 import imageMailchain from "../public/images/image-mailchain.png";
 import logoList from "../public/images/logos1.png";
 import ensLogo from "../public/images/ens_logo_purple.svg";
+import namestoneIcon from "../public/images/namestone-icon.svg";
 import airstackLogo from "../public/images/airstack-logo.png";
+import proofPointAdminPanelIcon from "../public/images/admin-icon-black.svg";
+import proofPointConnectionIcon from "../public/images/connection-icon-black.svg";
+import proofPointGaslessIcon from "../public/images/gasless-icon-black.svg";
 
 import darianCoin from "../public/images/darian-coin.png";
 import sloboCoin from "../public/images/slobo-coin.png";
@@ -146,43 +152,65 @@ export default function Home() {
         {/* Product Section */}
         <div className="w-full px-6 pb-20 text-center bg-white lg:px-32">
           {/* ITEM 1 */}
-          <div className="flex flex-wrap items-center gap-10">
-            <div className="flex flex-col justify-start flex-1 text-left min-w-[280px]">
-              <div className="text-base font-bold leading-7 text-orange-400 ">
-                API{" "}
-              </div>
-              <h2 className="font-bold leading-tight text-md md:text-lg text-brownblack-700">
-                Simple API Integration{" "}
-              </h2>
-              <div className="mt-3 text-sm md:text-base">
-                Streamline bulk registration and name management with our API.
-              </div>
-            </div>
-            <div className="flex flex-col items-center justify-center min-w-[280px] flex-1">
-              <Image
-                src={landingProductImage1}
-                width={472}
-                alt="NameStone logo connected to integrations via API"
-              />
-            </div>
-          </div>
-          {/* ITEM 2 */}
           <div className="flex flex-wrap items-center gap-10 mt-16">
             <div className="flex flex-col justify-start flex-1 text-left min-w-[280px]">
-              <div className="text-base font-bold leading-7 text-orange-400">
-                Admin Panel
-              </div>
-              <h2 className="font-bold leading-tight text-md md:text-lg text-brownblack-700">
-                Manage subdomains with Admin Panel{" "}
+              <h2 className="flex leading-tight text-md md:text-lg text-brownblack-700">
+                <Image
+                  className="mr-3"
+                  width={42}
+                  src={namestoneIcon}
+                  alt="NameStone Icon"
+                ></Image>{" "}
+                <span className="mr-2 font-bold">NameStone</span> API
               </h2>
               <div className="mt-3 text-sm md:text-base">
-                Add, revoke, and edit who can claim subnames. Create blocklists
-                to safeguard your community.
+                Issue gasless ENS subdomains with NameStone&apos;s REST API.
+                Manage all subnames in one dashboard with the no-code Admin
+                Panel.
+              </div>
+              <div className="flex gap-3 mt-5">
+                <Link
+                  className="px-4 py-2 text-sm font-bold transition-all duration-200 bg-orange-500 border border-black rounded-lg shadow-lg cursor-pointer md:text-sm hover:bg-orange-700 text-brownblack-700 active:bg-orange-800 "
+                  href="/try-namestone"
+                >
+                  Get Started
+                </Link>
+                <Link
+                  className="px-4 py-2 text-sm font-bold transition-all duration-200 bg-white border rounded-lg cursor-pointer md:text-sm hover:bg-neutral-100 border-neutral-300 text-brownblack-700 active:bg-neutral-200"
+                  href="/docs"
+                >
+                  View Docs
+                </Link>
+              </div>
+
+              {/* Proof Points */}
+
+              <div className="flex flex-col gap-4 mt-10">
+                <div className="flex gap-2">
+                  {" "}
+                  <Image
+                    src={proofPointAdminPanelIcon}
+                    alt="admin panel icon"
+                  />{" "}
+                  No-code Admin Panel for easy management
+                </div>
+                <div className="flex gap-2">
+                  {" "}
+                  <Image
+                    src={proofPointConnectionIcon}
+                    alt="connection icon"
+                  />{" "}
+                  Integrate via Rest API or QuickStart SDK
+                </div>
+                <div className="flex gap-2">
+                  <Image src={proofPointGaslessIcon} alt="gasless icon" /> Zero
+                  gas fees
+                </div>
               </div>
             </div>
             <div className="flex flex-col items-center justify-center min-w-[280px] flex-1">
               <Image
-                src={landingProductImage2}
+                src={landingProductImage3}
                 width={472}
                 alt="Managing subdomains in NameStone admin panel"
               />
