@@ -185,7 +185,7 @@ export default function Home() {
 
               {/* Proof Points */}
 
-              <div className="flex flex-col gap-4 mt-10">
+              <div className="flex flex-col gap-6 mt-10">
                 <div className="flex gap-2">
                   {" "}
                   <Image
