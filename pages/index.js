@@ -37,21 +37,6 @@ import Footer from "../components/Footer";
 import Header from "../components/Header";
 
 export default function Home() {
-  const gaslessData = [
-    {
-      key: "subdomain",
-      text: "Registering Subdomains",
-    },
-    {
-      key: "avatar",
-      text: "Setting Avatars",
-    },
-    {
-      key: "text",
-      text: "Changing Text Records",
-    },
-  ];
-
   const testimonyData = [
     {
       key: "pool",
@@ -322,7 +307,8 @@ export default function Home() {
               <div className="flex gap-3 mt-5">
                 <Link
                   className="px-8 py-2 text-sm font-bold transition-all duration-200 bg-orange-500 border border-black rounded-lg shadow-xl cursor-pointer drop--sm md:text-sm hover:bg-orange-700 text-brownblack-700 active:bg-orange-800 "
-                  href="/try-namestone"
+                  href="https://durin.dev/"
+                  target="_blank"
                 >
                   Durin{" "}
                 </Link>
@@ -385,7 +371,8 @@ export default function Home() {
               <div className="flex gap-3 mt-5">
                 <Link
                   className="px-6 py-2 text-sm font-bold transition-all duration-200 bg-orange-500 border border-black rounded-lg shadow-lg cursor-pointer md:text-sm hover:bg-orange-700 text-brownblack-700 active:bg-orange-800 "
-                  href="/try-namestone"
+                  href="https://enspro.xyz/"
+                  target="_blank"
                 >
                   ENSPro
                 </Link>
@@ -426,24 +413,35 @@ export default function Home() {
             </div>
           </div>
         </div>
-
-        {/* Trust Section */}
-        <div className="relative flex flex-col items-start justify-start w-full px-6 py-16 pt-16 text-left bg-white lg:px-32">
-          <h2 className="flex flex-col items-start font-bold text-md md:text-lg text-brownblack-700">
-            Trusted by web3 natives
-          </h2>
-          <div className="flex flex-wrap justify-center pb-20">
-            {testimonyData.map((data) => (
-              <Fragment key={data.key}>
-                {/* Testimony Card */}
-                <div className="flex flex-col items-start mt-16 justify-between min-h-[240px] w-auto max-w-fit rounded-lg bg-white p-[32px] mx-[32px] text-left drop-shadow-lg ">
-                  <div className="mb-4 text-sm md:max-w-xs text-brownblack-700">
-                    {data.text}
-                  </div>
-                  <Image src={data.img} height={48} alt={data.img_alt} />
-                </div>
-              </Fragment>
-            ))}
+        {/* Fancy Divider */}
+        <div className="flex w-full h-8 ">
+          <div className="w-8 h-full bg-neutral-100"></div>
+          <div className="w-0 h-0 border-l-[50px] border-l-neutral-100 border-b-[50px] border-b-white"></div>
+          <div className="flex-1 h-full bg-white"></div>
+          <div className="w-0 h-0 border-r-[50px] border-r-neutral-100 border-b-[50px] border-b-white"></div>
+          <div className="w-8 h-full bg-neutral-100"></div>
+        </div>
+        <div className="w-full px-6 pb-20 text-center bg-white h-fit lg:px-32">
+          <div className="text-[40px] font-bold text-left">
+            Find the right product for you
+          </div>
+          <div className="mt-2 mb-20 text-left">
+            It&apos;s your name, your way. Issue on a leading L2 chain or go
+            gasless.
+          </div>
+          <div className="flex justify-between">
+            <div>
+              <div className="font-bold">For Any Project</div>
+              <div className="flex items-center justify-center p-2 bg-neutral-900">
+                <Image
+                  src={namestoneIcon}
+                  alt="namestone"
+                  className="object-contain w-20 h-20 "
+                />
+              </div>
+            </div>
+            <div className="font-bold">For Developers</div>
+            <div className="font-bold">For Everyone</div>
           </div>
         </div>
         {/* BUILDERS */}
@@ -453,6 +451,7 @@ export default function Home() {
               <h2 className="self-stretch text-neutral-900 text-[32px] font-bold">
                 Builders
               </h2>
+
               <div className="w-[336px] justify-start items-center gap-6 inline-flex">
                 <Image width={88} src={sloboCoin} alt="slobo" />
                 <div className="inline-flex flex-col items-start justify-center gap-2 grow shrink basis-0">
