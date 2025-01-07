@@ -153,6 +153,29 @@ export default function Docs({ content, fileName }) {
               {/* Mobile Menu */}
               {menuOpen && (
                 <div className="flex flex-col items-start justify-start w-full p-2 bg-white border rounded-md border-brownblack-50 sm:hidden">
+                  {/* Toggle Network */}
+                  <div className="flex p-1 mt-2 mb-4 text-sm rounded-lg bg-neutral-200">
+                    <button
+                      onClick={() => setNetwork("Mainnet")}
+                      className={`px-4  rounded-lg transition ${
+                        network === "Mainnet"
+                          ? "bg-white shadow text-stone-900  py-1"
+                          : "bg-neutral-200"
+                      }`}
+                    >
+                      Mainnet
+                    </button>
+                    <button
+                      onClick={() => setNetwork("Sepolia")}
+                      className={`px-4 rounded-lg transition ${
+                        network === "Sepolia"
+                          ? "bg-white shadow text-black py-1"
+                          : "bg-neutral-200"
+                      }`}
+                    >
+                      Sepolia
+                    </button>
+                  </div>
                   {Object.keys(navDict).map((item) => (
                     <div key={item}>
                       <Link
