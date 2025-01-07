@@ -79,9 +79,7 @@ export default function Home() {
           />
           <link rel="icon" href="/favicon.ico" />
         </Head>
-
         {/* Nav Bar */}
-        {/* <Banner brand="Wassies" /> */}
         <Header />
         {/* Main Section */}
         <div className="w-full overflow-hidden text-center flex  bg-neutral-50 md:text-left  h-[676px] lg:px-32 px-8 justify-center md:justify-start mt-[76px] relative">
@@ -139,7 +137,7 @@ export default function Home() {
             alt="Logos of web3 companies 'Pooltogether', 'POAP', 'Obvious', 'Mailchain', 'dappling', 'GreenPill', and Azurbala'  "
           />
         </div>
-        {/* Product Section */}
+        {/* NameStone API */}
         <div className="w-full px-6 pb-20 text-center bg-white lg:px-32">
           <div className="flex flex-wrap items-center gap-10 mt-16">
             <div className="flex flex-col justify-start flex-1 text-left min-w-[280px]">
@@ -348,6 +346,7 @@ export default function Home() {
           <div className="w-0 h-0 border-l-[50px] border-b-neutral-100 border-b-[50px] border-l-white"></div>
           <div className="w-8 h-full bg-neutral-100"></div>
         </div>
+        {/* ENS Pro */}
         <div className="w-full px-6 pb-20 text-center bg-neutral-100 h-fit lg:px-32">
           <div className="mt-10 mb-6 text-[32px] font-bold text-left">
             Need no-code subdomains?
@@ -421,6 +420,7 @@ export default function Home() {
           <div className="w-0 h-0 border-r-[50px] border-r-neutral-100 border-b-[50px] border-b-white"></div>
           <div className="w-8 h-full bg-neutral-100"></div>
         </div>
+        {/* Right Product For You Section */}
         <div className="w-full px-6 pb-20 text-center bg-white h-fit lg:px-32">
           <div className="text-[40px] font-bold text-left">
             Find the right product for you
