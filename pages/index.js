@@ -18,8 +18,12 @@ import rocketIcon from "../public/images/rocket-icon.svg";
 import writeIcon from "../public/images/write-icon.svg";
 import durinExample from "../public/images/durin-example.png";
 import ensproLogo from "../public/images/enspro-logo.svg";
+import ensproExample from "../public/images/enspro.png";
 import pencil from "../public/images/pencil.svg";
 import xscreen from "../public/images/xscreen.svg";
+import orangeArrow from "../public/images/orange-arrow.svg";
+import durinIcon from "../public/images/icon-durin.svg";
+import ensproIcon from "../public/images/icon-enspro.svg";
 
 import logoList from "../public/images/logos1.png";
 import namestoneIcon from "../public/images/namestone-icon.svg";
@@ -396,19 +400,13 @@ export default function Home() {
                 </div>
               </div>
             </div>
+
             <div className="flex flex-col items-center justify-center min-w-[280px] flex-1">
-              <div className="flex items-center justify-center">
-                <video
-                  src="/enspro-small-vid.mp4"
-                  controls
-                  autoPlay
-                  loop
-                  muted
-                  className="w-full h-auto max-w-xs rounded-lg shadow-lg"
-                >
-                  Your browser does not support the video tag.
-                </video>
-              </div>
+              <Image
+                src={ensproExample}
+                width={472}
+                alt="Managing subdomains in NameStone admin panel"
+              />
             </div>
           </div>
         </div>
@@ -422,26 +420,38 @@ export default function Home() {
         </div>
         {/* Right Product For You Section */}
         <div className="w-full px-6 pb-20 text-center bg-white h-fit lg:px-32">
-          <div className="text-[40px] font-bold text-left">
+          <div className="mt-10 mb-4 text-[32px] font-bold text-left">
             Find the right product for you
           </div>
-          <div className="mt-2 mb-20 text-left">
+          <div className="mb-20 text-left ">
             It&apos;s your name, your way. Issue on a leading L2 chain or go
             gasless.
           </div>
-          <div className="flex justify-between">
-            <div>
-              <div className="font-bold">For Any Project</div>
-              <div className="flex items-center justify-center p-2 bg-neutral-900">
-                <Image
-                  src={namestoneIcon}
-                  alt="namestone"
-                  className="object-contain w-20 h-20 "
-                />
-              </div>
-            </div>
-            <div className="font-bold">For Developers</div>
-            <div className="font-bold">For Everyone</div>
+          <div className="flex flex-col justify-between gap-20 xl:gap-5 xl:flex-row">
+            <Card
+              title="For Any Project"
+              product="NameStone API"
+              description="Issue gasless ENS subdomains with our REST API."
+              iconSrc={namestoneIcon}
+              linkHref="/try-namestone"
+              backgroundColor="bg-neutral-900"
+            />
+            <Card
+              title="For Hackers"
+              product="Durin"
+              description="Create subdomains on an L2 of your choice in minutes."
+              iconSrc={durinIcon}
+              linkHref="https://durin.dev/"
+              backgroundColor="bg-stone-200"
+            />
+            <Card
+              title="For Everyone"
+              product="ENSPro"
+              description="Create and manage your own subdomains."
+              iconSrc={ensproIcon}
+              linkHref="https://enspro.xyz/"
+              backgroundColor="bg-neutral-900"
+            />
           </div>
         </div>
         {/* BUILDERS */}
@@ -531,6 +541,49 @@ export default function Home() {
         </div>
         {/* Footer */}
         <Footer />
+      </div>
+    </div>
+  );
+}
+
+function Card({
+  title,
+  description,
+  iconSrc,
+  linkHref,
+  product,
+  backgroundColor,
+}) {
+  return (
+    <div className="max-w-md max-h-24">
+      <div className="mb-5 font-bold text-left">{title}</div>
+      <div className="flex items-center justify-center max-w-full max-h-full overflow-hidden rounded-lg bg-neutral-100">
+        <div
+          className={`flex items-center justify-center flex-shrink-0 max-w-full max-h-full rounded-l-lg aspect-square ${backgroundColor}`}
+        >
+          <Image
+            src={iconSrc}
+            alt={title}
+            width={48}
+            height={48}
+            className="object-contain m-6"
+          />
+        </div>
+        <div className="flex flex-1 m-4 text-left">
+          <div className="flex flex-col gap-2">
+            <div className="font-bold">{product}</div>
+            <div className="text-xs">{description}</div>
+          </div>
+          <Link href={linkHref} className="flex items-center" target="_blank">
+            <Image
+              src={orangeArrow}
+              alt="arrow"
+              width={36}
+              height={36}
+              className="ml-2"
+            />
+          </Link>
+        </div>
       </div>
     </div>
   );
