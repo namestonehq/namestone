@@ -74,6 +74,7 @@ export async function getStaticProps({ params }) {
 
 export default function Docs({ content, fileName }) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [network, setNetwork] = useState("Mainnet");
   return (
     <>
       <div className="flex justify-center bg-neutral-50 ">
@@ -84,6 +85,29 @@ export default function Docs({ content, fileName }) {
           <div className="flex justify-start w-full px-8 lg:px-32 pt-[76px] md:pt-[88px]  max-w-[1536px]">
             {/* Desktop Menu */}
             <div className="flex-col items-start justify-start hidden py-10 border-t border-brownblack-50 sm:flex">
+              {/* Toggle Network */}
+              <div className="flex p-1 mt-2 mb-4 text-sm rounded-lg bg-neutral-200">
+                <button
+                  onClick={() => setNetwork("Mainnet")}
+                  className={`px-4  rounded-lg transition ${
+                    network === "Mainnet"
+                      ? "bg-white shadow text-stone-900  py-1"
+                      : "bg-neutral-200"
+                  }`}
+                >
+                  Mainnet
+                </button>
+                <button
+                  onClick={() => setNetwork("Sepolia")}
+                  className={`px-4 rounded-lg transition ${
+                    network === "Sepolia"
+                      ? "bg-white shadow text-black py-1"
+                      : "bg-neutral-200"
+                  }`}
+                >
+                  Sepolia
+                </button>
+              </div>
               {Object.keys(navDict).map((item) => (
                 <div key={item}>
                   <Link
@@ -282,7 +306,14 @@ export default function Docs({ content, fileName }) {
                       },
                     }}
                   >
-                    {content}
+                    {network === "Mainnet"
+                      ? content
+                      : content
+                          .replace(/public_v1/g, "public_v1_sepolia")
+                          .replace(
+                            "NameStone(<YOUR_API_KEY_HERE>)",
+                            "NameStone(<YOUR_API_KEY_HERE>, {network: 'sepolia'})"
+                          )}
                   </ReactMarkdown>
                 </div>
               </div>
