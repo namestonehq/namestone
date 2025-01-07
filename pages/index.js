@@ -112,12 +112,12 @@ export default function Home() {
                 today with a free API key.
               </span>
               <div className="flex flex-wrap justify-center gap-4 mt-10 mb-16">
-                <button
-                  onClick={() => router.push("/try-namestone")}
-                  className="px-8 py-3 text-sm font-bold bg-orange-500 rounded-lg cursor-pointer hover:bg-orange-700 text-brownblack-700 w-fit active:bg-orange-800"
+                <Link
+                  className="px-4 py-2 text-sm font-bold transition-all duration-200 bg-orange-500 border border-black rounded-lg shadow-lg cursor-pointer md:text-sm hover:bg-orange-700 text-brownblack-700 active:bg-orange-800 "
+                  href="/try-namestone"
                 >
                   Get Started
-                </button>
+                </Link>
               </div>
             </div>
           </div>
@@ -398,7 +398,7 @@ export default function Home() {
               </div>
             </div>
             <div className="flex flex-col items-center justify-center min-w-[280px] flex-1">
-              <div className="flex items-center justify-center min-h-screen ">
+              <div className="flex items-center justify-center">
                 <video
                   src="/enspro-small-vid.mp4"
                   controls
