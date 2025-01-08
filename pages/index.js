@@ -1,11 +1,6 @@
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
-
-import obviousLogo from "../public/images/obvious-logo.svg";
-import poolLogo from "../public/images/pooltogether-landing-logo.png";
-import owockiImg from "../public/images/owocki-img.png";
-import { Fragment } from "react";
 import landingProductImage3 from "../public/images/landing-product-image4.png";
 
 import quote from "../public/images/quote.svg";
@@ -39,41 +34,10 @@ import kirillCoin from "../public/images/kirill-coin.png";
 import nickCoin from "../public/images/nick-coin.jpeg";
 import timCoin from "../public/images/tim-coin.jpg";
 
-import { useRouter } from "next/router";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
 
 export default function Home() {
-  const testimonyData = [
-    {
-      key: "pool",
-
-      text: "“NameStone supports us in our mission to help people save money. We’re excited by the opportunity to provide gasless ENS names to our users around the world.”",
-      img: poolLogo,
-      img_alt: "pool logo",
-    },
-    {
-      key: "Kevin Owocki",
-
-      text: "“The greenpill network has local chapters in over 15 locations! From japan.greenpill.eth to ottawa.greenpill.eth to newyork.greenpill.eth, @namestonehq made it easy to issue subnames for our community.”",
-      img: owockiImg,
-      img_alt: "owocki twitter profile picture",
-    },
-    {
-      key: "obvious",
-
-      text: "“Issuing subnames with Namestone's API brought 500+ users to our platform in less than 48 hours. Our community loved it!”",
-      img: obviousLogo,
-      img_alt: "Multi-chain Smart Contract Wallet ",
-    },
-  ];
-
-  const router = useRouter();
-
-  function learnMoreClick() {
-    router.push("/contact-us");
-  }
-
   return (
     <div className="flex justify-center bg-neutral-50 ">
       <div className="w-full overflow-hidden flex flex-col max-w-[1536px]">
@@ -450,7 +414,7 @@ export default function Home() {
             <Card
               title="For Everyone"
               product="ENSPro"
-              description="Create and manage your own subdomains."
+              description="A no-code solution to create personal subdomains."
               iconSrc={ensproIcon}
               linkHref="https://enspro.xyz/"
               backgroundColor="bg-neutral-900"
