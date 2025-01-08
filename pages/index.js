@@ -37,6 +37,7 @@ import churinaCoin from "../public/images/churina-coin.png";
 import raffyCoin from "../public/images/raffy-coin.png";
 import kirillCoin from "../public/images/kirill-coin.png";
 import nickCoin from "../public/images/nick-coin.jpeg";
+import timCoin from "../public/images/tim-coin.jpg";
 
 import { useRouter } from "next/router";
 import Footer from "../components/Footer";
@@ -476,7 +477,13 @@ export default function Home() {
               <Image width={88} src={sloboCoin} alt="slobo" />
               <div className="inline-flex flex-col items-start justify-center gap-2 grow shrink basis-0">
                 <div className="self-stretch text-base font-bold leading-7 ">
-                  slobo.eth
+                  <Link
+                    href={"https://app.ens.domains/slobo.eth"}
+                    target="_blank"
+                    className="transition-colors duration-300 hover:text-ens-100"
+                  >
+                    slobo.eth
+                  </Link>
                 </div>
                 <div className="self-stretch text-sm font-normal leading-normal">
                   Web3 Founder, open source developer and ENS Steward.
@@ -488,7 +495,13 @@ export default function Home() {
               <Image width={88} src={darianCoin} alt="darian" />
               <div className="inline-flex flex-col items-start justify-center gap-2 grow shrink basis-0">
                 <div className="self-stretch text-base font-bold leading-7 ">
-                  darianb.eth
+                  <Link
+                    href={"https://app.ens.domains/darianb.eth"}
+                    target="_blank"
+                    className="transition-colors duration-300 hover:text-ens-100"
+                  >
+                    darianb.eth
+                  </Link>
                 </div>
                 <div className="self-stretch text-sm font-normal leading-normal">
                   Web3 Founder, builder and leader of tech teams.
@@ -500,7 +513,13 @@ export default function Home() {
               <Image width={88} src={churinaCoin} alt="churina" />
               <div className="inline-flex flex-col items-start justify-center gap-2 grow shrink basis-0">
                 <div className="self-stretch text-base font-bold leading-7 ">
-                  churina.eth
+                  <Link
+                    href={"https://app.ens.domains/churina.eth"}
+                    target="_blank"
+                    className="transition-colors duration-300 hover:text-ens-100"
+                  >
+                    churina.eth
+                  </Link>
                 </div>
                 <div className="self-stretch text-sm font-normal leading-normal">
                   UI/UX Designer crafting intuitive product experiences.
@@ -517,7 +536,13 @@ export default function Home() {
               />
               <div className="inline-flex flex-col items-start justify-center gap-2 grow shrink basis-0">
                 <div className="self-stretch text-base font-bold leading-7 ">
-                  raffy.eth
+                  <Link
+                    href={"https://app.ens.domains/raffy.eth"}
+                    target="_blank"
+                    className="transition-colors duration-300 hover:text-ens-100"
+                  >
+                    raffy.eth
+                  </Link>
                 </div>
                 <div className="self-stretch text-sm font-normal leading-normal">
                   Financial software engineer with a passion for solving
@@ -530,7 +555,13 @@ export default function Home() {
               <Image width={88} src={kirillCoin} alt="Kirill" />
               <div className="inline-flex flex-col items-start justify-center gap-2 grow shrink basis-0">
                 <div className="self-stretch text-base font-bold leading-7 ">
-                  kp3556.eth
+                  <Link
+                    href={"https://app.ens.domains/kp3556.eth"}
+                    target="_blank"
+                    className="transition-colors duration-300 hover:text-ens-100"
+                  >
+                    kp3556.eth
+                  </Link>
                 </div>
                 <div className="self-stretch text-sm font-normal leading-normal">
                   Product Manager
@@ -547,10 +578,39 @@ export default function Home() {
               />
               <div className="inline-flex flex-col items-start justify-center gap-2 grow shrink basis-0">
                 <div className="self-stretch text-base font-bold leading-7 ">
-                  ncale.eth
+                  <Link
+                    href={"https://app.ens.domains/ncale.eth"}
+                    target="_blank"
+                    className="transition-colors duration-300 hover:text-ens-100"
+                  >
+                    ncale.eth
+                  </Link>
                 </div>
                 <div className="self-stretch text-sm font-normal leading-normal">
                   Open Source Developer
+                </div>
+              </div>
+            </div>
+            {/* Tim */}
+            <div className="inline-flex items-center justify-start max-w-xl gap-6">
+              <Image
+                width={88}
+                src={timCoin}
+                alt="Tim"
+                className="rounded-full grayscale"
+              />
+              <div className="inline-flex flex-col items-start justify-center gap-2 grow shrink basis-0">
+                <div className="self-stretch text-base font-bold leading-7 ">
+                  <Link
+                    href={"https://app.ens.domains/timcox.eth"}
+                    target="_blank"
+                    className="transition-colors duration-300 hover:text-ens-100"
+                  >
+                    timecox.eth
+                  </Link>
+                </div>
+                <div className="self-stretch text-sm font-normal leading-normal">
+                  Hype Man
                 </div>
               </div>
             </div>
