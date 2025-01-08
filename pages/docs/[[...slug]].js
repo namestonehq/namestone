@@ -339,7 +339,7 @@ export default function Docs({ content, fileName }) {
                           )
                           .replace(
                             "0xA87361C4E58B619c390f469B9E6F27d759715125",
-                            "0xCa71342cB02714374e61e400f172FF003497B2c2"
+                            "0x467893bFE201F8EfEa09BBD53fB69282e6001595"
                           )}
                   </ReactMarkdown>
                 </div>
