@@ -35,6 +35,8 @@ import darianCoin from "../public/images/darian-coin.png";
 import sloboCoin from "../public/images/slobo-coin.png";
 import churinaCoin from "../public/images/churina-coin.png";
 import raffyCoin from "../public/images/raffy-coin.png";
+import kirillCoin from "../public/images/kirill-coin.png";
+import nickCoin from "../public/images/nick-coin.jpeg";
 
 import { useRouter } from "next/router";
 import Footer from "../components/Footer";
@@ -454,91 +456,107 @@ export default function Home() {
             />
           </div>
         </div>
-        {/* BUILDERS */}
-        <div className="flex flex-col items-start justify-start w-full px-6 py-16 bg-neutral-50 lg:px-32">
-          <div className="inline-flex items-center self-stretch justify-start gap-20">
-            <div className="inline-flex flex-col items-start self-stretch justify-center gap-8 grow shrink basis-0">
-              <h2 className="self-stretch text-neutral-900 text-[32px] font-bold">
-                Builders
-              </h2>
+        {/* Fancy divider */}
+        <div className="flex w-full h-8">
+          <div className="w-8 h-full bg-neutral-900"></div>
+          <div className="w-0 h-0 border-r-[50px] border-r-white border-b-[50px] border-b-neutral-900"></div>
+          <div className="flex-1 h-full bg-white"></div>
+          <div className="w-0 h-0 border-l-[50px] border-b-neutral-900 border-b-[50px] border-l-white"></div>
+          <div className="w-8 h-full bg-neutral-900"></div>
+        </div>
+        {/* Builders & Contributors */}
 
-              <div className="w-[336px] justify-start items-center gap-6 inline-flex">
-                <Image width={88} src={sloboCoin} alt="slobo" />
-                <div className="inline-flex flex-col items-start justify-center gap-2 grow shrink basis-0">
-                  <div className="self-stretch text-base font-bold leading-7 text-neutral-900">
-                    slobo.eth
-                  </div>
-                  <div className="self-stretch text-sm font-normal leading-normal text-neutral-900">
-                    ENS Steward, Web3 Founder, and Former CMO
-                  </div>
+        <div className="w-full px-6 pb-20 text-white bg-neutral-900 h-fit lg:px-32">
+          <div className="mt-10 mb-6 text-[32px] font-bold  text-left">
+            Builders & Contributors
+          </div>
+          <div className="grid grid-cols-1 gap-12 md:gap-8 md:grid-cols-2">
+            {/* Slobo */}
+            <div className="inline-flex items-center justify-start max-w-xl gap-6">
+              <Image width={88} src={sloboCoin} alt="slobo" />
+              <div className="inline-flex flex-col items-start justify-center gap-2 grow shrink basis-0">
+                <div className="self-stretch text-base font-bold leading-7 ">
+                  slobo.eth
+                </div>
+                <div className="self-stretch text-sm font-normal leading-normal">
+                  Web3 Founder, open source developer and ENS Steward.
                 </div>
               </div>
-              <div className="w-[336px] justify-start items-center gap-6 inline-flex">
-                <Image width={88} src={darianCoin} alt="darian" />
-                <div className="inline-flex flex-col items-start justify-center gap-2 grow shrink basis-0">
-                  <div className="self-stretch text-base font-bold leading-7 text-neutral-900">
-                    darianb.eth
-                  </div>
-                  <div className="self-stretch text-sm font-normal leading-normal text-neutral-900">
-                    Web3 Founder, Builder and Leader of Tech Teams
-                  </div>
+            </div>
+            {/* Darian */}
+            <div className="inline-flex items-center justify-start max-w-xl gap-6">
+              <Image width={88} src={darianCoin} alt="darian" />
+              <div className="inline-flex flex-col items-start justify-center gap-2 grow shrink basis-0">
+                <div className="self-stretch text-base font-bold leading-7 ">
+                  darianb.eth
+                </div>
+                <div className="self-stretch text-sm font-normal leading-normal">
+                  Web3 Founder, builder and leader of tech teams.
                 </div>
               </div>
-              <div className="w-[336px] justify-start items-center gap-6 inline-flex">
-                <Image width={88} src={churinaCoin} alt="churina" />
-                <div className="inline-flex flex-col items-start justify-center gap-2 grow shrink basis-0">
-                  <div className="self-stretch text-base font-bold leading-7 text-neutral-900">
-                    churina.eth
-                  </div>
-                  <div className="self-stretch text-sm font-normal leading-normal text-neutral-900">
-                    UI/UX Designer
-                  </div>
+            </div>
+            {/* Churina */}
+            <div className="inline-flex items-center justify-start max-w-xl gap-6">
+              <Image width={88} src={churinaCoin} alt="churina" />
+              <div className="inline-flex flex-col items-start justify-center gap-2 grow shrink basis-0">
+                <div className="self-stretch text-base font-bold leading-7 ">
+                  churina.eth
+                </div>
+                <div className="self-stretch text-sm font-normal leading-normal">
+                  UI/UX Designer crafting intuitive product experiences.
                 </div>
               </div>
-              <div className="w-[336px] justify-start items-center gap-6 inline-flex">
-                <Image width={88} src={raffyCoin} alt="churina" />
-                <div className="inline-flex flex-col items-start justify-center gap-2 grow shrink basis-0">
-                  <div className="self-stretch text-base font-bold leading-7 text-neutral-900">
-                    raffy.eth
-                  </div>
-                  <div className="self-stretch text-sm font-normal leading-normal text-neutral-900">
-                    Financial software engineer with a passion for solving
-                    problems.
-                  </div>
+            </div>
+            {/* Raffy */}
+            <div className="inline-flex items-center justify-start max-w-xl gap-6">
+              <Image
+                width={88}
+                src={raffyCoin}
+                alt="raffy"
+                className=" grayscale"
+              />
+              <div className="inline-flex flex-col items-start justify-center gap-2 grow shrink basis-0">
+                <div className="self-stretch text-base font-bold leading-7 ">
+                  raffy.eth
+                </div>
+                <div className="self-stretch text-sm font-normal leading-normal">
+                  Financial software engineer with a passion for solving
+                  problems.
                 </div>
               </div>
-              {/* <div className="pb-0.5 justify-center items-center gap-2 inline-flex">
-                <div className="text-base font-bold leading-normal text-center text-neutral-900">
-                  Currently hiring devs
+            </div>
+            {/* Kirill */}
+            <div className="inline-flex items-center justify-start max-w-xl gap-6">
+              <Image width={88} src={kirillCoin} alt="Kirill" />
+              <div className="inline-flex flex-col items-start justify-center gap-2 grow shrink basis-0">
+                <div className="self-stretch text-base font-bold leading-7 ">
+                  kp3556.eth
                 </div>
-                */}
+                <div className="self-stretch text-sm font-normal leading-normal">
+                  Product Manager
+                </div>
+              </div>
+            </div>
+            {/* Nick */}
+            <div className="inline-flex items-center justify-start max-w-xl gap-6">
+              <Image
+                width={88}
+                src={nickCoin}
+                alt="Nick"
+                className="rounded-full grayscale"
+              />
+              <div className="inline-flex flex-col items-start justify-center gap-2 grow shrink basis-0">
+                <div className="self-stretch text-base font-bold leading-7 ">
+                  ncale.eth
+                </div>
+                <div className="self-stretch text-sm font-normal leading-normal">
+                  Open Source Developer
+                </div>
+              </div>
             </div>
           </div>
         </div>
-        {/* Final Call section */}
-        <div className="flex flex-col items-start justify-start w-full px-6 py-16 text-left lg:px-32 bg-neutral-900 ">
-          <h2 className="mt-16 font-bold text-white text-md md:text-lg">
-            Ready to get started?{" "}
-          </h2>
-          <div className="max-w-xl mt-3 text-sm text-left text-white md:text-base ">
-            Our team is standing by to answer your questions and find the right
-            solution for you
-          </div>
-          <div className="flex flex-wrap justify-start gap-4 mt-10 mb-16">
-            <button
-              onClick={() => router.push("/try-namestone")}
-              className="px-8 py-3 text-sm font-bold bg-orange-500 rounded-lg cursor-pointer hover:bg-orange-700 text-brownblack-700 w-fit active:bg-orange-800"
-            >
-              Get Started
-            </button>
-            <button
-              onClick={learnMoreClick}
-              className="px-8 py-3 text-sm font-bold text-white border border-white border-solid rounded-lg cursor-pointer hover:bg-white hover:bg-opacity-5 w-fit active:bg-white active:bg-opacity-10"
-            >
-              Contact Us
-            </button>
-          </div>
-        </div>
+
         {/* Footer */}
         <Footer />
       </div>
