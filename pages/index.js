@@ -597,7 +597,7 @@ function Card({
   backgroundColor,
 }) {
   return (
-    <div className="max-w-md max-h-24">
+    <div className="h-24 max-w-md max-h-24">
       <div className="mb-5 font-bold text-left">{title}</div>
       <div className="flex items-center justify-center max-w-full max-h-full overflow-hidden rounded-lg bg-neutral-100">
         <div
@@ -614,7 +614,7 @@ function Card({
         <div className="flex flex-1 m-4 text-left">
           <div className="flex flex-col gap-2">
             <div className="font-bold">{product}</div>
-            <div className="text-xs">{description}</div>
+            <div className="text-xs line-clamp-2">{description}</div>
           </div>
           <Link href={linkHref} className="flex items-center" target="_blank">
             <Image
