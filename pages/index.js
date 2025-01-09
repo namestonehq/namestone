@@ -33,6 +33,7 @@ import raffyCoin from "../public/images/raffy-coin.png";
 import kirillCoin from "../public/images/kirill-coin.png";
 import nickCoin from "../public/images/nick-coin.jpeg";
 import timCoin from "../public/images/tim-coin.jpg";
+import zachCoin from "../public/images/zach-coin.jpg";
 
 import Footer from "../components/Footer";
 import Header from "../components/Header";
@@ -82,7 +83,7 @@ export default function Home() {
               </span>
               <div className="flex flex-wrap justify-center gap-4 mt-10 mb-16">
                 <Link
-                  className="px-4 py-2 text-sm font-bold transition-all duration-200 bg-orange-500 border border-black rounded-lg shadow-lg cursor-pointer md:text-sm hover:bg-orange-700 text-brownblack-700 active:bg-orange-800 "
+                  className="px-4 py-2 text-sm font-bold transition-all duration-200 bg-orange-500 border border-black rounded-lg cursor-pointer md:text-sm hover:bg-orange-700 text-brownblack-700 active:bg-orange-800 "
                   href="/try-namestone"
                 >
                   Get Started
@@ -128,7 +129,7 @@ export default function Home() {
               </div>
               <div className="flex gap-3 mt-5">
                 <Link
-                  className="px-4 py-2 text-sm font-bold transition-all duration-200 bg-orange-500 border border-black rounded-lg shadow-lg cursor-pointer md:text-sm hover:bg-orange-700 text-brownblack-700 active:bg-orange-800 "
+                  className="px-4 py-2 text-sm font-bold transition-all duration-200 bg-orange-500 border border-black rounded-lg cursor-pointer md:text-sm hover:bg-orange-700 text-brownblack-700 active:bg-orange-800 "
                   href="/try-namestone"
                 >
                   Get Started
@@ -253,7 +254,7 @@ export default function Home() {
           <Image src={divider} alt="divider" />
           <div className="flex flex-wrap items-center gap-10 mt-16">
             <div className="flex flex-col justify-start flex-1 text-left min-w-[280px]">
-              <div className="px-4 py-1 mb-8 font-light border shadow-inner rounded-xl text-neutral-900 border-neutral-200 drop-shadow bg-neutral-50 w-fit">
+              <div className="px-4 py-1 mb-8 font-light border shadow-inner rounded-xl text-neutral-900 border-neutral-200 bg-neutral-50 w-fit">
                 For {"{"}developers{"}"}
               </div>
               <Image
@@ -275,7 +276,7 @@ export default function Home() {
               </div>
               <div className="flex gap-3 mt-5">
                 <Link
-                  className="px-8 py-2 text-sm font-bold transition-all duration-200 bg-orange-500 border border-black rounded-lg shadow-xl cursor-pointer drop--sm md:text-sm hover:bg-orange-700 text-brownblack-700 active:bg-orange-800 "
+                  className="px-8 py-2 text-sm font-bold transition-all duration-200 bg-orange-500 border border-black rounded-lg cursor-pointer drop--sm md:text-sm hover:bg-orange-700 text-brownblack-700 active:bg-orange-800 "
                   href="https://durin.dev/"
                   target="_blank"
                 >
@@ -325,7 +326,7 @@ export default function Home() {
           <Image src={divider} alt="divider" />
           <div className="flex flex-wrap items-center gap-10 mt-16">
             <div className="flex flex-col justify-start flex-1 text-left min-w-[280px]">
-              <div className="px-4 py-1 mb-8 font-light border shadow-inner rounded-xl text-neutral-900 border-neutral-200 drop-shadow bg-neutral-50 w-fit">
+              <div className="px-4 py-1 mb-8 font-light border shadow-inner rounded-xl text-neutral-900 border-neutral-200 bg-neutral-50 w-fit">
                 For Everyone
               </div>
               <Image
@@ -340,7 +341,7 @@ export default function Home() {
               </div>
               <div className="flex gap-3 mt-5">
                 <Link
-                  className="px-6 py-2 text-sm font-bold transition-all duration-200 bg-orange-500 border border-black rounded-lg shadow-lg cursor-pointer md:text-sm hover:bg-orange-700 text-brownblack-700 active:bg-orange-800 "
+                  className="px-6 py-2 text-sm font-bold transition-all duration-200 bg-orange-500 border border-black rounded-lg cursor-pointer md:text-sm hover:bg-orange-700 text-brownblack-700 active:bg-orange-800 "
                   href="https://enspro.xyz/"
                   target="_blank"
                 >
@@ -514,6 +515,29 @@ export default function Home() {
                 </div>
               </div>
             </div>
+            {/* Zach */}
+            <div className="inline-flex items-center justify-start max-w-xl gap-6">
+              <Image
+                width={88}
+                src={zachCoin}
+                alt="Tim"
+                className="rounded-full grayscale"
+              />
+              <div className="inline-flex flex-col items-start justify-center gap-2 grow shrink basis-0">
+                <div className="self-stretch text-base font-bold leading-7 ">
+                  <Link
+                    href={"https://app.ens.domains/zachterrell.eth"}
+                    target="_blank"
+                    className="transition-colors duration-300 hover:text-ens-100"
+                  >
+                    zachterrell.eth
+                  </Link>
+                </div>
+                <div className="self-stretch text-sm font-normal leading-normal">
+                  Full Stack Developer
+                </div>
+              </div>
+            </div>
             {/* Kirill */}
             <div className="inline-flex items-center justify-start max-w-xl gap-6">
               <Image width={88} src={kirillCoin} alt="Kirill" />
@@ -555,6 +579,7 @@ export default function Home() {
                 </div>
               </div>
             </div>
+
             {/* Tim */}
             <div className="inline-flex items-center justify-start max-w-xl gap-6">
               <Image
@@ -570,7 +595,7 @@ export default function Home() {
                     target="_blank"
                     className="transition-colors duration-300 hover:text-ens-100"
                   >
-                    timecox.eth
+                    timcox.eth
                   </Link>
                 </div>
                 <div className="self-stretch text-sm font-normal leading-normal">
@@ -600,23 +625,28 @@ function Card({
     <div className="h-24 max-w-md max-h-24">
       <div className="mb-5 font-bold text-left">{title}</div>
       <div className="flex items-center justify-center max-w-full max-h-full overflow-hidden rounded-lg bg-neutral-100">
-        <div
-          className={`flex items-center justify-center flex-shrink-0 max-w-full max-h-full rounded-l-lg aspect-square ${backgroundColor}`}
+        <Link
+          href={linkHref}
+          className="flex items-center transition-colors duration-500 hover:bg-orange-100"
+          target="_blank"
         >
-          <Image
-            src={iconSrc}
-            alt={title}
-            width={48}
-            height={48}
-            className="object-contain m-6"
-          />
-        </div>
-        <div className="flex flex-1 m-4 text-left">
-          <div className="flex flex-col gap-2">
-            <div className="font-bold">{product}</div>
-            <div className="text-xs line-clamp-2">{description}</div>
+          <div
+            className={`flex items-center justify-center flex-shrink-0 max-w-full max-h-full rounded-l-lg aspect-square ${backgroundColor}`}
+          >
+            <Image
+              src={iconSrc}
+              alt={title}
+              width={48}
+              height={48}
+              className="object-contain m-6"
+            />
           </div>
-          <Link href={linkHref} className="flex items-center" target="_blank">
+          <div className="flex flex-1 m-4 text-left">
+            <div className="flex flex-col gap-2">
+              <div className="font-bold">{product}</div>
+              <div className="text-xs line-clamp-2">{description}</div>
+            </div>
+
             <Image
               src={orangeArrow}
               alt="arrow"
@@ -624,8 +654,8 @@ function Card({
               height={36}
               className="ml-2"
             />
-          </Link>
-        </div>
+          </div>
+        </Link>
       </div>
     </div>
   );
