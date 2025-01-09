@@ -39,7 +39,7 @@ export default function Footer() {
                     className="text-neutral-400 hover:text-white"
                     target="_blank"
                   >
-                    Durin.dev
+                    Durin
                   </Link>
                 </li>
                 <li>
@@ -48,7 +48,7 @@ export default function Footer() {
                     className="transition-colors duration-300 text-neutral-400 hover:text-white"
                     target="_blank"
                   >
-                    ENSPro.xyz
+                    ENSPro
                   </Link>
                 </li>
                 <li>
