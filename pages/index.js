@@ -54,7 +54,7 @@ export default function Home() {
         {/* Nav Bar */}
         <Header />
         {/* Main Section */}
-        <div className="w-full overflow-hidden text-center flex  bg-neutral-50 md:text-left  h-[676px] lg:px-32 px-8 justify-center md:justify-start mt-[76px] relative">
+        <div className="w-full overflow-hidden text-center flex  bg-neutral-50 md:text-left  h-[676px] lg:px-32 px-8 justify-center md:justify-start sm:mt-[76px] relative">
           <video
             autoPlay
             muted
@@ -69,10 +69,10 @@ export default function Home() {
             <source src="/background-landing-animation.mp4" type="video/mp4" />
             Your browser does not support the video tag.
           </video>
-          <div className="z-10 flex flex-wrap items-center justify-start mb-8 ">
-            <div className="z-20 flex flex-col items-center md:items-start">
+          <div className="z-10 flex flex-wrap items-center justify-start sm:mb-8 ">
+            <div className="z-20 flex flex-col items-start">
               {/* TITLE */}
-              <h1 className="max-w-lg font-bold text-md sm:text-lg md:text-5xl md:leading-tight text-brownblack-700">
+              <h1 className="max-w-lg font-bold text-left text-md sm:text-lg md:text-5xl md:leading-tight text-brownblack-700">
                 Create ENS Subdomains
               </h1>
               <span className="max-w-lg mt-3 text-sm text-left md:text-base text-brownblack-700">
@@ -81,7 +81,7 @@ export default function Home() {
                 seamless, gasless subdomain management and issuance. Get started
                 today with a free API key.
               </span>
-              <div className="flex flex-wrap justify-center gap-4 mt-10 mb-16">
+              <div className="flex flex-wrap gap-4 mt-10 sm:mb-16 ">
                 <Link
                   className="px-4 py-2 text-sm font-bold transition-all duration-200 bg-orange-500 border border-black rounded-lg cursor-pointer md:text-sm hover:bg-orange-700 text-brownblack-700 active:bg-orange-800 "
                   href="/try-namestone"
@@ -101,12 +101,12 @@ export default function Home() {
           <div className="w-8 h-full"></div>
         </div>
         {/* Logos section */}
-        <div className="flex flex-col w-full px-6 pt-16 bg-white lg:pl-32">
+        <div className="flex flex-col w-full px-6 pt-4 pb-4 bg-white lg:px-0 ">
           <Image
             src={logoList}
             height={64}
             className="mx-auto"
-            alt="Logos of web3 companies 'Pooltogether', 'POAP', 'Obvious', 'Mailchain', 'dappling', 'GreenPill', and Azurbala'  "
+            alt="Logos of web3 companies that use NameStone"
           />
         </div>
         {/* NameStone API */}
@@ -205,7 +205,7 @@ export default function Home() {
                 otherwise costly feature.
               </p>
               <span className="self-end mt-4 text-right text-neutral-300">
-                Cameron
+                – Cameron
               </span>
               <Image src={burner} width={120} alt="burner Logo" />
               <span className="mt-4 text-left">
@@ -234,7 +234,7 @@ export default function Home() {
             </div>
             <div className="flex flex-col items-center gap-4">
               <div className="text-5xl font-bold">100,000</div>
-              <div>Resolutions Per Month</div>
+              <div>Resolutions per Month</div>
             </div>
           </div>
         </div>
@@ -267,7 +267,7 @@ export default function Home() {
                 Issue subdomains on the L2 of your choice. Project docs,
                 contracts, and architecture can be found on{" "}
                 <Link
-                  className="text-orange-500"
+                  className="text-orange-500 transition-colors duration-300 hover:text-orange-700"
                   href={"https://github.com/namestonehq/durin"}
                 >
                   GitHub
@@ -327,7 +327,7 @@ export default function Home() {
           <div className="flex flex-wrap items-center gap-10 mt-16">
             <div className="flex flex-col justify-start flex-1 text-left min-w-[280px]">
               <div className="px-4 py-1 mb-8 font-light border shadow-inner rounded-xl text-neutral-900 border-neutral-200 bg-neutral-50 w-fit">
-                For Everyone
+                For everyone
               </div>
               <Image
                 className="mr-3"
@@ -360,7 +360,7 @@ export default function Home() {
                     src={proofPointGaslessIcon}
                     alt="connection icon"
                   />{" "}
-                  100% Free personal subdomains
+                  100% free personal subdomains
                 </div>
                 <div className="flex gap-2">
                   <Image src={pencil} alt="gasless icon" /> Supports text
@@ -387,8 +387,8 @@ export default function Home() {
           <div className="w-8 h-full bg-neutral-100"></div>
         </div>
         {/* Right Product For You Section */}
-        <div className="w-full px-6 pb-20 text-center bg-white h-fit lg:px-32">
-          <div className="mt-10 mb-4 text-[32px] font-bold text-left">
+        <div className="w-full px-6 pb-40 text-center bg-white h-fit lg:px-32">
+          <div className="mt-20 mb-4 text-[32px] font-bold text-left">
             Find the right product for you
           </div>
           <div className="mb-20 text-left ">
@@ -433,7 +433,7 @@ export default function Home() {
         {/* Builders & Contributors */}
 
         <div className="w-full px-6 pb-20 text-white bg-neutral-900 h-fit lg:px-32">
-          <div className="mt-10 mb-6 text-[32px] font-bold  text-left">
+          <div className="mt-20 mb-6 text-[32px] font-bold  text-left">
             Builders & Contributors
           </div>
           <div className="grid grid-cols-1 gap-12 md:gap-8 md:grid-cols-2">
