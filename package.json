@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "NODE_OPTIONS=\"--max_old_space_size=400\" next start",
     "lint": "next lint",
-    "test": "jest"
+    "test": "jest",
+    "test:watch": "jest --watch"
   },
   "dependencies": {
     "@ensdomains/content-hash": "^2.5.7",
