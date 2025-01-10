@@ -25,9 +25,9 @@ export default async function handler(req, res) {
     }
 
     const wallet = token.sub;
-    const { name, email, domain } = JSON.parse(req.body);
+    const { name, email, domain, network } = JSON.parse(req.body);
 
-    if (!name || !email || !domain) {
+    if (!name || !email || !domain || !network) {
       res.status(400).json({ error: "Missing parameters" });
       console.log("Try Namestone error: Missing parameters");
       return;
@@ -42,7 +42,7 @@ export default async function handler(req, res) {
     }
     //Check if domain exists
     let domainQuery = await sql`
-  select * from domain where name = ${domain.toLowerCase()} limit 1;`;
+  select * from domain where name = ${domain.toLowerCase()} and network = ${network} limit 1;`;
     if (domainQuery.length > 0) {
       // if domain exists we return an error
       res.status(400).json({ error: "Domain already exists" });
@@ -61,16 +61,27 @@ export default async function handler(req, res) {
     }
 
     //Check if user Owns the domain
-    const domainOwner = await getDomainOwner(domain);
+    const domainOwner = await getDomainOwner(domain, network);
     if (domainOwner !== address) {
       return res
         .status(400)
         .json({ error: "Your wallet needs to own the domain" });
     }
 
-    let insertDomain = { name: domain, name_limit: 1000, address: address };
+    let insertDomain = {
+      name: domain,
+      name_limit: 1000,
+      address: address,
+      network: network,
+    };
     domainQuery = await sql`
-  insert into domain ${sql(insertDomain, "name", "name_limit", "address")}
+  insert into domain ${sql(
+    insertDomain,
+    "name",
+    "name_limit",
+    "address",
+    "network"
+  )}
   returning id;`;
     let insertBrand = {
       name: domain,
@@ -102,6 +113,8 @@ export default async function handler(req, res) {
     Hi ${name},
     Here's your namestone API key for your domain ${domain}:
     ${apiKey[0].key}
+
+    On network ${network}.
 
     You can use this key to create and manage subdomains for ${domain}.
     Here is an example: https://namestone.xyz/docs/set-name 
@@ -144,7 +157,7 @@ export default async function handler(req, res) {
         <div class="container">
             <p>Hi <strong>${name}</strong>,</p>
     
-            <p>Your API key for <strong>${domain}</strong> is:</p>
+            <p>Your API key for <strong>${domain}</strong> on <strong>${network}</strong> is:</p>
     
             <div class="api-key">${apiKey[0].key}</div>
     
@@ -197,6 +210,7 @@ export default async function handler(req, res) {
     Email: ${email}
     Wallet Address: ${wallet}
     Domain: ${domain}
+    Network: ${network}
     `;
 
     const mailOptions2 = {

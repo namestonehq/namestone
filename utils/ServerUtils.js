@@ -2,7 +2,7 @@ import sql from "../lib/db.js";
 import { ethers } from "ethers";
 import contentHash from "@ensdomains/content-hash";
 import { createPublicClient, http } from "viem";
-import { mainnet } from "viem/chains";
+import { mainnet, sepolia } from "viem/chains";
 import {
   createSiweMessage,
   generateSiweNonce,
@@ -10,6 +10,7 @@ import {
 } from "viem/siwe";
 import { getOwner } from "@ensdomains/ensjs/public";
 import { addEnsContracts, ensSubgraphActions } from "@ensdomains/ensjs";
+import { getToken } from "next-auth/jwt";
 
 export const providerUrl =
   "https://eth-mainnet.g.alchemy.com/v2/" +
@@ -25,6 +26,22 @@ export const client = createPublicClient({
     },
   },
   transport: http(providerUrl || ""),
+}).extend(ensSubgraphActions);
+
+export const sepoliaProviderUrl =
+  "https://eth-sepolia.g.alchemy.com/v2/" +
+  process.env.NEXT_PUBLIC_ALCHEMY_API_KEY; // replace with your actual project ID
+
+export const sepoliaClient = createPublicClient({
+  chain: {
+    ...addEnsContracts(sepolia),
+    subgraphs: {
+      ens: {
+        url: process.env.SUBGRAPH_URL_SEPOLIA || "",
+      },
+    },
+  },
+  transport: http(sepoliaProviderUrl || ""),
 }).extend(ensSubgraphActions);
 
 // get whether a user is eligible to claim a name
@@ -292,6 +309,25 @@ export async function checkApiKey(apiKey, domain) {
   return false;
 }
 
+// function to check if user is an admin of the domain
+export async function getAdminToken(req, domain) {
+  const token = await getToken({ req });
+  if (!token) {
+    return false;
+  }
+  const superAdminQuery = await sql`
+  SELECT * FROM super_admin WHERE address = ${token.sub}`;
+  const adminQuery = await sql`
+  SELECT * FROM admin
+  join domain on admin.domain_id = domain.id
+  WHERE admin.address = ${token.sub}
+  and domain.name = ${domain}`;
+  if (superAdminQuery.length === 0 && adminQuery.length === 0) {
+    return false;
+  }
+  return token;
+}
+
 function matchProtocol(text) {
   return (
     text.match(/^(ipfs|sia|ipns|bzz|onion|onion3|arweave|ar):\/\/(.*)/) ||
@@ -361,11 +397,17 @@ const resolverList = [
   "0x84c5AdB77dd9f362A1a3480009992d8d47325dc3",
   "0xd17347fA0a6eeC89a226c96a9ae354F785e94241",
   "0xA87361C4E58B619c390f469B9E6F27d759715125",
+  "0x467893bFE201F8EfEa09BBD53fB69282e6001595", //Sepolia
 ];
 
-export async function checkResolver(ensName) {
+export async function checkResolver(ensName, network = "mainnet") {
   try {
-    const resolver = await client.getEnsResolver({ name: ensName });
+    let resolver;
+    if (network === "sepolia") {
+      resolver = await sepoliaClient.getEnsResolver({ name: ensName });
+    } else {
+      resolver = await client.getEnsResolver({ name: ensName });
+    }
     console.log("Resolver:", resolver);
     return resolverList.includes(resolver);
   } catch (error) {
@@ -410,10 +452,16 @@ export async function verifySignature(address, signature) {
   return { success: true, error: "" };
 }
 
-export async function getDomainOwner(domain) {
+export async function getDomainOwner(domain, network = "mainnet") {
   // resolve owner of domain using ens
   try {
-    const result = await getOwner(client, { name: domain });
+    let result;
+    if (network === "sepolia") {
+      result = await getOwner(sepoliaClient, { name: domain });
+    } else {
+      result = await getOwner(client, { name: domain });
+    }
+    console.log(result);
     const ensAddress = result.owner;
     return ensAddress;
   } catch (error) {
@@ -470,4 +518,16 @@ export async function getOnchainDomainInfo(basename) {
     },
   };
   return result;
+}
+
+export function getNetwork(req) {
+  const network = req.query.network.toLowerCase();
+  if (network === "public_v1") {
+    return "mainnet";
+  }
+  if (network === "public_v1_sepolia") {
+    return "sepolia";
+  } else {
+    return false;
+  }
 }

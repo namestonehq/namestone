@@ -1,5 +1,9 @@
 import sql from "../../../lib/db";
-import { checkApiKey, encodeContenthash } from "../../../utils/ServerUtils";
+import {
+  checkApiKey,
+  encodeContenthash,
+  getNetwork,
+} from "../../../utils/ServerUtils";
 import Cors from "micro-cors";
 import { normalize } from "viem/ens";
 import { getDomainOwner } from "../../../utils/ServerUtils";
@@ -10,6 +14,10 @@ const cors = Cors({
 });
 
 async function handler(req, res) {
+  const network = getNetwork(req);
+  if (!network) {
+    return res.status(400).json({ error: "Invalid network" });
+  }
   const { headers } = req;
   let data = req.body;
   let apiKey = headers.authorization || req.query.api_key;
@@ -57,7 +65,7 @@ async function handler(req, res) {
 
   // check if domain exists
   let domainQuery = await sql`
-  select * from domain where name = ${domainName} limit 1;`;
+  select * from domain where name = ${domainName} and network=${network} limit 1;`;
 
   if (domainQuery.length == 0) {
     return res

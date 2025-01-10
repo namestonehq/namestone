@@ -1,12 +1,13 @@
 import sql from "../../../lib/db";
 import Cors from "micro-cors";
+import { getNetwork } from "../../../utils/ServerUtils";
 
 const cors = Cors({
   allowMethods: ["GET", "HEAD", "POST", "OPTIONS"],
   origin: "*",
 });
 
-async function checkApiKey(apiKey, domain) {
+async function checkApiKey(apiKey, domain, network) {
   console.log("Get domain", apiKey, domain);
   if (!apiKey) {
     return false;
@@ -22,6 +23,7 @@ async function checkApiKey(apiKey, domain) {
     join domain 
     on api_key.domain_id = domain.id
     where domain.name = ${domain}
+    and domain.network = ${network}
     and api_key.key = ${apiKey}`;
   }
   console.log(apiQuery);
@@ -32,6 +34,11 @@ async function checkApiKey(apiKey, domain) {
 }
 
 async function handler(req, res) {
+  const network = getNetwork(req);
+  if (!network) {
+    return res.status(400).json({ error: "Invalid network" });
+  }
+
   const { headers } = req;
 
   // Check required parameters
@@ -41,7 +48,7 @@ async function handler(req, res) {
   }
   const apiKey = headers.authorization || req.query.api_key;
   // Check API key
-  const allowedApi = await checkApiKey(apiKey, domain);
+  const allowedApi = await checkApiKey(apiKey, domain, network);
   if (!allowedApi) {
     return res.status(401).json({
       error: "key error - You are not authorized to use this endpoint",
@@ -49,7 +56,7 @@ async function handler(req, res) {
   }
 
   const domainQuery = await sql`
-    select id, address, name, contenthash_raw from domain where name = ${domain} limit 1`;
+    select id, address, name, contenthash_raw from domain where name = ${domain} and network = ${network} limit 1`;
   if (domainQuery.length === 0) {
     return res.status(400).json({ error: "Domain does not exist" });
   }
@@ -83,6 +90,7 @@ async function handler(req, res) {
     coin_types: coinTypeDict,
     contenthash: contenthashRaw,
   };
+  console.log("Get domain", domainPayload);
   return res.status(200).json(domainPayload);
 }
 

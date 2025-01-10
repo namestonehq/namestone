@@ -1,26 +1,33 @@
-import { NameWithRelation } from "@ensdomains/ensjs/subgraph";
 import { addEnsContracts, ensSubgraphActions } from "@ensdomains/ensjs";
 import { batch, getResolver } from "@ensdomains/ensjs/public";
-import { mainnet } from "viem/chains";
+import { mainnet, sepolia } from "viem/chains";
 import { createPublicClient, http, isAddress } from "viem";
-import { NextApiRequest, NextApiResponse } from "next";
 import { getToken } from "next-auth/jwt";
 
-export const providerUrl =
-  "https://eth-mainnet.g.alchemy.com/v2/" +
-  process.env.NEXT_PUBLIC_ALCHEMY_API_KEY; // replace with your actual project ID
+// Constants
+const providerUrl = `https://eth-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_API_KEY}`;
+const sepoliaProviderUrl = `https://eth-sepolia.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_API_KEY}`;
 
-const client = createPublicClient({
-  chain: {
-    ...addEnsContracts(mainnet),
-    subgraphs: {
-      ens: {
-        url: process.env.SUBGRAPH_URL || "",
+// Function to get the appropriate client based on network
+const getNetworkClient = (network) => {
+  const isSepoliaNetwork = network === "Sepolia";
+
+  console.log(isSepoliaNetwork);
+  return createPublicClient({
+    chain: {
+      ...addEnsContracts(isSepoliaNetwork ? sepolia : mainnet),
+      subgraphs: {
+        ens: {
+          url:
+            (isSepoliaNetwork
+              ? process.env.SEPOLIA_SUBGRAPH_URL
+              : process.env.SUBGRAPH_URL) || "",
+        },
       },
     },
-  },
-  transport: http(providerUrl || ""),
-}).extend(ensSubgraphActions);
+    transport: http(isSepoliaNetwork ? sepoliaProviderUrl : providerUrl),
+  }).extend(ensSubgraphActions);
+};
 
 const goodResolvers = [
   "0x7CE6Cf740075B5AF6b1681d67136B84431B43AbD",
@@ -28,6 +35,7 @@ const goodResolvers = [
   "0x2291053F49Cd008306b92f84a61c6a1bC9B5CB65",
   "0xA87361C4E58B619c390f469B9E6F27d759715125",
 ];
+const goodSepoliaResolvers = ["0x467893bFE201F8EfEa09BBD53fB69282e6001595"];
 
 export default async function handler(req, res) {
   if (req.method !== "GET") {
@@ -52,9 +60,15 @@ export default async function handler(req, res) {
     res.status(400).json({ error: "Invalid address" });
     return;
   }
+  // get network from url
+  const network = req.query.network;
+  if (!network) {
+    res.status(400).json({ error: "Missing network" });
+    return;
+  }
 
   try {
-    console.log(client.chain.subgraphs.ens.url);
+    const client = getNetworkClient(network);
     const result = await client.getNamesForAddress({
       address: address,
       pageSize: 1000,
@@ -73,7 +87,10 @@ export default async function handler(req, res) {
       parentName: item.parentName,
       owner: item.owner,
       createdAt: item.createdAt,
-      validResolver: goodResolvers.includes(displayedData[index] || ""),
+      validResolver:
+        network == "Mainnet"
+          ? goodResolvers.includes(displayedData[index] || "")
+          : goodSepoliaResolvers.includes(displayedData[index] || ""),
       expiryDate: item.expiryDate,
       resolver: displayedData[index],
     }));

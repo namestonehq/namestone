@@ -1,7 +1,6 @@
 import sql from "../../../lib/db";
-import { checkApiKey } from "../../../utils/ServerUtils";
+import { checkApiKey, getNetwork } from "../../../utils/ServerUtils";
 import Cors from "micro-cors";
-import { normalize } from "viem/ens";
 
 const cors = Cors({
   allowMethods: ["GET", "HEAD", "POST"],
@@ -9,6 +8,12 @@ const cors = Cors({
 });
 
 async function handler(req, res) {
+  // Revoke name deprecated so only mainnet
+  const network = getNetwork(req);
+  if (network !== "mainnet") {
+    return res.status(400).json({ error: "Invalid network" });
+  }
+
   const { headers } = req;
 
   // Check required parameters
@@ -38,7 +43,7 @@ async function handler(req, res) {
   select subdomain.id 
   from subdomain 
   where name = ${name} and domain_id in 
-  (select id from domain where name = ${domain} limit 1)`;
+  (select id from domain where name = ${domain} and network=${network} limit 1)`;
 
   if (subdomainQuery.length === 0) {
     return res.status(400).json({ error: "Name does not exist" });

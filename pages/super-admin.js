@@ -111,13 +111,14 @@ export default function SuperAdmin() {
     setSelectedTab(tab);
   }
 
-  function createBrand(domain, name, url) {
+  function createBrand(domain, name, url, network) {
     fetch("/api/admin/create-brand", {
       method: "POST",
       body: JSON.stringify({
         domain,
         name,
         url,
+        network,
       }),
     }).then((res) => {
       setBrandModalOpen(false);
@@ -654,6 +655,7 @@ function BrandModal({ open, setOpen, createBrand }) {
   const [domain, setDomain] = useState("");
   const [name, setName] = useState("");
   const [url, setUrl] = useState("");
+  const [network, setNetwork] = useState("mainnet");
 
   return (
     <Dialog
@@ -694,12 +696,22 @@ function BrandModal({ open, setOpen, createBrand }) {
               value={url}
               onChange={(e) => setUrl(e.target.value)}
             />
+            <div className="text-sm font-bold text-brownblack-700">network</div>
+            {/* network select */}
+            <select
+              className="w-full px-4 py-2 mb-4 border rounded-md border-brownblack-50"
+              value={network}
+              onChange={(e) => setNetwork(e.target.value)}
+            >
+              <option value="mainnet">Mainnet</option>
+              <option value="sepolia">Sepolia</option>
+            </select>
           </div>
           <div className="flex items-center justify-around mt-6">
             <Button
               buttonText="Create Brand"
               onClick={() => {
-                createBrand(domain, name, url);
+                createBrand(domain, name, url, network);
               }}
             />
           </div>

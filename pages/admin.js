@@ -3,14 +3,23 @@ import Image from "next/image";
 import AuthContentContainer from "../components/Admin/AuthContentContainer";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import SubdomainsTable from "../components/Admin/SubdomainTable";
+import SubdomainTable from "../components/Admin/SubdomainTable";
 import { useSession } from "next-auth/react";
 import Button from "../components/Button";
-import { Dialog } from "@headlessui/react";
 import { ethers } from "ethers";
 import placeholderImage from "../public/images/placeholder-icon-image.png";
 import { Icon } from "@iconify/react";
-import { normalize } from "viem/ens";
+import AddNameModal from "../components/Admin/AddNameModal";
+import toast from "react-hot-toast";
+import _ from "lodash";
+
+const blankNameData = {
+  name: "",
+  address: "",
+  contenthash: "",
+  textRecords: [],
+  coinTypes: [],
+};
 
 export default function Admin() {
   const { data: session, status: authStatus } = useSession();
@@ -21,8 +30,6 @@ export default function Admin() {
   const [subdomains, setSubdomains] = useState([]);
 
   const [addNameModalOpen, setAddNameModalOpen] = useState(false);
-  const [nameInput, setNameInput] = useState("");
-  const [addressInput, setAddressInput] = useState("");
   const [nameErrorMsg, setNameErrorMsg] = useState("");
   const [addressErrorMsg, setAddressErrorMsg] = useState("");
   const [nameId, setNameId] = useState(null); // id of name to edit
@@ -33,8 +40,23 @@ export default function Admin() {
   const [apiKey, setApiKey] = useState("loading");
   const [adminErrorMsg, setAdminErrorMsg] = useState("");
   //add or edit
-  const [modalType, setModalType] = useState("add");
   const [activeTab, setActiveTab] = useState("Subnames");
+  const [currentNameData, setCurrentNameData] = useState(blankNameData);
+  const [saveNamePending, setSaveNamePending] = useState(false);
+  const [mainnetOpen, setMainnetOpen] = useState(true);
+  const [sepoliaOpen, setSepoliaOpen] = useState(true);
+
+  //funtion to help set current name data
+  function setCurrentNameHelper(value, key1, key2 = undefined) {
+    if (key2 !== undefined) {
+      setCurrentNameData({
+        ...currentNameData,
+        [key1]: { ...currentNameData[key1], [key2]: value },
+      });
+    } else {
+      setCurrentNameData({ ...currentNameData, [key1]: value });
+    }
+  }
 
   // fetch to get allowed domains after connect
   useEffect(() => {
@@ -57,18 +79,22 @@ export default function Admin() {
   // fetch to populate table
   useEffect(() => {
     if (!selectedBrand) return;
+    // get names and replace data
     fetch(
       "/api/admin/list-subdomains?" +
-        new URLSearchParams({ domain: selectedBrand?.domain })
-    ).then((res) =>
+        new URLSearchParams({
+          domain: selectedBrand?.domain,
+          network: selectedBrand?.network,
+        })
+    ).then((res) => {
       res.json().then((data) => {
         if (res.status === 200) {
           setSubdomains(data);
         } else {
           console.log(data);
         }
-      })
-    );
+      });
+    });
     fetch(
       "/api/admin/get-domain-admins?" +
         new URLSearchParams({ domain: selectedBrand?.domain })
@@ -97,124 +123,168 @@ export default function Admin() {
   }, [selectedBrand]);
 
   function openAddNameModal() {
-    setModalType("add");
     setAddNameModalOpen(true);
+    let tempBlankNameData = _.cloneDeep(blankNameData);
+    tempBlankNameData.domain = selectedBrand.domain;
+    tempBlankNameData.id = 0;
+    console.log(tempBlankNameData);
+    setCurrentNameData(tempBlankNameData);
   }
 
-  function openEditNameModal(id, name, address) {
-    setNameId(id);
-    setNameInput(name);
-    setAddressInput(address);
-    setModalType("edit");
-    setAddNameModalOpen(true);
-  }
-
-  // function to add a name
-  function addName(name, address) {
-    if (!name) {
-      setNameErrorMsg("*Name cannot be blank");
-      return;
-    }
-    if (!address) {
-      setAddressErrorMsg("*Address cannot be blank");
-      return;
-    }
-    // check if address is valid ethereum address using ethers and convert to checksum
-    try {
-      address = ethers.utils.getAddress(address);
-    } catch (e) {
-      setAddressErrorMsg("*Invalid address");
-      return;
-    }
-    // check if name is valid
-    try {
-      name = normalize(name);
-    } catch (e) {
-      setNameErrorMsg("*Invalid name");
-      return;
-    }
-
-    fetch("/api/admin/add-subdomain", {
-      method: "POST",
-      body: JSON.stringify({
-        name: name,
-        address: address,
-        domain: selectedBrand.domain,
-      }),
-    }).then((res) => {
+  function openEditNameModal(index) {
+    // set currectNameData to what we know already
+    let tempNameData = _.cloneDeep(blankNameData);
+    tempNameData.name = subdomains[index].name;
+    tempNameData.address = subdomains[index].address;
+    tempNameData.id = subdomains[index].id;
+    tempNameData.domain = selectedBrand.domain;
+    setCurrentNameData(tempNameData);
+    // prevent saving when text records havent loaded
+    setSaveNamePending(true);
+    // fetch name
+    const url =
+      selectedBrand.network === "mainnet"
+        ? "/api/public_v1/search-names?"
+        : "/api/public_v1_sepolia/search-names?";
+    fetch(
+      url +
+        new URLSearchParams({
+          domain: selectedBrand?.domain,
+          name: subdomains[index].name,
+        })
+    ).then((res) => {
       res.json().then((data) => {
         if (res.status === 200) {
-          setAddNameModalOpen(false);
-          setSubdomains([...subdomains, data]);
-          setNameErrorMsg("");
-          setAddressErrorMsg("");
-          setNameInput("");
-          setAddressInput("");
+          // Get the latest currentNameData state to preserve any user changes
+          setCurrentNameData((prevNameData) => ({
+            ...data[0],
+            // Preserve the latest user-editable fields from the current state
+            name: prevNameData.name,
+            address: prevNameData.address,
+            id: subdomains[index].id,
+          }));
         } else {
-          if (data.error.includes("claimed") || data.error.includes("ens")) {
-            setNameErrorMsg(data.error);
-          }
           console.log(data);
         }
+        setSaveNamePending(false);
       });
     });
+
+    setAddNameModalOpen(true);
   }
-  // function to edit a name
-  function editName(name, address, id) {
-    if (!name) {
+
+  // function to add and edit a name
+  function setName(nameData) {
+    if (!nameData.name) {
       setNameErrorMsg("*Name cannot be blank");
       return;
     }
-    if (!address) {
+    if (!nameData.address) {
       setAddressErrorMsg("*Address cannot be blank");
       return;
     }
     // check if address is valid ethereum address using ethers and convert to checksum
+    let address;
     try {
-      address = ethers.utils.getAddress(address);
+      address = ethers.utils.getAddress(nameData.address);
     } catch (e) {
       setAddressErrorMsg("*Invalid address");
       return;
     }
-    // check if name is valid
-    try {
-      name = normalize(name);
-    } catch (e) {
-      setNameErrorMsg("*Invalid name");
-      return;
-    }
+    setSaveNamePending(true);
 
-    fetch("/api/admin/edit-subdomain", {
+    fetch("/api/admin/set-subdomain", {
+      method: "POST",
+      body: JSON.stringify({
+        id: nameData.id,
+        name: nameData.name,
+        address: address,
+        contenthash: nameData.contenthash,
+        domain: selectedBrand.domain,
+        text_records: nameData.text_records,
+        coin_types: nameData.coin_types,
+      }),
+    }).then((res) => {
+      res
+        .json()
+        .then((data) => {
+          if (res.status === 200) {
+            setAddNameModalOpen(false);
+            setNameErrorMsg("");
+            setAddressErrorMsg("");
+            toast.success("Subdomain set successfully");
+          } else {
+            setNameErrorMsg(data.error);
+            console.log(data);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+          console.res;
+        })
+        .finally(() => {
+          setSaveNamePending(false);
+          // get names and replace data
+          fetch(
+            "/api/admin/list-subdomains?" +
+              new URLSearchParams({
+                domain: selectedBrand?.domain,
+                network: selectedBrand?.network,
+              })
+          ).then((res) => {
+            res.json().then((data) => {
+              if (res.status === 200) {
+                setSubdomains(data);
+              } else {
+                console.log(data);
+              }
+            });
+          });
+        });
+    });
+  }
+  // function to delete a name
+  function deleteName(name) {
+    const url =
+      selectedBrand.network === "mainnet"
+        ? "/api/public_v1/delete-name"
+        : "/api/public_v1_sepolia/delete-name";
+
+    fetch(url, {
       method: "POST",
       body: JSON.stringify({
         name: name,
-        address: address,
         domain: selectedBrand.domain,
-        id: id,
       }),
     }).then((res) => {
-      res.json().then((data) => {
-        if (res.status === 200) {
-          setAddNameModalOpen(false);
-          // get index of old name
-          let index = subdomains.findIndex((sub) => sub.id === id);
-          // replace old name with data
-          let tempSubdomains = subdomains;
-          tempSubdomains[index] = data;
-          setSubdomains(tempSubdomains);
-          // clear inputs
-          setNameErrorMsg("");
-          setAddressErrorMsg("");
-          setNameInput("");
-          setAddressInput("");
-        } else {
-          if (data.error.includes("claimed") || data.error.includes("ens")) {
-            setNameErrorMsg(data.error);
+      res
+        .json()
+        .then((data) => {
+          if (res.status === 200) {
+            // get names and replace data
+            fetch(
+              "/api/admin/list-subdomains?" +
+                new URLSearchParams({
+                  domain: selectedBrand?.domain,
+                  network: selectedBrand?.network,
+                })
+            ).then((res) => {
+              res.json().then((data) => {
+                if (res.status === 200) {
+                  setSubdomains(data);
+                  toast.success("Subdomain deleted successfully");
+                } else {
+                  console.log(data);
+                }
+              });
+            });
+          } else {
+            console.log(data);
           }
-
-          console.log(data);
-        }
-      });
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     });
   }
 
@@ -273,8 +343,7 @@ export default function Admin() {
     if (!addNameModalOpen) {
       setNameErrorMsg("");
       setAddressErrorMsg("");
-      setNameInput("");
-      setAddressInput("");
+      setCurrentNameData(blankNameData);
     }
   }, [addNameModalOpen]);
   // if they haven't authenticated, they need to click connect
@@ -312,16 +381,13 @@ export default function Admin() {
   return (
     <AuthContentContainer>
       <AddNameModal
-        modalType={modalType}
         open={addNameModalOpen}
         setOpen={setAddNameModalOpen}
-        nameId={nameId}
-        addName={addName}
-        editName={editName}
-        nameInput={nameInput}
-        setNameInput={setNameInput}
-        addressInput={addressInput}
-        setAddressInput={setAddressInput}
+        currentNameData={currentNameData}
+        setCurrentNameHelper={setCurrentNameHelper}
+        savePending={saveNamePending}
+        deleteName={deleteName}
+        setName={setName}
         nameErrorMsg={nameErrorMsg}
         addressErrorMsg={addressErrorMsg}
       />
@@ -329,34 +395,93 @@ export default function Admin() {
       <div className="flex-grow flex-1 max-w-sm border-r-[1px] border-brownblack-20 ">
         <div className="ml-4 md:ml-16 mt-7">
           <div className="w-full mb-4 text-sm font-bold md:text-base text-brownblack-700">
-            Brands
+            Names
           </div>
-          <div className="flex flex-col w-full ">
-            {brandUrls.map((brandUrl) => {
-              const brand = brandDict[brandUrl];
-              return (
-                <div
-                  key={brand.url_slug}
-                  className={`flex items-center h-10 mb-2 mr-6 md:text-sm text-xs rounded-lg text-brownblack-700 cursor-pointer ${
-                    selectedBrand?.url_slug === brand.url_slug
-                      ? " bg-neutral-100"
-                      : ""
-                  }`}
-                  onClick={() => setSelectedBrand(brand)}
-                >
-                  <div className="flex  overflow-hidden rounded-full  w-[24px] h-[24px] mx-2">
-                    <Image
-                      src={brand.default_avatar || placeholderImage}
-                      width={24}
-                      height={24}
-                      alt={brand.name}
-                    />
-                  </div>
-                  <span className="hidden md:block">{brand.name}</span>
-                </div>
-              );
-            })}
+          <div
+            className="flex pr-2 cursor-pointer"
+            onClick={() => setMainnetOpen(!mainnetOpen)}
+          >
+            <div className="w-full my-1 text-xs text-brownblack-700">
+              Mainnet
+            </div>
+            {mainnetOpen ? "-" : "+"}
           </div>
+          {mainnetOpen && (
+            <div className="flex flex-col w-full ">
+              {brandUrls
+                .filter((brandUrl) => {
+                  return brandDict[brandUrl].network === "mainnet";
+                })
+                .map((brandUrl) => {
+                  const brand = brandDict[brandUrl];
+                  return (
+                    <div
+                      key={brand.url_slug}
+                      className={`flex items-center h-10 mb-2 mr-6 md:text-sm text-xs rounded-lg text-brownblack-700 cursor-pointer ${
+                        selectedBrand?.url_slug === brand.url_slug
+                          ? " bg-neutral-100"
+                          : ""
+                      }`}
+                      onClick={() => setSelectedBrand(brand)}
+                    >
+                      <div className="flex  overflow-hidden rounded-full  w-[24px] h-[24px] mx-2">
+                        <Image
+                          src={brand.default_avatar || placeholderImage}
+                          width={24}
+                          height={24}
+                          alt={brand.name}
+                        />
+                      </div>
+                      <span className="hidden md:block">{brand.name}</span>
+                    </div>
+                  );
+                })}
+            </div>
+          )}
+          {/* Divider */}
+          <hr className="my-4 bg-neutral-200"></hr>
+          <div
+            className="flex pr-2 cursor-pointer"
+            onClick={() => setSepoliaOpen(!sepoliaOpen)}
+          >
+            <div className="w-full my-1 text-xs text-brownblack-700">
+              Sepolia
+            </div>
+            {sepoliaOpen ? "-" : "+"}
+          </div>
+
+          {sepoliaOpen && (
+            <div className="flex flex-col w-full ">
+              {brandUrls
+                .filter((brandUrl) => {
+                  return brandDict[brandUrl].network === "sepolia";
+                })
+                .map((brandUrl) => {
+                  const brand = brandDict[brandUrl];
+                  return (
+                    <div
+                      key={brand.url_slug}
+                      className={`flex items-center h-10 mb-2 mr-6 md:text-sm text-xs rounded-lg text-brownblack-700 cursor-pointer ${
+                        selectedBrand?.url_slug === brand.url_slug
+                          ? " bg-neutral-100"
+                          : ""
+                      }`}
+                      onClick={() => setSelectedBrand(brand)}
+                    >
+                      <div className="flex  overflow-hidden rounded-full  w-[24px] h-[24px] mx-2">
+                        <Image
+                          src={brand.default_avatar || placeholderImage}
+                          width={24}
+                          height={24}
+                          alt={brand.name}
+                        />
+                      </div>
+                      <span className="hidden md:block">{brand.name}</span>
+                    </div>
+                  );
+                })}
+            </div>
+          )}
         </div>
       </div>
       {/*Main Content*/}
@@ -416,9 +541,9 @@ export default function Admin() {
                   + Add Name
                 </button>
               </div>
-              <SubdomainsTable
+              <SubdomainTable
                 subdomains={subdomains}
-                setSubdomains={setSubdomains}
+                deleteName={deleteName}
                 openEditNameModal={openEditNameModal}
                 admin={true}
               />
@@ -472,76 +597,6 @@ export default function Admin() {
       {/*Right Bar*/}
       <div className="flex-1 bg-white"></div>
     </AuthContentContainer>
-  );
-}
-
-function AddNameModal({
-  modalType,
-  open,
-  setOpen,
-  nameId,
-  addName,
-  editName,
-  nameInput,
-  setNameInput,
-  addressInput,
-  setAddressInput,
-  nameErrorMsg,
-  addressErrorMsg,
-}) {
-  return (
-    <Dialog
-      className="relative z-50"
-      open={open}
-      onClose={() => setOpen(false)}
-    >
-      {/* The backdrop, rendered as a fixed sibling to the panel container */}
-      <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
-
-      <div className="fixed inset-0 flex items-center justify-center p-4">
-        <Dialog.Panel className="w-full max-w-sm px-6 py-4 bg-white border-2 rounded-lg border-brownblack-200">
-          <Dialog.Title className="text-base font-bold text-brownblack-700">
-            {modalType === "add" ? "Add a subname" : "Edit Subname"}
-          </Dialog.Title>
-          <div className="flex flex-col mt-8">
-            <div className="flex flex-row justify-between">
-              <div className="text-sm font-bold text-brownblack-700">
-                Subname
-              </div>
-              <div className="text-sm text-red-500">{nameErrorMsg}</div>
-            </div>
-            <input
-              className="w-full px-4 py-2 mb-4 border rounded-md border-brownblack-50"
-              value={nameInput}
-              onChange={(e) => setNameInput(e.target.value)}
-            />
-            <div className="flex flex-row justify-between">
-              <div className="text-sm font-bold text-brownblack-700">
-                Address
-              </div>
-              <div className="text-sm text-red-500">{addressErrorMsg}</div>
-            </div>
-            <input
-              className="w-full px-4 py-2 mb-4 border rounded-md border-brownblack-50"
-              value={addressInput}
-              onChange={(e) => setAddressInput(e.target.value)}
-            />
-          </div>
-          <div className="flex items-center justify-around mt-6">
-            <Button
-              buttonText="Save"
-              onClick={() => {
-                if (modalType === "edit") {
-                  editName(nameInput, addressInput, nameId);
-                } else {
-                  addName(nameInput, addressInput);
-                }
-              }}
-            />
-          </div>
-        </Dialog.Panel>
-      </div>
-    </Dialog>
   );
 }
 

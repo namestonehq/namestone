@@ -1,7 +1,10 @@
 import sql from "../../../lib/db";
-import { checkApiKey } from "../../../utils/ServerUtils";
+import {
+  checkApiKey,
+  getAdminToken,
+  getNetwork,
+} from "../../../utils/ServerUtils";
 import Cors from "micro-cors";
-import { normalize } from "viem/ens";
 
 const cors = Cors({
   allowMethods: ["GET", "HEAD", "POST"],
@@ -11,8 +14,16 @@ const cors = Cors({
 async function handler(req, res) {
   const { headers } = req;
 
+  const network = getNetwork(req);
+  if (!network) {
+    return res.status(400).json({ error: "Invalid network" });
+  }
+
   // Check required parameters
-  const body = req.body;
+  let body = req.body;
+  if (typeof body === "string") {
+    body = JSON.parse(body);
+  }
   if (!body.domain) {
     return res.status(400).json({ error: "Missing domain" });
   }
@@ -21,11 +32,12 @@ async function handler(req, res) {
   }
 
   // Check API key
+  const adminToken = await getAdminToken(req, body.domain);
   const allowedApi = await checkApiKey(
     headers.authorization || req.query.api_key,
     body.domain
   );
-  if (!allowedApi) {
+  if (!allowedApi && !adminToken) {
     return res
       .status(401)
       .json({ error: "You are not authorized to use this endpoint" });
@@ -38,7 +50,7 @@ async function handler(req, res) {
   select subdomain.id 
   from subdomain 
   where name = ${name} and domain_id in 
-  (select id from domain where name = ${domain} limit 1)`;
+  (select id from domain where name = ${domain} and network=${network} limit 1)`;
 
   if (subdomainQuery.length === 0) {
     return res.status(400).json({ error: "Name does not exist" });

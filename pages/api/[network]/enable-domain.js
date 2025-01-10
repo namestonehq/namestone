@@ -3,7 +3,7 @@ import sql from "../../../lib/db";
 import { v4 as uuidv4 } from "uuid";
 import { ethers } from "ethers";
 import { normalize } from "viem/ens";
-import { checkResolver, providerUrl } from "../../../utils/ServerUtils";
+import { checkResolver, getNetwork } from "../../../utils/ServerUtils";
 import Cors from "micro-cors";
 import { verifySignature, getDomainOwner } from "../../../utils/ServerUtils";
 
@@ -14,6 +14,11 @@ const cors = Cors({
 
 async function handler(req, res) {
   if (req.method === "POST") {
+    const network = getNetwork(req);
+    if (!network) {
+      return res.status(400).json({ error: "Invalid network" });
+    }
+
     let {
       company_name,
       email,
@@ -45,7 +50,7 @@ async function handler(req, res) {
     }
 
     // check if domain is owned by the wallet
-    const domainOwner = await getDomainOwner(domainName);
+    const domainOwner = await getDomainOwner(domainName, network);
     if (domainOwner !== address) {
       return res
         .status(400)
@@ -61,7 +66,7 @@ async function handler(req, res) {
     }
     //Check if domain exists
     let domainQuery = await sql`
-     select * from domain where name = ${domainName.toLowerCase()} limit 1;`;
+     select * from domain where name = ${domainName.toLowerCase()} and network = ${network} limit 1;`;
 
     if (domainQuery.length > 0 && cycle_key === "1") {
       // if domain exists and cycle key is true we change the api_key
@@ -85,7 +90,7 @@ async function handler(req, res) {
     }
 
     // check if domain has a good resolver
-    let goodResolver = await checkResolver(domainName);
+    let goodResolver = await checkResolver(domainName, network);
     if (!goodResolver) {
       return res.status(400).json({ error: "Invalid domain resolver" });
     }
@@ -96,9 +101,9 @@ async function handler(req, res) {
       return res.status(400).json({ error: validSignature.error });
     }
 
-    let insertDomain = { name: domainName, name_limit: 1000 };
+    let insertDomain = { name: domainName, name_limit: 1000, network: network };
     domainQuery = await sql`
-  insert into domain ${sql(insertDomain, "name", "name_limit")}
+  insert into domain ${sql(insertDomain, "name", "name_limit", "network")}
   returning id;`;
     let insertBrand = {
       name: domainName,

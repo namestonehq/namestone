@@ -3,42 +3,15 @@ import Link from "next/link";
 import { shortenAddress } from "../../utils/FrontUtils";
 import { Dialog } from "@headlessui/react";
 import { useState } from "react";
-import Button from "../Button";
 
-export default function SubdomainsTable({
+export default function SubdomainTable({
   subdomains,
-  setSubdomains,
   admin,
+  deleteName,
   openEditNameModal,
 }) {
   const [showModal, setShowModal] = useState(null);
 
-  function revokeName(fullSubdomain, address) {
-    const lastIndex = fullSubdomain.lastIndexOf(".");
-    const secondLastIndex = fullSubdomain
-      .substring(0, lastIndex)
-      .lastIndexOf(".");
-    const name = fullSubdomain.substring(0, secondLastIndex);
-    const domain = fullSubdomain.substring(secondLastIndex + 1);
-    fetch("/api/admin/revoke-subdomain", {
-      method: "POST",
-      body: JSON.stringify({
-        subdomain: {
-          name: name,
-          domain: domain,
-          address: address,
-        },
-      }),
-    }).then((res) => {
-      if (res.status === 200) {
-        setSubdomains(subdomains.filter((sub) => sub.name !== name));
-      } else {
-        res.json().then((data) => {
-          console.log(data);
-        });
-      }
-    });
-  }
   return (
     <>
       <Dialog
@@ -56,7 +29,10 @@ export default function SubdomainsTable({
             </Dialog.Title>
             <Dialog.Description className="mt-4 text-left">
               This will remove{" "}
-              <span className="font-bold">{showModal?.name}</span> from{" "}
+              <span className="font-bold">
+                {showModal?.name}.{showModal?.domain}
+              </span>{" "}
+              from{" "}
               <span className="font-bold">
                 {shortenAddress(showModal?.address || "")}
               </span>{" "}
@@ -72,18 +48,18 @@ export default function SubdomainsTable({
               <button
                 className="px-6 py-2 text-white bg-red-500 rounded-lg hover:bg-red-600"
                 onClick={() => {
-                  revokeName(showModal.name, showModal.address);
+                  deleteName(showModal.name);
                   setShowModal(null);
                 }}
               >
-                Revoke
+                Delete
               </button>
             </div>
           </Dialog.Panel>
         </div>
       </Dialog>
 
-      <div className="w-full h-full overflow-x-auto border rounded-lg border-1  border-neutral-200">
+      <div className="w-full h-full overflow-x-auto border rounded-lg border-1 border-neutral-200">
         <table className="min-w-full divide-y divide-neutral-200">
           <thead>
             <tr className=" bg-neutral-100">
@@ -110,12 +86,21 @@ export default function SubdomainsTable({
             {subdomains.map((subdomain, index) => (
               <tr key={index}>
                 <td className="px-6 py-4">
-                  {subdomain.name}.{subdomain.domain}
+                  <Link
+                    href={`https://app.ens.domains/${subdomain.name}.${subdomain.domain}`}
+                    className="underline "
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    {subdomain.name}.{subdomain.domain}
+                  </Link>
                 </td>
                 <td className="px-6 py-4">
                   <Link
                     href={`https://etherscan.io/address/${subdomain.address}`}
                     className="underline "
+                    target="_blank"
+                    rel="noreferrer"
                   >
                     {shortenAddress(subdomain.address)}
                   </Link>
@@ -124,27 +109,21 @@ export default function SubdomainsTable({
                   <td className="px-6 py-2">
                     <button
                       className="mr-4 text-orange-500 rounded-lg hover:underline"
-                      buttonText={"Edit"}
-                      onClick={() =>
-                        openEditNameModal(
-                          subdomain.id,
-                          subdomain.name,
-                          subdomain.address
-                        )
-                      }
+                      onClick={() => openEditNameModal(index)}
                     >
                       Edit
                     </button>
                     <button
                       onClick={() =>
                         setShowModal({
-                          name: subdomain.name + "." + subdomain.domain,
+                          name: subdomain.name,
+                          domain: subdomain.domain,
                           address: subdomain.address,
                         })
                       }
                       className="text-red-600 rounded-lg hover:underline"
                     >
-                      Revoke
+                      Delete
                     </button>
                   </td>
                 )}

@@ -1,5 +1,9 @@
 import sql from "../../../lib/db";
-import { checkApiKey } from "../../../utils/ServerUtils";
+import {
+  checkApiKey,
+  getAdminToken,
+  getNetwork,
+} from "../../../utils/ServerUtils";
 import Cors from "micro-cors";
 
 const cors = Cors({
@@ -8,6 +12,10 @@ const cors = Cors({
 });
 
 async function handler(req, res) {
+  const network = getNetwork(req);
+  if (!network) {
+    return res.status(400).json({ error: "Invalid network" });
+  }
   const { headers } = req;
 
   // Check required parameters
@@ -26,7 +34,8 @@ async function handler(req, res) {
     headers.authorization || req.query.api_key,
     domain
   );
-  if (!allowedApi) {
+  const adminToken = await getAdminToken(req, domain);
+  if (!allowedApi && !adminToken) {
     return res.status(401).json({
       error: "key error - You are not authorized to use this endpoint",
     });
@@ -44,7 +53,7 @@ async function handler(req, res) {
   }
 
   const domainQuery = await sql`
-  select id from domain where name = ${domain} limit 1`;
+  select id from domain where name = ${domain} and network=${network} limit 1`;
 
   if (domainQuery.length === 0) {
     return res.status(400).json({ error: "Domain does not exist" });
@@ -89,11 +98,20 @@ async function handler(req, res) {
       textRecords.forEach((record) => {
         textRecordDict[record.key] = record.value;
       });
+      // get coin types from db
+      const coinTypes = await sql`
+      SELECT * FROM subdomain_coin_type WHERE subdomain_id = ${entry.id}`;
+
+      const coinTypeDict = {};
+      coinTypes.forEach((coin) => {
+        coinTypeDict[coin.coin_type] = coin.address;
+      });
 
       delete entry.id;
       const subDomainPayload = {
         ...entry,
         text_records: textRecordDict,
+        coin_types: coinTypeDict,
       };
       subDomainPayloads.push(subDomainPayload);
     }
