@@ -223,7 +223,7 @@ export default function Home() {
             </div>
           </div>
           {/* Statistics */}
-          <div className="flex justify-between gap-12 mt-40 text-white">
+          <div className="flex flex-col justify-between gap-12 mt-40 text-white md:flex-row">
             <div className="flex flex-col items-center gap-4">
               <div className="text-5xl font-bold">20,000</div>
               <div>Subdomains Issued</div>
