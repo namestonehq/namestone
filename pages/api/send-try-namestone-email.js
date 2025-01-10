@@ -146,7 +146,7 @@ export default async function handler(req, res) {
         <div class="container">
             <p>Hi <strong>${name}</strong>,</p>
     
-            <p>Your API key for <strong>${domain}</strong> is:</p>
+            <p>Your API key for <strong>${domain}</strong> on <strong>${network}</strong> is:</p>
     
             <div class="api-key">${apiKey[0].key}</div>
     
