@@ -68,9 +68,20 @@ export default async function handler(req, res) {
         .json({ error: "Your wallet needs to own the domain" });
     }
 
-    let insertDomain = { name: domain, name_limit: 1000, address: address };
+    let insertDomain = {
+      name: domain,
+      name_limit: 1000,
+      address: address,
+      network: network,
+    };
     domainQuery = await sql`
-  insert into domain ${sql(insertDomain, "name", "name_limit", "address")}
+  insert into domain ${sql(
+    insertDomain,
+    "name",
+    "name_limit",
+    "address",
+    "network"
+  )})}
   returning id;`;
     let insertBrand = {
       name: domain,

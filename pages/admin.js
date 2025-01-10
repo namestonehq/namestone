@@ -43,8 +43,8 @@ export default function Admin() {
   const [activeTab, setActiveTab] = useState("Subnames");
   const [currentNameData, setCurrentNameData] = useState(blankNameData);
   const [saveNamePending, setSaveNamePending] = useState(false);
-  const [mainnetOpen, setMainnetOpen] = useState(false);
-  const [sepoliaOpen, setSepoliaOpen] = useState(false);
+  const [mainnetOpen, setMainnetOpen] = useState(true);
+  const [sepoliaOpen, setSepoliaOpen] = useState(true);
 
   //funtion to help set current name data
   function setCurrentNameHelper(value, key1, key2 = undefined) {
