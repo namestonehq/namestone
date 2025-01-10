@@ -152,6 +152,11 @@ export default function TryNamestone() {
       const correctNameWrapper =
         network === "Mainnet" ? NAMEWRAPPER : NAMEWRAPPER_SEPOLIA;
       const correctNetwork = network === "Mainnet" ? mainnet : sepolia;
+      // Call switchNetwork and wait a moment for it to take effect
+      switchNetwork(correctNetwork.id);
+
+      // Wait for 2 seconds to allow the network switch to propagate
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       if (selectedDomain?.resolver !== correctResolver) {
         const wallet = createWalletClient({
@@ -252,114 +257,106 @@ export default function TryNamestone() {
             {/* Main content */}
 
             <div className="z-10 flex flex-col items-center justify-start flex-1 ">
-              {!fullyConnected && (
-                <>
-                  <div className="flex flex-col items-center justify-center px-20 mt-20 bg-white border rounded-lg shadow-lg border-neutral-200 h-60">
-                    <CustomConnectButton />
-                    <div className="mt-4 text-sm text-center text-neutral-700">
-                      Connect your wallet to get started.
+              <div className="flex flex-col items-start w-full max-w-md lg:hidden ">
+                <span className="mt-8 font-bold text-md text-brownblack-700">
+                  Get a free API Key
+                </span>
+                <div className="mb-6 text-sm text-center text-neutral-700">
+                  API key will be sent to your inbox.
+                </div>
+              </div>
+              <WhiteInput
+                labelText="Your Name"
+                placeholderText="e.g. Alex Slobodnik"
+                onChange={(e) => setNameInput(e.target.value)}
+                value={nameInput}
+                className={`bg-white`}
+              />
+              <WhiteInput
+                labelText="Email"
+                placeholderText="e.g. youremail@email.com"
+                onChange={(e) => setEmailInput(e.target.value)}
+                value={emailInput}
+              />
+              {/* Select Domain + Resolver Box */}
+              <div className="w-full max-w-md px-4 pt-4 bg-white border rounded-lg shadow-lg ">
+                <div className="flex ">
+                  <div className="flex flex-col items-start w-full max-w-md mb-6">
+                    <div className="flex items-baseline justify-between w-full">
+                      <label
+                        htmlFor="name-input"
+                        className="mb-1 text-sm font-bold text-neutral-900"
+                      >
+                        Select Domain
+                      </label>
+                      {/* Toggle Network */}
+                      <div className="flex p-1 mt-2 mb-4 text-sm rounded-lg bg-neutral-200">
+                        <button
+                          onClick={() => {
+                            setNetwork("Mainnet");
+                            setDomainInput("");
+                          }}
+                          className={`px-4  rounded-lg transition ${
+                            network === "Mainnet"
+                              ? "bg-white shadow text-stone-900  py-1"
+                              : "bg-neutral-200"
+                          }`}
+                        >
+                          Mainnet
+                        </button>
+                        <button
+                          onClick={() => {
+                            setNetwork("Sepolia");
+                            setDomainInput("");
+                          }}
+                          className={`px-4 rounded-lg transition ${
+                            network === "Sepolia"
+                              ? "bg-white shadow text-black py-1"
+                              : "bg-neutral-200"
+                          }`}
+                        >
+                          Sepolia
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex justify-center w-full mt-10 mb-10 lg:hidden first-letter:items-center">
-                    <SideText />
-                  </div>
-                </>
-              )}
-              {fullyConnected && (
-                <>
-                  <div className="flex flex-col items-start w-full max-w-md lg:hidden ">
-                    <span className="mt-8 font-bold text-md text-brownblack-700">
-                      Get a free API Key
-                    </span>
-                    <div className="mb-6 text-sm text-center text-neutral-700">
-                      API key will be sent to your inbox.
-                    </div>
-                  </div>
-                  <WhiteInput
-                    labelText="Your Name"
-                    placeholderText="e.g. Alex Slobodnik"
-                    onChange={(e) => setNameInput(e.target.value)}
-                    value={nameInput}
-                    className={`bg-white`}
-                  />
-                  <WhiteInput
-                    labelText="Email"
-                    placeholderText="e.g. youremail@email.com"
-                    onChange={(e) => setEmailInput(e.target.value)}
-                    value={emailInput}
-                  />
-                  {/* Select Domain + Resolver Box */}
-                  <div className="w-full max-w-md px-4 pt-4 bg-white border rounded-lg shadow-lg ">
-                    <div className="flex ">
-                      <div className="flex flex-col items-start w-full max-w-md mb-6">
-                        <div className="flex items-baseline justify-between w-full">
-                          <label
-                            htmlFor="name-input"
-                            className="mb-1 text-sm font-bold text-neutral-900"
-                          >
-                            Select Domain
-                          </label>
-                          {/* Toggle Network */}
-                          <div className="flex p-1 mt-2 mb-4 text-sm rounded-lg bg-neutral-200">
-                            <button
-                              onClick={() => {
-                                setNetwork("Mainnet");
-                                switchNetwork(mainnet.id);
-                              }}
-                              className={`px-4  rounded-lg transition ${
-                                network === "Mainnet"
-                                  ? "bg-white shadow text-stone-900  py-1"
-                                  : "bg-neutral-200"
-                              }`}
-                            >
-                              Mainnet
-                            </button>
-                            <button
-                              onClick={() => {
-                                setNetwork("Sepolia");
-                                switchNetwork(sepolia.id);
-                              }}
-                              className={`px-4 rounded-lg transition ${
-                                network === "Sepolia"
-                                  ? "bg-white shadow text-black py-1"
-                                  : "bg-neutral-200"
-                              }`}
-                            >
-                              Sepolia
-                            </button>
-                          </div>
-                        </div>
 
-                        <div className="relative w-full h-12">
-                          <div className="absolute flex-col w-full h-12">
-                            <div className="relative flex flex-1">
-                              <input
-                                type="text"
-                                id="select domain"
-                                placeholder=" slobo.eth"
-                                onChange={(e) => setDomainInput(e.target.value)}
-                                value={domainInput}
-                                onFocus={() => {
-                                  setDomainInputSelected(true);
-                                }}
-                                onBlur={() => {
-                                  setTimeout(() => {
-                                    setDomainInputSelected(false);
-                                  }, 200);
-                                }}
-                                className="w-full h-10 p-4 border-neutral-300 border rounded-lg appearance-none focus:ring focus:ring-orange-400/[0.5] focus:outline-none"
-                              />
-                              <Image
-                                src={searchIcon}
-                                alt="search icon"
-                                width={24}
-                                height={24}
-                                className="absolute transform -translate-y-1/2 right-2 top-1/2"
-                              />
-                            </div>
-                            {/* Dropdown with domain list */}
-                            {domainInputSelected && (
-                              <div className="z-10 w-full max-w-md overflow-x-hidden overflow-y-scroll bg-white border rounded-lg shadow-lg max-h-40">
+                    <div className="relative w-full h-12">
+                      <div className="absolute flex-col w-full h-12">
+                        <div className="relative flex flex-1">
+                          <input
+                            type="text"
+                            id="select domain"
+                            placeholder={
+                              fullyConnected
+                                ? " slobo.eth"
+                                : " Connect Wallet to see domains"
+                            }
+                            onChange={(e) => setDomainInput(e.target.value)}
+                            value={domainInput}
+                            onFocus={() => {
+                              setDomainInputSelected(true);
+                            }}
+                            onBlur={() => {
+                              setTimeout(() => {
+                                setDomainInputSelected(false);
+                              }, 200);
+                            }}
+                            className="w-full h-10 p-4 border-neutral-300 border rounded-lg appearance-none focus:ring focus:ring-orange-400/[0.5] focus:outline-none"
+                            disabled={!fullyConnected}
+                          />
+                          <Image
+                            src={searchIcon}
+                            alt="search icon"
+                            width={24}
+                            height={24}
+                            className="absolute transform -translate-y-1/2 right-2 top-1/2"
+                          />
+                        </div>
+                        {/* Dropdown with domain list */}
+                        {domainInputSelected && (
+                          <div className="z-10 w-full max-w-md overflow-x-hidden overflow-y-scroll bg-white border rounded-lg shadow-lg max-h-40">
+                            {fullyConnected && (
+                              <>
                                 {filteredDomainList.map((domain, index) => (
                                   <div
                                     key={index}
@@ -374,68 +371,68 @@ export default function TryNamestone() {
                                     No domains found
                                   </div>
                                 )}
-                              </div>
+                              </>
                             )}
                           </div>
-                        </div>
+                        )}
                       </div>
                     </div>
-
-                    <div className="flex justify-between w-full h-fit ">
-                      <label
-                        htmlFor="name-input"
-                        className="mb-2 text-sm font-bold text-neutral-900"
-                      >
-                        Update Resolver
-                      </label>
-                      {!validResolver && (
-                        <Image
-                          src={XIcon}
-                          alt="X"
-                          width={20}
-                          height={20}
-                          className="w-5 h-5"
-                        />
-                      )}
-                      {validResolver && (
-                        <Image
-                          src={SuccessIcon}
-                          alt="success"
-                          width={20}
-                          height={20}
-                          className="w-5 h-5"
-                        />
-                      )}
-                    </div>
-                    <div className="flex justify-start w-full px-4 py-2 text-xs border border-solid rounded-lg border-brownblack-200">
-                      {selectedDomain
-                        ? selectedDomain.resolver
-                        : "Waiting for domain"}
-                    </div>
-                    <div className="flex w-full my-4">
-                      <button
-                        onClick={updateResolver}
-                        disabled={validResolver || selectedDomain === null}
-                        className="px-6 py-2 font-bold rounded-lg bg-neutral-200 hover:bg-neutral-300 active:bg-neutral-400 disabled:bg-brownblack-300/[0.50]"
-                      >
-                        {resolverButtonText}
-                      </button>
-                    </div>
                   </div>
-                  {errorMsg && (
-                    <div className="h-6 mt-2 text-xs font-bold text-red-400">
-                      {errorMsg}
-                    </div>
+                </div>
+
+                <div className="flex justify-between w-full h-fit ">
+                  <label
+                    htmlFor="name-input"
+                    className="mb-2 text-sm font-bold text-neutral-900"
+                  >
+                    Update Resolver
+                  </label>
+                  {!validResolver && (
+                    <Image
+                      src={XIcon}
+                      alt="X"
+                      width={20}
+                      height={20}
+                      className="w-5 h-5"
+                    />
                   )}
-                  <Button
-                    buttonText="Get a key"
-                    onClick={handleClick}
-                    disabled={disableSend}
-                    className="mt-4 mb-24"
-                    pending={apiPending}
-                  />{" "}
-                </>
+                  {validResolver && (
+                    <Image
+                      src={SuccessIcon}
+                      alt="success"
+                      width={20}
+                      height={20}
+                      className="w-5 h-5"
+                    />
+                  )}
+                </div>
+                <div className="flex justify-start w-full px-4 py-2 text-xs border border-solid rounded-lg border-brownblack-200">
+                  {selectedDomain
+                    ? selectedDomain.resolver
+                    : "Waiting for domain"}
+                </div>
+                <div className="flex w-full my-4">
+                  <button
+                    onClick={updateResolver}
+                    disabled={validResolver || selectedDomain === null}
+                    className="px-6 py-2 font-bold rounded-lg bg-neutral-200 hover:bg-neutral-300 active:bg-neutral-400 disabled:bg-brownblack-300/[0.50]"
+                  >
+                    {resolverButtonText}
+                  </button>
+                </div>
+              </div>
+              {errorMsg && (
+                <div className="h-6 mt-2 text-xs font-bold text-red-400">
+                  {errorMsg}
+                </div>
               )}
+              <Button
+                buttonText="Get a key"
+                onClick={handleClick}
+                disabled={disableSend}
+                className="mt-4 mb-24"
+                pending={apiPending}
+              />{" "}
             </div>
           </div>
         </div>
