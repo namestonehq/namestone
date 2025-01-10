@@ -13,7 +13,13 @@ const cors = Cors({
 });
 
 async function handler(req, res) {
+  console.log(`###### MENDELEDEN DEBUG ######`);
+  console.log(req);
+  console.log(`###### MENDELEDEN DEBUG ######`);
   const network = getNetwork(req);
+  console.log(`###### MENDELEDEN DEBUG ######`);
+  console.log(network);
+  console.log(`###### MENDELEDEN DEBUG ######`);
   if (!network) {
     return res.status(400).json({ error: "Invalid network" });
   }
@@ -33,6 +39,9 @@ async function handler(req, res) {
   if (!body.name) {
     return res.status(400).json({ error: "Missing name" });
   }
+  console.log(`###### MENDELEDEN DEBUG ######`);
+  console.log(body);
+  console.log(`###### MENDELEDEN DEBUG ######`);
 
   // Check  API key
   const allowedApi = await checkApiKey(
@@ -44,6 +53,9 @@ async function handler(req, res) {
       .status(401)
       .json({ error: "You are not authorized to use this endpoint" });
   }
+  console.log(`###### MENDELEDEN DEBUG ######`);
+  console.log(`Passed API key check`);
+  console.log(`###### MENDELEDEN DEBUG ######`);
 
   let domain;
   let name;
@@ -54,12 +66,19 @@ async function handler(req, res) {
     return res.status(400).json({ error: "Invalid ens name" });
   }
   let subdomainId;
+  console.log(`###### MENDELEDEN DEBUG ######`);
+  console.log(`before QUERY`);
+  console.log(`###### MENDELEDEN DEBUG ######`);
   // Check if subdomain exists
   const subdomainQuery = await sql`
   select subdomain.id, subdomain.address
   from subdomain
   where subdomain.name = ${name} and subdomain.domain_id in
   (select id from domain where name = ${domain} and network=${network} limit 1)`;
+
+  console.log(`###### MENDELEDEN DEBUG ######`);
+  console.log(`AFTER QUERY`);
+  console.log(`###### MENDELEDEN DEBUG ######`);
 
   // Get content hash and encode it
   let contenthash = body.contenthash || null;
