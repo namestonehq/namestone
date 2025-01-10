@@ -103,6 +103,8 @@ export default async function handler(req, res) {
     Here's your namestone API key for your domain ${domain}:
     ${apiKey[0].key}
 
+    On network ${network}.
+
     You can use this key to create and manage subdomains for ${domain}.
     Here is an example: https://namestone.xyz/docs/set-name 
     Please keep this key safe and do not share it with anyone.
@@ -197,6 +199,7 @@ export default async function handler(req, res) {
     Email: ${email}
     Wallet Address: ${wallet}
     Domain: ${domain}
+    Network: ${network}
     `;
 
     const mailOptions2 = {
