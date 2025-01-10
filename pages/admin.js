@@ -82,7 +82,10 @@ export default function Admin() {
     // get names and replace data
     fetch(
       "/api/admin/list-subdomains?" +
-        new URLSearchParams({ domain: selectedBrand?.domain })
+        new URLSearchParams({
+          domain: selectedBrand?.domain,
+          network: selectedBrand?.network,
+        })
     ).then((res) => {
       res.json().then((data) => {
         if (res.status === 200) {
@@ -139,8 +142,12 @@ export default function Admin() {
     // prevent saving when text records havent loaded
     setSaveNamePending(true);
     // fetch name
+    const url =
+      selectedBrand.network === "mainnet"
+        ? "/api/public_v1/search-names?"
+        : "/api/public_v1_sepolia/search-names?";
     fetch(
-      "/api/public_v1/search-names?" +
+      url +
         new URLSearchParams({
           domain: selectedBrand?.domain,
           name: subdomains[index].name,
@@ -220,7 +227,10 @@ export default function Admin() {
           // get names and replace data
           fetch(
             "/api/admin/list-subdomains?" +
-              new URLSearchParams({ domain: selectedBrand?.domain })
+              new URLSearchParams({
+                domain: selectedBrand?.domain,
+                network: selectedBrand?.network,
+              })
           ).then((res) => {
             res.json().then((data) => {
               if (res.status === 200) {
@@ -235,7 +245,12 @@ export default function Admin() {
   }
   // function to delete a name
   function deleteName(name) {
-    fetch("/api/public_v1/delete-name", {
+    const url =
+      selectedBrand.network === "mainnet"
+        ? "/api/public_v1/delete-name"
+        : "/api/public_v1_sepolia/delete-name";
+
+    fetch(url, {
       method: "POST",
       body: JSON.stringify({
         name: name,
@@ -249,7 +264,10 @@ export default function Admin() {
             // get names and replace data
             fetch(
               "/api/admin/list-subdomains?" +
-                new URLSearchParams({ domain: selectedBrand?.domain })
+                new URLSearchParams({
+                  domain: selectedBrand?.domain,
+                  network: selectedBrand?.network,
+                })
             ).then((res) => {
               res.json().then((data) => {
                 if (res.status === 200) {
