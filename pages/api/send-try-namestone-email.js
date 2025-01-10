@@ -81,7 +81,7 @@ export default async function handler(req, res) {
     "name_limit",
     "address",
     "network"
-  )})}
+  )}
   returning id;`;
     let insertBrand = {
       name: domain,
