@@ -175,7 +175,7 @@ export default function TryNamestone() {
               selectedDomain?.owner === correctNameWrapper
                 ? "nameWrapper"
                 : "registry",
-            resolverAddress: correctNameWrapper,
+            resolverAddress: correctResolver,
             account: address,
           });
           setResolverButtonText("Pending");
