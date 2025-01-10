@@ -7,7 +7,7 @@ import Footer from "../components/Footer";
 import { useState, useEffect } from "react";
 import { useWalletClient } from "wagmi";
 import { createWalletClient, custom, createPublicClient, http } from "viem";
-import { mainnet } from "wagmi";
+import { mainnet, sepolia } from "wagmi";
 import XIcon from "../public/images/x-icon-red.png";
 import SuccessIcon from "../public/images/success-icon.png";
 import searchIcon from "../public/images/search-icon.svg";
@@ -17,19 +17,19 @@ import CustomConnectButton from "../components/CustomConnectButton";
 import Link from "next/link";
 import namestoneIcon from "../public/images/namestone-icon.svg";
 import { useSession } from "next-auth/react";
-import { useAccount } from "wagmi";
+import { useAccount, useSwitchNetwork } from "wagmi";
 import { addEnsContracts, ensSubgraphActions } from "@ensdomains/ensjs";
 import { setResolver } from "@ensdomains/ensjs/wallet";
 
 export const providerUrl =
   "https://eth-mainnet.g.alchemy.com/v2/" +
   process.env.NEXT_PUBLIC_ALCHEMY_API_KEY; // replace with your actual project ID
+export const sepoliaProviderUrl = `https://eth-sepolia.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_API_KEY}`;
 
-const client = createPublicClient({
-  transport: http(providerUrl || ""),
-});
 const HYBRID_RESOLVER = "0xA87361C4E58B619c390f469B9E6F27d759715125";
+const SEPOOLIA_RESOLVER = "0x467893bFE201F8EfEa09BBD53fB69282e6001595";
 const NAMEWRAPPER = "0xD4416b13d2b3a9aBae7AcD5D6C2BbDBE25686401";
+const NAMEWRAPPER_SEPOLIA = "0x0635513f179D50A207757E05759CbD106d7dFcE8";
 
 export default function TryNamestone() {
   const { status: authStatus } = useSession();
@@ -50,6 +50,8 @@ export default function TryNamestone() {
   const [changeResolver, setChangeResolver] = useState(0);
   // fullyConnected means authenticated and connected
   const fullyConnected = isConnected && authStatus === "authenticated";
+  const [network, setNetwork] = useState("Mainnet");
+  const { switchNetwork } = useSwitchNetwork();
 
   const selectedDomain =
     filteredDomainList.length === 1 &&
@@ -80,7 +82,7 @@ export default function TryNamestone() {
   // fetch to get domains after connect
   useEffect(() => {
     if (fullyConnected) {
-      fetch("/api/try/get-domains").then((res) =>
+      fetch("/api/try/get-domains?network=" + network).then((res) =>
         res.json().then((data) => {
           console.log(data);
           if (res.status === 200) {
@@ -93,7 +95,7 @@ export default function TryNamestone() {
         })
       );
     }
-  }, [fullyConnected, changeResolver]);
+  }, [fullyConnected, changeResolver, network]);
 
   //useEffect to filter domain list
   useEffect(() => {
@@ -145,12 +147,18 @@ export default function TryNamestone() {
       if (!walletClient) {
         return;
       }
-      if (selectedDomain?.resolver !== HYBRID_RESOLVER) {
+      const correctResolver =
+        network === "Mainnet" ? HYBRID_RESOLVER : SEPOOLIA_RESOLVER;
+      const correctNameWrapper =
+        network === "Mainnet" ? NAMEWRAPPER : NAMEWRAPPER_SEPOLIA;
+      const correctNetwork = network === "Mainnet" ? mainnet : sepolia;
+
+      if (selectedDomain?.resolver !== correctResolver) {
         const wallet = createWalletClient({
-          chain: addEnsContracts(mainnet),
+          chain: addEnsContracts(correctNetwork),
           transport: custom(walletClient.transport),
         });
-
+        console.log(wallet);
         try {
           setResolverButtonText("Waiting for approval...");
           //TODO: get text records from domain
@@ -159,14 +167,19 @@ export default function TryNamestone() {
           const hash = await setResolver(wallet, {
             name: selectedDomain?.name,
             contract:
-              selectedDomain?.owner === NAMEWRAPPER
+              selectedDomain?.owner === correctNameWrapper
                 ? "nameWrapper"
                 : "registry",
-            resolverAddress: HYBRID_RESOLVER,
+            resolverAddress: correctNameWrapper,
             account: address,
           });
           setResolverButtonText("Pending");
           try {
+            const client = createPublicClient({
+              transport: http(
+                network === "Mainnet" ? providerUrl : sepoliaProviderUrl || ""
+              ),
+            });
             const transaction = await client.waitForTransactionReceipt({
               hash,
             });
@@ -279,12 +292,44 @@ export default function TryNamestone() {
                   <div className="w-full max-w-md px-4 pt-4 bg-white border rounded-lg shadow-lg ">
                     <div className="flex ">
                       <div className="flex flex-col items-start w-full max-w-md mb-6">
-                        <label
-                          htmlFor="name-input"
-                          className="mb-1 text-sm font-bold text-neutral-900"
-                        >
-                          Select Domain
-                        </label>
+                        <div className="flex items-baseline justify-between w-full">
+                          <label
+                            htmlFor="name-input"
+                            className="mb-1 text-sm font-bold text-neutral-900"
+                          >
+                            Select Domain
+                          </label>
+                          {/* Toggle Network */}
+                          <div className="flex p-1 mt-2 mb-4 text-sm rounded-lg bg-neutral-200">
+                            <button
+                              onClick={() => {
+                                setNetwork("Mainnet");
+                                switchNetwork(mainnet.id);
+                              }}
+                              className={`px-4  rounded-lg transition ${
+                                network === "Mainnet"
+                                  ? "bg-white shadow text-stone-900  py-1"
+                                  : "bg-neutral-200"
+                              }`}
+                            >
+                              Mainnet
+                            </button>
+                            <button
+                              onClick={() => {
+                                setNetwork("Sepolia");
+                                switchNetwork(sepolia.id);
+                              }}
+                              className={`px-4 rounded-lg transition ${
+                                network === "Sepolia"
+                                  ? "bg-white shadow text-black py-1"
+                                  : "bg-neutral-200"
+                              }`}
+                            >
+                              Sepolia
+                            </button>
+                          </div>
+                        </div>
+
                         <div className="relative w-full h-12">
                           <div className="absolute flex-col w-full h-12">
                             <div className="relative flex flex-1">
