@@ -25,9 +25,9 @@ export default async function handler(req, res) {
     }
 
     const wallet = token.sub;
-    const { name, email, domain } = JSON.parse(req.body);
+    const { name, email, domain, network } = JSON.parse(req.body);
 
-    if (!name || !email || !domain) {
+    if (!name || !email || !domain || !network) {
       res.status(400).json({ error: "Missing parameters" });
       console.log("Try Namestone error: Missing parameters");
       return;
@@ -42,7 +42,7 @@ export default async function handler(req, res) {
     }
     //Check if domain exists
     let domainQuery = await sql`
-  select * from domain where name = ${domain.toLowerCase()} limit 1;`;
+  select * from domain where name = ${domain.toLowerCase()} and network = ${network} limit 1;`;
     if (domainQuery.length > 0) {
       // if domain exists we return an error
       res.status(400).json({ error: "Domain already exists" });
@@ -61,7 +61,7 @@ export default async function handler(req, res) {
     }
 
     //Check if user Owns the domain
-    const domainOwner = await getDomainOwner(domain);
+    const domainOwner = await getDomainOwner(domain, network);
     if (domainOwner !== address) {
       return res
         .status(400)

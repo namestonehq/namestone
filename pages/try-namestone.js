@@ -118,6 +118,7 @@ export default function TryNamestone() {
         wallet: address,
         domain: domainInput,
         saved_domain_info: savedDomainInfo,
+        network: network.toLowerCase(),
       }),
     })
       .then((res) => {
