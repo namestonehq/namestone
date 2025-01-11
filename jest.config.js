@@ -18,7 +18,7 @@ const config = {
     '^.+\\.(js|jsx|ts|tsx)$': ['babel-jest', { presets: ['next/babel'] }],
   },
   transformIgnorePatterns: [
-    '/node_modules/(?!(@ensdomains|uint8arrays|multicodec|multiformats|@rainbow-me|jose|next-auth|ethers|viem|wagmi|multihashes-sync|dns-packet|sver)/)',
+    '/node_modules/(?!(@ensdomains|uint8arrays|multicodec|multiformats|@rainbow-me|jose|next-auth|ethers|viem|wagmi|multihashes-sync|dns-packet|sver|@testcontainers|testcontainers|yaml|docker-compose)/)',
   ],
   moduleDirectories: ['node_modules', '<rootDir>'],
   testEnvironmentOptions: {

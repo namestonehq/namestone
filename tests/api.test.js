@@ -50,17 +50,27 @@ describe("API Routes", () => {
     });
 
     it("should show data for domains", async () => {
-        // const subdomainQuery = await sql`
-        // select subdomain.id, subdomain.address
-        // from subdomain
-        // where subdomain.name = ${process.env.TEST_NAME} and subdomain.domain_id in
-        // (select id from domain where name = ${process.env.TEST_DOMAIN} and network=${network} limit 1)`;
-      const domains = await sql`
+        const domains = await sql`
         select subdomain.id, subdomain.address
         from subdomain
-        where subdomain.name = ${process.env.TEST_NAME}
       `;
       console.log(domains);
+
+        // select subdomain.id, subdomain.address
+        // from subdomain
+        // where subdomain.name = $1 and subdomain.domain_id in
+        // (select id from domain where name = $2 and network=$3 limit 1);
+
+    const name = process.env.TEST_NAME;
+    const domain = process.env.TEST_DOMAIN;
+    const network = 'mainnet';
+      const results = sql`
+  select subdomain.id, subdomain.address
+  from subdomain
+  where subdomain.name = ${name} and subdomain.domain_id in
+  (select id from domain where name = ${domain} and network=${network} limit 1)`;
+
+      console.log(results);
     });
     // it('should insert test data successfully', async () => {
     //   const [domain] = await sql`
@@ -78,13 +88,13 @@ describe("API Routes", () => {
     // });
   });
 
-    describe('set-name', () => {
-      const testTextRecords = {
-        'com.twitter': 'namestonehq',
-        'com.github': 'resolverworks',
-        'url': 'https://www.namestone.xyz',
-        'description': 'API Test Example'
-      };
+    // describe('set-name', () => {
+    //   const testTextRecords = {
+    //     'com.twitter': 'namestonehq',
+    //     'com.github': 'resolverworks',
+    //     'url': 'https://www.namestone.xyz',
+    //     'description': 'API Test Example'
+    //   };
 
     //   it('should set a name successfully', async () => {
     //     const handler = createMockHandler(setNameHandler);
@@ -167,7 +177,7 @@ describe("API Routes", () => {
     //     expect(response.statusCode).toBe(400);
     //     expect(response.body).toHaveProperty('error');
     //   });
-    });
+    // });
 });
 
 // Helper function to make API requests in tests

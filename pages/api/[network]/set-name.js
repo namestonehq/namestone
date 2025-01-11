@@ -68,6 +68,11 @@ async function handler(req, res) {
   let subdomainId;
   console.log(`###### MENDELEDEN DEBUG ######`);
   console.log(`before QUERY`);
+  console.log(`
+  select subdomain.id, subdomain.address
+  from subdomain
+  where subdomain.name = ${name} and subdomain.domain_id in
+  (select id from domain where name = ${domain} and network=${network} limit 1)`);
   console.log(`###### MENDELEDEN DEBUG ######`);
   // Check if subdomain exists
   const subdomainQuery = await sql`
@@ -78,6 +83,7 @@ async function handler(req, res) {
 
   console.log(`###### MENDELEDEN DEBUG ######`);
   console.log(`AFTER QUERY`);
+  console.log(subdomainQuery);
   console.log(`###### MENDELEDEN DEBUG ######`);
 
   // Get content hash and encode it
@@ -95,8 +101,14 @@ async function handler(req, res) {
       return res.status(400).json({ error: "Invalid contenthash" });
     }
   }
+  console.log(`###### MENDELEDEN DEBUG ######`);
+  console.log(`before checking subdomain query`);
+  console.log(`###### MENDELEDEN DEBUG ######`);
 
   if (subdomainQuery.length > 0) {
+    console.log(`###### MENDELEDEN DEBUG ######`);
+    console.log(`inside if`);
+    console.log(`###### MENDELEDEN DEBUG ######`);
     // Update subdomain
     await sql`
     update subdomain set address = ${body.address},
@@ -106,9 +118,20 @@ async function handler(req, res) {
 
     subdomainId = subdomainQuery[0].id;
   } else {
+    console.log(`###### MENDELEDEN DEBUG ######`);
+    console.log(`inside else`);
+    console.log(`###### MENDELEDEN DEBUG ######`);
     // Insert subdomain
     const domainQuery = await sql`
     select id, name_limit from domain where name = ${domain} limit 1`;
+
+    console.log(`###### MENDELEDEN DEBUG ######`);
+    console.log(`after domain query in else`);
+    console.log(domainQuery);
+    console.log(domainQuery.length);
+    const edsResults = await sql`select * from domain`;
+    console.log(edsResults);
+    console.log(`###### MENDELEDEN DEBUG ######`);
 
     if (domainQuery.length === 0) {
       return res.status(400).json({ error: "Domain does not exist" });
@@ -135,6 +158,10 @@ async function handler(req, res) {
 
     subdomainId = subdomainQuery[0].id;
   }
+
+  console.log(`###### MENDELEDEN DEBUG ######`);
+  console.log(`before deleting text records`);
+  console.log(`###### MENDELEDEN DEBUG ######`);
 
   // Delete existing text records
   await sql`delete from subdomain_text_record

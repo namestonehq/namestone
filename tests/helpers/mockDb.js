@@ -1,8 +1,19 @@
 const { newDb } = require("pg-mem");
+const fs = require('fs');
+const path = require('path');
 
 function createMockDb() {
   const db = newDb({
     autoCreateForeignKeyIndices: true,
+    // Add more pg-mem specific configurations for better query support
+    noErrorOnUndefinedParamType: true,
+    allowDuplicatePubSub: true,
+    // Add support for more Postgres features
+    enhancedNumericTypes: true,
+    functionImplementation: {
+      current_database: () => 'test',
+      current_schema: () => 'public',
+    }
   });
 
   // Register custom functions used in migrations/queries
@@ -12,216 +23,120 @@ function createMockDb() {
     implementation: () => new Date(),
   });
 
-  // Create tables based on Prisma schema
+  // Create tables based on migration SQL
   const createTables = (db) => {
-    // user_engagement
-    db.public.none(`
-      CREATE TABLE user_engagement (
-        id SERIAL PRIMARY KEY,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        address VARCHAR,
-        name VARCHAR,
-        details JSONB
-      );
-    `);
+    const migrationsDir = path.join(__dirname, '../../prisma/migrations');
+    
+    // Get all migration folders and sort them chronologically
+    const migrationFolders = fs.readdirSync(migrationsDir)
+      .filter(folder => folder !== 'migration_lock.toml')
+      .sort();  // This will sort by timestamp since the folder names start with timestamps
 
-    // domain
-    db.public.none(`
-      CREATE TABLE domain (
-        id SERIAL PRIMARY KEY,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        network VARCHAR DEFAULT 'mainnet',
-        address VARCHAR,
-        name VARCHAR,
-        contract VARCHAR,
-        contenthash VARCHAR,
-        contenthash_raw VARCHAR,
-        name_limit INTEGER DEFAULT 0
-      );
-      CREATE INDEX domain__name ON domain(name);
-    `);
+    for (const migrationFolder of migrationFolders) {
+      const migrationPath = path.join(migrationsDir, migrationFolder, 'migration.sql');
+      console.log(`Applying migration from ${migrationFolder}`);
+      
+      if (!fs.existsSync(migrationPath)) {
+        console.warn(`No migration.sql found in ${migrationFolder}`);
+        continue;
+      }
 
-    // domain_text_record
-    db.public.none(`
-      CREATE TABLE domain_text_record (
-        id SERIAL PRIMARY KEY,
-        domain_id INTEGER REFERENCES domain(id),
-        key VARCHAR,
-        value VARCHAR
-      );
-      CREATE INDEX domain_text_record__domain_id ON domain_text_record(domain_id);
-    `);
+      const migrationSQL = fs.readFileSync(migrationPath, 'utf8');
+      
+      // Split the migration SQL into individual statements
+      const statements = migrationSQL.split(';')
+        .map(stmt => stmt.trim())
+        .filter(stmt => stmt.length > 0);
 
-    // domain_coin_type
-    db.public.none(`
-      CREATE TABLE domain_coin_type (
-        id SERIAL PRIMARY KEY,
-        domain_id INTEGER REFERENCES domain(id),
-        coin_type VARCHAR,
-        address VARCHAR
-      );
-    `);
+      // Execute each statement
+      for (const statement of statements) {
+        try {
+          // Skip certain postgres-specific commands that pg-mem doesn't support
+          if (statement.toLowerCase().includes('create extension') || 
+              statement.toLowerCase().includes('drop extension')) {
+            continue;
+          }
 
-    // subdomain
-    db.public.none(`
-      CREATE TABLE subdomain (
-        id SERIAL PRIMARY KEY,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        address VARCHAR,
-        name VARCHAR,
-        domain_id INTEGER REFERENCES domain(id),
-        contenthash VARCHAR,
-        contenthash_raw VARCHAR
-      );
-      CREATE INDEX subdomain__address ON subdomain(address);
-      CREATE INDEX subdomain__domain_id ON subdomain(domain_id);
-      CREATE INDEX subdomain__name ON subdomain(name);
-    `);
-
-    // subdomain_text_record
-    db.public.none(`
-      CREATE TABLE subdomain_text_record (
-        id SERIAL PRIMARY KEY,
-        subdomain_id INTEGER REFERENCES subdomain(id),
-        key VARCHAR,
-        value VARCHAR
-      );
-      CREATE INDEX subdomain_text_record__subdomain_id ON subdomain_text_record(subdomain_id);
-    `);
-
-    // subdomain_coin_type
-    db.public.none(`
-      CREATE TABLE subdomain_coin_type (
-        id SERIAL PRIMARY KEY,
-        subdomain_id INTEGER REFERENCES subdomain(id),
-        coin_type VARCHAR,
-        address VARCHAR
-      );
-    `);
-
-    // eligibility_item
-    db.public.none(`
-      CREATE TABLE eligibility_item (
-        id SERIAL PRIMARY KEY,
-        domain_id INTEGER REFERENCES domain(id),
-        display VARCHAR,
-        requirement VARCHAR,
-        parameters JSONB
-      );
-    `);
-
-    // admin
-    db.public.none(`
-      CREATE TABLE admin (
-        id SERIAL PRIMARY KEY,
-        domain_id INTEGER REFERENCES domain(id),
-        address VARCHAR
-      );
-    `);
-
-    // super_admin
-    db.public.none(`
-      CREATE TABLE super_admin (
-        id SERIAL PRIMARY KEY,
-        address VARCHAR
-      );
-    `);
-
-    // brand
-    db.public.none(`
-      CREATE TABLE brand (
-        id SERIAL PRIMARY KEY,
-        domain_id INTEGER REFERENCES domain(id),
-        name VARCHAR,
-        url_slug VARCHAR,
-        claim_slug VARCHAR,
-        description VARCHAR,
-        banner_image VARCHAR,
-        footer_image VARCHAR,
-        default_avatar VARCHAR,
-        default_description VARCHAR,
-        share_with_data_providers BOOLEAN DEFAULT false,
-        show_converse_link BOOLEAN DEFAULT false,
-        show_mailchain_link BOOLEAN DEFAULT false
-      );
-    `);
-
-    // brand_text_record
-    db.public.none(`
-      CREATE TABLE brand_text_record (
-        id SERIAL PRIMARY KEY,
-        domain_id INTEGER,
-        key VARCHAR,
-        default_value VARCHAR
-      );
-    `);
-
-    // api_key
-    db.public.none(`
-      CREATE TABLE api_key (
-        id SERIAL PRIMARY KEY,
-        domain_id INTEGER,
-        key VARCHAR
-      );
-    `);
-
-    // name_resolution
-    db.public.none(`
-      CREATE TABLE name_resolution (
-        id SERIAL PRIMARY KEY,
-        resolution_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        subdomain_id INTEGER
-      );
-    `);
-
-    // data_provider
-    db.public.none(`
-      CREATE TABLE data_provider (
-        id SERIAL PRIMARY KEY,
-        api_key VARCHAR,
-        company_name VARCHAR
-      );
-    `);
-
-    // blocklist
-    db.public.none(`
-      CREATE TABLE blocklist (
-        id SERIAL PRIMARY KEY,
-        uid VARCHAR,
-        words JSONB
-      );
-    `);
-
-    // siwe
-    db.public.none(`
-      CREATE TABLE siwe (
-        id SERIAL PRIMARY KEY,
-        address VARCHAR UNIQUE,
-        message VARCHAR
-      );
-    `);
+          // Handle complex queries by breaking them down
+          if (statement.toLowerCase().includes('select') && statement.toLowerCase().includes('in (')) {
+            // For migration statements containing subqueries with IN clauses,
+            // we'll execute them differently to avoid pg-mem limitations
+            const cleanStmt = statement
+              .replace(/\bIN\b\s*\((.*?)\)/gi, '= ANY($1)')
+              .replace(/\bTEXT\[\]/gi, 'TEXT')
+              .replace(/\bTIMESTAMP\(\d+\)/gi, 'TIMESTAMP');
+            db.public.none(cleanStmt);
+          } else {
+            db.public.none(statement);
+          }
+        } catch (error) {
+          if (!error.message.includes('already exists')) {
+            console.warn(`Warning executing statement from ${migrationFolder}: ${error.message}`);
+          }
+        }
+      }
+    }
   };
 
   createTables(db);
 
   // Create a tagged template function that matches the postgres library interface
   function sql(strings, ...values) {
-    if (!Array.isArray(strings)) {
-      // Handle raw queries
-      return db.public.query(strings);
-    }
+    try {
+      if (!Array.isArray(strings)) {
+        // Handle raw queries
+        const query = typeof strings === 'string' ? strings : strings.toString();
+        
+        // Handle complex queries by converting IN clauses to = ANY
+        if (query.toLowerCase().includes('in (select')) {
+          const modifiedQuery = query.replace(
+            /\bIN\b\s*\((SELECT[^)]+)\)/gi,
+            '= ANY($1)'
+          );
+          return db.public.query(modifiedQuery, values);
+        }
+        
+        return db.public.query(query, values);
+      }
 
-    // Convert template literal to parameterized query
-    let query = strings[0];
-    for (let i = 0; i < values.length; i++) {
-      query += `$${i + 1}${strings[i + 1]}`;
-    }
+      // Convert template literal to parameterized query
+      let query = strings[0];
+      for (let i = 0; i < values.length; i++) {
+        query += `$${i + 1}${strings[i + 1]}`;
+      }
 
-    return db.public.query(query, values);
+      // Handle complex queries by converting IN clauses to = ANY
+      if (query.toLowerCase().includes('in (select')) {
+        query = query.replace(
+          /\bIN\b\s*\((SELECT[^)]+)\)/gi,
+          '= ANY($1)'
+        );
+      }
+
+      return db.public.query(query, values);
+    } catch (error) {
+      console.error('Query error:', error);
+      throw error;
+    }
   }
 
   // Add properties to match postgres library
-  sql.query = (text, params) => db.public.query(text, params);
+  sql.query = (text, params) => {
+    try {
+      // Handle complex queries by converting IN clauses to = ANY
+      if (text.toLowerCase().includes('in (select')) {
+        const modifiedText = text.replace(
+          /\bIN\b\s*\((SELECT[^)]+)\)/gi,
+          '= ANY($1)'
+        );
+        return db.public.query(modifiedText, params);
+      }
+      return db.public.query(text, params);
+    } catch (error) {
+      console.error('Query error:', error);
+      throw error;
+    }
+  };
   sql.unsafe = (query) => db.public.query(query);
 
   // Add count property to match postgres library
