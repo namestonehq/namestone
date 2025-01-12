@@ -8,7 +8,7 @@ require("dotenv").config({ path: ".env.test" });
 const DEFAULT_NETWORK = "public_v1";
 const TEST_DOMAIN = "test.eth";
 const TEST_API_KEY = "test-api-key";
-
+const DEFAULT_SUBDOMAIN_LIMIT = 100;
 describe("set-name API E2E", () => {
   let res;
   let testDomainId;
@@ -83,7 +83,7 @@ describe("set-name API E2E", () => {
     // Insert seed data
     const [domain] = await sql`
       INSERT INTO domain (name, network, name_limit)
-      VALUES (${TEST_DOMAIN}, ${DEFAULT_NETWORK}, 100)
+      VALUES (${TEST_DOMAIN}, ${DEFAULT_NETWORK}, ${DEFAULT_SUBDOMAIN_LIMIT})
       RETURNING id
     `;
 
@@ -146,7 +146,7 @@ describe("set-name API E2E", () => {
       const createReq = httpMocks.createRequest({
         method: "POST",
         query: {
-          network: DEFAULT_NETWORK
+          network: DEFAULT_NETWORK,
         },
         body: {
           domain: "non-existing.eth",
@@ -179,8 +179,8 @@ describe("set-name API E2E", () => {
           authorization: "invalid-api-key",
         },
         query: {
-            network: DEFAULT_NETWORK
-          },
+          network: DEFAULT_NETWORK,
+        },
         body: {
           domain: "non-existing.eth",
           address: "0x1234567890123456789012345678901234567890",
@@ -210,8 +210,8 @@ describe("set-name API E2E", () => {
           authorization: "test-api-key",
         },
         query: {
-            network: DEFAULT_NETWORK
-          },
+          network: DEFAULT_NETWORK,
+        },
         body: {
           domain: "non-existing.eth",
           address: "0x1234567890123456789012345678901234567890",
@@ -252,26 +252,20 @@ describe("set-name API E2E", () => {
 
     afterEach(async () => {
       // Clean up test data
-      await sql`DELETE FROM domain_coin_type WHERE domain_id = ${testDomainId}`;
-      await sql`DELETE FROM subdomain WHERE domain_id = ${testDomainId}`;
       await sql`DELETE FROM subdomain_coin_type`;
       await sql`DELETE FROM subdomain_text_record`;
+      await sql`DELETE FROM subdomain WHERE domain_id = ${testDomainId}`;
     });
 
-    test("e2e successfully creates subdomain with all fields", async () => {
+    test("e2e successfully creates subdomain with no coin types or text records", async () => {
       const testSubdomain = "test-subdomain";
-      const subDomainsForTestDomainBeforeApiCall = await sql`
-        SELECT * FROM subdomain 
-        WHERE domain_id = ${testDomainId}`;
-      expect(subDomainsForTestDomainBeforeApiCall).toHaveLength(0);
-
       const createReq = httpMocks.createRequest({
         method: "POST",
         headers: {
           authorization: TEST_API_KEY,
         },
         query: {
-          network: DEFAULT_NETWORK
+          network: DEFAULT_NETWORK,
         },
         body: {
           domain: TEST_DOMAIN,
@@ -280,29 +274,257 @@ describe("set-name API E2E", () => {
         },
       });
 
-      // When the API is called
       await handler(createReq, res);
 
-      // Then the API returns 200 and a new subdomain is created
-      console.log(res._getData());
       expect(res._getStatusCode()).toBe(200);
-      const subDomainsForTestDomainAfterApiCall = await sql`
+      const subdomains = await sql`
         SELECT * FROM subdomain 
         WHERE domain_id = ${testDomainId}`;
-      expect(subDomainsForTestDomainAfterApiCall).toHaveLength(1);
-      const newSubdomain = subDomainsForTestDomainAfterApiCall[0];
+      expect(subdomains).toHaveLength(1);
+      const newSubdomain = subdomains[0];
       expect(newSubdomain).toMatchObject({
         name: testSubdomain,
         address: "0x1234567890123456789012345678901234567890",
       });
+
       const coinTypes = await sql`
         SELECT * FROM subdomain_coin_type 
         WHERE subdomain_id = ${newSubdomain.id}`;
       expect(coinTypes).toHaveLength(0);
+
       const textRecords = await sql`
         SELECT * FROM subdomain_text_record
         WHERE subdomain_id = ${newSubdomain.id}`;
       expect(textRecords).toHaveLength(0);
+    });
+
+    test("e2e successfully creates subdomain with text records", async () => {
+      const testSubdomain = "test-subdomain-text";
+      const textRecordsData = {
+        email: "test@example.com",
+        url: "https://example.com",
+        description: "Test description",
+        avatar: "https://example.com/avatar.png",
+        notice: "Test notice",
+      };
+
+      const createReq = httpMocks.createRequest({
+        method: "POST",
+        headers: {
+          authorization: TEST_API_KEY,
+        },
+        query: {
+          network: DEFAULT_NETWORK,
+        },
+        body: {
+          domain: TEST_DOMAIN,
+          address: "0x1234567890123456789012345678901234567890",
+          name: testSubdomain,
+          text_records: textRecordsData,
+        },
+      });
+
+      await handler(createReq, res);
+
+      expect(res._getStatusCode()).toBe(200);
+      const subdomains = await sql`
+        SELECT * FROM subdomain 
+        WHERE domain_id = ${testDomainId}`;
+      expect(subdomains).toHaveLength(1);
+      const newSubdomain = subdomains[0];
+      const textRecords = await sql`
+        SELECT * FROM subdomain_text_record
+        WHERE subdomain_id = ${newSubdomain.id}`;
+      expect(textRecords).toHaveLength(Object.keys(textRecordsData).length);
+
+      // Verify each text record
+      for (const record of textRecords) {
+        expect(record.value).toBe(textRecordsData[record.key]);
+      }
+    });
+
+    test("e2e successfully creates subdomain with coin types", async () => {
+      const testSubdomain = "test-subdomain-coins";
+      const coinTypesData = {
+        2147483785: "0x534631Bcf33BDb069fB20A93d2fdb9e4D4dD42CF", // BTC
+        2147492101: "0x534631Bcf33BDb069fB20A93d2fdb9e4D4dD42CF", // DOGE
+        60: "0x534631Bcf33BDb069fB20A93d2fdb9e4D4dD42CF", // ETH
+      };
+
+      const createReq = httpMocks.createRequest({
+        method: "POST",
+        headers: {
+          authorization: TEST_API_KEY,
+        },
+        query: {
+          network: DEFAULT_NETWORK,
+        },
+        body: {
+          domain: TEST_DOMAIN,
+          address: "0x1234567890123456789012345678901234567890",
+          name: testSubdomain,
+          coin_types: coinTypesData,
+        },
+      });
+
+      await handler(createReq, res);
+
+      expect(res._getStatusCode()).toBe(200);
+      const subdomains = await sql`
+        SELECT * FROM subdomain 
+        WHERE domain_id = ${testDomainId}`;
+      expect(subdomains).toHaveLength(1);
+      const newSubdomain = subdomains[0];
+      const coinTypes = await sql`
+        SELECT * FROM subdomain_coin_type 
+        WHERE subdomain_id = ${newSubdomain.id}`;
+      expect(coinTypes).toHaveLength(Object.keys(coinTypesData).length);
+
+      // Verify each coin type
+      for (const record of coinTypes) {
+        expect(record.address).toBe(coinTypesData[record.coin_type]);
+      }
+    });
+
+    test("e2e successfully creates subdomain with both text records and coin types", async () => {
+      const testSubdomain = "test-subdomain-full";
+      const textRecordsData = {
+        email: "test@example.com",
+        url: "https://example.com",
+      };
+      const coinTypesData = {
+        2147483785: "0x534631Bcf33BDb069fB20A93d2fdb9e4D4dD42CF",
+        60: "0x534631Bcf33BDb069fB20A93d2fdb9e4D4dD42CF",
+      };
+
+      const createReq = httpMocks.createRequest({
+        method: "POST",
+        headers: {
+          authorization: TEST_API_KEY,
+        },
+        query: {
+          network: DEFAULT_NETWORK,
+        },
+        body: {
+          domain: TEST_DOMAIN,
+          address: "0x1234567890123456789012345678901234567890",
+          name: testSubdomain,
+          text_records: textRecordsData,
+          coin_types: coinTypesData,
+        },
+      });
+
+      await handler(createReq, res);
+
+      expect(res._getStatusCode()).toBe(200);
+      const subdomains = await sql`
+        SELECT * FROM subdomain 
+        WHERE domain_id = ${testDomainId}`;
+      expect(subdomains).toHaveLength(1);
+      const newSubdomain = subdomains[0];
+      const textRecords = await sql`
+        SELECT * FROM subdomain_text_record
+        WHERE subdomain_id = ${newSubdomain.id}`;
+      expect(textRecords).toHaveLength(Object.keys(textRecordsData).length);
+
+      const coinTypes = await sql`
+        SELECT * FROM subdomain_coin_type 
+        WHERE subdomain_id = ${newSubdomain.id}`;
+      expect(coinTypes).toHaveLength(Object.keys(coinTypesData).length);
+    });
+
+    test("returns 400 when subdomain name is invalid", async () => {
+      const createReq = httpMocks.createRequest({
+        method: "POST",
+        headers: {
+          authorization: TEST_API_KEY,
+        },
+        query: {
+          network: DEFAULT_NETWORK,
+        },
+        body: {
+          domain: TEST_DOMAIN,
+          address: "0x1234567890123456789012345678901234567890",
+          name: "invalid!@#$%^&*()",
+        },
+      });
+
+      await handler(createReq, res);
+      expect(res._getStatusCode()).toBe(400);
+      expect(JSON.parse(res._getData())).toEqual({
+        error: expect.stringContaining("Invalid ens name"),
+      });
+    });
+
+    test("returns 400 when domain has reached subdomain limit", async () => {
+      // First, update the domain to have a low limit
+      await sql`
+        UPDATE domain 
+        SET name_limit = 2 
+        WHERE id = ${testDomainId}
+      `;
+
+      // Create subdomains up to the limit
+      for (let i = 1; i <= 2; i++) {
+        const createReq = httpMocks.createRequest({
+          method: "POST",
+          headers: {
+            authorization: TEST_API_KEY,
+          },
+          query: {
+            network: DEFAULT_NETWORK,
+          },
+          body: {
+            domain: TEST_DOMAIN,
+            address: "0x1234567890123456789012345678901234567890",
+            name: `test-subdomain-${i}`,
+          },
+        });
+
+        const limitRes = httpMocks.createResponse();
+        await handler(createReq, limitRes);
+        expect(limitRes._getStatusCode()).toBe(200);
+      }
+
+      // Verify we have reached the limit
+      const subdomainCount = await sql`
+        SELECT *
+        FROM subdomain 
+        WHERE domain_id = ${testDomainId}
+      `;
+      expect(subdomainCount).toHaveLength(2);
+
+      // Try to create one more subdomain
+      const exceedLimitReq = httpMocks.createRequest({
+        method: "POST",
+        headers: {
+          authorization: TEST_API_KEY,
+        },
+        query: {
+          network: DEFAULT_NETWORK,
+        },
+        body: {
+          domain: TEST_DOMAIN,
+          address: "0x1234567890123456789012345678901234567890",
+          name: "test-subdomain-exceed",
+        },
+      });
+
+      const exceedRes = httpMocks.createResponse();
+      await handler(exceedLimitReq, exceedRes);
+
+      // Verify we get a 400 error
+      expect(exceedRes._getStatusCode()).toBe(400);
+      expect(JSON.parse(exceedRes._getData())).toEqual({
+        error: expect.stringContaining("Api name limit reached"),
+      });
+
+      // Reset the domain limit for other tests
+      await sql`
+        UPDATE domain 
+        SET name_limit = ${DEFAULT_SUBDOMAIN_LIMIT}
+        WHERE id = ${testDomainId}
+      `;
     });
   });
 });
