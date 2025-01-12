@@ -10,8 +10,26 @@ const createJestConfig = nextJest({
 const config = {
   coverageProvider: 'v8',
   testEnvironment: 'jsdom',
-  // Add more setup options before each test is run
-  // setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
+  
+  // Add setup files
+  setupFiles: [
+    '<rootDir>/jest.setup.js'
+  ],
+
+  // Set different test environments based on test path
+  projects: [
+    {
+      displayName: 'e2e',
+      testMatch: ['<rootDir>/__tests__/e2e/**/*.test.js'],
+      testEnvironment: 'node'
+    },
+    {
+      displayName: 'unit',
+      testMatch: ['<rootDir>/__tests__/pages/**/*.test.js'],
+      testEnvironment: 'jsdom',
+      setupFiles: ['<rootDir>/jest.setup.js']
+    }
+  ],
   
   // Coverage configuration
   collectCoverage: true,
