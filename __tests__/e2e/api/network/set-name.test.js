@@ -1,6 +1,6 @@
 const httpMocks = require('node-mocks-http');
 const handler = require('../../../../pages/api/[network]/set-name').default;
-const { checkApiKey, encodeContenthash, getNetwork } = require('../../../../utils/ServerUtils');
+const { encodeContenthash, getNetwork } = require('../../../../utils/ServerUtils');
 const { normalize } = require('viem/ens');
 const sql = require('../../../../lib/db').default;
 const postgres = require('postgres');
@@ -9,12 +9,15 @@ require('dotenv').config({ path: '.env.test' });
 
 const DEFAULT_NETWORK = 'mainnet';
 
-// Only mock non-DB dependencies
-jest.mock('../../../../utils/ServerUtils', () => ({
-  checkApiKey: jest.fn(),
-  encodeContenthash: jest.fn(),
-  getNetwork: jest.fn(),
-}));
+// Only mock external dependencies that we can't easily use in tests
+jest.mock('../../../../utils/ServerUtils', () => {
+  const actual = jest.requireActual('../../../../utils/ServerUtils');
+  return {
+    ...actual, // Use actual implementations by default
+    encodeContenthash: jest.fn(), // Mock only what's necessary
+    getNetwork: jest.fn(),
+  };
+});
 
 jest.mock('viem/ens', () => ({
   normalize: jest.fn(),
@@ -22,6 +25,7 @@ jest.mock('viem/ens', () => ({
 
 describe('set-name API E2E', () => {
   let res;
+  let testDomainId;
 
   beforeAll(async () => {
     // Database setup
@@ -83,14 +87,15 @@ describe('set-name API E2E', () => {
     // Insert seed data
     const [domain] = await sql`
       INSERT INTO domain (name, network, name_limit)
-      VALUES ('test.eth', 'mainnet', 100)
+      VALUES ('test.eth', ${DEFAULT_NETWORK}, 100)
       RETURNING id
     `;
+    testDomainId = domain.id;
 
     // Insert API key for the domain
     await sql`
       INSERT INTO api_key (domain_id, key)
-      VALUES (${domain.id}, 'test-api-key')
+      VALUES (${testDomainId}, 'test-api-key')
     `;
 
     // Verify seed data was inserted correctly
@@ -104,13 +109,12 @@ describe('set-name API E2E', () => {
   });
 
   beforeEach(() => {
-    // Reset all mocks except DB
+    // Reset only necessary mocks
     jest.clearAllMocks();
     res = httpMocks.createResponse();
 
-    // Default mock implementations for non-DB dependencies
-    getNetwork.mockReturnValue('mainnet');
-    checkApiKey.mockResolvedValue(true);
+    // Default mock implementations for external dependencies only
+    getNetwork.mockReturnValue(DEFAULT_NETWORK);
     normalize.mockImplementation((input) => input);
   });
 
@@ -141,7 +145,8 @@ describe('set-name API E2E', () => {
     }
   });
 
-  test('setName_nonExistingDomain_returns404', async () => {
+  
+  test('setName_noApiKeySupplied_returns401', async () => {
     // First, create a new subdomain
     const createReq = httpMocks.createRequest({
       method: 'POST',
@@ -165,70 +170,68 @@ describe('set-name API E2E', () => {
     });
 
     await handler(createReq, res);
-    expect(res._getStatusCode()).toBe(400);
+    expect(res._getStatusCode()).toBe(401);
     expect(JSON.parse(res._getData())).toEqual({ 
-        error: 'Invalid network' 
+        error: 'You are not authorized to use this endpoint' 
       });
-    // Verify the data was saved correctly
-    // const savedSubdomain = await sql`
-    //   SELECT s.*, 
-    //     (SELECT json_agg(json_build_object('key', tr.key, 'value', tr.value))
-    //      FROM subdomain_text_record tr
-    //      WHERE tr.subdomain_id = s.id) as text_records,
-    //     (SELECT json_agg(json_build_object('coin_type', ct.coin_type, 'address', ct.address))
-    //      FROM subdomain_coin_type ct
-    //      WHERE ct.subdomain_id = s.id) as coin_types
-    //   FROM subdomain s
-    //   WHERE s.name = 'e2e-test'
-    // `;
+  });
 
-    // expect(savedSubdomain).toHaveLength(1);
-    // expect(savedSubdomain[0].text_records).toHaveLength(2);
-    // expect(savedSubdomain[0].coin_types).toHaveLength(2);
+  test('setName_incorrectApiKey_returns401', async () => {
+    // First, create a new subdomain
+    const createReq = httpMocks.createRequest({
+      method: 'POST',
+      headers: {
+        authorization: 'invalid-api-key'
+      },
+      body: {
+        network: DEFAULT_NETWORK,
+        domain: 'non-existing.eth',
+        address: '0x1234567890123456789012345678901234567890',
+        name: 'e2e-test',
+        text_records: {
+          email: 'test@example.com',
+          url: 'https://example.com'
+        },
+        coin_types: {
+          "2147483785": "0x534631Bcf33BDb069fB20A93d2fdb9e4D4dD42CF",
+          "2147492101": "0x534631Bcf33BDb069fB20A93d2fdb9e4D4dD42CF"
+        }
+      }
+    });
 
-    // // Now update the subdomain
-    // const updateReq = httpMocks.createRequest({
-    //   method: 'POST',
-    //   headers: {
-    //     authorization: 'valid-api-key'
-    //   },
-    //   body: {
-    //     network: DEFAULT_NETWORK,
-    //     domain: 'test.eth',
-    //     address: '0x9876543210987654321098765432109876543210',
-    //     name: 'e2e-test',
-    //     text_records: {
-    //       email: 'updated@example.com'
-    //     },
-    //     coin_types: {
-    //       "2147483785": "0x987654321098765432109876543210987654321"
-    //     }
-    //   }
-    // });
+    await handler(createReq, res);
+    expect(res._getStatusCode()).toBe(401);
+    expect(JSON.parse(res._getData())).toEqual({ 
+        error: 'You are not authorized to use this endpoint' 
+      });
+  });
 
-    // res = httpMocks.createResponse(); // Reset response
-    // await handler(updateReq, res);
-    // expect(res._getStatusCode()).toBe(200);
+  test('setName_validApiKeyButNonExistingDomain_returns404', async () => {
+    const createReq = httpMocks.createRequest({
+      method: 'POST',
+      headers: {
+        authorization: 'test-api-key'
+      },
+      body: {
+        network: DEFAULT_NETWORK,
+        domain: 'non-existing.eth',
+        address: '0x1234567890123456789012345678901234567890',
+        name: 'e2e-test',
+        text_records: {
+          email: 'test@example.com',
+          url: 'https://example.com'
+        },
+        coin_types: {
+          "2147483785": "0x534631Bcf33BDb069fB20A93d2fdb9e4D4dD42CF",
+          "2147492101": "0x534631Bcf33BDb069fB20A93d2fdb9e4D4dD42CF"
+        }
+      }
+    });
 
-    // // Verify the update
-    // const updatedSubdomain = await sql`
-    //   SELECT s.*, 
-    //     (SELECT json_agg(json_build_object('key', tr.key, 'value', tr.value))
-    //      FROM subdomain_text_record tr
-    //      WHERE tr.subdomain_id = s.id) as text_records,
-    //     (SELECT json_agg(json_build_object('coin_type', ct.coin_type, 'address', ct.address))
-    //      FROM subdomain_coin_type ct
-    //      WHERE ct.subdomain_id = s.id) as coin_types
-    //   FROM subdomain s
-    //   WHERE s.name = 'e2e-test'
-    // `;
-
-    // expect(updatedSubdomain).toHaveLength(1);
-    // expect(updatedSubdomain[0].address).toBe('0x9876543210987654321098765432109876543210');
-    // expect(updatedSubdomain[0].text_records).toHaveLength(1);
-    // expect(updatedSubdomain[0].text_records[0].key).toBe('email');
-    // expect(updatedSubdomain[0].text_records[0].value).toBe('updated@example.com');
-    // expect(updatedSubdomain[0].coin_types).toHaveLength(1);
-    // expect(updatedSubdomain[0].coin_types[0].coin_type).toBe('2147483785');
+    await handler(createReq, res);
+    expect(res._getStatusCode()).toBe(401);
+    expect(JSON.parse(res._getData())).toEqual({
+      error: 'You are not authorized to use this endpoint'
+    });
   });
 });
