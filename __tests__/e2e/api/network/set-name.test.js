@@ -5,9 +5,10 @@ const postgres = require("postgres");
 const { execSync } = require("child_process");
 require("dotenv").config({ path: ".env.test" });
 
-const DEFAULT_NETWORK = "public_v1";
+const DEFAULT_NETWORK_API = "public_v1";
 const TEST_DOMAIN = "test.eth";
 const TEST_API_KEY = "test-api-key";
+const TEST_DEFAULT_NETWORK = "mainnet";
 const DEFAULT_SUBDOMAIN_LIMIT = 100;
 describe("set-name API E2E", () => {
   let res;
@@ -83,7 +84,7 @@ describe("set-name API E2E", () => {
     // Insert seed data
     const [domain] = await sql`
       INSERT INTO domain (name, network, name_limit)
-      VALUES (${TEST_DOMAIN}, ${DEFAULT_NETWORK}, ${DEFAULT_SUBDOMAIN_LIMIT})
+      VALUES (${TEST_DOMAIN}, ${TEST_DEFAULT_NETWORK}, ${DEFAULT_SUBDOMAIN_LIMIT})
       RETURNING id
     `;
 
@@ -146,7 +147,7 @@ describe("set-name API E2E", () => {
       const createReq = httpMocks.createRequest({
         method: "POST",
         query: {
-          network: DEFAULT_NETWORK,
+          network: DEFAULT_NETWORK_API,
         },
         body: {
           domain: "non-existing.eth",
@@ -179,7 +180,7 @@ describe("set-name API E2E", () => {
           authorization: "invalid-api-key",
         },
         query: {
-          network: DEFAULT_NETWORK,
+          network: DEFAULT_NETWORK_API,
         },
         body: {
           domain: "non-existing.eth",
@@ -210,7 +211,7 @@ describe("set-name API E2E", () => {
           authorization: "test-api-key",
         },
         query: {
-          network: DEFAULT_NETWORK,
+          network: DEFAULT_NETWORK_API,
         },
         body: {
           domain: "non-existing.eth",
@@ -265,7 +266,7 @@ describe("set-name API E2E", () => {
           authorization: TEST_API_KEY,
         },
         query: {
-          network: DEFAULT_NETWORK,
+          network: DEFAULT_NETWORK_API,
         },
         body: {
           domain: TEST_DOMAIN,
@@ -314,7 +315,7 @@ describe("set-name API E2E", () => {
           authorization: TEST_API_KEY,
         },
         query: {
-          network: DEFAULT_NETWORK,
+          network: DEFAULT_NETWORK_API,
         },
         body: {
           domain: TEST_DOMAIN,
@@ -357,7 +358,7 @@ describe("set-name API E2E", () => {
           authorization: TEST_API_KEY,
         },
         query: {
-          network: DEFAULT_NETWORK,
+          network: DEFAULT_NETWORK_API,
         },
         body: {
           domain: TEST_DOMAIN,
@@ -403,7 +404,7 @@ describe("set-name API E2E", () => {
           authorization: TEST_API_KEY,
         },
         query: {
-          network: DEFAULT_NETWORK,
+          network: DEFAULT_NETWORK_API,
         },
         body: {
           domain: TEST_DOMAIN,
@@ -440,7 +441,7 @@ describe("set-name API E2E", () => {
           authorization: TEST_API_KEY,
         },
         query: {
-          network: DEFAULT_NETWORK,
+          network: DEFAULT_NETWORK_API,
         },
         body: {
           domain: TEST_DOMAIN,
@@ -472,7 +473,7 @@ describe("set-name API E2E", () => {
             authorization: TEST_API_KEY,
           },
           query: {
-            network: DEFAULT_NETWORK,
+            network: DEFAULT_NETWORK_API,
           },
           body: {
             domain: TEST_DOMAIN,
@@ -501,7 +502,7 @@ describe("set-name API E2E", () => {
           authorization: TEST_API_KEY,
         },
         query: {
-          network: DEFAULT_NETWORK,
+          network: DEFAULT_NETWORK_API,
         },
         body: {
           domain: TEST_DOMAIN,
@@ -525,6 +526,293 @@ describe("set-name API E2E", () => {
         SET name_limit = ${DEFAULT_SUBDOMAIN_LIMIT}
         WHERE id = ${testDomainId}
       `;
+    });
+  });
+
+  describe("updates existing subdomain", () => {
+    const existingSubdomainName = "existing-subdomain";
+    const preExistingSubdomainAddress =
+      "0x1234567890123456789012345678901234567890";
+    const preExistingEmailTextRecord = "old@example.com";
+    const preExistingUrlTextRecord = "https://old.example.com";
+    const preExistingEthCoinType = "0x1111111111111111111111111111111111111111";
+    const preExistingBtcCoinType = "0x2222222222222222222222222222222222222222";
+    let existingSubdomainId;
+
+    beforeEach(async () => {
+      const req = httpMocks.createRequest({
+        method: "POST",
+        headers: {
+          authorization: TEST_API_KEY,
+        },
+        query: {
+          network: DEFAULT_NETWORK_API,
+        },
+        body: {
+          domain: TEST_DOMAIN,
+          address: preExistingSubdomainAddress,
+          name: existingSubdomainName,
+          text_records: {
+            email: preExistingEmailTextRecord,
+            url: preExistingUrlTextRecord,
+          },
+          coin_types: {
+            60: preExistingEthCoinType,
+            2147483785: preExistingBtcCoinType,
+          },
+        },
+      });
+      await handler(req, res);
+      expect(res._getStatusCode()).toBe(200);
+      const result = await sql`
+        SELECT * FROM subdomain WHERE name = ${existingSubdomainName}
+        `;
+      expect(result).toHaveLength(1);
+      const newSubdomainRecord = result[0];
+      existingSubdomainId = result[0].id;
+      expect(newSubdomainRecord).toMatchObject({
+        name: existingSubdomainName,
+        address: preExistingSubdomainAddress,
+      });
+      // Verify text records were created
+      const textRecords = await sql`
+        SELECT * FROM subdomain_text_record 
+        WHERE subdomain_id = ${existingSubdomainId}
+      `;
+      expect(textRecords).toHaveLength(2);
+      expect(textRecords).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            key: 'email',
+            value: preExistingEmailTextRecord
+          }),
+          expect.objectContaining({
+            key: 'url', 
+            value: preExistingUrlTextRecord
+          })
+        ])
+      );
+
+      // Verify coin type records were created
+      const coinRecords = await sql`
+        SELECT address, coin_type FROM subdomain_coin_type
+        WHERE subdomain_id = ${existingSubdomainId}
+      `;
+      expect(coinRecords).toHaveLength(2);
+      expect(coinRecords).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            coin_type: "60",
+            address: preExistingEthCoinType
+          }),
+          expect.objectContaining({
+            coin_type: "2147483785",
+            address: preExistingBtcCoinType
+          })
+        ])
+      );
+    });
+
+    afterEach(async () => {
+      // Clean up test data
+      await sql`DELETE FROM subdomain_coin_type WHERE subdomain_id = ${existingSubdomainId}`;
+      await sql`DELETE FROM subdomain_text_record WHERE subdomain_id = ${existingSubdomainId}`;
+      await sql`DELETE FROM subdomain WHERE id = ${existingSubdomainId}`;
+    });
+
+    test("e2e successfully updates subdomain address only", async () => {
+      const newAddress = "0x9876543210987654321098765432109876543210";
+      const updateReq = httpMocks.createRequest({
+        method: "POST",
+        headers: {
+          authorization: TEST_API_KEY,
+        },
+        query: {
+          network: DEFAULT_NETWORK_API,
+        },
+        body: {
+          domain: TEST_DOMAIN,
+          name: existingSubdomainName,
+          address: newAddress,
+        },
+      });
+
+      const updateRes = httpMocks.createResponse();
+      await handler(updateReq, updateRes);
+      expect(updateRes._getStatusCode()).toBe(200);
+
+      // Verify address was updated but records remain unchanged
+      const afterUpdateSubdomain = await sql`
+      SELECT * FROM subdomain WHERE id = ${existingSubdomainId}
+      `;
+      expect(afterUpdateSubdomain).toHaveLength(1);
+      const afterUpdateSubdomainRecord = afterUpdateSubdomain[0];
+      expect(afterUpdateSubdomainRecord.address).toBe(newAddress);
+      // Verify no coin records exist
+      const coinRecords = await sql`
+        SELECT * FROM subdomain_coin_type 
+        WHERE subdomain_id = ${existingSubdomainId}
+      `;
+      expect(coinRecords).toHaveLength(0);
+      // Verify no text records exist
+      const textRecords = await sql`
+        SELECT * FROM subdomain_text_record 
+        WHERE subdomain_id = ${existingSubdomainId}
+      `;
+      expect(textRecords).toHaveLength(0);
+    });
+
+    test("e2e successfully updates subdomain text records", async () => {
+      const newTextRecords = {
+        email: "new@example.com",
+        url: "https://new.example.com",
+        description: "New description",
+      };
+
+      const updateReq = httpMocks.createRequest({
+        method: "POST",
+        headers: {
+          authorization: TEST_API_KEY,
+        },
+        query: {
+          network: DEFAULT_NETWORK_API,
+        },
+        body: {
+          domain: TEST_DOMAIN,
+          name: existingSubdomainName,
+          address: "0x1234567890123456789012345678901234567890",
+          text_records: newTextRecords,
+        },
+      });
+
+      const updateRes = httpMocks.createResponse();
+      await handler(updateReq, updateRes);
+      expect(updateRes._getStatusCode()).toBe(200);
+
+      // Verify text records were updated
+      const textRecords = await sql`
+        SELECT * FROM subdomain_text_record 
+        WHERE subdomain_id = ${existingSubdomainId}
+        ORDER BY key
+      `;
+      expect(textRecords).toHaveLength(Object.keys(newTextRecords).length);
+
+      for (const record of textRecords) {
+        expect(record.value).toBe(newTextRecords[record.key]);
+      }
+
+      // Verify coin types were removed
+      const coinTypes = await sql`
+        SELECT * FROM subdomain_coin_type 
+        WHERE subdomain_id = ${existingSubdomainId}
+      `;
+      expect(coinTypes).toHaveLength(0);
+    });
+
+    test("e2e successfully updates subdomain coin types", async () => {
+      const newCoinTypes = {
+        60: "0x3333333333333333333333333333333333333333",
+        2147483785: "0x4444444444444444444444444444444444444444",
+        2147492101: "0x5555555555555555555555555555555555555555",
+      };
+
+      const updateReq = httpMocks.createRequest({
+        method: "POST",
+        headers: {
+          authorization: TEST_API_KEY,
+        },
+        query: {
+          network: DEFAULT_NETWORK_API,
+        },
+        body: {
+          domain: TEST_DOMAIN,
+          name: existingSubdomainName,
+          address: "0x1234567890123456789012345678901234567890",
+          coin_types: newCoinTypes,
+        },
+      });
+
+      const updateRes = httpMocks.createResponse();
+      await handler(updateReq, updateRes);
+      expect(updateRes._getStatusCode()).toBe(200);
+
+      // Verify coin types were updated
+      const coinTypes = await sql`
+        SELECT * FROM subdomain_coin_type 
+        WHERE subdomain_id = ${existingSubdomainId}
+        ORDER BY coin_type
+      `;
+      expect(coinTypes).toHaveLength(Object.keys(newCoinTypes).length);
+
+      for (const record of coinTypes) {
+        expect(record.address).toBe(newCoinTypes[record.coin_type]);
+      }
+
+      // Verify text records remained unchanged
+      const textRecords = await sql`
+        SELECT * FROM subdomain_text_record 
+        WHERE subdomain_id = ${existingSubdomainId}
+      `;
+      expect(textRecords).toHaveLength(0);
+    });
+
+    test("e2e successfully updates all subdomain fields", async () => {
+      const newAddress = "0x9999999999999999999999999999999999999999";
+      const newTextRecords = {
+        email: "complete@example.com",
+        avatar: "https://new.example.com/avatar.png",
+      };
+      const newCoinTypes = {
+        60: "0x6666666666666666666666666666666666666666",
+        2147492101: "0x7777777777777777777777777777777777777777",
+      };
+
+      const updateReq = httpMocks.createRequest({
+        method: "POST",
+        headers: {
+          authorization: TEST_API_KEY,
+        },
+        query: {
+          network: DEFAULT_NETWORK_API,
+        },
+        body: {
+          domain: TEST_DOMAIN,
+          name: existingSubdomainName,
+          address: newAddress,
+          text_records: newTextRecords,
+          coin_types: newCoinTypes,
+        },
+      });
+
+      const updateRes = httpMocks.createResponse();
+      await handler(updateReq, updateRes);
+      expect(updateRes._getStatusCode()).toBe(200);
+
+      // Verify all fields were updated
+      const [updatedSubdomain] = await sql`
+        SELECT * FROM subdomain WHERE id = ${existingSubdomainId}
+      `;
+      expect(updatedSubdomain.address).toBe(newAddress);
+
+      const textRecords = await sql`
+        SELECT * FROM subdomain_text_record 
+        WHERE subdomain_id = ${existingSubdomainId}
+        ORDER BY key
+      `;
+      expect(textRecords).toHaveLength(Object.keys(newTextRecords).length);
+      for (const record of textRecords) {
+        expect(record.value).toBe(newTextRecords[record.key]);
+      }
+
+      const coinTypes = await sql`
+        SELECT * FROM subdomain_coin_type 
+        WHERE subdomain_id = ${existingSubdomainId}
+        ORDER BY coin_type
+      `;
+      expect(coinTypes).toHaveLength(Object.keys(newCoinTypes).length);
+      for (const record of coinTypes) {
+        expect(record.address).toBe(newCoinTypes[record.coin_type]);
+      }
     });
   });
 });
