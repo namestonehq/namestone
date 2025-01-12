@@ -52,9 +52,6 @@ async function handler(req, res) {
       .status(401)
       .json({ error: "You are not authorized to use this endpoint" });
   }
-  console.log(`### DEBUG ###`);
-  console.log(`passed api key check`);
-  console.log(`### DEBUG ###`);
 
   let domain;
   let name;
