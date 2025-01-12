@@ -1,32 +1,13 @@
 const httpMocks = require("node-mocks-http");
 const handler = require("../../../../pages/api/[network]/set-name").default;
-const {
-  encodeContenthash,
-  getNetwork,
-} = require("../../../../utils/ServerUtils");
-const { normalize } = require("viem/ens");
 const sql = require("../../../../lib/db").default;
 const postgres = require("postgres");
 const { execSync } = require("child_process");
 require("dotenv").config({ path: ".env.test" });
 
-const DEFAULT_NETWORK = "mainnet";
+const DEFAULT_NETWORK = "public_v1";
 const TEST_DOMAIN = "test.eth";
 const TEST_API_KEY = "test-api-key";
-
-// Only mock external dependencies that we can't easily use in tests
-jest.mock("../../../../utils/ServerUtils", () => {
-  const actual = jest.requireActual("../../../../utils/ServerUtils");
-  return {
-    ...actual, // Use actual implementations by default
-    encodeContenthash: jest.fn(), // Mock only what's necessary
-    getNetwork: jest.fn(),
-  };
-});
-
-jest.mock("viem/ens", () => ({
-  normalize: jest.fn(),
-}));
 
 describe("set-name API E2E", () => {
   let res;
@@ -128,10 +109,6 @@ describe("set-name API E2E", () => {
     // Reset only necessary mocks
     jest.clearAllMocks();
     res = httpMocks.createResponse();
-
-    // Default mock implementations for external dependencies only
-    getNetwork.mockReturnValue(DEFAULT_NETWORK);
-    normalize.mockImplementation((input) => input);
   });
 
   afterAll(async () => {
@@ -168,8 +145,10 @@ describe("set-name API E2E", () => {
       // First, create a new subdomain
       const createReq = httpMocks.createRequest({
         method: "POST",
+        query: {
+          network: DEFAULT_NETWORK
+        },
         body: {
-          network: DEFAULT_NETWORK,
           domain: "non-existing.eth",
           address: "0x1234567890123456789012345678901234567890",
           name: "e2e-test",
@@ -185,6 +164,7 @@ describe("set-name API E2E", () => {
       });
 
       await handler(createReq, res);
+
       expect(res._getStatusCode()).toBe(401);
       expect(JSON.parse(res._getData())).toEqual({
         error: "You are not authorized to use this endpoint",
@@ -198,8 +178,10 @@ describe("set-name API E2E", () => {
         headers: {
           authorization: "invalid-api-key",
         },
+        query: {
+            network: DEFAULT_NETWORK
+          },
         body: {
-          network: DEFAULT_NETWORK,
           domain: "non-existing.eth",
           address: "0x1234567890123456789012345678901234567890",
           name: "e2e-test",
@@ -227,8 +209,10 @@ describe("set-name API E2E", () => {
         headers: {
           authorization: "test-api-key",
         },
+        query: {
+            network: DEFAULT_NETWORK
+          },
         body: {
-          network: DEFAULT_NETWORK,
           domain: "non-existing.eth",
           address: "0x1234567890123456789012345678901234567890",
           name: "e2e-test",
@@ -275,20 +259,19 @@ describe("set-name API E2E", () => {
     });
 
     test("e2e successfully creates subdomain with all fields", async () => {
-      //   Given there are no subdomains for the domain
       const testSubdomain = "test-subdomain";
       const subDomainsForTestDomainBeforeApiCall = await sql`
         SELECT * FROM subdomain 
         WHERE domain_id = ${testDomainId}`;
       expect(subDomainsForTestDomainBeforeApiCall).toHaveLength(0);
 
-      normalize.mockImplementation((input) => input); // Mock ENS normalize to return input unchanged
-      encodeContenthash.mockReturnValue("0xencoded");
-      getNetwork.mockReturnValue(DEFAULT_NETWORK);
       const createReq = httpMocks.createRequest({
         method: "POST",
         headers: {
           authorization: TEST_API_KEY,
+        },
+        query: {
+          network: DEFAULT_NETWORK
         },
         body: {
           domain: TEST_DOMAIN,
