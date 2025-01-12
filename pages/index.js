@@ -49,6 +49,7 @@ export default function Home() {
             content="Create and issue free ENS subdomains via a REST API. Trusted by web3 leaders. Supported by ENS DAO."
             key="desc"
           />
+          <meta property="og:image" content="/opengraph-image.jpg" />
           <link rel="icon" href="/favicon.ico" />
         </Head>
         {/* Nav Bar */}
