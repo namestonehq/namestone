@@ -10,22 +10,19 @@ export function middleware(request) {
   }
 
   // Redirect namestone.xyz to namestone.com
-  if (hostname === "namestone.xyz") {
-    return NextResponse.redirect(
-      `https://namestone.com${path}${request.nextUrl.search}`,
-      {
-        status: 301,
-      }
-    );
+  if (hostname.includes("namestone.xyz")) {
+    const newUrl = new URL(request.url);
+    newUrl.protocol = "https";
+    newUrl.host = "namestone.com";
+    console.log("Redirecting to:", newUrl.toString());
+    return NextResponse.redirect(newUrl.toString(), {
+      status: 301,
+    });
   }
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: [
-    // Match root path and all other paths except protected ones
-    "/",
-    "/((?!api|_next|static|_vercel).*)",
-  ],
+  matcher: ["/", "/((?!api|_next|static|_vercel).*)"],
 };
