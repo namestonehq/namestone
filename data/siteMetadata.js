@@ -5,7 +5,7 @@ const siteMetadata = {
   description: "Easy subdomain management and issuance",
   language: "en-us",
   theme: "system", // system, dark or light
-  siteUrl: "https://namestone.xyz",
+  siteUrl: "https://namestone.com",
   siteLogo: "/static/images/logo.png",
   image: "/static/images/avatar.png",
   socialBanner: "/static/images/twitter-card.png",

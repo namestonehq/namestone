@@ -25,7 +25,7 @@ curl -X POST \
      -H 'Content-Type: application/json' \
      -H 'Authorization: YOUR_API_KEY' \
      -d '{
-          "domain": "namestone.xyz",
+          "domain": "namestone.com",
           "name": "multichain",
           "address": "0x534631Bcf33BDb069fB20A93d2fdb9e4D4dD42CF",
           "coin_types": {
@@ -37,12 +37,12 @@ curl -X POST \
           "text_records": {
             "com.twitter": "namestonehq",
             "com.github": "resolverworks",
-            "url": "https://www.namestone.xyz",
+            "url": "https://www.namestone.com",
             "description": "Multichain Example",
             "avatar": "https://imagedelivery.net/UJ5oN2ajUBrk2SVxlns2Aw/e52988ee-9840-48a2-d8d9-8a92594ab200/public"
           }
         }' \
-     https://namestone.xyz/api/public_v1/set-name
+     https://namestone.com/api/public_v1/set-name
 ```
 
 ## SDK Example with coin_types
@@ -54,7 +54,7 @@ import NameStone, { AuthenticationError, NetworkError, TextRecords, CoinTypes } 
 const ns = new NameStone(<YOUR_API_KEY_HERE>);
 
 // Define the name parameters
-const domain = "namestone.xyz";
+const domain = "namestone.com";
 const name = "multichain";
 const address = "0x534631Bcf33BDb069fB20A93d2fdb9e4D4dD42CF";
 
@@ -70,7 +70,7 @@ const coinTypes: CoinTypes = {
 const textRecords: TextRecords = {
   "com.twitter": "namestonehq",
   "com.github": "resolverworks",
-  "url": "https://www.namestone.xyz",
+  "url": "https://www.namestone.com",
   "description": "Multichain Example",
   "avatar": "https://imagedelivery.net/UJ5oN2ajUBrk2SVxlns2Aw/e52988ee-9840-48a2-d8d9-8a92594ab200/public"
 };
@@ -99,6 +99,6 @@ const textRecords: TextRecords = {
 })();
 ```
 
-**Live Example: See [multichain.namestone.xyz](https://app.ens.domains/multichain.namestone.xyz) on the ENS app.**
+**Live Example: See [multichain.namestone.com](https://app.ens.domains/multichain.namestone.com) on the ENS app.**
 
 ![Image](https://imagedelivery.net/UJ5oN2ajUBrk2SVxlns2Aw/05c36ee0-86f5-4875-4720-da70a1ae8600/highres)

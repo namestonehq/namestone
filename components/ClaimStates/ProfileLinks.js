@@ -16,7 +16,7 @@ export default function ProfileLinks({ brand, claimState, setClaimState }) {
   const { congratsPending, setCongratsPending, userSubdomain } =
     useContext(ClaimContext);
   const [twitterShareLink, setTwitterShareLink] = useState(
-    `https://twitter.com/intent/tweet?text=I just claimed ${userSubdomain?.name}.${userSubdomain?.domain} on namestone.xyz/${brand.url_slug}`
+    `https://twitter.com/intent/tweet?text=I just claimed ${userSubdomain?.name}.${userSubdomain?.domain} on namestone.com/${brand.url_slug}`
   );
 
   function goToCommunityPage() {

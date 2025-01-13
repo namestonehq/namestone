@@ -44,12 +44,12 @@ run_test() {
                     "text_records": {
                         "com.twitter": "namestonehq'$i'",
                         "com.github": "resolverworks",
-                        "url": "https://www.namestone.xyz",
+                        "url": "https://www.namestone.com",
                         "description": "Multichain Example",
                         "avatar": "https://imagedelivery.net/UJ5oN2ajUBrk2SVxlns2Aw/e52988ee-9840-48a2-d8d9-8a92594ab200/public"
                     }
                 }' \
-                https://namestone.xyz/api/public_v1/set-name)
+                https://namestone.com/api/public_v1/set-name)
                 
             # Process response in subshell
             echo "$response" >> "$temp_file"

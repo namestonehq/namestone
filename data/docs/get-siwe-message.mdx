@@ -6,14 +6,14 @@ Libraries such as [viem](https://viem.sh/docs/actions/wallet/signMessage.html) o
 ## Parameters
 
 - `address` (string): Your Ethereum address. This address should own the domain name you plan to use with NameStone.
-- `domain` (string)(optional): The domain sending the SIWE message. If not filled out, it defaults to namestone.xyz. The format should be "yourdomain.tld".
-- `uri` (string)(optional): The URI sending the SIWE message. If not filled out, it defaults to "https://namestone.xyz/api/public_v1/get-siwe-message"
+- `domain` (string)(optional): The domain sending the SIWE message. If not filled out, it defaults to namestone.com. The format should be "yourdomain.tld".
+- `uri` (string)(optional): The URI sending the SIWE message. If not filled out, it defaults to "https://namestone.com/api/public_v1/get-siwe-message"
 
 ## Curl Example
 
 ```
 curl -X GET \
-     'https://namestone.xyz/api/public_v1/get-siwe-message?address=0x57632Ba9A844af0AB7d5cdf98b0056c8d87e3A85'
+     'https://namestone.com/api/public_v1/get-siwe-message?address=0x57632Ba9A844af0AB7d5cdf98b0056c8d87e3A85'
 ```
 
 ## SDK Example
@@ -41,10 +41,10 @@ const uri = "https://yourdomain.tld/api"; // optional
     console.log("SIWE message received:", response);
 
     // Example response message will look like:
-    // namestone.xyz wants you to sign in with your Ethereum account:
+    // namestone.com wants you to sign in with your Ethereum account:
     // 0x57632Ba9A844af0AB7d5cdf98b0056c8d87e3A85
     // Sign this message to access protected endpoints.
-    // URI: https://namestone.xyz/api/public_v1/get-siwe-message
+    // URI: https://namestone.com/api/public_v1/get-siwe-message
     // Version: 1
     // Chain ID: 1
     // Nonce: b10ffd444b0a2d810377a3900ba6cd0422141306d158520f24b2805952ea589f9bd1bcbf2e353a14105830183472de5f
@@ -62,12 +62,12 @@ const uri = "https://yourdomain.tld/api"; // optional
 ## Example Return
 
 ```
-Siwe message: namestone.xyz wants you to sign in with your Ethereum account:
+Siwe message: namestone.com wants you to sign in with your Ethereum account:
 0x57632Ba9A844af0AB7d5cdf98b0056c8d87e3A85
 
 Sign this message to access protected endpoints.
 
-URI: https://namestone.xyz/api/public_v1/get-siwe-message
+URI: https://namestone.com/api/public_v1/get-siwe-message
 Version: 1
 Chain ID: 1
 Nonce: b10ffd444b0a2d810377a3900ba6cd0422141306d158520f24b2805952ea589f9bd1bcbf2e353a14105830183472de5f

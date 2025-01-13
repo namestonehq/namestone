@@ -50,7 +50,7 @@ set_name_response=$(curl -s -X POST \
         "text_records": {
             "com.twitter": "namestonehq",
             "com.github": "resolverworks",
-            "url": "https://www.namestone.xyz",
+            "url": "https://www.namestone.com",
             "description": "API Test Example"
         }
     }' \
@@ -86,7 +86,7 @@ set_domain_response=$(curl -s -X POST \
         "text_records": {
             "com.twitter": "namestonehq",
             "com.github": "resolverworks",
-            "url": "https://www.namestone.xyz",
+            "url": "https://www.namestone.com",
             "description": "Domain Test Example"
         }
     }' \
@@ -121,7 +121,7 @@ reset_domain_response=$(curl -s -X POST \
         "address": "'$TEST_ADDRESS'",
         "text_records": {
             "description": "Base State",
-            "url": "https://www.namestone.xyz"
+            "url": "https://www.namestone.com"
         }
     }' \
     "$TEST_BASE_URL/set-domain")
