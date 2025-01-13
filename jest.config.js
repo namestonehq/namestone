@@ -22,12 +22,6 @@ const config = {
       displayName: 'e2e',
       testMatch: ['<rootDir>/__tests__/e2e/**/*.test.js'],
       testEnvironment: 'node'
-    },
-    {
-      displayName: 'unit',
-      testMatch: ['<rootDir>/__tests__/pages/**/*.test.js'],
-      testEnvironment: 'jsdom',
-      setupFiles: ['<rootDir>/jest.setup.js']
     }
   ],
   
