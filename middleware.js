@@ -1,6 +1,12 @@
 import { NextResponse } from "next/server";
 
 export function middleware(request) {
+  console.log(
+    "Middleware running:",
+    request.headers.get("host"),
+    request.nextUrl.pathname
+  );
+
   const hostname = request.headers.get("host") || "";
   const path = request.nextUrl.pathname;
 
