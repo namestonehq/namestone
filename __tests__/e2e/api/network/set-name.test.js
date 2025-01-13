@@ -16,9 +16,7 @@ describe("set-name API E2E", () => {
 
   beforeAll(async () => {
     // Database setup
-    const adminSql = postgres(
-      `${process.env.DATABASE_BASE_URL}/postgres`
-    );
+    const adminSql = postgres(`${process.env.DATABASE_BASE_URL}/postgres`);
 
     try {
       // Check if database exists
@@ -117,9 +115,7 @@ describe("set-name API E2E", () => {
     await sql.end();
 
     // Connect to postgres to drop the test database
-    const adminSql = postgres(
-      `${process.env.DATABASE_BASE_URL}/postgres`
-    );
+    const adminSql = postgres(`${process.env.DATABASE_BASE_URL}/postgres`);
 
     try {
       // Terminate all connections to the test database
@@ -139,6 +135,99 @@ describe("set-name API E2E", () => {
     } finally {
       await adminSql.end();
     }
+  });
+
+  describe("Domain Validation", () => {
+    test("setName_noDomainSupplied_returns400", async () => {
+      // First, create a new subdomain
+      const createReq = httpMocks.createRequest({
+        method: "POST",
+        query: {
+          network: "",
+        },
+        body: {
+          address: "0x1234567890123456789012345678901234567890",
+          name: "e2e-test",
+          text_records: {
+            email: "test@example.com",
+            url: "https://example.com",
+          },
+          coin_types: {
+            2147483785: "0x534631Bcf33BDb069fB20A93d2fdb9e4D4dD42CF",
+            2147492101: "0x534631Bcf33BDb069fB20A93d2fdb9e4D4dD42CF",
+          },
+        },
+      });
+
+      await handler(createReq, res);
+
+      expect(res._getStatusCode()).toBe(400);
+      expect(JSON.parse(res._getData())).toEqual({
+        error: "Invalid network",
+      });
+    });
+  });
+
+  describe("Missing required parameters validation", () => {
+    test("setName_noAddressSupplied_returns400", async () => {
+      const createReq = httpMocks.createRequest({
+        method: "POST",
+        query: {
+          network: DEFAULT_NETWORK_API,
+        },
+        body: {
+          domain: TEST_DOMAIN,
+          name: "e2e-test",
+        },
+      });
+
+      await handler(createReq, res);
+
+      expect(res._getStatusCode()).toBe(400);
+      expect(JSON.parse(res._getData())).toEqual({
+        error: "Missing address",
+      });
+    });
+
+    test("setName_noNameSupplied_returns400", async () => {
+      const createReq = httpMocks.createRequest({
+        method: "POST",
+        query: {
+          network: DEFAULT_NETWORK_API,
+        },
+        body: {
+          domain: TEST_DOMAIN,
+          address: "0x1234567890123456789012345678901234567890",
+        },
+      });
+
+      await handler(createReq, res);
+
+      expect(res._getStatusCode()).toBe(400);
+      expect(JSON.parse(res._getData())).toEqual({
+        error: "Missing name",
+      });
+    });
+
+    test("setName_noDomainSupplied_returns400", async () => {
+      const createReq = httpMocks.createRequest({
+        method: "POST",
+        query: {
+          network: DEFAULT_NETWORK_API,
+        },
+        body: {
+          address: "0x1234567890123456789012345678901234567890",
+          name: "e2e-test",
+        },
+      });
+
+      await handler(createReq, res);
+
+      expect(res._getStatusCode()).toBe(400);
+      expect(JSON.parse(res._getData())).toEqual({
+        error: "Missing domain",
+      });
+    });
   });
 
   describe("API Key Validation", () => {
@@ -583,13 +672,13 @@ describe("set-name API E2E", () => {
       expect(textRecords).toEqual(
         expect.arrayContaining([
           expect.objectContaining({
-            key: 'email',
-            value: preExistingEmailTextRecord
+            key: "email",
+            value: preExistingEmailTextRecord,
           }),
           expect.objectContaining({
-            key: 'url', 
-            value: preExistingUrlTextRecord
-          })
+            key: "url",
+            value: preExistingUrlTextRecord,
+          }),
         ])
       );
 
@@ -603,12 +692,12 @@ describe("set-name API E2E", () => {
         expect.arrayContaining([
           expect.objectContaining({
             coin_type: "60",
-            address: preExistingEthCoinType
+            address: preExistingEthCoinType,
           }),
           expect.objectContaining({
             coin_type: "2147483785",
-            address: preExistingBtcCoinType
-          })
+            address: preExistingBtcCoinType,
+          }),
         ])
       );
     });
