@@ -1,12 +1,6 @@
 import { NextResponse } from "next/server";
 
 export function middleware(request) {
-  console.log(
-    "Middleware running:",
-    request.headers.get("host"),
-    request.nextUrl.pathname
-  );
-
   const hostname = request.headers.get("host") || "";
   const path = request.nextUrl.pathname;
 
@@ -30,11 +24,8 @@ export function middleware(request) {
 
 export const config = {
   matcher: [
-    // Match all request paths except:
-    // 1. /api (API routes)
-    // 2. /_next (Next.js internals)
-    // 3. /static (public files)
-    // 4. /_vercel (Vercel internals)
+    // Match root path and all other paths except protected ones
+    "/",
     "/((?!api|_next|static|_vercel).*)",
   ],
 };
