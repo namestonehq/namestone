@@ -17,7 +17,7 @@ describe("set-name API E2E", () => {
   beforeAll(async () => {
     // Database setup
     const adminSql = postgres(
-      "postgresql://admin:admin@localhost:5432/postgres"
+      `${process.env.DATABASE_BASE_URL}/postgres`
     );
 
     try {
@@ -118,7 +118,7 @@ describe("set-name API E2E", () => {
 
     // Connect to postgres to drop the test database
     const adminSql = postgres(
-      "postgresql://admin:admin@localhost:5432/postgres"
+      `${process.env.DATABASE_BASE_URL}/postgres`
     );
 
     try {
