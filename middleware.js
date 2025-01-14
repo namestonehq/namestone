@@ -12,7 +12,7 @@ export function middleware(request) {
 
   // Redirect namestone.xyz to namestone.com
   if (hostname.includes("namestone.xyz")) {
-    const newUrl = `https://www.namestone.com${path}${request.nextUrl.search}`;
+    const newUrl = `https://namestone.com${path}${request.nextUrl.search}`;
     console.log("Redirecting to:", newUrl);
     return NextResponse.redirect(newUrl, {
       status: 301,
