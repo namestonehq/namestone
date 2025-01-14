@@ -11,7 +11,10 @@ export function middleware(request) {
   }
 
   // Redirect namestone.xyz to namestone.com
-  if (hostname.includes("namestone.xyz")) {
+  if (
+    hostname.includes("namestone.xyz") ||
+    hostname.includes("namestone-staging-43aq")
+  ) {
     const newUrl = `https://www.namestone.com${path}${request.nextUrl.search}`;
     console.log("Redirecting to:", newUrl);
     return NextResponse.redirect(newUrl, {
