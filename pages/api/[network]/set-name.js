@@ -39,6 +39,14 @@ async function handler(req, res) {
     headers.authorization || req.query.api_key,
     body.domain
   );
+  console.log(
+    "allowedApi",
+    allowedApi,
+    headers.authorization,
+    req.query.api_key,
+    body.domain,
+    network
+  );
   if (!allowedApi) {
     return res
       .status(401)
