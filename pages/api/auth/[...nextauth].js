@@ -11,7 +11,8 @@ export function getAuthOptions(req) {
           const siwe = new SiweMessage(
             JSON.parse(credentials?.message || "{}")
           );
-          const nextAuthUrl = process.env.NEXTAUTH_URL;
+          const nextAuthUrl =
+            process.env.NEXTAUTH_URL || "https://namestone.com";
           if (!nextAuthUrl) {
             return null;
           }
