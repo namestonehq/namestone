@@ -1,8 +1,19 @@
+/**
+ * E2E Tests for /set-name
+ * Key features tested:
+ * - Subdomain creation and updates
+ * - Parameter validation
+ * - API key authentication
+ * - Domain validation
+ * - Text record management
+ * - Coin type record management
+ * - Subdomain limits
+ */
+
 const httpMocks = require("node-mocks-http");
 const handler = require("../../../../pages/api/[network]/set-name").default;
 const sql = require("../../../../lib/db").default;
-const postgres = require("postgres");
-const { execSync } = require("child_process");
+const { setupTestDatabase, teardownTestDatabase } = require("../e2e_db_setup");
 require("dotenv").config({ path: ".env.test" });
 
 const TEST_DOMAIN = "test.eth";
@@ -18,67 +29,7 @@ describe("set-name API E2E", () => {
   let testDomainId;
 
   beforeAll(async () => {
-    // Database setup
-    const adminSql = postgres(`${process.env.DATABASE_BASE_URL}/postgres`);
-
-    try {
-      // Check if database exists
-      const dbExists = await adminSql`
-        SELECT 1 FROM pg_database WHERE datname=${process.env.DB_NAME}
-      `;
-
-      if (dbExists.length === 0) {
-        console.log(`Creating test database: ${process.env.DB_NAME}`);
-        await adminSql`CREATE DATABASE ${adminSql(process.env.DB_NAME)}`;
-      } else {
-        console.log(`Test database ${process.env.DB_NAME} already exists`);
-      }
-    } finally {
-      await adminSql.end();
-    }
-
-    // Run Prisma migrations
-    try {
-      console.log("Running Prisma migrations...");
-      execSync("npx prisma validate", {
-        stdio: "inherit",
-        env: {
-          ...process.env,
-          DATABASE_URL: process.env.DATABASE_URL,
-        },
-      });
-
-      execSync("npx prisma migrate dev", {
-        stdio: "inherit",
-        env: {
-          ...process.env,
-          DATABASE_URL: process.env.DATABASE_URL,
-        },
-      });
-    } catch (error) {
-      console.error("Error in test setup:", error);
-      throw error;
-    }
-
-    // Verify database is empty
-    console.log("Verifying database is empty...");
-
-    const tables = [
-      "domain",
-      "subdomain",
-      "subdomain_text_record",
-      "subdomain_coin_type",
-      "api_key",
-    ];
-    for (const table of tables) {
-      const count = await sql`SELECT COUNT(*) as count FROM ${sql(table)}`;
-      if (count[0].count > 0) {
-        throw new Error(
-          `Table ${table} is not empty. Found ${count[0].count} rows.`
-        );
-      }
-      console.log(`Verified ${table} is empty`);
-    }
+    await setupTestDatabase();
   });
 
   beforeEach(() => {
@@ -88,35 +39,16 @@ describe("set-name API E2E", () => {
   });
 
   afterAll(async () => {
-    // Close the test database connection
-    await sql.end();
-
-    // Connect to postgres to drop the test database
-    const adminSql = postgres(`${process.env.DATABASE_BASE_URL}/postgres`);
-
-    try {
-      // Terminate all connections to the test database
-      await adminSql`
-        SELECT pg_terminate_backend(pg_stat_activity.pid)
-        FROM pg_stat_activity
-        WHERE pg_stat_activity.datname = ${process.env.DB_NAME}
-        AND pid <> pg_backend_pid()
-      `;
-
-      // Drop the test database
-      console.log(`Dropping test database: ${process.env.DB_NAME}`);
-      await adminSql`DROP DATABASE IF EXISTS ${adminSql(process.env.DB_NAME)}`;
-    } catch (error) {
-      console.error("Error dropping test database:", error);
-      throw error;
-    } finally {
-      await adminSql.end();
-    }
+    await teardownTestDatabase();
   });
 
-  describe("Domain Validation", () => {
-    test("setName_noDomainSupplied_returns400", async () => {
-      // First, create a new subdomain
+  /**
+   * Tests network validation:
+   * - Empty network parameter
+   * - Invalid network value
+   */
+  describe("Network Validation", () => {
+    test("setName_noNetworkSupplied_returns400", async () => {
       const createReq = httpMocks.createRequest({
         method: "POST",
         query: {
@@ -144,7 +76,7 @@ describe("set-name API E2E", () => {
       });
     });
 
-    test("setName_nonExistingDomain_returns400", async () => {
+    test("setName_nonValidNetwork_returns400", async () => {
       const createReq = httpMocks.createRequest({
         method: "POST",
         query: {
@@ -167,6 +99,12 @@ describe("set-name API E2E", () => {
     });
   });
 
+  /**
+   * Tests API functionality for each supported network:
+   * - Mainnet (public_v1)
+   * - Sepolia (public_v1_sepolia)
+   * Each network runs the complete test suite
+   */
   describe.each(SUPPORTED_NETWORKS)(
     "set-name API E2E for %s",
     (networkConfig) => {
@@ -206,6 +144,12 @@ describe("set-name API E2E", () => {
         await sql`DELETE FROM domain WHERE id = ${testDomainId}`;
       });
 
+      /**
+       * Tests missing required parameters:
+       * - No address supplied
+       * - No name supplied
+       * - No domain supplied
+       */
       describe("Missing required parameters validation", () => {
         test("setName_noAddressSupplied_returns400", async () => {
           const createReq = httpMocks.createRequest({
@@ -268,6 +212,12 @@ describe("set-name API E2E", () => {
         });
       });
 
+      /**
+       * Tests API key validation:
+       * - Missing API key
+       * - Invalid API key
+       * - Valid API key with non-existing domain
+       */
       describe("API Key Validation", () => {
         test("setName_noApiKeySupplied_returns401", async () => {
           const createReq = httpMocks.createRequest({
@@ -361,6 +311,15 @@ describe("set-name API E2E", () => {
         });
       });
 
+      /**
+       * Tests creation of new subdomains:
+       * - Basic subdomain with only address
+       * - Subdomain with text records
+       * - Subdomain with coin types
+       * - Subdomain with both text records and coin types
+       * - Invalid subdomain name handling
+       * - Subdomain limit enforcement
+       */
       describe("creates new subdomain", () => {
         beforeEach(async () => {
           // Assert there are no subdomains, coin types, or text records
@@ -654,6 +613,14 @@ describe("set-name API E2E", () => {
         });
       });
 
+      /**
+       * Tests updating existing subdomains:
+       * - Address-only updates
+       * - Text record updates
+       * - Coin type updates
+       * - Full subdomain updates (all fields)
+       * - Record removal and replacement
+       */
       describe("updates existing subdomain", () => {
         const existingSubdomainName = "existing-subdomain";
         const preExistingSubdomainAddress =
