@@ -1,61 +1,91 @@
 import React, { useEffect, useState } from "react";
 import Header from "../components/Header";
-import { ethers } from "ethers";
-import checkIcon from "../public/images/icon-orange-check.svg";
+import { createPublicClient, http } from "viem";
+import { mainnet, sepolia } from "viem/chains";
+import { normalize } from "viem/ens";
 import Link from "next/link";
 
 const resolutionList = [
   {
     name: "slobo.teamnick.eth",
     gateway: "EVM Gateway",
+    network: "mainnet",
   },
   {
     name: "slobo.cu-cypherpunk.eth",
     gateway: "Offchain Gateway",
+    network: "mainnet",
+  },
+  {
+    name: "boop.namestone-test.eth",
+    gateway: "Offchain Gateway - Sepolia",
+    network: "sepolia",
   },
   {
     name: "slobo.converse.xyz",
     gateway: "Namestone Gateway (Legacy) - converse",
+    network: "mainnet",
   },
   {
     name: "slobo.nfty.eth",
     gateway: "Namestone Gateway (Legacy) - .eth",
+    network: "mainnet",
   },
   {
     name: "slobo.xyz",
     gateway: "Namestone Gateway (Legacy) - gasless dns",
+    network: "mainnet",
   },
 ];
-export const providerUrl =
-  "https://eth-mainnet.g.alchemy.com/v2/" +
-  process.env.NEXT_PUBLIC_ALCHEMY_API_KEY; // replace with your actual project ID
+
+const mainnetClient = createPublicClient({
+  chain: mainnet,
+  transport: http(
+    `https://eth-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_API_KEY}`
+  ),
+});
+
+const sepoliaClient = createPublicClient({
+  chain: sepolia,
+  transport: http(
+    `https://eth-sepolia.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_API_KEY}`
+  ),
+});
 
 export default function Status() {
-  const [status, setStatus] = useState([
-    "...checking",
-    "...checking",
-    "...checking",
-  ]);
+  const [status, setStatus] = useState(resolutionList.map(() => "checking..."));
   // use Effect to check name resolution on load
   useEffect(() => {
-    async function checkEnsResolution(name) {
-      let provider = new ethers.providers.JsonRpcProvider(providerUrl);
-
+    async function checkEnsResolution(name, network) {
       try {
-        const address = await provider.resolveName(name);
-        console.log("address", address);
-        if (address) {
-          return "working";
-        } else {
-          return "error";
-        }
+        // Normalize the ENS name first
+        const normalizedName = normalize(name);
+
+        // Choose the appropriate client based on network
+        const client = network === "sepolia" ? sepoliaClient : mainnetClient;
+
+        // Resolve the ENS name to an address
+        const address = await client.getEnsAddress({
+          name: normalizedName,
+        });
+
+        // If we got an address, the name is working
+        return address ? "working" : "not registered";
       } catch (error) {
+        console.error(`Error resolving ${name} on ${network}:`, error);
+
+        // Check if it's a known ENS-related error
+        if (error.message?.includes("ENS")) {
+          return "not supported";
+        }
         return "error";
       }
     }
+
     const statusPromises = resolutionList.map((resolution) =>
-      checkEnsResolution(resolution.name)
+      checkEnsResolution(resolution.name, resolution.network)
     );
+
     Promise.all(statusPromises).then((results) => setStatus(results));
   }, []);
 
