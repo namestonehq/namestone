@@ -3,6 +3,14 @@ const { execSync } = require("child_process");
 const sql = require("../../../lib/db").default;
 require("dotenv").config({ path: ".env.test" });
 
+// Verify we're using test database
+if (!process.env.DB_NAME?.includes("test")) {
+  throw new Error("Test database name must include 'test' for safety");
+}
+if (!process.env.DATABASE_BASE_URL?.includes("localhost")) {
+  throw new Error("Test database must be on localhost");
+}
+
 async function setupTestDatabase() {
   // Database setup
   const adminSql = postgres(`${process.env.DATABASE_BASE_URL}/postgres`);
@@ -30,15 +38,13 @@ async function setupTestDatabase() {
       stdio: "inherit",
       env: {
         ...process.env,
-        DATABASE_URL: process.env.DATABASE_URL,
       },
     });
 
-    execSync("npx prisma migrate dev", {
+    execSync("npx prisma db push", {
       stdio: "inherit",
       env: {
         ...process.env,
-        DATABASE_URL: process.env.DATABASE_URL,
       },
     });
   } catch (error) {
