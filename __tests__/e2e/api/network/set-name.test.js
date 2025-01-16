@@ -10,11 +10,19 @@
  * - Subdomain limits
  */
 
+/**
+ * Set up mocks before imports
+ * 
+ * This is a workaround to mock the database module to use the `TEST_DATABASE_URL` environment variable
+ * instead of the `POSTGRES_URI` environment variable.
+ */
+jest.mock("../../../../lib/db", () => require("../../e2e_db_mock"));
+
 const httpMocks = require("node-mocks-http");
 const handler = require("../../../../pages/api/[network]/set-name").default;
-const sql = require("../../../../lib/db").default;
-const { setupTestDatabase, teardownTestDatabase } = require("../e2e_db_setup");
-require("dotenv").config({ path: ".env.test" });
+const sqlForTests = require("../../e2e_db_mock").default;
+const { setupTestDatabase, teardownTestDatabase } = require("../../e2e_db_setup");
+require("dotenv").config({ path: ".env.test" }, { override: true });
 
 const TEST_DOMAIN = "test.eth";
 const TEST_API_KEY = "test-api-key";
@@ -33,7 +41,6 @@ describe("set-name API E2E", () => {
   });
 
   beforeEach(() => {
-    // Reset only necessary mocks
     jest.clearAllMocks();
     res = httpMocks.createResponse();
   });
@@ -112,7 +119,7 @@ describe("set-name API E2E", () => {
         console.log(`Seed data for ${networkConfig.path}...`);
 
         // Insert seed data
-        const [domain] = await sql`
+        const [domain] = await sqlForTests`
         INSERT INTO domain (name, network, name_limit)
         VALUES (${TEST_DOMAIN}, ${networkConfig.name}, ${DEFAULT_SUBDOMAIN_LIMIT})
         RETURNING id
@@ -121,14 +128,14 @@ describe("set-name API E2E", () => {
         testDomainId = domain.id;
 
         // Insert API key for the domain
-        await sql`
+        await sqlForTests`
         INSERT INTO api_key (domain_id, key)
         VALUES (${testDomainId}, ${TEST_API_KEY})
       `;
 
         // Verify seed data was inserted correctly
-        const domainCount = await sql`SELECT COUNT(*) as count FROM domain`;
-        const apiKeyCount = await sql`SELECT COUNT(*) as count FROM api_key`;
+        const domainCount = await sqlForTests`SELECT COUNT(*) as count FROM domain`;
+        const apiKeyCount = await sqlForTests`SELECT COUNT(*) as count FROM api_key`;
 
         expect(domainCount.length).toBe(1);
         expect(apiKeyCount.length).toBe(1);
@@ -137,11 +144,11 @@ describe("set-name API E2E", () => {
       });
 
       afterAll(async () => {
-        await sql`DELETE FROM subdomain_coin_type`;
-        await sql`DELETE FROM subdomain_text_record`;
-        await sql`DELETE FROM subdomain WHERE domain_id = ${testDomainId}`;
-        await sql`DELETE FROM api_key WHERE domain_id = ${testDomainId}`;
-        await sql`DELETE FROM domain WHERE id = ${testDomainId}`;
+        await sqlForTests`DELETE FROM subdomain_coin_type`;
+        await sqlForTests`DELETE FROM subdomain_text_record`;
+        await sqlForTests`DELETE FROM subdomain WHERE domain_id = ${testDomainId}`;
+        await sqlForTests`DELETE FROM api_key WHERE domain_id = ${testDomainId}`;
+        await sqlForTests`DELETE FROM domain WHERE id = ${testDomainId}`;
       });
 
       /**
@@ -323,23 +330,23 @@ describe("set-name API E2E", () => {
       describe("creates new subdomain", () => {
         beforeEach(async () => {
           // Assert there are no subdomains, coin types, or text records
-          const subDomainsForTestDomainBeforeApiCall = await sql`
+          const subDomainsForTestDomainBeforeApiCall = await sqlForTests`
         SELECT * FROM subdomain 
         WHERE domain_id = ${testDomainId}`;
           expect(subDomainsForTestDomainBeforeApiCall).toHaveLength(0);
-          const coinTypesForTestDomainBeforeApiCall = await sql`
+          const coinTypesForTestDomainBeforeApiCall = await sqlForTests`
         SELECT * FROM subdomain_coin_type`;
           expect(coinTypesForTestDomainBeforeApiCall).toHaveLength(0);
-          const textRecordsForTestDomainBeforeApiCall = await sql`
+          const textRecordsForTestDomainBeforeApiCall = await sqlForTests`
         SELECT * FROM subdomain_text_record`;
           expect(textRecordsForTestDomainBeforeApiCall).toHaveLength(0);
         });
 
         afterEach(async () => {
           // Clean up test data
-          await sql`DELETE FROM subdomain_coin_type`;
-          await sql`DELETE FROM subdomain_text_record`;
-          await sql`DELETE FROM subdomain WHERE domain_id = ${testDomainId}`;
+          await sqlForTests`DELETE FROM subdomain_coin_type`;
+          await sqlForTests`DELETE FROM subdomain_text_record`;
+          await sqlForTests`DELETE FROM subdomain WHERE domain_id = ${testDomainId}`;
         });
 
         test("e2e successfully creates subdomain with no coin types or text records", async () => {
@@ -362,7 +369,7 @@ describe("set-name API E2E", () => {
           await handler(createReq, res);
 
           expect(res._getStatusCode()).toBe(200);
-          const subdomains = await sql`
+          const subdomains = await sqlForTests`
         SELECT * FROM subdomain 
         WHERE domain_id = ${testDomainId}`;
           expect(subdomains).toHaveLength(1);
@@ -372,12 +379,12 @@ describe("set-name API E2E", () => {
             address: "0x1234567890123456789012345678901234567890",
           });
 
-          const coinTypes = await sql`
+          const coinTypes = await sqlForTests`
         SELECT * FROM subdomain_coin_type 
         WHERE subdomain_id = ${newSubdomain.id}`;
           expect(coinTypes).toHaveLength(0);
 
-          const textRecords = await sql`
+          const textRecords = await sqlForTests`
         SELECT * FROM subdomain_text_record
         WHERE subdomain_id = ${newSubdomain.id}`;
           expect(textRecords).toHaveLength(0);
@@ -412,12 +419,12 @@ describe("set-name API E2E", () => {
           await handler(createReq, res);
 
           expect(res._getStatusCode()).toBe(200);
-          const subdomains = await sql`
+          const subdomains = await sqlForTests`
         SELECT * FROM subdomain 
         WHERE domain_id = ${testDomainId}`;
           expect(subdomains).toHaveLength(1);
           const newSubdomain = subdomains[0];
-          const textRecords = await sql`
+          const textRecords = await sqlForTests`
         SELECT * FROM subdomain_text_record
         WHERE subdomain_id = ${newSubdomain.id}`;
           expect(textRecords).toHaveLength(Object.keys(textRecordsData).length);
@@ -455,12 +462,12 @@ describe("set-name API E2E", () => {
           await handler(createReq, res);
 
           expect(res._getStatusCode()).toBe(200);
-          const subdomains = await sql`
+          const subdomains = await sqlForTests`
         SELECT * FROM subdomain 
         WHERE domain_id = ${testDomainId}`;
           expect(subdomains).toHaveLength(1);
           const newSubdomain = subdomains[0];
-          const coinTypes = await sql`
+          const coinTypes = await sqlForTests`
         SELECT * FROM subdomain_coin_type 
         WHERE subdomain_id = ${newSubdomain.id}`;
           expect(coinTypes).toHaveLength(Object.keys(coinTypesData).length);
@@ -502,17 +509,17 @@ describe("set-name API E2E", () => {
           await handler(createReq, res);
 
           expect(res._getStatusCode()).toBe(200);
-          const subdomains = await sql`
+          const subdomains = await sqlForTests`
         SELECT * FROM subdomain 
         WHERE domain_id = ${testDomainId}`;
           expect(subdomains).toHaveLength(1);
           const newSubdomain = subdomains[0];
-          const textRecords = await sql`
+          const textRecords = await sqlForTests`
         SELECT * FROM subdomain_text_record
         WHERE subdomain_id = ${newSubdomain.id}`;
           expect(textRecords).toHaveLength(Object.keys(textRecordsData).length);
 
-          const coinTypes = await sql`
+          const coinTypes = await sqlForTests`
         SELECT * FROM subdomain_coin_type 
         WHERE subdomain_id = ${newSubdomain.id}`;
           expect(coinTypes).toHaveLength(Object.keys(coinTypesData).length);
@@ -543,7 +550,7 @@ describe("set-name API E2E", () => {
 
         test("returns 400 when domain has reached subdomain limit", async () => {
           // First, update the domain to have a low limit
-          await sql`
+          await sqlForTests`
         UPDATE domain 
         SET name_limit = 2 
         WHERE id = ${testDomainId}
@@ -572,7 +579,7 @@ describe("set-name API E2E", () => {
           }
 
           // Verify we have reached the limit
-          const subdomainCount = await sql`
+          const subdomainCount = await sqlForTests`
         SELECT *
         FROM subdomain 
         WHERE domain_id = ${testDomainId}
@@ -605,7 +612,7 @@ describe("set-name API E2E", () => {
           });
 
           // Reset the domain limit for other tests
-          await sql`
+          await sqlForTests`
         UPDATE domain 
         SET name_limit = ${DEFAULT_SUBDOMAIN_LIMIT}
         WHERE id = ${testDomainId}
@@ -658,7 +665,7 @@ describe("set-name API E2E", () => {
           });
           await handler(req, res);
           expect(res._getStatusCode()).toBe(200);
-          const result = await sql`
+          const result = await sqlForTests`
         SELECT * FROM subdomain WHERE name = ${existingSubdomainName}
         `;
           expect(result).toHaveLength(1);
@@ -669,7 +676,7 @@ describe("set-name API E2E", () => {
             address: preExistingSubdomainAddress,
           });
           // Verify text records were created
-          const textRecords = await sql`
+          const textRecords = await sqlForTests`
         SELECT * FROM subdomain_text_record 
         WHERE subdomain_id = ${existingSubdomainId}
       `;
@@ -688,7 +695,7 @@ describe("set-name API E2E", () => {
           );
 
           // Verify coin type records were created
-          const coinRecords = await sql`
+          const coinRecords = await sqlForTests`
         SELECT address, coin_type FROM subdomain_coin_type
         WHERE subdomain_id = ${existingSubdomainId}
       `;
@@ -709,13 +716,13 @@ describe("set-name API E2E", () => {
 
         afterEach(async () => {
           // Clean up test data
-          await sql`DELETE FROM subdomain_coin_type WHERE subdomain_id = ${existingSubdomainId}`;
-          await sql`DELETE FROM subdomain_text_record WHERE subdomain_id = ${existingSubdomainId}`;
-          await sql`DELETE FROM subdomain WHERE id = ${existingSubdomainId}`;
+          await sqlForTests`DELETE FROM subdomain_coin_type WHERE subdomain_id = ${existingSubdomainId}`;
+          await sqlForTests`DELETE FROM subdomain_text_record WHERE subdomain_id = ${existingSubdomainId}`;
+          await sqlForTests`DELETE FROM subdomain WHERE id = ${existingSubdomainId}`;
         });
 
         test("e2e successfully updates subdomain address only", async () => {
-          const beforeUpdateSubdomain = await sql`
+          const beforeUpdateSubdomain = await sqlForTests`
       SELECT * FROM subdomain 
       WHERE name = ${existingSubdomainName}
       `;
@@ -740,7 +747,7 @@ describe("set-name API E2E", () => {
           expect(updateRes._getStatusCode()).toBe(200);
 
           // Verify address was updated but records remain unchanged
-          const afterUpdateSubdomain = await sql`
+          const afterUpdateSubdomain = await sqlForTests`
             SELECT * FROM subdomain 
             WHERE name = ${existingSubdomainName}
           `;
@@ -748,13 +755,13 @@ describe("set-name API E2E", () => {
           const afterUpdateSubdomainRecord = afterUpdateSubdomain[0];
           expect(afterUpdateSubdomainRecord.address).toBe(newAddress);
           // Verify no coin records exist
-          const coinRecords = await sql`
+          const coinRecords = await sqlForTests`
         SELECT * FROM subdomain_coin_type 
         WHERE subdomain_id = ${existingSubdomainId}
       `;
           expect(coinRecords).toHaveLength(0);
           // Verify no text records exist
-          const textRecords = await sql`
+          const textRecords = await sqlForTests`
         SELECT * FROM subdomain_text_record 
         WHERE subdomain_id = ${existingSubdomainId}
       `;
@@ -789,7 +796,7 @@ describe("set-name API E2E", () => {
           expect(updateRes._getStatusCode()).toBe(200);
 
           // Verify text records were updated
-          const textRecords = await sql`
+          const textRecords = await sqlForTests`
         SELECT * FROM subdomain_text_record 
         WHERE subdomain_id = ${existingSubdomainId}
         ORDER BY key
@@ -801,7 +808,7 @@ describe("set-name API E2E", () => {
           }
 
           // Verify coin types were removed
-          const coinTypes = await sql`
+          const coinTypes = await sqlForTests`
         SELECT * FROM subdomain_coin_type 
         WHERE subdomain_id = ${existingSubdomainId}
       `;
@@ -836,7 +843,7 @@ describe("set-name API E2E", () => {
           expect(updateRes._getStatusCode()).toBe(200);
 
           // Verify coin types were updated
-          const coinTypes = await sql`
+          const coinTypes = await sqlForTests`
         SELECT * FROM subdomain_coin_type 
         WHERE subdomain_id = ${existingSubdomainId}
         ORDER BY coin_type
@@ -848,7 +855,7 @@ describe("set-name API E2E", () => {
           }
 
           // Verify text records remained unchanged
-          const textRecords = await sql`
+          const textRecords = await sqlForTests`
         SELECT * FROM subdomain_text_record 
         WHERE subdomain_id = ${existingSubdomainId}
       `;
@@ -888,12 +895,12 @@ describe("set-name API E2E", () => {
           expect(updateRes._getStatusCode()).toBe(200);
 
           // Verify all fields were updated
-          const [updatedSubdomain] = await sql`
+          const [updatedSubdomain] = await sqlForTests`
         SELECT * FROM subdomain WHERE id = ${existingSubdomainId}
       `;
           expect(updatedSubdomain.address).toBe(newAddress);
 
-          const textRecords = await sql`
+          const textRecords = await sqlForTests`
         SELECT * FROM subdomain_text_record 
         WHERE subdomain_id = ${existingSubdomainId}
         ORDER BY key
@@ -903,7 +910,7 @@ describe("set-name API E2E", () => {
             expect(record.value).toBe(newTextRecords[record.key]);
           }
 
-          const coinTypes = await sql`
+          const coinTypes = await sqlForTests`
         SELECT * FROM subdomain_coin_type 
         WHERE subdomain_id = ${existingSubdomainId}
         ORDER BY coin_type
