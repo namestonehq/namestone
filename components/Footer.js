@@ -27,7 +27,7 @@ export default function Footer() {
               <ul className="space-y-2">
                 <li>
                   <Link
-                    href="/api"
+                    href="/try-namestone"
                     className="text-neutral-400 hover:text-white"
                   >
                     NameStone API
