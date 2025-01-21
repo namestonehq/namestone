@@ -369,7 +369,7 @@ export default function Admin() {
           </div>
           <Link
             className="mt-2 text-sm text-orange-800 hover:underline"
-            href="mailto:alex@namestone.xyz"
+            href="mailto:alex@namestone.com"
           >
             Contact Alex
           </Link>

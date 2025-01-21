@@ -12,9 +12,9 @@ const handler = async (req, res) => {
   const { method } = req;
   let address = req.query.address;
 
-  let domain = req.query.domain || "namestone.xyz";
+  let domain = req.query.domain || "namestone.com";
   let uri =
-    req.query.uri || "https://namestone.xyz/api/public_v1/get-siwe-message";
+    req.query.uri || "https://namestone.com/api/public_v1/get-siwe-message";
 
   if (method !== "GET") {
     res.setHeader("Allow", ["GET"]);

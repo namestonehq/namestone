@@ -40,7 +40,7 @@ export default function Home() {
         } else {
           setDisableSend(false);
           setErrorMsg(
-            "Something went wrong. Please refresh and try again or email alex at alex@namestone.xyz"
+            "Something went wrong. Please refresh and try again or email alex at alex@namestone.com"
           );
           console.log(data);
         }

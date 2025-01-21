@@ -8,7 +8,7 @@ export default function Home() {
       </h1>
       <br />
       <p className="mb-4">
-        At NameStone, accessible from www.namestone.xyz, one of our main
+        At NameStone, accessible from www.namestone.com, one of our main
         priorities is the privacy of our visitors. This Privacy Policy document
         contains types of information that is collected and recorded by
         resolverworks and how we use it.

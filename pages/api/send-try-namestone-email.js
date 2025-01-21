@@ -117,7 +117,7 @@ export default async function handler(req, res) {
     On network ${network}.
 
     You can use this key to create and manage subdomains for ${domain}.
-    Here is an example: https://namestone.xyz/docs/set-name 
+    Here is an example: https://namestone.com/docs/set-name 
     Please keep this key safe and do not share it with anyone.
     `;
     const email_html = `<!DOCTYPE html>
@@ -163,15 +163,15 @@ export default async function handler(req, res) {
     
             <p>Do not share this key with anyone. This key grants you access to NameStone's API, allowing you to gaslessly issue and manage subnames for <strong>${domain}</strong>.</p>
     
-            <p>Visit our <a href="https://namestone.xyz/docs">docs</a> to get started.</p>
+            <p>Visit our <a href="https://namestone.com/docs">docs</a> to get started.</p>
     
             <p>Feel free to reach out with questions or further assistance.</p>
     
             <p>Alex<br>
             NameStone<br>
-            <a href="https://namestone.xyz">namestone.xyz</a></p>
+            <a href="https://namestone.com">namestone.com</a></p>
     
-            <a href="https://namestone.xyz/docs" class="button">Docs</a>
+            <a href="https://namestone.com/docs" class="button">Docs</a>
         </div>
     </body>
     </html>`;
@@ -188,7 +188,7 @@ export default async function handler(req, res) {
     });
 
     const mailOptions = {
-      from: "apikey@namestone.xyz",
+      from: "apikey@namestone.com",
       to: email,
       subject: email_subject,
       text: email_message,
@@ -214,8 +214,8 @@ export default async function handler(req, res) {
     `;
 
     const mailOptions2 = {
-      from: "apikey@namestone.xyz",
-      to: "darian@namestone.xyz, alex@namestone.xyz",
+      from: "apikey@namestone.com",
+      to: "darian@namestone.com, alex@namestone.com",
       subject: email_subject2,
       text: email_message2,
     };

@@ -57,8 +57,8 @@ export default function Home() {
               Please check your inbox for your API key. Questions? Email
               <span className="font-bold">
                 {" "}
-                <Link href="mailto:alex@namestone.xyz" className="font-bold">
-                  alex@namestone.xyz
+                <Link href="mailto:alex@namestone.com" className="font-bold">
+                  alex@namestone.com
                 </Link>
               </span>
             </div>
@@ -80,17 +80,17 @@ export default function Home() {
             <span className="text-sm font-normal leading-normal text-neutral-900">
               The admin panel allows you to add and modify subnames.
             </span>
-            <span className="text-sm flex text-neutral-900 mb-5">
+            <span className="flex mb-5 text-sm text-neutral-900">
               <div className="relative flex items-center group">
-                <span className="font-bold font-mono cursor-pointer">
+                <span className="font-mono font-bold cursor-pointer">
                   {shortAddress(address)}
                 </span>
-                <div className="absolute cursor-pointer px-2 rounded bg-gray-50 shadow opacity-0 group-hover:opacity-100 transition-opacity duration-300 -ml-2 -mt-12">
+                <div className="absolute px-2 -mt-12 -ml-2 transition-opacity duration-300 rounded shadow opacity-0 cursor-pointer bg-gray-50 group-hover:opacity-100">
                   {address}
                 </div>
               </div>
 
-              <span className="text-sm font-normal pl-1 leading-normal text-neutral-900">
+              <span className="pl-1 text-sm font-normal leading-normal text-neutral-900">
                 has been granted access.
               </span>
             </span>

@@ -166,8 +166,8 @@ async function handler(req, res) {
     `;
 
     const mailOptions = {
-      from: "apikey@namestone.xyz",
-      to: "darian@namestone.xyz, alex@namestone.xyz",
+      from: "apikey@namestone.com",
+      to: "darian@namestone.com, alex@namestone.com",
       subject: email_subject,
       text: email_message,
     };

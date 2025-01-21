@@ -128,8 +128,8 @@ export default function Home() {
           <strong>our</strong>
         </span>
         <span>&rdquo;), concerning your access to and use of the </span>
-        <a href="http://www.namestone.xyz/" target="_blank" rel="noopener">
-          http://www.namestone.xyz
+        <a href="http://www.namestone.com/" target="_blank" rel="noopener">
+          http://www.namestone.com
         </a>
         <span>
           {" "}
@@ -843,11 +843,11 @@ export default function Home() {
           <strong> </strong>
         </span>
         <a
-          href="http://www.namestone.xyz/privacy-policy"
+          href="http://www.namestone.com/privacy-policy"
           target="_blank"
           rel="noopener"
         >
-          <strong>http://www.namestone.xyz/privacy-policy</strong>
+          <strong>http://www.namestone.com/privacy-policy</strong>
         </a>
         <span>
           <strong> </strong>

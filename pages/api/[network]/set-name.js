@@ -109,7 +109,7 @@ async function handler(req, res) {
       if (subdomainCount[0].count >= domainQuery[0].name_limit) {
         return res.status(400).json({
           error:
-            "Api name limit reached. Please contact alex@namestone.xyz to increase your limit",
+            "Api name limit reached. Please contact alex@namestone.com to increase your limit",
         });
       }
     }
