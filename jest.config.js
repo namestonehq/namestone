@@ -1,30 +1,20 @@
-const nextJest = require('next/jest')
- 
-/** @type {import('jest').Config} */
-const createJestConfig = nextJest({
-  // Provide the path to your Next.js app to load next.config.js and .env files in your test environment
-  dir: './',
-})
- 
-// Add any custom config to be passed to Jest
-const config = {
-  coverageProvider: 'v8',
-  testEnvironment: 'jsdom',
-  
-  // Add setup files
-  setupFiles: [
-    '<rootDir>/jest.setup.js'
-  ],
+// You can learn more about each option below in the Jest docs: https://jestjs.io/docs/configuration.
 
-  // Set different test environments based on test path
-  projects: [
-    {
-      displayName: 'e2e',
-      testMatch: ['<rootDir>/__tests__/e2e/**/*.test.js'],
-      testEnvironment: 'node'
-    }
-  ],
-  
+module.exports = {
+  setupFilesAfterEnv: ["<rootDir>/jest.setup.js"],
+  testPathIgnorePatterns: ["<rootDir>/node_modules/", "<rootDir>/.next/"],
+  transform: {
+    // Use babel-jest to transpile tests with the next/babel preset
+    // https://jestjs.io/docs/configuration#transform-objectstring-pathtotransformer--pathtotransformer-object
+    "^.+\\.(js|jsx|ts|tsx)$": ["babel-jest", { presets: ["next/babel"] }],
+  },
+  moduleNameMapper: {
+    // Mock the database module for testing
+    "lib/db": "<rootDir>/test_utils/mock_db.js",
+  },
+  testEnvironment: "node",
+  setupFiles: ["./jest.setup.js"],
+
   // Coverage configuration
   collectCoverage: true,
   collectCoverageFrom: [
@@ -41,12 +31,9 @@ const config = {
       branches: 80,
       functions: 80,
       lines: 80,
-      statements: 80
-    }
+    statements: 80,
+    },
   },
-  coverageReporters: ['json', 'lcov', 'text', 'clover', 'html'],
-  coverageDirectory: 'coverage'
-}
- 
-// createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async
-module.exports = createJestConfig(config)
+  coverageReporters: ["json", "lcov", "text", "clover", "html"],
+  coverageDirectory: "coverage",
+};
