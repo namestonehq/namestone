@@ -1,11 +1,6 @@
-// Mock micro-cors since it's not needed in tests
-jest.mock('micro-cors', () => () => (handler) => handler);
+import dotenv from 'dotenv';
 
-// Add any other global mocks or setup here
-global.console = {
-  ...console,
-  // Uncomment to suppress console.log during tests
-  // log: jest.fn(),
-  error: jest.fn(),
-  warn: jest.fn(),
-}; 
+/**
+ * Load the .env.test file for testing
+ */
+dotenv.config({ path: '.env.test' }, { override: true });
