@@ -54,7 +54,7 @@ export async function getEligibility(token, domain) {
 
   // Check db to see domain exists
   const domainQuery = await sql`
-  select id from domain where name = ${domain} limit 1`;
+  select id from domain where name = ${domain} and netork='mainnet' limit 1`;
 
   if (domainQuery.length === 0) {
     // if domain doesn't exist we return user can't claim

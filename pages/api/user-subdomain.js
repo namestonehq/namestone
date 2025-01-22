@@ -15,7 +15,7 @@ export default async function handler(req, res) {
   }
   const domain = req.query.domain;
   const domainQuery = await sql`
-  select id from domain where name = ${domain} limit 1`;
+  select id from domain where name = ${domain} and network='mainnet' limit 1`;
 
   if (domainQuery.length === 0) {
     return res.status(400).json({ error: "Domain does not exist" });
