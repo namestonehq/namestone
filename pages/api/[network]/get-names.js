@@ -57,31 +57,47 @@ async function handler(req, res) {
   // Check Admin token and API key
   const adminToken = await getAdminToken(req, domain);
   const allowedApi = await checkApiKey(apiKey, domain);
-  if (!allowedApi && !adminToken) {
-    return res.status(401).json({
-      error: "key error - You are not authorized to use this endpoint",
-    });
-  }
+
   let domainIds = [];
   if (domain) {
     // Get domain from db
-    const domainQuery = await sql`
+    let domainQuery;
+    if (allowedApi || adminToken) {
+      domainQuery = await sql`
     select id from domain where name = ${domain} and network= ${network} limit 1`;
+    } else {
+      domainQuery = await sql`
+    select domain.id from domain JOIN brand
+     ON brand.domain_id = domain.id
+    WHERE brand.share_with_data_providers = true 
+    AND domain.name = ${domain}  and domain.network= ${network} limit 1`;
+    }
+
     if (domainQuery.length === 0) {
       return res.status(400).json({ error: "Domain does not exist" });
     }
     domainIds = [domainQuery[0].id];
   } else {
     // Get all domains from db for api key
-    const domainQuery = await sql`
+    let domainQuery;
+    if (allowedApi) {
+      // if apiKey get all apikey domains
+      domainQuery = await sql`
     select domain.id from domain join api_key on api_key.domain_id = domain.id where api_key.key = ${apiKey} and domain.network = ${network}`;
+    } else {
+      // otherwise get all public domains
+      domainQuery = await sql`
+    select domain.id from domain JOIN brand
+     ON brand.domain_id = domain.id
+    WHERE brand.share_with_data_providers = true
+   and domain.network = ${network}`;
+    }
 
     if (domainQuery.length === 0) {
       return res.status(400).json({ error: "Domain does not exist" });
     }
     domainIds = domainQuery.map((domain) => domain.id);
   }
-
   // Get subdomains from db for non contract domains
   let subdomainEntries;
   if (address === undefined) {
