@@ -8,6 +8,11 @@ export default async function handler(req, res) {
     return res.status(401).json({ error: "Unauthorized. Please refresh." });
   }
 
+  // Get Domain && Name
+  if (!req.query.domain) {
+    return res.status(400).json({ error: "Domain is required" });
+  }
+
   const superAdminQuery = await sql`
   SELECT * FROM super_admin WHERE address = ${token.sub};
 `;
@@ -19,10 +24,6 @@ export default async function handler(req, res) {
   and domain.network=  ${req.query.network};`;
   if (superAdminQuery.length === 0 && adminQuery.length === 0) {
     return res.status(401).json({ error: "Unauthorized. Please refresh." });
-  }
-  // Get Domain && Name
-  if (!req.query.domain) {
-    return res.status(400).json({ error: "Domain is required" });
   }
 
   const subdomainQuery = await sql`

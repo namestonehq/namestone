@@ -196,6 +196,7 @@ export default function Admin() {
     fetch("/api/admin/set-subdomain", {
       method: "POST",
       body: JSON.stringify({
+        network: selectedBrand.network,
         id: nameData.id,
         name: nameData.name,
         address: address,

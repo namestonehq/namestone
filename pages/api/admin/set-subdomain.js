@@ -24,6 +24,9 @@ export default async function handler(req, res) {
   if (!body.domain) {
     return res.status(400).json({ error: "Domain is required" });
   }
+  if (!body.network) {
+    return res.status(400).json({ error: "Network is required" });
+  }
   let domain;
   let name;
   try {
@@ -41,7 +44,8 @@ export default async function handler(req, res) {
   select subdomain.id, subdomain.address
   from subdomain
   where subdomain.name = ${name} and subdomain.domain_id in
-  (select id from domain where name = ${domain} limit 1)`;
+  (select id from domain where name = ${domain} and network= ${body.network} limit 1)`;
+
   // If subdomain exists and is different than current, warn user
   if (subdomainQuery.length == 1 && subdomainQuery[0].id != subdomainId) {
     return res.status(400).json({
@@ -52,7 +56,7 @@ export default async function handler(req, res) {
   if (subdomainId == 0) {
     // Insert subdomain
     const domainQuery = await sql`
-    select id from domain where name = ${domain} limit 1`;
+    select id from domain where name = ${domain} and network= ${body.network} limit 1`;
 
     if (domainQuery.length === 0) {
       return res.status(400).json({ error: "Domain does not exist" });
