@@ -1,14 +1,14 @@
-const postgres = require("postgres");
-const { execSync } = require("child_process");
-const sql = require("./e2e_db_mock").default;
-require("dotenv").config({ path: ".env.test" }, { override: true });
+import postgres from "postgres";
+import { execSync } from "child_process";
+import sql from "./mock_db";
 
 // Verify we're using test database
-if (!process.env.TEST_DB_NAME?.includes("test")) {
-  throw new Error("Test database name must include 'test' for safety");
-}
 if (!process.env.TEST_DATABASE_URL?.includes("localhost")) {
   throw new Error("Test database must be on localhost");
+}
+
+if (process.env.TEST_API_KEY !== "fake-test-api-key") {
+  throw new Error("Test API key is required for testing");
 }
 
 async function setupTestDatabase() {
