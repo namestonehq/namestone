@@ -58,7 +58,7 @@ async function handler(req, res) {
   select subdomain.id, subdomain.address
   from subdomain
   where subdomain.name = ${name} and subdomain.domain_id in
-  (select id from domain where name = ${domain} limit 1)`;
+  (select id from domain where name = ${domain}  and network='mainnet' limit 1)`;
 
   // single_claim check
   if (req.query.single_claim === "1") {
@@ -67,7 +67,7 @@ async function handler(req, res) {
     select subdomain.id, subdomain.address
     from subdomain
     where subdomain.address = ${body.address} and subdomain.domain_id in
-    (select id from domain where name = ${domain} limit 1)`;
+    (select id from domain where name = ${domain} and network='mainnet'  limit 1)`;
     // if so, return error
     if (claimedSubdomainQuery.length > 0) {
       return res
@@ -81,7 +81,7 @@ async function handler(req, res) {
   } else {
     // Insert subdomain
     const domainQuery = await sql`
-    select id, name_limit from domain where name = ${body.domain} limit 1`;
+    select id, name_limit from domain where name = ${body.domain} and network='mainnet' limit 1`;
 
     if (domainQuery.length === 0) {
       return res.status(400).json({ error: "Domain does not exist" });

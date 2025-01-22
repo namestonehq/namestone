@@ -97,7 +97,7 @@ async function handler(req, res) {
   } else {
     // Insert subdomain
     const domainQuery = await sql`
-    select id, name_limit from domain where name = ${domain} limit 1`;
+    select id, name_limit from domain where name = ${domain} and network = ${network} limit 1`;
 
     if (domainQuery.length === 0) {
       return res.status(400).json({ error: "Domain does not exist" });
