@@ -1,6 +1,6 @@
 # Set Domain
 
-This POST route is used to set a domain for a given address. If the domain doesn't exist, it will be created with the API key and admins that match the first domain created by the API key. If the domain exists, and the API key has access, the endpoint will overwrite existing domain data.
+This POST route is used to set domain records. It should only be used for domains already enabled in namestone. To enable a new domain use enable-domain.
 
 ## Parameters
 
@@ -9,30 +9,6 @@ This POST route is used to set a domain for a given address. If the domain doesn
 - `contenthash` (string)(Optional): The link for an ipfs or ipns website.
 - `text_records` (object)(Optional): An object containing key-value pairs representing the text records to be set.
 
-## Example
-
-```
-POST https://namestone.xyz/api/public_v1/set-domain
-
-{
-  "domain":"testbrand.eth",
-  "address":"0xE997d9b785Dd99832d21b3Ce5A34fCacC6D53C57",
-  "text_records": {
-      "com.twitter":"namestonehq",
-      "com.github":"aslobodnik",
-      "com.discord":"superslobo",
-      "url":"https://www.namestone.xyz",
-      "location":"📍 nyc",
-      "description":"APIs are cool",
-      "avatar":"https://raw.githubusercontent.com/aslobodnik/profile/main/pic.jpeg"
-  }
-}
-headers:
-{
-  `Authorization: YOUR_API_KEY`
-}
-```
-
 ## Curl Example
 
 ```
@@ -40,17 +16,58 @@ curl -X POST \
      -H 'Content-Type: application/json' \
      -H 'Authorization: YOUR_API_KEY' \
      -d '{
-          "name":"example",
+           "domain":"testbrand.eth",
           "address":"0xE997d9b785Dd99832d21b3Ce5A34fCacC6D53C57",
           "text_records": {
             "com.twitter":"namestonehq",
             "com.github":"aslobodnik",
             "com.discord":"superslobo",
-            "url":"https://www.namestone.xyz",
+            "url":"https://www.namestone.com",
             "location":"📍 nyc",
             "description":"APIs are cool",
             "avatar":"https://raw.githubusercontent.com/aslobodnik/profile/main/pic.jpeg"
           }
         }' \
-     https://namestone.xyz/api/public_v1/set-domain
+     https://namestone.com/api/public_v1/set-domain
+```
+
+## SDK Example
+
+```ts
+import NameStone, { AuthenticationError, NetworkError, TextRecords } from 'namestone-sdk';
+
+// Initialize the NameStone instance
+const ns = new NameStone(<YOUR_API_KEY_HERE>);
+
+// Define the domain parameters
+const domain = "testbrand.eth";
+const address = "0xE997d9b785Dd99832d21b3Ce5A34fCacC6D53C57";
+
+// Define the text records
+const textRecords: TextRecords = {
+  "com.twitter": "namestonehq",
+  "com.github": "aslobodnik",
+  "com.discord": "superslobo",
+  "url": "https://www.namestone.com",
+  "location": "📍 nyc",
+  "description": "APIs are cool",
+  "avatar": "https://raw.githubusercontent.com/aslobodnik/profile/main/pic.jpeg"
+};
+
+// Use an immediately invoked async function to allow top-level await
+(async () => {
+  try {
+    const response = await ns.setDomain({domain:domain, address:address, text_records:textRecords});
+
+    console.log("Domain set successfully:", response);
+  } catch (error) {
+    if (error instanceof AuthenticationError) {
+      console.error("Authentication failed:", error.message);
+    } else if (error instanceof NetworkError) {
+      console.error("Network error:", error.message);
+    } else {
+      console.error("An unexpected error occurred:", error);
+    }
+  }
+})();
 ```

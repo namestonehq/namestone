@@ -14,16 +14,19 @@ model user_engagement {
 model domain {
   id               Int                  @id @default(autoincrement())
   created_at       DateTime             @default(now())
+  network          String               @default("mainnet")
   address          String?
   name             String?
-  contract         String? 
+  contract         String?
   contenthash      String?
+  contenthash_raw  String?
   name_limit       Int                  @default(0)
   subdomains       subdomain[]
   text_records     domain_text_record[]
   eligibility_item eligibility_item[]
   admin            admin[]
   brand            brand[]
+  domain_coin_type domain_coin_type[]
 
   @@index([name], map: "domain__name")
 }
@@ -38,16 +41,25 @@ model domain_text_record {
   @@index([domain_id], map: "domain_text_record__domain_id")
 }
 
+model domain_coin_type {
+  id        Int     @id @default(autoincrement())
+  domain_id Int
+  domain    domain  @relation(fields: [domain_id], references: [id])
+  coin_type String?
+  address   String?
+}
+
 model subdomain {
-  id           Int                     @id @default(autoincrement())
-  created_at   DateTime                @default(now())
-  address      String?
-  name         String?
-  domain_id    Int
-  domain       domain                  @relation(fields: [domain_id], references: [id])
-  contenthash  String?
-  text_records subdomain_text_record[]
-  coin_types   subdomain_coin_type[]
+  id              Int                     @id @default(autoincrement())
+  created_at      DateTime                @default(now())
+  address         String?
+  name            String?
+  domain_id       Int
+  domain          domain                  @relation(fields: [domain_id], references: [id])
+  contenthash     String?
+  contenthash_raw String?
+  text_records    subdomain_text_record[]
+  coin_types      subdomain_coin_type[]
 
   @@index([address], map: "subdomain__address")
   @@index([domain_id], map: "subdomain__domain_id")
@@ -62,6 +74,14 @@ model subdomain_text_record {
   value        String?
 
   @@index([subdomain_id], map: "subdomain_text_record__subdomain_id")
+}
+
+model subdomain_coin_type {
+  id           Int       @id @default(autoincrement())
+  subdomain_id Int
+  subdomain    subdomain @relation(fields: [subdomain_id], references: [id])
+  coin_type    String?
+  address      String?
 }
 
 model eligibility_item {
@@ -121,14 +141,6 @@ model name_resolution {
   subdomain_id    Int
 }
 
-model subdomain_coin_type {
-  id           Int       @id @default(autoincrement())
-  subdomain_id Int
-  subdomain    subdomain @relation(fields: [subdomain_id], references: [id])
-  coin_type    String?
-  address      String?
-}
-
 model data_provider {
   id           Int     @id @default(autoincrement())
   api_key      String?
@@ -139,4 +151,10 @@ model blocklist {
   id    Int     @id @default(autoincrement())
   uid   String?
   words Json
+}
+
+model siwe {
+  id      Int    @id @default(autoincrement())
+  address String @unique
+  message String
 }

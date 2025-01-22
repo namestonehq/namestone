@@ -14,8 +14,7 @@ export default function Header({ subtitle }) {
 
   return (
     <div className="z-40 flex flex-col fixed justify-center w-full max-w-[1536px]">
-      <div className="relative w-full h-2 bg-gradient-to-r from-orange-400 via-red-500 to-red-500"></div>
-      <div className="flex justify-between w-full px-6 py-4  backdrop-blur-sm lg:px-32">
+      <div className="flex justify-between w-full px-6 py-4 backdrop-blur-sm lg:px-32">
         {!menuOpen ? (
           <>
             <div className="flex items-center text-2xl font-bold">
@@ -34,9 +33,9 @@ export default function Header({ subtitle }) {
                 <Icon icon="charm:menu-hamburger" className="w-6 h-6" />
               </button>
             </div>
-            <div className="items-center hidden space-x-6 md:space-x-10 lg:flex">
+            <div className="items-center hidden space-x-6 md:space-x-8 lg:flex">
               <Link
-                className={`text-xs font-bold md:text-sm ${
+                className={`text-xs font-bold md:text-sm hover:underline underline-offset-4 ${
                   subtitle === "Docs" ? "text-orange-800" : ""
                 }`}
                 href="/docs"
@@ -46,7 +45,7 @@ export default function Header({ subtitle }) {
               </Link>
 
               <Link
-                className={`text-xs font-bold md:text-sm ${
+                className={`text-xs font-bold md:text-sm cursor-pointer hover:underline underline-offset-4 ${
                   subtitle === "Blog" ? "text-orange-800" : ""
                 }`}
                 href="/blog"
@@ -54,20 +53,14 @@ export default function Header({ subtitle }) {
                 {" "}
                 Blog
               </Link>
-              <Link className="text-xs font-bold md:text-sm" href="/admin">
-                {" "}
-                Admin Login
-              </Link>
-              <Link className="text-xs font-bold md:text-sm" href="/contact-us">
-                {" "}
-                Contact Us
-              </Link>
-              <button
-                onClick={() => router.push("/try-namestone")}
-                className="z-20 px-6 py-3 text-sm font-bold bg-orange-500 rounded-lg hover:bg-orange-700 text-brownblack-700 active:bg-orange-800"
+              <Link
+                className="text-xs font-bold cursor-pointer md:text-sm"
+                href="/admin"
               >
-                Try for Free
-              </button>
+                <button className="z-20 px-4 py-2 text-sm font-bold bg-orange-500 border border-black rounded-lg shadow cursor-pointer border-1 hover:bg-orange-700 text-brownblack-700 active:bg-orange-800">
+                  Admin Login
+                </button>
+              </Link>
             </div>
           </>
         ) : (
@@ -142,7 +135,7 @@ export default function Header({ subtitle }) {
                   onClick={() => router.push("/try-namestone")}
                   className="z-20 px-6 py-3 text-sm font-bold bg-orange-500 rounded-lg hover:bg-orange-700 text-brownblack-700 active:bg-orange-800"
                 >
-                  Try for Free
+                  Get Started
                 </button>
               </div>
             </div>

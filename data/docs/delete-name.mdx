@@ -1,0 +1,51 @@
+# Delete Name
+
+This POST route is used to delete a name for a given domain.
+
+## Parameters
+
+- `name` (string): The name being deleted, i.e., the "example" in example.testbrand.eth.
+- `domain` (string): The domain ("testbrand.eth").
+
+## Curl Example
+
+```
+curl -X POST \
+     -H 'Content-Type: application/json' \
+     -H 'Authorization: YOUR_API_KEY' \
+     -d '{
+          "domain": "testbrand.eth",
+          "name": "example"
+        }' \
+     https://namestone.com/api/public_v1/delete-name
+```
+
+## SDK Example
+
+```ts
+import NameStone, { AuthenticationError, NetworkError } from 'namestone-sdk';
+
+// Initialize the NameStone instance
+const ns = new NameStone(<YOUR_API_KEY_HERE>);
+
+// Define the domain and name to delete
+const domain = "testbrand.eth";
+const name = "example";
+
+// Use an immediately invoked async function to allow top-level await
+(async () => {
+  try {
+    const response = await ns.deleteName({name:name, domain:domain});
+
+    console.log("Name deleted successfully", response);
+  } catch (error) {
+    if (error instanceof AuthenticationError) {
+      console.error("Authentication failed:", error.message);
+    } else if (error instanceof NetworkError) {
+      console.error("Network error:", error.message);
+    } else {
+      console.error("An unexpected error occurred:", error);
+    }
+  }
+})();
+```

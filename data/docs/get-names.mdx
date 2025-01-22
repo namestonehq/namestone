@@ -12,23 +12,51 @@ If it is included it will get only your names (public and private).
 - `limit` (integer)(Optional): Number of names returned in request. Default 50.
 - `offset` (integer)(Optional): Offset the returned names window. Default 0.
 
-## Example
-
-```
-GET https://namestone.xyz/api/public_v1/get-names?domain=example.xyz&address=0x123abc...
-headers:
-{
-  `Authorization: YOUR_API_KEY`
-}
-```
-
 ## Curl Example
 
 ```
 curl -X GET \
      -H 'Authorization: YOUR_API_KEY' \
-     'https://namestone.xyz/api/public_v1/get-names?domain=testbrand.eth&address=0x57632Ba9A844af0AB7d5cdf98b0056c8d87e3A85'
+     'https://namestone.com/api/public_v1/get-names?domain=testbrand.eth&address=0x57632Ba9A844af0AB7d5cdf98b0056c8d87e3A85'
 
+```
+
+## SDK Example
+
+```ts
+import NameStone, { AuthenticationError, NetworkError, NameData } from 'namestone-sdk';
+
+// Initialize the NameStone instance
+const ns = new NameStone(<YOUR_API_KEY_HERE>);
+
+// Define the query parameters
+const domain = "testbrand.eth";
+const address = "0x57632Ba9A844af0AB7d5cdf98b0056c8d87e3A85";
+
+// Use an immediately invoked async function to allow top-level await
+(async () => {
+  try {
+    const response: NameData[] = await ns.getNames({domain:domain, address:address});
+
+    if (response.length > 0) {
+      console.log(`Found ${response.length} name(s):`);
+      response.forEach((nameData, index) => {
+        console.log(`\nName ${index + 1}:`);
+        console.log(JSON.stringify(nameData, null, 2));
+      });
+    } else {
+      console.log("No names found for the specified domain and address.");
+    }
+  } catch (error) {
+    if (error instanceof AuthenticationError) {
+      console.error("Authentication failed:", error.message);
+    } else if (error instanceof NetworkError) {
+      console.error("Network error:", error.message);
+    } else {
+      console.error("An unexpected error occurred:", error);
+    }
+  }
+})();
 ```
 
 ## Example Return
@@ -39,14 +67,22 @@ curl -X GET \
       "name":"namestone",
       "address":"0x57632Ba9A844af0AB7d5cdf98b0056c8d87e3A85",
       "domain":"testbrand.eth",
-      "textRecords":{
+      "text_records":{
          "avatar":"https://imagedelivery.net/UJ5oN2ajUBrk2SVxlns2Aw/71cec612-fe0b-46a4-3d1c-e3eaf53d4600/public",
          "com.twitter":"namestonehq",
          "com.discord":"superslobo",
          "location":"📍 nyc",
-         "url":"https://namestone.xyz",
+         "url":"https://namestone.com",
          "description":"Brand Choice"
       }
+      "coin_types": {
+         "2147483785": "0x534631Bcf33BDb069fB20A93d2fdb9e4D4dD42CF",
+         "2147492101": "0x534631Bcf33BDb069fB20A93d2fdb9e4D4dD42CF",
+         "2147525809": "0x534631Bcf33BDb069fB20A93d2fdb9e4D4dD42CF",
+         "2147483658": "0x534631Bcf33BDb069fB20A93d2fdb9e4D4dD42CF"
+      },
    }
 ]
 ```
+
+NameStone supports multichain address resolution to any L2 chain permitted within [ENS](https://github.com/satoshilabs/slips/blob/master/slip-0044.md)

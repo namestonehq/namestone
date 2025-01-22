@@ -1,10 +1,48 @@
 import sql from "../lib/db.js";
 import { ethers } from "ethers";
 import contentHash from "@ensdomains/content-hash";
+import { createPublicClient, http } from "viem";
+import { mainnet, sepolia } from "viem/chains";
+import {
+  createSiweMessage,
+  generateSiweNonce,
+  parseSiweMessage,
+} from "viem/siwe";
+import { getOwner } from "@ensdomains/ensjs/public";
+import { addEnsContracts, ensSubgraphActions } from "@ensdomains/ensjs";
+import { getToken } from "next-auth/jwt";
 
 export const providerUrl =
   "https://eth-mainnet.g.alchemy.com/v2/" +
   process.env.NEXT_PUBLIC_ALCHEMY_API_KEY; // replace with your actual project ID
+
+export const client = createPublicClient({
+  chain: {
+    ...addEnsContracts(mainnet),
+    subgraphs: {
+      ens: {
+        url: process.env.SUBGRAPH_URL || "",
+      },
+    },
+  },
+  transport: http(providerUrl || ""),
+}).extend(ensSubgraphActions);
+
+export const sepoliaProviderUrl =
+  "https://eth-sepolia.g.alchemy.com/v2/" +
+  process.env.NEXT_PUBLIC_ALCHEMY_API_KEY; // replace with your actual project ID
+
+export const sepoliaClient = createPublicClient({
+  chain: {
+    ...addEnsContracts(sepolia),
+    subgraphs: {
+      ens: {
+        url: process.env.SUBGRAPH_URL_SEPOLIA || "",
+      },
+    },
+  },
+  transport: http(sepoliaProviderUrl || ""),
+}).extend(ensSubgraphActions);
 
 // get whether a user is eligible to claim a name
 // Takes a user token and returns a payload with eligibility information
@@ -16,7 +54,7 @@ export async function getEligibility(token, domain) {
 
   // Check db to see domain exists
   const domainQuery = await sql`
-  select id from domain where name = ${domain} limit 1`;
+  select id from domain where name = ${domain} and netork='mainnet' limit 1`;
 
   if (domainQuery.length === 0) {
     // if domain doesn't exist we return user can't claim
@@ -271,6 +309,25 @@ export async function checkApiKey(apiKey, domain) {
   return false;
 }
 
+// function to check if user is an admin of the domain
+export async function getAdminToken(req, domain) {
+  const token = await getToken({ req });
+  if (!token) {
+    return false;
+  }
+  const superAdminQuery = await sql`
+  SELECT * FROM super_admin WHERE address = ${token.sub}`;
+  const adminQuery = await sql`
+  SELECT * FROM admin
+  join domain on admin.domain_id = domain.id
+  WHERE admin.address = ${token.sub}
+  and domain.name = ${domain}`;
+  if (superAdminQuery.length === 0 && adminQuery.length === 0) {
+    return false;
+  }
+  return token;
+}
+
 function matchProtocol(text) {
   return (
     text.match(/^(ipfs|sia|ipns|bzz|onion|onion3|arweave|ar):\/\/(.*)/) ||
@@ -332,4 +389,145 @@ export function encodeContenthash(text) {
     }
   }
   return encoded;
+}
+
+const resolverList = [
+  "0x2291053F49Cd008306b92f84a61c6a1bC9B5CB65",
+  "0x828ec5bDe537B8673AF98D77bCB275ae1CA26D1f",
+  "0x84c5AdB77dd9f362A1a3480009992d8d47325dc3",
+  "0xd17347fA0a6eeC89a226c96a9ae354F785e94241",
+  "0xA87361C4E58B619c390f469B9E6F27d759715125",
+  "0x467893bFE201F8EfEa09BBD53fB69282e6001595", //Sepolia
+];
+
+export async function checkResolver(ensName, network = "mainnet") {
+  try {
+    let resolver;
+    if (network === "sepolia") {
+      resolver = await sepoliaClient.getEnsResolver({ name: ensName });
+    } else {
+      resolver = await client.getEnsResolver({ name: ensName });
+    }
+    console.log("Resolver:", resolver);
+    return resolverList.includes(resolver);
+  } catch (error) {
+    console.error("Error checking ENS resolver:", error);
+    return false;
+  }
+}
+
+export async function verifySignature(address, signature) {
+  try {
+    // get siwe message from sql
+    const siweQuery = await sql`
+    SELECT message FROM siwe WHERE address = ${address} limit 1`;
+    if (siweQuery.length === 0) {
+      return {
+        success: false,
+        error:
+          "Invalid Siwe message - Either it doesn't exist or has been used. Please request another.",
+      };
+    }
+    console.log("Siwe message:", siweQuery[0].message);
+    console.log("Signature:", signature);
+    const message = siweQuery[0].message;
+    const preparedMessage = createSiweMessage(parseSiweMessage(message));
+    console.log("Prepared message:", preparedMessage);
+    const valid = await client.verifySiweMessage({
+      address: address,
+      message: preparedMessage,
+      signature,
+    });
+    // check signature
+    if (!valid) {
+      return { success: false, error: "Invalid signature" };
+    }
+  } catch (error) {
+    console.log("Error validating signature:", error);
+    return { success: false, error: "Error validating signature" };
+  }
+  // delete siwe message
+  await sql`DELETE FROM siwe WHERE address = ${address}`;
+  // return success
+  return { success: true, error: "" };
+}
+
+export async function getDomainOwner(domain, network = "mainnet") {
+  // resolve owner of domain using ens
+  try {
+    let result;
+    if (network === "sepolia") {
+      result = await getOwner(sepoliaClient, { name: domain });
+    } else {
+      result = await getOwner(client, { name: domain });
+    }
+    console.log(result);
+    const ensAddress = result.owner;
+    return ensAddress;
+  } catch (error) {
+    console.error("Error resolving domain owner:", error);
+    return "";
+  }
+}
+
+export async function getOnchainDomainInfo(basename) {
+  console.log("Fetching domain for", basename);
+  const address = await client.getEnsAddress({
+    name: normalize(basename),
+  });
+  console.log("Address:", address);
+  const description = await client.getEnsText({
+    name: normalize(basename),
+    key: "description",
+  });
+  const ensAvatar = await client.getEnsAvatar({
+    name: normalize(basename),
+  });
+  const location = await client.getEnsText({
+    name: normalize(basename),
+    key: "location",
+  });
+  const twitter = await client.getEnsText({
+    name: normalize(basename),
+    key: "com.twitter",
+  });
+  const discord = await client.getEnsText({
+    name: normalize(basename),
+    key: "com.discord",
+  });
+  const github = await client.getEnsText({
+    name: normalize(basename),
+    key: "com.github",
+  });
+  const website = await client.getEnsText({
+    name: normalize(basename),
+    key: "url",
+  });
+
+  const result = {
+    domain: basename,
+    address: address,
+    text_records: {
+      avatar: ensAvatar,
+      description: description,
+      location: location,
+      "com.twitter": twitter,
+      "com.github": github,
+      "com.discord": discord,
+      url: website,
+    },
+  };
+  return result;
+}
+
+export function getNetwork(req) {
+  const network = req.query.network.toLowerCase();
+  if (network === "public_v1") {
+    return "mainnet";
+  }
+  if (network === "public_v1_sepolia") {
+    return "sepolia";
+  } else {
+    return false;
+  }
 }

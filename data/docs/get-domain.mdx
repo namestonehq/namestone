@@ -1,0 +1,71 @@
+# Get Domain
+
+This GET route fetches the information for a domain
+
+## Parameters
+
+- `domain` (string)(Optional): The domain for the user name. If not included route will return all domains tied to your API key.
+
+## Curl Example
+
+```
+curl -X GET \
+     -H 'Authorization: YOUR_API_KEY' \
+     'https://namestone.com/api/public_v1/get-domain?domain=testbrand.eth'
+
+```
+
+## SDK Example
+
+```ts
+import NameStone, { AuthenticationError, NetworkError, DomainData } from 'namestone-sdk';
+
+// Initialize the NameStone instance
+const ns = new NameStone(<YOUR_API_KEY_HERE>);
+
+// Define the domain to query
+const domain = "testbrand.eth";
+
+// Use an immediately invoked async function to allow top-level await
+(async () => {
+  try {
+    const response: DomainData[] = await ns.getDomain({domain:domain});
+    console.log(response);
+  } catch (error) {
+    if (error instanceof AuthenticationError) {
+      console.error("Authentication failed:", error.message);
+    } else if (error instanceof NetworkError) {
+      console.error("Network error:", error.message);
+    } else {
+      console.error("An unexpected error occurred:", error);
+    }
+  }
+})();
+```
+
+## Example Return
+
+```
+[
+   {
+      "domain":"testbrand.eth",
+      "address":"0x57632Ba9A844af0AB7d5cdf98b0056c8d87e3A85",
+      "text_records":{
+         "avatar":"https://imagedelivery.net/UJ5oN2ajUBrk2SVxlns2Aw/71cec612-fe0b-46a4-3d1c-e3eaf53d4600/public",
+         "com.twitter":"namestonehq",
+         "com.discord":"superslobo",
+         "location":"📍 nyc",
+         "url":"https://namestone.com",
+         "description":"Brand Choice"
+      }
+      "coin_types": {
+         "2147483785": "0x534631Bcf33BDb069fB20A93d2fdb9e4D4dD42CF",
+         "2147492101": "0x534631Bcf33BDb069fB20A93d2fdb9e4D4dD42CF",
+         "2147525809": "0x534631Bcf33BDb069fB20A93d2fdb9e4D4dD42CF",
+         "2147483658": "0x534631Bcf33BDb069fB20A93d2fdb9e4D4dD42CF"
+      },
+   }
+]
+```
+
+NameStone supports multichain address resolution to any L2 chain permitted within [ENS](https://github.com/satoshilabs/slips/blob/master/slip-0044.md)

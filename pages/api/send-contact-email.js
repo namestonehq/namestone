@@ -33,8 +33,8 @@ export default async function handler(req, res) {
     });
 
     const mailOptions = {
-      from: "darian@namestone.xyz",
-      to: "darian@namestone.xyz, alex@namestone.xyz",
+      from: "darian@namestone.com",
+      to: "darian@namestone.com, alex@namestone.com",
       subject: email_subject,
       text: email_message,
     };

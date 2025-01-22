@@ -5,18 +5,23 @@ import Link from "next/link";
 import Header from "../../components/Header";
 import { Icon } from "@iconify/react";
 import { useState } from "react";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { vscDarkPlus } from "react-syntax-highlighter/dist/cjs/styles/prism";
 
 const navDict = {
   Introduction: { file: "index" },
+  "SDK Quickstart": { file: "sdk-quickstart" },
   API: {
-    file: "api_routes",
+    file: "api-routes",
     children: {
       "Set Name": { file: "set-name" },
-      "Claim Name": { file: "claim-name" },
       "Get Names": { file: "get-names" },
       "Search Names": { file: "search-names" },
-      "Revoke Name": { file: "revoke-name" },
+      "Delete Name": { file: "delete-name" },
       "Set Domain": { file: "set-domain" },
+      "Get Domain": { file: "get-domain" },
+      "Enable Domain": { file: "enable-domain" },
+      "Get SIWE Message": { file: "get-siwe-message" },
     },
   },
   "Admin Panel": { file: "admin_panel" },
@@ -24,14 +29,17 @@ const navDict = {
 };
 const fileNameLookup = {
   index: "Introduction",
-  api_routes: "API",
+  "sdk-quickstart": "SDK Quickstart",
+  "api-routes": "API",
   "set-name": "Set Name",
-  "claim-name": "Claim Name",
   "get-names": "Get Names",
   "search-names": "Search Names",
-  "revoke-name": "Revoke Name",
+  "delete-name": "Delete Name",
   "set-domain": "Set Domain",
+  "get-domain": "Get Domain",
   admin_panel: "Admin Panel",
+  "get-siwe-message": "Get Siwe Message",
+  "enable-domain": "Enable Domain",
 };
 
 export async function getStaticPaths() {
@@ -66,6 +74,7 @@ export async function getStaticProps({ params }) {
 
 export default function Docs({ content, fileName }) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [network, setNetwork] = useState("Mainnet");
   return (
     <>
       <div className="flex justify-center bg-neutral-50 ">
@@ -76,6 +85,29 @@ export default function Docs({ content, fileName }) {
           <div className="flex justify-start w-full px-8 lg:px-32 pt-[76px] md:pt-[88px]  max-w-[1536px]">
             {/* Desktop Menu */}
             <div className="flex-col items-start justify-start hidden py-10 border-t border-brownblack-50 sm:flex">
+              {/* Toggle Network */}
+              <div className="flex p-1 mt-2 mb-4 text-sm rounded-lg bg-neutral-200">
+                <button
+                  onClick={() => setNetwork("Mainnet")}
+                  className={`px-4  rounded-lg transition ${
+                    network === "Mainnet"
+                      ? "bg-white shadow text-stone-900  py-1"
+                      : "bg-neutral-200"
+                  }`}
+                >
+                  Mainnet
+                </button>
+                <button
+                  onClick={() => setNetwork("Sepolia")}
+                  className={`px-4 rounded-lg transition ${
+                    network === "Sepolia"
+                      ? "bg-white shadow text-black py-1"
+                      : "bg-neutral-200"
+                  }`}
+                >
+                  Sepolia
+                </button>
+              </div>
               {Object.keys(navDict).map((item) => (
                 <div key={item}>
                   <Link
@@ -121,6 +153,29 @@ export default function Docs({ content, fileName }) {
               {/* Mobile Menu */}
               {menuOpen && (
                 <div className="flex flex-col items-start justify-start w-full p-2 bg-white border rounded-md border-brownblack-50 sm:hidden">
+                  {/* Toggle Network */}
+                  <div className="flex p-1 mt-2 mb-4 text-sm rounded-lg bg-neutral-200">
+                    <button
+                      onClick={() => setNetwork("Mainnet")}
+                      className={`px-4  rounded-lg transition ${
+                        network === "Mainnet"
+                          ? "bg-white shadow text-stone-900  py-1"
+                          : "bg-neutral-200"
+                      }`}
+                    >
+                      Mainnet
+                    </button>
+                    <button
+                      onClick={() => setNetwork("Sepolia")}
+                      className={`px-4 rounded-lg transition ${
+                        network === "Sepolia"
+                          ? "bg-white shadow text-black py-1"
+                          : "bg-neutral-200"
+                      }`}
+                    >
+                      Sepolia
+                    </button>
+                  </div>
                   {Object.keys(navDict).map((item) => (
                     <div key={item}>
                       <Link
@@ -157,14 +212,21 @@ export default function Docs({ content, fileName }) {
                 </div>
               )}
 
-              <div className="justify-start flex-1 border-t sm:border-l border-brownblack-50 ">
-                <div className="w-full py-6 sm:py-10 sm:pl-10 ">
+              <div className="justify-start flex-1 border-t sm:border-l border-brownblack-50">
+                <div className="w-full max-w-full py-6 sm:py-10 sm:pl-10 ">
                   <ReactMarkdown
                     components={{
-                      li: ({ node, ...props }) => {
+                      li: ({ node, ordered, ...props }) => {
                         if (typeof props.inline === "boolean")
                           props.inline = props.inline.toString();
-                        return <li className="mb-6" {...props} />;
+                        return (
+                          <li
+                            className={`mb-6 ${
+                              ordered ? "" : "list-disc"
+                            } ml-6`}
+                            {...props}
+                          />
+                        );
                       },
                       // Map `h1` (`# heading`)
                       h1: ({ node, ...props }) => (
@@ -214,7 +276,38 @@ export default function Docs({ content, fileName }) {
                         );
                       },
                       code: ({ node, ...props }) => {
-                        if (props.inline) {
+                        const match = /language-(\w+)/.exec(
+                          props.className || ""
+                        );
+                        const language = match ? match[1] : "";
+
+                        const codeString = String(props.children).replace(
+                          /\n$/,
+                          ""
+                        );
+                        console.log("language:", language);
+                        console.log("Code content:", codeString);
+                        if (match) {
+                          return (
+                            <div className="relative max-w-full overflow-hidden">
+                              <SyntaxHighlighter
+                                style={vscDarkPlus}
+                                language={language}
+                                PreTag="pre"
+                                {...props}
+                                customStyle={{}}
+                                codeTagProps={{
+                                  className: "whitespace-pre break-words",
+                                }}
+                                wrapLines={true}
+                                wrapLongLines={true}
+                                className="!mt-0 !mb-0 p-4"
+                              >
+                                {codeString}
+                              </SyntaxHighlighter>
+                            </div>
+                          );
+                        } else if (props.inline) {
                           if (typeof props.inline === "boolean")
                             props.inline = props.inline.toString();
                           return (
@@ -236,7 +329,18 @@ export default function Docs({ content, fileName }) {
                       },
                     }}
                   >
-                    {content}
+                    {network === "Mainnet"
+                      ? content
+                      : content
+                          .replace(/public_v1/g, "public_v1_sepolia")
+                          .replace(
+                            "NameStone(<YOUR_API_KEY_HERE>)",
+                            "NameStone(<YOUR_API_KEY_HERE>, {network: 'sepolia'})"
+                          )
+                          .replace(
+                            "0xA87361C4E58B619c390f469B9E6F27d759715125",
+                            "0x467893bFE201F8EfEa09BBD53fB69282e6001595"
+                          )}
                   </ReactMarkdown>
                 </div>
               </div>

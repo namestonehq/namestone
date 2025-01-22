@@ -1,0 +1,97 @@
+# Enable Domain
+
+In order to use this endpoint, you must first sign a message from [Get SIWE Message](./get-siwe-message).
+
+This POST route programmatically enables new domains for NameStone. It returns an API key.
+Note: Your domain's resolver must be NameStone's resolver: `0xA87361C4E58B619c390f469B9E6F27d759715125`.
+
+## Parameters
+
+- `company_name` (string): The name of your company.
+- `email` (string): Your email to send the api key to
+- `address` (string): The Ethereum address that owns the domain.
+- `domain` (string): The domain (e.g. "testbrand.eth").
+- `signature` (string): The message from [get-siwe-message](./get-siwe-message), signed with your Ethereum address.
+- `api_key` (string)(optional): To use an existing NameStone API key that your wallet has access to, add it here.
+- `cycle_key` ("1" or "0")(optional): If 1 and the api key already exists, the key will be cycled.
+
+## Curl Example
+
+```
+curl -X POST \
+     -H 'Content-Type: application/json' \
+     -d '{
+       "company_name": "your_company_name",
+       "email": "your_email@company.com",
+       "domain":"testbrand.eth",
+       "address":"0xE997d9b785Dd99832d21b3Ce5A34fCacC6D53C57",
+       "signature": "signed_siwe_message"
+        }' \
+     https://namestone.com/api/public_v1/enable-domain
+```
+
+## SDK Example with getSiweMessage
+
+```typescript
+import NameStone, { AuthenticationError, NetworkError } from "namestone-sdk";
+import { createWalletClient, custom } from "viem"; // if using viem for signing
+
+// Initialize the NameStone instance (no API key needed for initial setup)
+const ns = new NameStone();
+
+// Define the parameters
+const address = "0xE997d9b785Dd99832d21b3Ce5A34fCacC6D53C57";
+const domain = "testbrand.eth";
+const email = "your_email@company.com";
+const company_name = "Your Company Name";
+
+// Use an immediately invoked async function to allow top-level await
+(async () => {
+  try {
+    // Step 1: Get the SIWE message
+    const siweMessage = await ns.getSiweMessage({
+      address: address,
+    });
+
+    console.log("SIWE message received:", siweMessage);
+
+    // Step 2: Sign the message (example using viem)
+    const walletClient = createWalletClient({
+      transport: custom(window.ethereum),
+    });
+
+    const signature = await walletClient.signMessage({
+      message: siweMessage,
+    });
+
+    console.log("Message signed:", signature);
+
+    // Step 3: Enable domain with the signed message
+    const response = await ns.enableDomain({
+      company_name: company_name,
+      email: email,
+      domain: domain,
+      address: address,
+      signature: signature,
+      // Optional parameters:
+      // api_key: "existing_api_key",  // if you want to use an existing key
+      // cycle_key: "1"                // if you want to cycle an existing key
+    });
+
+    console.log("Domain enabled successfully! New API key:", response.api_key);
+
+    // Step 4: You can now initialize a new NameStone instance with the API key
+    const nsWithAuth = new NameStone(response.api_key);
+
+    // Now you can use other endpoints that require authentication...
+  } catch (error) {
+    if (error instanceof AuthenticationError) {
+      console.error("Authentication failed:", error.message);
+    } else if (error instanceof NetworkError) {
+      console.error("Network error:", error.message);
+    } else {
+      console.error("An unexpected error occurred:", error);
+    }
+  }
+})();
+```

@@ -1,11 +1,11 @@
 const siteMetadata = {
-  title: "NameStone Blog",
+  title: "NameStone",
   author: "NameStone Team",
-  headerTitle: "NameStone Blog",
-  description: "A blog for NameStone",
+  headerTitle: "NameStone",
+  description: "Easy subdomain management and issuance",
   language: "en-us",
   theme: "system", // system, dark or light
-  siteUrl: "https://namestone.xyz",
+  siteUrl: "https://namestone.com",
   siteLogo: "/static/images/logo.png",
   image: "/static/images/avatar.png",
   socialBanner: "/static/images/twitter-card.png",

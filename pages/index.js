@@ -1,102 +1,61 @@
 import Head from "next/head";
 import Image from "next/image";
+import Link from "next/link";
+import landingProductImage3 from "../public/images/landing-product-image4.png";
 
-import obviousLogo from "../public/images/obvious-logo.svg";
-import poolLogo from "../public/images/pooltogether-landing-logo.png";
-import owockiImg from "../public/images/owocki-img.png";
-import { Fragment } from "react";
-import landingProductImage1 from "../public/images/landing-product-image1.png";
-import landingProductImage2 from "../public/images/landing-product-image2.png";
-import blackProductImage1 from "../public/images/product-image-black1.png";
-import blackProductImage2 from "../public/images/product-image-black2.png";
-import blackProductImage3 from "../public/images/product-image-black3.png";
+import quote from "../public/images/quote.svg";
+import burner from "../public/images/burner.svg";
+import burnerSite from "../public/images/burnersite.svg";
+import divider from "../public/images/divider-orangespot.svg";
+import durinLogo from "../public/images/durin-logo.png";
+import ethIcon from "../public/images/eth-icon.svg";
+import rocketIcon from "../public/images/rocket-icon.svg";
+import writeIcon from "../public/images/write-icon.svg";
+import durinExample from "../public/images/durin-example.png";
+import ensproLogo from "../public/images/enspro-logo.svg";
+import ensproExample from "../public/images/enspro.png";
+import pencil from "../public/images/pencil.svg";
+import xscreen from "../public/images/xscreen.svg";
+import orangeArrow from "../public/images/orange-arrow.svg";
+import durinIcon from "../public/images/icon-durin.svg";
+import ensproIcon from "../public/images/icon-enspro.svg";
 
-import noGasImage from "../public/images/no-gas-icon.png";
-import imageCoinbase from "../public/images/image-coinbase-wallet.png";
-import imageRainbowWallet from "../public/images/image-rainbow-wallet.png";
-import imageMetamask from "../public/images/image-metamask.png";
-import imageUniswapWallet from "../public/images/image-uniswap-wallet.png";
-import imageEns from "../public/images/image-ens.png";
-import imageShowtime from "../public/images/image-showtime.png";
-import imageEtherscan from "../public/images/image-etherscan.png";
-import imageMailchain from "../public/images/image-mailchain.png";
-import logoList from "../public/images/logos.png";
-import ensLogo from "../public/images/ens_logo_purple.svg";
-import airstackLogo from "../public/images/airstack-logo.svg";
+import logoList from "../public/images/logos1.png";
+import namestoneIcon from "../public/images/namestone-icon.svg";
+import proofPointAdminPanelIcon from "../public/images/admin-icon-black.svg";
+import proofPointConnectionIcon from "../public/images/connection-icon-black.svg";
+import proofPointGaslessIcon from "../public/images/gasless-icon-black.svg";
 
 import darianCoin from "../public/images/darian-coin.png";
 import sloboCoin from "../public/images/slobo-coin.png";
 import churinaCoin from "../public/images/churina-coin.png";
 import raffyCoin from "../public/images/raffy-coin.png";
+import kirillCoin from "../public/images/kirill-coin.png";
+import nickCoin from "../public/images/nick-coin.jpeg";
+import timCoin from "../public/images/tim-coin.jpg";
+import zachCoin from "../public/images/zach-coin.jpg";
 
-import { useRouter } from "next/router";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
 
 export default function Home() {
-  const gaslessData = [
-    {
-      key: "subdomain",
-      text: "Registering Subdomains",
-    },
-    {
-      key: "avatar",
-      text: "Setting Avatars",
-    },
-    {
-      key: "text",
-      text: "Changing Text Records",
-    },
-  ];
-
-  const testimonyData = [
-    {
-      key: "pool",
-
-      text: "“NameStone supports us in our mission to help people save money. We’re excited by the opportunity to provide gasless ENS names to our users around the world.”",
-      img: poolLogo,
-      img_alt: "pool logo",
-    },
-    {
-      key: "Kevin Owocki",
-
-      text: "“The greenpill network has local chapters in over 15 locations! From japan.greenpill.eth to ottawa.greenpill.eth to newyork.greenpill.eth, @namestonehq made it easy to issue subnames for our community.”",
-      img: owockiImg,
-      img_alt: "owocki twitter profile picture",
-    },
-    {
-      key: "obvious",
-
-      text: "“Issuing subnames with Namestone's API brought 500+ users to our platform in less than 48 hours. Our community loved it!”",
-      img: obviousLogo,
-      img_alt: "Multi-chain Smart Contract Wallet ",
-    },
-  ];
-
-  const router = useRouter();
-
-  function learnMoreClick() {
-    router.push("/contact-us");
-  }
-
   return (
     <div className="flex justify-center bg-neutral-50 ">
       <div className="w-full overflow-hidden flex flex-col max-w-[1536px]">
         <Head>
-          <title> Issue Free ENS Subdomains via API | NameStone</title>
+          <title> Create ENS Subdomains via API | NameStone</title>
           <meta
             name="description"
-            content="Issue free ENS subdomains via API. Get started today with a free API key. Trusted by web3 leaders with support from ENS DAO."
+            content="Create and issue free ENS subdomains via a REST API. Trusted by web3 leaders. Supported by ENS DAO."
             key="desc"
           />
+          <meta property="og:image" content="/opengraph-image.jpg" />
           <link rel="icon" href="/favicon.ico" />
         </Head>
-
         {/* Nav Bar */}
-        {/* <Banner brand="Wassies" /> */}
         <Header />
         {/* Main Section */}
-        <div className="w-full overflow-hidden text-center flex  bg-neutral-50 md:text-left  h-[676px] lg:px-32 px-8 justify-center md:justify-start mt-[76px] relative">
+        <div className="w-full overflow-hidden text-center flex  bg-neutral-50 md:text-left  h-[676px] lg:px-32 px-8 justify-center md:justify-start sm:mt-[76px] relative">
           <video
             autoPlay
             muted
@@ -111,372 +70,593 @@ export default function Home() {
             <source src="/background-landing-animation.mp4" type="video/mp4" />
             Your browser does not support the video tag.
           </video>
-          <div className="z-10 flex flex-wrap items-center justify-start mb-8 ">
-            <div className="z-20 flex flex-col items-center md:items-start">
-              {/* CHIPS */}
-              <div className="inline-flex items-center justify-start gap-3 mb-4">
-                <div className="px-3 py-0.5 bg-neutral-200  rounded-[99px] justify-center items-center gap-2 flex">
-                  <div className="text-sm font-normal leading-none text-neutral-900">
-                    Supported by
-                  </div>
-
-                  <Image src={ensLogo} width={46} alt="ens Logo" />
-                </div>
-                <div className="flex items-center justify-start gap-2">
-                  <div className="text-sm font-normal leading-none text-neutral-900">
-                    Integrated with
-                  </div>
-                  <Image src={airstackLogo} width={72} alt="airstack Logo" />
-                </div>
-              </div>
+          <div className="z-10 flex flex-wrap items-center justify-start sm:mb-8 ">
+            <div className="z-20 flex flex-col items-start">
               {/* TITLE */}
-              <h1 className="max-w-lg font-bold text-md sm:text-lg md:text-xl md:leading-tight text-brownblack-700">
-                Issue Free ENS Subdomains
+              <h1 className="max-w-lg font-bold text-left text-md sm:text-lg md:text-5xl md:leading-tight text-brownblack-700">
+                Create ENS Subdomains
               </h1>
-              <span className="max-w-lg mt-3 text-sm md:text-base text-brownblack-700">
-                NameStone’s API is trusted by web3 leaders for easy subdomain
-                management and issuance.
+              <span className="max-w-lg mt-3 text-sm text-left md:text-base text-brownblack-700">
+                NameStone&apos;s API is trusted by Web3{" "}
+                <span className="font-bold">businesses and developers</span> for
+                seamless, gasless subdomain management and issuance. Get started
+                today with a free API key.
               </span>
-              <div className="flex flex-wrap justify-center gap-4 mt-10 mb-16">
-                <button
-                  onClick={() => router.push("/try-namestone")}
-                  className="px-8 py-3 text-sm font-bold bg-orange-500 rounded-lg cursor-pointer hover:bg-orange-700 text-brownblack-700 w-fit active:bg-orange-800"
+              <div className="flex flex-wrap gap-4 mt-10 sm:mb-16 ">
+                <Link
+                  className="px-4 py-2 text-sm font-bold transition-all duration-200 bg-orange-500 border border-black rounded-lg cursor-pointer md:text-sm hover:bg-orange-700 text-brownblack-700 active:bg-orange-800 "
+                  href="/try-namestone"
                 >
-                  Try For Free
-                </button>
+                  Get Started
+                </Link>
               </div>
             </div>
           </div>
+        </div>
+        {/* Fancy divider */}
+        <div className="flex w-full h-8">
+          <div className="w-8 h-full"></div>
+          <div className="w-0 h-0 border-l-[50px] border-l-transparent border-b-[50px] border-b-white"></div>
+          <div className="flex-1 h-full bg-white"></div>
+          <div className="w-0 h-0 border-b-[50px] border-b-white border-r-[50px] border-r-transparent"></div>
+          <div className="w-8 h-full"></div>
         </div>
         {/* Logos section */}
-        <div className="flex flex-col w-full pt-16 pb-32 pl-6 bg-white lg:pl-32">
-          <div className="mb-10 text-base font-bold text-neutral-900">
-            Serving web3 leaders
-          </div>
+        <div className="flex flex-col w-full px-6 pt-4 pb-4 bg-white lg:px-0 ">
           <Image
             src={logoList}
-            height={36}
-            alt="Logos of web3 companies 'Pooltogether', 'POAP', 'Obvious', 'Mailchain', 'dappling', 'GreenPill', and Azurbala'  "
+            height={64}
+            className="mx-auto"
+            alt="Logos of web3 companies that use NameStone"
           />
         </div>
-        {/* Product Section */}
+        {/* NameStone API */}
         <div className="w-full px-6 pb-20 text-center bg-white lg:px-32">
-          {/* ITEM 1 */}
           <div className="flex flex-wrap items-center gap-10 mt-16">
             <div className="flex flex-col justify-start flex-1 text-left min-w-[280px]">
-              <div className="text-base font-bold leading-7 text-orange-400 ">
-                API{" "}
-              </div>
-              <h2 className="font-bold leading-tight text-md md:text-lg text-brownblack-700">
-                Simple API Integration{" "}
+              <h2 className="flex leading-tight text-md md:text-lg text-brownblack-700">
+                <Image
+                  className="mr-3"
+                  width={42}
+                  src={namestoneIcon}
+                  alt="NameStone Icon"
+                ></Image>{" "}
+                <span className="mr-2 font-bold">NameStone</span> API
               </h2>
               <div className="mt-3 text-sm md:text-base">
-                Streamline bulk registration and name management with our API.
+                Issue gasless ENS subdomains with NameStone&apos;s REST API.
+                Manage all subnames in one dashboard with the no-code Admin
+                Panel.
+              </div>
+              <div className="flex gap-3 mt-5">
+                <Link
+                  className="px-4 py-2 text-sm font-bold transition-all duration-200 bg-orange-500 border border-black rounded-lg cursor-pointer md:text-sm hover:bg-orange-700 text-brownblack-700 active:bg-orange-800 "
+                  href="/try-namestone"
+                >
+                  Get Started
+                </Link>
+                <Link
+                  className="px-4 py-2 text-sm font-bold transition-all duration-200 bg-white border rounded-lg cursor-pointer md:text-sm hover:bg-neutral-100 border-neutral-300 text-brownblack-700 active:bg-neutral-200"
+                  href="/docs"
+                >
+                  View Docs
+                </Link>
+              </div>
+              {/* Proof Points */}
+              <div className="flex flex-col gap-6 mt-10">
+                <div className="flex gap-2">
+                  {" "}
+                  <Image
+                    src={proofPointAdminPanelIcon}
+                    alt="admin panel icon"
+                  />{" "}
+                  No-code Admin Panel for easy management
+                </div>
+                <div className="flex gap-2">
+                  {" "}
+                  <Image
+                    src={proofPointConnectionIcon}
+                    alt="connection icon"
+                  />{" "}
+                  Integrate via Rest API or QuickStart SDK
+                </div>
+                <div className="flex gap-2">
+                  <Image src={proofPointGaslessIcon} alt="gasless icon" /> Zero
+                  gas fees
+                </div>
               </div>
             </div>
             <div className="flex flex-col items-center justify-center min-w-[280px] flex-1">
               <Image
-                src={landingProductImage1}
-                width={472}
-                alt="NameStone logo connected to integrations via API"
-              />
-            </div>
-          </div>
-          {/* ITEM 2 */}
-          <div className="flex flex-wrap items-center gap-10 mt-16">
-            <div className="flex flex-col justify-start flex-1 text-left min-w-[280px]">
-              <div className="text-base font-bold leading-7 text-orange-400">
-                Admin Panel
-              </div>
-              <h2 className="font-bold leading-tight text-md md:text-lg text-brownblack-700">
-                Manage subdomains with Admin Panel{" "}
-              </h2>
-              <div className="mt-3 text-sm md:text-base">
-                Add, revoke, and edit who can claim subnames. Create blocklists
-                to safeguard your community.
-              </div>
-            </div>
-            <div className="flex flex-col items-center justify-center min-w-[280px] flex-1">
-              <Image
-                src={landingProductImage2}
+                src={landingProductImage3}
                 width={472}
                 alt="Managing subdomains in NameStone admin panel"
               />
             </div>
           </div>
         </div>
-        {/* Gasless Section */}
-        <div className="w-full px-6 bg-white lg:px-32 pb-36">
-          <div className="px-10 py-10 bg-white  rounded-[20px] shadow border border-neutral-200 flex-col justify-center items-start flex">
-            <h2 className="flex flex-col items-center font-bold text-md md:text-lg text-brownblack-700">
-              Gasless User Benefits
-            </h2>
-            <div className="text-sm md:text-base text-brownblack-700">
-              Сlaiming an ENS subdomain and changing text records, including an
-              avatar, requires zero gas fees.
+        {/* Fancy divider */}
+        <div className="flex w-full h-8">
+          <div className="w-8 h-full bg-neutral-900"></div>
+          <div className="w-0 h-0 border-r-[50px] border-r-white border-b-[50px] border-b-neutral-900"></div>
+          <div className="flex-1 h-full bg-white"></div>
+          <div className="w-0 h-0 border-l-[50px] border-b-neutral-900 border-b-[50px] border-l-white"></div>
+          <div className="w-8 h-full bg-neutral-900"></div>
+        </div>
+        <div className="w-full px-6 pb-20 text-center h-fit bg-neutral-900 lg:px-32">
+          {/* Testimonial Burner */}
+          <div className="flex flex-col gap-4 mt-32 xl:gap-0 xl:flex-row">
+            <div className="flex flex-col flex-1 p-8 text-white bg-neutral-800 mx-auto w-full sm:w-[600px] xl:w-auto">
+              <Image
+                src={quote}
+                width={48}
+                height={48}
+                alt="Quote Icon"
+                className="mb-4"
+              />
+              <p className="text-[24px] text-left leading-relaxed">
+                <span className="text-orange-500">NameStone</span> makes it
+                incredibly easy for any{" "}
+                <span className="text-emerald-600">
+                  <Link href={"https://burner.pro/"}>Burner</Link>
+                </span>{" "}
+                owner to claim a<strong> brnr.eth </strong> ENS subdomain during
+                setup. And, with thousands of Burners shipped, NameStone&apos;s
+                offchain registration is crucial to save gas and enable an
+                otherwise costly feature.
+              </p>
+              <span className="self-end mt-4 text-right text-neutral-300">
+                – Cameron
+              </span>
+              <Image src={burner} width={120} alt="burner Logo" />
+              <span className="mt-4 text-left">
+                Easy to use, low cost hardware wallet designed for gifting
+                stablecoins.
+              </span>
             </div>
 
-            <div className="flex flex-row flex-wrap justify-start pt-16 md:gap-4">
-              {gaslessData.map((data) => (
-                <div key={data.key} className="flex items-center mb-1 mr-4">
-                  <Image src={noGasImage} width={48} height={48} alt="no gas" />
-                  <div className="text-base font-bold ml-3 py-[10px] text-neutral-900">
-                    {data.text}
-                  </div>
+            <div className="flex items-center justify-center flex-1 xl:bg-neutral-800">
+              <Image
+                src={burnerSite}
+                alt="burner site"
+                className="w-full sm:w-[600px]"
+              />
+            </div>
+          </div>
+          {/* Statistics */}
+          <div className="flex flex-col justify-between gap-12 mt-40 text-white md:flex-row">
+            <div className="flex flex-col items-center gap-4">
+              <div className="text-5xl font-bold">20,000</div>
+              <div>Subdomains Issued</div>
+            </div>
+            <div className="flex flex-col items-center gap-4">
+              <div className="text-5xl font-bold">190</div>
+              <div>Domains Managed</div>
+            </div>
+            <div className="flex flex-col items-center gap-4">
+              <div className="text-5xl font-bold">100,000</div>
+              <div>Resolutions per Month</div>
+            </div>
+          </div>
+        </div>
+        {/* Fancy Divider */}
+        <div className="flex w-full h-8 ">
+          <div className="w-8 h-full bg-neutral-900"></div>
+          <div className="w-0 h-0 border-l-[50px] border-l-neutral-900 border-b-[50px] border-b-white"></div>
+          <div className="flex-1 h-full bg-white"></div>
+          <div className="w-0 h-0 border-r-[50px] border-r-neutral-900 border-b-[50px] border-b-white"></div>
+          <div className="w-8 h-full bg-neutral-900"></div>
+        </div>
+        {/* Durin */}
+        <div className="w-full px-6 pb-20 text-center bg-white h-fit lg:px-32">
+          <div className="mt-10 mb-6 text-[32px] font-bold text-left">
+            Building onchain?
+          </div>
+          <Image src={divider} alt="divider" />
+          <div className="flex flex-wrap items-center gap-10 mt-16">
+            <div className="flex flex-col justify-start flex-1 text-left min-w-[280px]">
+              <div className="px-4 py-1 mb-8 font-light border shadow-inner rounded-xl text-neutral-900 border-neutral-200 bg-neutral-50 w-fit">
+                For {"{"}developers{"}"}
+              </div>
+              <Image
+                className="mb-2 mr-3"
+                src={durinLogo}
+                width={196}
+                alt="NameStone Icon"
+              ></Image>{" "}
+              <div className="mt-3 text-sm md:text-base">
+                Issue subdomains on the L2 of your choice. Project docs,
+                contracts, and architecture can be found on{" "}
+                <Link
+                  className="text-orange-500 transition-colors duration-300 hover:text-orange-700"
+                  href={"https://github.com/namestonehq/durin"}
+                >
+                  GitHub
+                </Link>
+                .
+              </div>
+              <div className="flex gap-3 mt-5">
+                <Link
+                  className="px-8 py-2 text-sm font-bold transition-all duration-200 bg-orange-500 border border-black rounded-lg cursor-pointer drop--sm md:text-sm hover:bg-orange-700 text-brownblack-700 active:bg-orange-800 "
+                  href="https://durin.dev/"
+                  target="_blank"
+                >
+                  Durin{" "}
+                </Link>
+              </div>
+              {/* Proof Points */}
+              <div className="flex flex-col gap-6 mt-10">
+                <div className="flex gap-2">
+                  {" "}
+                  <Image src={rocketIcon} alt="admin panel icon" /> Deploy L2
+                  subdomains in minutes
                 </div>
-              ))}
-            </div>
-          </div>
-        </div>
-        {/* Black Product Section */}
-        <div className="w-full px-6 pb-20 text-center bg-black lg:px-32">
-          {/* ITEM 1 */}
-          <div className="flex flex-wrap items-center gap-10 mt-16">
-            <div className="flex flex-col justify-start flex-1 text-left min-w-[280px]">
-              <h2 className="font-bold leading-tight text-white text-md md:text-lg">
-                Web3 usernames without the cost
-              </h2>
-              <div className="mt-3 text-sm text-white md:text-base ">
-                Remove the price barrier of an ENS name with CCIP-read and
-                NameStone.
-              </div>
-            </div>
-            <div className="flex flex-col items-center justify-center min-w-[280px] flex-1">
-              <Image
-                src={blackProductImage1}
-                width={440}
-                alt="ENS domain connecting a network of subdomains"
-              />
-            </div>
-          </div>
-          {/* ITEM 2 */}
-          <div className="flex flex-wrap items-center gap-10 mt-16">
-            <div className="flex flex-col justify-start flex-1 text-left min-w-[280px]">
-              <h2 className="font-bold leading-tight text-white text-md md:text-lg">
-                Enable community virality
-              </h2>
-              <div className="mt-3 text-sm text-white md:text-base ">
-                Subnames get shared on social media sites, drawing more
-                attention to your brand.
-              </div>
-            </div>
-            <div className="flex flex-col items-center justify-center min-w-[280px] flex-1">
-              <Image
-                src={blackProductImage2}
-                width={440}
-                alt="Person with ENS subdomain on Twitter"
-              />
-            </div>
-          </div>
-          {/* ITEM 3 */}
-          <div className="flex flex-wrap items-center gap-10 mt-16">
-            <div className="flex flex-col justify-start flex-1 text-left min-w-[280px]">
-              <h2 className="font-bold leading-tight text-white text-md md:text-lg">
-                A shared identity
-              </h2>
-              <div className="mt-3 text-sm text-white md:text-base ">
-                People who share the same subname can easily find and connect
-                with each other.
-              </div>
-            </div>
-            <div className="flex flex-col items-center justify-center min-w-[280px] flex-1">
-              <Image
-                src={blackProductImage3}
-                width={440}
-                alt="A list of names connect to an ENS domain and create unique ENS subdomains"
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Stats */}
-        <div className="inline-flex flex-col items-start justify-center w-full gap-20 px-6 pb-20 mt-32 text-center bg-white lg:px-32">
-          <div className="flex flex-col items-start justify-start gap-3 ">
-            <h2 className=" text-neutral-900  text-md md:text-lg font-bold text-left">
-              The backbone for web3 names
-            </h2>
-            <div className="text-base font-normal leading-7 text-left text-neutral-900">
-              No matter the project size, NameStone makes issuing and managing
-              ENS subdomains a breeze.
-            </div>
-          </div>
-          <div className="inline-flex flex-wrap items-start justify-start gap-6">
-            <div className="inline-flex flex-col items-start justify-start gap-3  w-[278px]">
-              <div className=" text-neutral-900 text-[32px] font-bold  border-l-[6px] border-solid border-orange-500 rounded-sm pl-[12px]">
-                10,000+
-              </div>
-              <div className="text-base font-normal text-neutral-900 pl-[18px]">
-                Names issued
-              </div>
-            </div>
-            <div className="inline-flex flex-col items-start justify-start gap-3  w-[278px]">
-              <div className=" text-neutral-900 text-[32px] font-bold border-l-[6px] border-solid border-orange-500 rounded-sm pl-[12px]">
-                30
-              </div>
-              <div className="text-base font-normal text-neutral-900 pl-[18px]">
-                Domains
-              </div>
-            </div>
-            <div className="inline-flex flex-col items-start justify-start gap-3  w-[278px]">
-              <div className=" text-neutral-900 text-[32px] font-bold border-l-[6px] border-solid border-orange-500 rounded-sm pl-[12px]">
-                400k+
-              </div>
-              <div className="text-base font-normal text-neutral-900 pl-[18px]">
-                Resolutions
-              </div>
-            </div>
-            <div className="inline-flex flex-col items-start justify-start gap-3  w-[278px]">
-              <div className=" text-neutral-900 text-[32px] font-bold border-l-[6px] border-solid border-orange-500 rounded-sm pl-[12px]">
-                2,000+
-              </div>
-              <div className="text-base font-normal text-neutral-900 pl-[18px]">
-                L2 names issued
-              </div>
-            </div>
-          </div>
-        </div>
-        {/*  Integrations section */}
-        <div className="flex flex-col items-start justify-start w-full px-6 py-16 bg-white lg:px-32">
-          <h2 className="font-bold text-md md:text-lg brownblack-700">
-            Hundreds of integrations <br /> powered by ENS
-          </h2>
-          <div className="flex flex-wrap items-center justify-start w-full gap-[38px] mt-16 ">
-            <Image src={imageCoinbase} width={80} height={80} alt="coinbase" />
-            <Image
-              src={imageRainbowWallet}
-              width={80}
-              height={80}
-              alt="rainbow wallet"
-            />
-            <Image src={imageMetamask} width={80} height={80} alt="metamask" />
-            <Image
-              src={imageUniswapWallet}
-              width={80}
-              height={80}
-              alt="uniswap wallet"
-            />
-            <Image src={imageEns} width={80} height={80} alt="ens" />
-            <Image src={imageShowtime} width={80} height={80} alt="showtime" />
-            <Image
-              src={imageEtherscan}
-              width={80}
-              height={80}
-              alt="etherscan"
-            />
-            <Image
-              src={imageMailchain}
-              width={80}
-              height={80}
-              alt="mailchain"
-            />
-          </div>
-        </div>
-
-        {/* Trust Section */}
-        <div className="relative flex flex-col items-start justify-start w-full px-6 py-16 pt-16 text-left bg-white lg:px-32">
-          <h2 className="flex flex-col items-start font-bold text-md md:text-lg text-brownblack-700">
-            Trusted by web3 natives
-          </h2>
-          <div className="flex flex-wrap justify-center pb-20">
-            {testimonyData.map((data) => (
-              <Fragment key={data.key}>
-                {/* Testimony Card */}
-                <div className="flex flex-col items-start mt-16 justify-between min-h-[240px] w-auto max-w-fit rounded-lg bg-white p-[32px] mx-[32px] text-left drop-shadow-lg ">
-                  <div className="mb-4 text-sm md:max-w-xs text-brownblack-700">
-                    {data.text}
-                  </div>
-                  <Image src={data.img} height={48} alt={data.img_alt} />
+                <div className="flex gap-2">
+                  {" "}
+                  <Image src={writeIcon} alt="connection icon" /> Helpful
+                  factory and template contracts
                 </div>
-              </Fragment>
-            ))}
+                <div className="flex gap-2">
+                  <Image src={ethIcon} alt="gasless icon" /> Supports ENS
+                  resolution on Sepolia and Mainnet
+                </div>
+              </div>
+            </div>
+            <div className="flex flex-col items-center justify-center min-w-[280px] flex-1">
+              <Image
+                src={durinExample}
+                width={472}
+                alt="Managing subdomains in NameStone admin panel"
+              />
+            </div>
           </div>
         </div>
-        {/* BUILDERS */}
-        <div className="flex flex-col items-start justify-start w-full px-6 py-16 bg-neutral-50 lg:px-32">
-          <div className="inline-flex items-center self-stretch justify-start gap-20">
-            <div className="inline-flex flex-col items-start self-stretch justify-center gap-8 grow shrink basis-0">
-              <h2 className="self-stretch text-neutral-900 text-[32px] font-bold">
-                Builders
-              </h2>
-              <div className="w-[336px] justify-start items-center gap-6 inline-flex">
-                <Image width={88} src={sloboCoin} alt="slobo" />
-                <div className="inline-flex flex-col items-start justify-center gap-2 grow shrink basis-0">
-                  <div className="self-stretch text-base font-bold leading-7 text-neutral-900">
+        {/* Fancy divider */}
+        <div className="flex w-full h-8">
+          <div className="w-8 h-full bg-neutral-100"></div>
+          <div className="w-0 h-0 border-r-[50px] border-r-white border-b-[50px] border-b-neutral-100"></div>
+          <div className="flex-1 h-full bg-white"></div>
+          <div className="w-0 h-0 border-l-[50px] border-b-neutral-100 border-b-[50px] border-l-white"></div>
+          <div className="w-8 h-full bg-neutral-100"></div>
+        </div>
+        {/* ENS Pro */}
+        <div className="w-full px-6 pb-20 text-center bg-neutral-100 h-fit lg:px-32">
+          <div className="mt-10 mb-6 text-[32px] font-bold text-left">
+            Need no-code subdomains?
+          </div>
+          <Image src={divider} alt="divider" />
+          <div className="flex flex-wrap items-center gap-10 mt-16">
+            <div className="flex flex-col justify-start flex-1 text-left min-w-[280px]">
+              <div className="px-4 py-1 mb-8 font-light border shadow-inner rounded-xl text-neutral-900 border-neutral-200 bg-neutral-50 w-fit">
+                For everyone
+              </div>
+              <Image
+                className="mr-3"
+                width={200}
+                src={ensproLogo}
+                alt="NameStone Icon"
+              ></Image>{" "}
+              <div className="mt-3 text-sm md:text-base">
+                Create, edit and manage your own gasless subdomains with the
+                easiest no-code subdomain maker around.
+              </div>
+              <div className="flex gap-3 mt-5">
+                <Link
+                  className="px-6 py-2 text-sm font-bold transition-all duration-200 bg-orange-500 border border-black rounded-lg cursor-pointer md:text-sm hover:bg-orange-700 text-brownblack-700 active:bg-orange-800 "
+                  href="https://enspro.xyz/"
+                  target="_blank"
+                >
+                  ENSPro
+                </Link>
+              </div>
+              {/* Proof Points */}
+              <div className="flex flex-col gap-6 mt-10">
+                <div className="flex gap-2">
+                  {" "}
+                  <Image src={xscreen} alt="admin panel icon" /> No-code web app
+                </div>
+                <div className="flex gap-2">
+                  {" "}
+                  <Image
+                    src={proofPointGaslessIcon}
+                    alt="connection icon"
+                  />{" "}
+                  100% free personal subdomains
+                </div>
+                <div className="flex gap-2">
+                  <Image src={pencil} alt="gasless icon" /> Supports text
+                  records, avatars, and BTC
+                </div>
+              </div>
+            </div>
+
+            <div className="flex flex-col items-center justify-center min-w-[280px] flex-1">
+              <Image
+                src={ensproExample}
+                width={472}
+                alt="Managing subdomains in NameStone admin panel"
+              />
+            </div>
+          </div>
+        </div>
+        {/* Fancy Divider */}
+        <div className="flex w-full h-8 ">
+          <div className="w-8 h-full bg-neutral-100"></div>
+          <div className="w-0 h-0 border-l-[50px] border-l-neutral-100 border-b-[50px] border-b-white"></div>
+          <div className="flex-1 h-full bg-white"></div>
+          <div className="w-0 h-0 border-r-[50px] border-r-neutral-100 border-b-[50px] border-b-white"></div>
+          <div className="w-8 h-full bg-neutral-100"></div>
+        </div>
+        {/* Right Product For You Section */}
+        <div className="w-full px-6 pb-40 text-center bg-white h-fit lg:px-32">
+          <div className="mt-20 mb-4 text-[32px] font-bold text-left">
+            Find the right product for you
+          </div>
+          <div className="mb-20 text-left ">
+            It&apos;s your name, your way. Issue on a leading L2 chain or go
+            gasless.
+          </div>
+          <div className="flex flex-col justify-between gap-20 xl:gap-5 xl:flex-row">
+            <Card
+              title="For Any Project"
+              product="NameStone API"
+              description="Issue gasless ENS subdomains with our REST API."
+              iconSrc={namestoneIcon}
+              linkHref="/try-namestone"
+              backgroundColor="bg-neutral-900"
+            />
+            <Card
+              title="For Hackers"
+              product="Durin"
+              description="Create subdomains on an L2 of your choice in minutes."
+              iconSrc={durinIcon}
+              linkHref="https://durin.dev/"
+              backgroundColor="bg-stone-200"
+            />
+            <Card
+              title="For Everyone"
+              product="ENSPro"
+              description="A no-code solution to create personal subdomains."
+              iconSrc={ensproIcon}
+              linkHref="https://enspro.xyz/"
+              backgroundColor="bg-neutral-900"
+            />
+          </div>
+        </div>
+        {/* Fancy divider */}
+        <div className="flex w-full h-8">
+          <div className="w-8 h-full bg-neutral-900"></div>
+          <div className="w-0 h-0 border-r-[50px] border-r-white border-b-[50px] border-b-neutral-900"></div>
+          <div className="flex-1 h-full bg-white"></div>
+          <div className="w-0 h-0 border-l-[50px] border-b-neutral-900 border-b-[50px] border-l-white"></div>
+          <div className="w-8 h-full bg-neutral-900"></div>
+        </div>
+        {/* Builders & Contributors */}
+
+        <div className="w-full px-6 pb-20 text-white bg-neutral-900 h-fit lg:px-32">
+          <div className="mt-20 mb-6 text-[32px] font-bold  text-left">
+            Builders & Contributors
+          </div>
+          <div className="grid grid-cols-1 gap-12 md:gap-8 md:grid-cols-2">
+            {/* Slobo */}
+            <div className="inline-flex items-center justify-start max-w-xl gap-6">
+              <Image width={88} src={sloboCoin} alt="slobo" />
+              <div className="inline-flex flex-col items-start justify-center gap-2 grow shrink basis-0">
+                <div className="self-stretch text-base font-bold leading-7 ">
+                  <Link
+                    href={"https://app.ens.domains/slobo.eth"}
+                    target="_blank"
+                    className="transition-colors duration-300 hover:text-ens-100"
+                  >
                     slobo.eth
-                  </div>
-                  <div className="self-stretch text-sm font-normal leading-normal text-neutral-900">
-                    ENS Steward, Web3 Founder, and Former CMO
-                  </div>
+                  </Link>
+                </div>
+                <div className="self-stretch text-sm font-normal leading-normal">
+                  Web3 Founder, open source developer and ENS Steward.
                 </div>
               </div>
-              <div className="w-[336px] justify-start items-center gap-6 inline-flex">
-                <Image width={88} src={darianCoin} alt="darian" />
-                <div className="inline-flex flex-col items-start justify-center gap-2 grow shrink basis-0">
-                  <div className="self-stretch text-base font-bold leading-7 text-neutral-900">
+            </div>
+            {/* Darian */}
+            <div className="inline-flex items-center justify-start max-w-xl gap-6">
+              <Image width={88} src={darianCoin} alt="darian" />
+              <div className="inline-flex flex-col items-start justify-center gap-2 grow shrink basis-0">
+                <div className="self-stretch text-base font-bold leading-7 ">
+                  <Link
+                    href={"https://app.ens.domains/darianb.eth"}
+                    target="_blank"
+                    className="transition-colors duration-300 hover:text-ens-100"
+                  >
                     darianb.eth
-                  </div>
-                  <div className="self-stretch text-sm font-normal leading-normal text-neutral-900">
-                    Web3 Founder, Builder and Leader of Tech Teams
-                  </div>
+                  </Link>
+                </div>
+                <div className="self-stretch text-sm font-normal leading-normal">
+                  Web3 Founder, builder and leader of tech teams.
                 </div>
               </div>
-              <div className="w-[336px] justify-start items-center gap-6 inline-flex">
-                <Image width={88} src={churinaCoin} alt="churina" />
-                <div className="inline-flex flex-col items-start justify-center gap-2 grow shrink basis-0">
-                  <div className="self-stretch text-base font-bold leading-7 text-neutral-900">
+            </div>
+            {/* Churina */}
+            <div className="inline-flex items-center justify-start max-w-xl gap-6">
+              <Image width={88} src={churinaCoin} alt="churina" />
+              <div className="inline-flex flex-col items-start justify-center gap-2 grow shrink basis-0">
+                <div className="self-stretch text-base font-bold leading-7 ">
+                  <Link
+                    href={"https://app.ens.domains/churina.eth"}
+                    target="_blank"
+                    className="transition-colors duration-300 hover:text-ens-100"
+                  >
                     churina.eth
-                  </div>
-                  <div className="self-stretch text-sm font-normal leading-normal text-neutral-900">
-                    UI/UX Designer
-                  </div>
+                  </Link>
+                </div>
+                <div className="self-stretch text-sm font-normal leading-normal">
+                  UI/UX Designer crafting intuitive product experiences.
                 </div>
               </div>
-              <div className="w-[336px] justify-start items-center gap-6 inline-flex">
-                <Image width={88} src={raffyCoin} alt="churina" />
-                <div className="inline-flex flex-col items-start justify-center gap-2 grow shrink basis-0">
-                  <div className="self-stretch text-base font-bold leading-7 text-neutral-900">
+            </div>
+            {/* Raffy */}
+            <div className="inline-flex items-center justify-start max-w-xl gap-6">
+              <Image
+                width={88}
+                src={raffyCoin}
+                alt="raffy"
+                className=" grayscale"
+              />
+              <div className="inline-flex flex-col items-start justify-center gap-2 grow shrink basis-0">
+                <div className="self-stretch text-base font-bold leading-7 ">
+                  <Link
+                    href={"https://app.ens.domains/raffy.eth"}
+                    target="_blank"
+                    className="transition-colors duration-300 hover:text-ens-100"
+                  >
                     raffy.eth
-                  </div>
-                  <div className="self-stretch text-sm font-normal leading-normal text-neutral-900">
-                    Financial software engineer with a passion for solving
-                    problems.
-                  </div>
+                  </Link>
+                </div>
+                <div className="self-stretch text-sm font-normal leading-normal">
+                  Financial software engineer with a passion for solving
+                  problems.
                 </div>
               </div>
-              {/* <div className="pb-0.5 justify-center items-center gap-2 inline-flex">
-                <div className="text-base font-bold leading-normal text-center text-neutral-900">
-                  Currently hiring devs
+            </div>
+            {/* Zach */}
+            <div className="inline-flex items-center justify-start max-w-xl gap-6">
+              <Image
+                width={88}
+                src={zachCoin}
+                alt="Tim"
+                className="rounded-full grayscale"
+              />
+              <div className="inline-flex flex-col items-start justify-center gap-2 grow shrink basis-0">
+                <div className="self-stretch text-base font-bold leading-7 ">
+                  <Link
+                    href={"https://app.ens.domains/zachterrell.eth"}
+                    target="_blank"
+                    className="transition-colors duration-300 hover:text-ens-100"
+                  >
+                    zachterrell.eth
+                  </Link>
                 </div>
-                */}
+                <div className="self-stretch text-sm font-normal leading-normal">
+                  Full Stack Developer
+                </div>
+              </div>
+            </div>
+            {/* Kirill */}
+            <div className="inline-flex items-center justify-start max-w-xl gap-6">
+              <Image width={88} src={kirillCoin} alt="Kirill" />
+              <div className="inline-flex flex-col items-start justify-center gap-2 grow shrink basis-0">
+                <div className="self-stretch text-base font-bold leading-7 ">
+                  <Link
+                    href={"https://app.ens.domains/kp3556.eth"}
+                    target="_blank"
+                    className="transition-colors duration-300 hover:text-ens-100"
+                  >
+                    kp3556.eth
+                  </Link>
+                </div>
+                <div className="self-stretch text-sm font-normal leading-normal">
+                  Product Manager
+                </div>
+              </div>
+            </div>
+            {/* Nick */}
+            <div className="inline-flex items-center justify-start max-w-xl gap-6">
+              <Image
+                width={88}
+                src={nickCoin}
+                alt="Nick"
+                className="rounded-full grayscale"
+              />
+              <div className="inline-flex flex-col items-start justify-center gap-2 grow shrink basis-0">
+                <div className="self-stretch text-base font-bold leading-7 ">
+                  <Link
+                    href={"https://app.ens.domains/ncale.eth"}
+                    target="_blank"
+                    className="transition-colors duration-300 hover:text-ens-100"
+                  >
+                    ncale.eth
+                  </Link>
+                </div>
+                <div className="self-stretch text-sm font-normal leading-normal">
+                  Open Source Developer
+                </div>
+              </div>
+            </div>
+
+            {/* Tim */}
+            <div className="inline-flex items-center justify-start max-w-xl gap-6">
+              <Image
+                width={88}
+                src={timCoin}
+                alt="Tim"
+                className="rounded-full grayscale"
+              />
+              <div className="inline-flex flex-col items-start justify-center gap-2 grow shrink basis-0">
+                <div className="self-stretch text-base font-bold leading-7 ">
+                  <Link
+                    href={"https://app.ens.domains/timcox.eth"}
+                    target="_blank"
+                    className="transition-colors duration-300 hover:text-ens-100"
+                  >
+                    timcox.eth
+                  </Link>
+                </div>
+                <div className="self-stretch text-sm font-normal leading-normal">
+                  Hype Man
+                </div>
+              </div>
             </div>
           </div>
         </div>
-        {/* Final Call section */}
-        <div className="flex flex-col items-start justify-start w-full px-6 py-16 text-left lg:px-32 bg-neutral-900 ">
-          <h2 className="mt-16 font-bold text-white text-md md:text-lg">
-            Ready to get started?{" "}
-          </h2>
-          <div className="max-w-xl mt-3 text-sm text-left text-white md:text-base ">
-            Our team is standing by to answer your questions and find the right
-            solution for you
-          </div>
-          <div className="flex flex-wrap justify-start gap-4 mt-10 mb-16">
-            <button
-              onClick={() => router.push("/try-namestone")}
-              className="px-8 py-3 text-sm font-bold bg-orange-500 rounded-lg cursor-pointer hover:bg-orange-700 text-brownblack-700 w-fit active:bg-orange-800"
-            >
-              Try For Free
-            </button>
-            <button
-              onClick={learnMoreClick}
-              className="px-8 py-3 text-sm font-bold text-white border border-white border-solid rounded-lg cursor-pointer hover:bg-white hover:bg-opacity-5 w-fit active:bg-white active:bg-opacity-10"
-            >
-              Contact Us
-            </button>
-          </div>
-        </div>
+
         {/* Footer */}
         <Footer />
+      </div>
+    </div>
+  );
+}
+
+function Card({
+  title,
+  description,
+  iconSrc,
+  linkHref,
+  product,
+  backgroundColor,
+}) {
+  return (
+    <div className="h-24 max-w-md max-h-24">
+      <div className="mb-5 font-bold text-left">{title}</div>
+      <div className="flex items-center justify-center max-w-full max-h-full overflow-hidden rounded-lg bg-neutral-100">
+        <Link
+          href={linkHref}
+          className="flex items-center transition-colors duration-500 hover:bg-orange-100"
+          target="_blank"
+        >
+          <div
+            className={`flex items-center justify-center flex-shrink-0 max-w-full max-h-full rounded-l-lg aspect-square ${backgroundColor}`}
+          >
+            <Image
+              src={iconSrc}
+              alt={title}
+              width={48}
+              height={48}
+              className="object-contain m-6"
+            />
+          </div>
+          <div className="flex flex-1 m-4 text-left">
+            <div className="flex flex-col gap-2">
+              <div className="font-bold">{product}</div>
+              <div className="text-xs line-clamp-2">{description}</div>
+            </div>
+
+            <Image
+              src={orangeArrow}
+              alt="arrow"
+              width={36}
+              height={36}
+              className="ml-2"
+            />
+          </div>
+        </Link>
       </div>
     </div>
   );

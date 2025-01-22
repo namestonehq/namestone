@@ -8,6 +8,11 @@ export default async function handler(req, res) {
     return res.status(401).json({ error: "Unauthorized. Please refresh." });
   }
 
+  // Get Domain && Name
+  if (!req.query.domain) {
+    return res.status(400).json({ error: "Domain is required" });
+  }
+
   const superAdminQuery = await sql`
   SELECT * FROM super_admin WHERE address = ${token.sub};
 `;
@@ -15,13 +20,10 @@ export default async function handler(req, res) {
   SELECT * FROM admin 
   join domain on admin.domain_id = domain.id
   WHERE admin.address = ${token.sub}
-  and domain.name = ${req.query.domain};`;
+  and domain.name = ${req.query.domain}
+  and domain.network=  ${req.query.network};`;
   if (superAdminQuery.length === 0 && adminQuery.length === 0) {
     return res.status(401).json({ error: "Unauthorized. Please refresh." });
-  }
-  // Get Domain && Name
-  if (!req.query.domain) {
-    return res.status(400).json({ error: "Domain is required" });
   }
 
   const subdomainQuery = await sql`
@@ -29,6 +31,7 @@ export default async function handler(req, res) {
   from subdomain join domain 
   on subdomain.domain_id = domain.id 
   where domain.name = ${req.query.domain}
+  and domain.network=  ${req.query.network}
   order by subdomain.name`;
 
   return res.status(200).json(subdomainQuery);

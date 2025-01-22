@@ -18,7 +18,7 @@ export default async function handler(req, res) {
 
   let domainData = JSON.parse(req.body).brandData;
 
-  if (!domainData?.id || !domainData?.address || !domainData?.textRecords) {
+  if (!domainData?.id || !domainData?.textRecords) {
     return res.status(400).json({ error: "All fields are required" });
   }
 

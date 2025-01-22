@@ -2,7 +2,8 @@ import nodemailer from "nodemailer";
 import sql from "../../lib/db";
 import { v4 as uuidv4 } from "uuid";
 import { ethers } from "ethers";
-import { providerUrl } from "../../utils/ServerUtils";
+import { getToken } from "next-auth/jwt";
+import { getDomainOwner } from "../../utils/ServerUtils";
 
 // Async function to resolve ENS name to address
 const resolveENS = async (name, provider) => {
@@ -17,9 +18,16 @@ const resolveENS = async (name, provider) => {
 
 export default async function handler(req, res) {
   if (req.method === "POST") {
-    const { name, email, wallet, domain } = JSON.parse(req.body);
+    const token = await getToken({ req });
 
-    if (!name || !email || !domain || !wallet) {
+    if (!token) {
+      return res.status(401).json({ error: "Unauthorized. Please refresh." });
+    }
+
+    const wallet = token.sub;
+    const { name, email, domain, network } = JSON.parse(req.body);
+
+    if (!name || !email || !domain || !network) {
       res.status(400).json({ error: "Missing parameters" });
       console.log("Try Namestone error: Missing parameters");
       return;
@@ -34,38 +42,46 @@ export default async function handler(req, res) {
     }
     //Check if domain exists
     let domainQuery = await sql`
-  select * from domain where name = ${domain.toLowerCase()} limit 1;`;
+  select * from domain where name = ${domain.toLowerCase()} and network = ${network} limit 1;`;
     if (domainQuery.length > 0) {
       // if domain exists we return an error
       res.status(400).json({ error: "Domain already exists" });
       console.log("Try Namestone error: Domain already exists");
       return;
     }
-    // check if wallet is an ens name by checking for dot
+
+    // check if wallet is a valid address
     let address;
-    if (wallet.includes(".")) {
-      let provider = new ethers.providers.JsonRpcProvider(providerUrl);
-      // try to resolve the ens name
-      address = await resolveENS(wallet, provider);
-      if (!address) {
-        res.status(400).json({ error: "Invalid ENS name" });
-        console.log("Try Namestone error: Invalid ENS name");
-        return;
-      }
-    } else {
-      // check if wallet is a valid address
-      try {
-        address = ethers.utils.getAddress(wallet);
-      } catch (error) {
-        res.status(400).json({ error: "Invalid wallet address" });
-        console.log("Try Namestone error: Invalid wallet address");
-        return;
-      }
+    try {
+      address = ethers.utils.getAddress(wallet);
+    } catch (error) {
+      res.status(400).json({ error: "Invalid wallet address" });
+      console.log("Try Namestone error: Invalid wallet address");
+      return;
     }
 
-    let insertDomain = { name: domain, name_limit: 1000 };
+    //Check if user Owns the domain
+    const domainOwner = await getDomainOwner(domain, network);
+    if (domainOwner !== address) {
+      return res
+        .status(400)
+        .json({ error: "Your wallet needs to own the domain" });
+    }
+
+    let insertDomain = {
+      name: domain,
+      name_limit: 1000,
+      address: address,
+      network: network,
+    };
     domainQuery = await sql`
-  insert into domain ${sql(insertDomain, "name", "name_limit")}
+  insert into domain ${sql(
+    insertDomain,
+    "name",
+    "name_limit",
+    "address",
+    "network"
+  )}
   returning id;`;
     let insertBrand = {
       name: domain,
@@ -98,8 +114,10 @@ export default async function handler(req, res) {
     Here's your namestone API key for your domain ${domain}:
     ${apiKey[0].key}
 
+    On network ${network}.
+
     You can use this key to create and manage subdomains for ${domain}.
-    Here is an example: https://namestone.xyz/docs/set-name 
+    Here is an example: https://namestone.com/docs/set-name 
     Please keep this key safe and do not share it with anyone.
     `;
     const email_html = `<!DOCTYPE html>
@@ -139,21 +157,21 @@ export default async function handler(req, res) {
         <div class="container">
             <p>Hi <strong>${name}</strong>,</p>
     
-            <p>Your API key for <strong>${domain}</strong> is:</p>
+            <p>Your API key for <strong>${domain}</strong> on <strong>${network}</strong> is:</p>
     
             <div class="api-key">${apiKey[0].key}</div>
     
             <p>Do not share this key with anyone. This key grants you access to NameStone's API, allowing you to gaslessly issue and manage subnames for <strong>${domain}</strong>.</p>
     
-            <p>Visit our <a href="https://namestone.xyz/docs">docs</a> to get started.</p>
+            <p>Visit our <a href="https://namestone.com/docs">docs</a> to get started.</p>
     
             <p>Feel free to reach out with questions or further assistance.</p>
     
             <p>Alex<br>
             NameStone<br>
-            <a href="https://namestone.xyz">namestone.xyz</a></p>
+            <a href="https://namestone.com">namestone.com</a></p>
     
-            <a href="https://namestone.xyz/docs" class="button">Docs</a>
+            <a href="https://namestone.com/docs" class="button">Docs</a>
         </div>
     </body>
     </html>`;
@@ -170,7 +188,7 @@ export default async function handler(req, res) {
     });
 
     const mailOptions = {
-      from: "apikey@namestone.xyz",
+      from: "apikey@namestone.com",
       to: email,
       subject: email_subject,
       text: email_message,
@@ -192,11 +210,12 @@ export default async function handler(req, res) {
     Email: ${email}
     Wallet Address: ${wallet}
     Domain: ${domain}
+    Network: ${network}
     `;
 
     const mailOptions2 = {
-      from: "apikey@namestone.xyz",
-      to: "darian@namestone.xyz, alex@namestone.xyz",
+      from: "apikey@namestone.com",
+      to: "darian@namestone.com, alex@namestone.com",
       subject: email_subject2,
       text: email_message2,
     };
