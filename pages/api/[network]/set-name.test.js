@@ -12,17 +12,18 @@
 
 /**
  * Set up mocks before imports
- * 
+ *
  * This is a workaround to mock the database module to use the `TEST_DATABASE_URL` environment variable
  * instead of the `POSTGRES_URI` environment variable.
  */
-jest.mock("../../../../lib/db", () => require("../../e2e_db_mock"));
 
-const httpMocks = require("node-mocks-http");
-const handler = require("../../../../pages/api/[network]/set-name").default;
-const sqlForTests = require("../../e2e_db_mock").default;
-const { setupTestDatabase, teardownTestDatabase } = require("../../e2e_db_setup");
-require("dotenv").config({ path: ".env.test" }, { override: true });
+import { createRequest, createResponse } from "node-mocks-http";
+import handler from "./set-name";
+import { default as sqlForTests } from "../../../test_utils/mock_db";
+import {
+  setupTestDatabase,
+  teardownTestDatabase,
+} from "../../../test_utils/test_db_setup";
 
 const TEST_DOMAIN = "test.eth";
 const TEST_API_KEY = "test-api-key";
@@ -33,16 +34,10 @@ const SUPPORTED_NETWORKS = [
 ];
 
 describe("set-name API E2E", () => {
-  let res;
   let testDomainId;
 
   beforeAll(async () => {
     await setupTestDatabase();
-  });
-
-  beforeEach(() => {
-    jest.clearAllMocks();
-    res = httpMocks.createResponse();
   });
 
   afterAll(async () => {
@@ -56,7 +51,7 @@ describe("set-name API E2E", () => {
    */
   describe("Network Validation", () => {
     test("setName_noNetworkSupplied_returns400", async () => {
-      const createReq = httpMocks.createRequest({
+      const createReq = createRequest({
         method: "POST",
         query: {
           network: "",
@@ -74,17 +69,18 @@ describe("set-name API E2E", () => {
           },
         },
       });
+      let response = createResponse();
 
-      await handler(createReq, res);
+      await handler(createReq, response);
 
-      expect(res._getStatusCode()).toBe(400);
-      expect(JSON.parse(res._getData())).toEqual({
+      expect(response._getStatusCode()).toBe(400);
+      expect(JSON.parse(response._getData())).toEqual({
         error: "Invalid network",
       });
     });
 
     test("setName_nonValidNetwork_returns400", async () => {
-      const createReq = httpMocks.createRequest({
+      const createReq = createRequest({
         method: "POST",
         query: {
           network: "non_valid_network",
@@ -95,12 +91,12 @@ describe("set-name API E2E", () => {
           address: "0x1234567890123456789012345678901234567890",
         },
       });
+      let response = createResponse();
 
-      const res = httpMocks.createResponse();
-      await handler(createReq, res);
+      await handler(createReq, response);
 
-      expect(res._getStatusCode()).toBe(400);
-      expect(JSON.parse(res._getData())).toEqual({
+      expect(response._getStatusCode()).toBe(400);
+      expect(JSON.parse(response._getData())).toEqual({
         error: "Invalid network",
       });
     });
@@ -134,8 +130,10 @@ describe("set-name API E2E", () => {
       `;
 
         // Verify seed data was inserted correctly
-        const domainCount = await sqlForTests`SELECT COUNT(*) as count FROM domain`;
-        const apiKeyCount = await sqlForTests`SELECT COUNT(*) as count FROM api_key`;
+        const domainCount =
+          await sqlForTests`SELECT COUNT(*) as count FROM domain`;
+        const apiKeyCount =
+          await sqlForTests`SELECT COUNT(*) as count FROM api_key`;
 
         expect(domainCount.length).toBe(1);
         expect(apiKeyCount.length).toBe(1);
@@ -159,7 +157,7 @@ describe("set-name API E2E", () => {
        */
       describe("Missing required parameters validation", () => {
         test("setName_noAddressSupplied_returns400", async () => {
-          const createReq = httpMocks.createRequest({
+          const createReq = createRequest({
             method: "POST",
             query: {
               network: networkConfig.path,
@@ -169,17 +167,18 @@ describe("set-name API E2E", () => {
               name: "e2e-test",
             },
           });
+          const response = createResponse();
 
-          await handler(createReq, res);
+          await handler(createReq, response);
 
-          expect(res._getStatusCode()).toBe(400);
-          expect(JSON.parse(res._getData())).toEqual({
+          expect(response._getStatusCode()).toBe(400);
+          expect(JSON.parse(response._getData())).toEqual({
             error: "Missing address",
           });
         });
 
         test("setName_noNameSupplied_returns400", async () => {
-          const createReq = httpMocks.createRequest({
+          const createReq = createRequest({
             method: "POST",
             query: {
               network: networkConfig.path,
@@ -189,17 +188,18 @@ describe("set-name API E2E", () => {
               address: "0x1234567890123456789012345678901234567890",
             },
           });
+          const response = createResponse();
 
-          await handler(createReq, res);
+          await handler(createReq, response);
 
-          expect(res._getStatusCode()).toBe(400);
-          expect(JSON.parse(res._getData())).toEqual({
+          expect(response._getStatusCode()).toBe(400);
+          expect(JSON.parse(response._getData())).toEqual({
             error: "Missing name",
           });
         });
 
         test("setName_noDomainSupplied_returns400", async () => {
-          const createReq = httpMocks.createRequest({
+          const createReq = createRequest({
             method: "POST",
             query: {
               network: networkConfig.path,
@@ -209,11 +209,12 @@ describe("set-name API E2E", () => {
               name: "e2e-test",
             },
           });
+          const response = createResponse();
 
-          await handler(createReq, res);
+          await handler(createReq, response);
 
-          expect(res._getStatusCode()).toBe(400);
-          expect(JSON.parse(res._getData())).toEqual({
+          expect(response._getStatusCode()).toBe(400);
+          expect(JSON.parse(response._getData())).toEqual({
             error: "Missing domain",
           });
         });
@@ -227,7 +228,7 @@ describe("set-name API E2E", () => {
        */
       describe("API Key Validation", () => {
         test("setName_noApiKeySupplied_returns401", async () => {
-          const createReq = httpMocks.createRequest({
+          const createReq = createRequest({
             method: "POST",
             query: {
               network: networkConfig.path,
@@ -246,17 +247,18 @@ describe("set-name API E2E", () => {
               },
             },
           });
+          const response = createResponse();
 
-          await handler(createReq, res);
+          await handler(createReq, response);
 
-          expect(res._getStatusCode()).toBe(401);
-          expect(JSON.parse(res._getData())).toEqual({
+          expect(response._getStatusCode()).toBe(401);
+          expect(JSON.parse(response._getData())).toEqual({
             error: "You are not authorized to use this endpoint",
           });
         });
 
         test("setName_incorrectApiKey_returns401", async () => {
-          const createReq = httpMocks.createRequest({
+          const createReq = createRequest({
             method: "POST",
             headers: {
               authorization: "invalid-api-key",
@@ -278,16 +280,17 @@ describe("set-name API E2E", () => {
               },
             },
           });
+          const response = createResponse();
 
-          await handler(createReq, res);
-          expect(res._getStatusCode()).toBe(401);
-          expect(JSON.parse(res._getData())).toEqual({
+          await handler(createReq, response);
+          expect(response._getStatusCode()).toBe(401);
+          expect(JSON.parse(response._getData())).toEqual({
             error: "You are not authorized to use this endpoint",
           });
         });
 
         test("setName_validApiKeyButNonExistingDomain_returns404", async () => {
-          const createReq = httpMocks.createRequest({
+          const createReq = createRequest({
             method: "POST",
             headers: {
               authorization: "test-api-key",
@@ -309,10 +312,11 @@ describe("set-name API E2E", () => {
               },
             },
           });
+          const response = createResponse();
 
-          await handler(createReq, res);
-          expect(res._getStatusCode()).toBe(401);
-          expect(JSON.parse(res._getData())).toEqual({
+          await handler(createReq, response);
+          expect(response._getStatusCode()).toBe(401);
+          expect(JSON.parse(response._getData())).toEqual({
             error: "You are not authorized to use this endpoint",
           });
         });
@@ -351,7 +355,7 @@ describe("set-name API E2E", () => {
 
         test("e2e successfully creates subdomain with no coin types or text records", async () => {
           const testSubdomain = "test-subdomain";
-          const createReq = httpMocks.createRequest({
+          const createReq = createRequest({
             method: "POST",
             headers: {
               authorization: TEST_API_KEY,
@@ -365,10 +369,11 @@ describe("set-name API E2E", () => {
               name: testSubdomain,
             },
           });
+          const response = createResponse();
 
-          await handler(createReq, res);
+          await handler(createReq, response);
 
-          expect(res._getStatusCode()).toBe(200);
+          expect(response._getStatusCode()).toBe(200);
           const subdomains = await sqlForTests`
         SELECT * FROM subdomain 
         WHERE domain_id = ${testDomainId}`;
@@ -400,7 +405,7 @@ describe("set-name API E2E", () => {
             notice: "Test notice",
           };
 
-          const createReq = httpMocks.createRequest({
+          const createReq = createRequest({
             method: "POST",
             headers: {
               authorization: TEST_API_KEY,
@@ -415,10 +420,11 @@ describe("set-name API E2E", () => {
               text_records: textRecordsData,
             },
           });
+          const response = createResponse();
 
-          await handler(createReq, res);
+          await handler(createReq, response);
 
-          expect(res._getStatusCode()).toBe(200);
+          expect(response._getStatusCode()).toBe(200);
           const subdomains = await sqlForTests`
         SELECT * FROM subdomain 
         WHERE domain_id = ${testDomainId}`;
@@ -443,7 +449,7 @@ describe("set-name API E2E", () => {
             60: "0x534631Bcf33BDb069fB20A93d2fdb9e4D4dD42CF", // ETH
           };
 
-          const createReq = httpMocks.createRequest({
+          const createReq = createRequest({
             method: "POST",
             headers: {
               authorization: TEST_API_KEY,
@@ -458,10 +464,11 @@ describe("set-name API E2E", () => {
               coin_types: coinTypesData,
             },
           });
+          const response = createResponse();
 
-          await handler(createReq, res);
+          await handler(createReq, response);
 
-          expect(res._getStatusCode()).toBe(200);
+          expect(response._getStatusCode()).toBe(200);
           const subdomains = await sqlForTests`
         SELECT * FROM subdomain 
         WHERE domain_id = ${testDomainId}`;
@@ -489,7 +496,7 @@ describe("set-name API E2E", () => {
             60: "0x534631Bcf33BDb069fB20A93d2fdb9e4D4dD42CF",
           };
 
-          const createReq = httpMocks.createRequest({
+          const createReq = createRequest({
             method: "POST",
             headers: {
               authorization: TEST_API_KEY,
@@ -505,10 +512,11 @@ describe("set-name API E2E", () => {
               coin_types: coinTypesData,
             },
           });
+          const response = createResponse();
 
-          await handler(createReq, res);
+          await handler(createReq, response);
 
-          expect(res._getStatusCode()).toBe(200);
+          expect(response._getStatusCode()).toBe(200);
           const subdomains = await sqlForTests`
         SELECT * FROM subdomain 
         WHERE domain_id = ${testDomainId}`;
@@ -526,7 +534,7 @@ describe("set-name API E2E", () => {
         });
 
         test("returns 400 when subdomain name is invalid", async () => {
-          const createReq = httpMocks.createRequest({
+          const createReq = createRequest({
             method: "POST",
             headers: {
               authorization: TEST_API_KEY,
@@ -540,10 +548,11 @@ describe("set-name API E2E", () => {
               name: "invalid!@#$%^&*()",
             },
           });
+          const response = createResponse();
 
-          await handler(createReq, res);
-          expect(res._getStatusCode()).toBe(400);
-          expect(JSON.parse(res._getData())).toEqual({
+          await handler(createReq, response);
+          expect(response._getStatusCode()).toBe(400);
+          expect(JSON.parse(response._getData())).toEqual({
             error: expect.stringContaining("Invalid ens name"),
           });
         });
@@ -558,7 +567,7 @@ describe("set-name API E2E", () => {
 
           // Create subdomains up to the limit
           for (let i = 1; i <= 2; i++) {
-            const createReq = httpMocks.createRequest({
+            const createReq = createRequest({
               method: "POST",
               headers: {
                 authorization: TEST_API_KEY,
@@ -573,7 +582,7 @@ describe("set-name API E2E", () => {
               },
             });
 
-            const limitRes = httpMocks.createResponse();
+            const limitRes = createResponse();
             await handler(createReq, limitRes);
             expect(limitRes._getStatusCode()).toBe(200);
           }
@@ -587,7 +596,7 @@ describe("set-name API E2E", () => {
           expect(subdomainCount).toHaveLength(2);
 
           // Try to create one more subdomain
-          const exceedLimitReq = httpMocks.createRequest({
+          const exceedLimitReq = createRequest({
             method: "POST",
             headers: {
               authorization: TEST_API_KEY,
@@ -602,7 +611,7 @@ describe("set-name API E2E", () => {
             },
           });
 
-          const exceedRes = httpMocks.createResponse();
+          const exceedRes = createResponse();
           await handler(exceedLimitReq, exceedRes);
 
           // Verify we get a 400 error
@@ -641,7 +650,7 @@ describe("set-name API E2E", () => {
         let existingSubdomainId;
 
         beforeEach(async () => {
-          const req = httpMocks.createRequest({
+          const req = createRequest({
             method: "POST",
             headers: {
               authorization: TEST_API_KEY,
@@ -663,11 +672,12 @@ describe("set-name API E2E", () => {
               },
             },
           });
-          await handler(req, res);
-          expect(res._getStatusCode()).toBe(200);
+          const response = createResponse();
+          await handler(req, response);
+          expect(response._getStatusCode()).toBe(200);
           const result = await sqlForTests`
-        SELECT * FROM subdomain WHERE name = ${existingSubdomainName}
-        `;
+            SELECT * FROM subdomain WHERE name = ${existingSubdomainName}
+          `;
           expect(result).toHaveLength(1);
           const newSubdomainRecord = result[0];
           existingSubdomainId = result[0].id;
@@ -677,9 +687,9 @@ describe("set-name API E2E", () => {
           });
           // Verify text records were created
           const textRecords = await sqlForTests`
-        SELECT * FROM subdomain_text_record 
-        WHERE subdomain_id = ${existingSubdomainId}
-      `;
+            SELECT * FROM subdomain_text_record 
+            WHERE subdomain_id = ${existingSubdomainId}
+          `;
           expect(textRecords).toHaveLength(2);
           expect(textRecords).toEqual(
             expect.arrayContaining([
@@ -696,9 +706,9 @@ describe("set-name API E2E", () => {
 
           // Verify coin type records were created
           const coinRecords = await sqlForTests`
-        SELECT address, coin_type FROM subdomain_coin_type
-        WHERE subdomain_id = ${existingSubdomainId}
-      `;
+            SELECT address, coin_type FROM subdomain_coin_type
+            WHERE subdomain_id = ${existingSubdomainId}
+          `;
           expect(coinRecords).toHaveLength(2);
           expect(coinRecords).toEqual(
             expect.arrayContaining([
@@ -723,11 +733,11 @@ describe("set-name API E2E", () => {
 
         test("e2e successfully updates subdomain address only", async () => {
           const beforeUpdateSubdomain = await sqlForTests`
-      SELECT * FROM subdomain 
-      WHERE name = ${existingSubdomainName}
-      `;
+            SELECT * FROM subdomain 
+            WHERE name = ${existingSubdomainName}
+          `;
           const newAddress = "0x9876543210987654321098765432109876543210";
-          const updateReq = httpMocks.createRequest({
+          const updateReq = createRequest({
             method: "POST",
             headers: {
               authorization: TEST_API_KEY,
@@ -742,7 +752,7 @@ describe("set-name API E2E", () => {
             },
           });
 
-          const updateRes = httpMocks.createResponse();
+          const updateRes = createResponse();
           await handler(updateReq, updateRes);
           expect(updateRes._getStatusCode()).toBe(200);
 
@@ -756,15 +766,15 @@ describe("set-name API E2E", () => {
           expect(afterUpdateSubdomainRecord.address).toBe(newAddress);
           // Verify no coin records exist
           const coinRecords = await sqlForTests`
-        SELECT * FROM subdomain_coin_type 
-        WHERE subdomain_id = ${existingSubdomainId}
-      `;
+            SELECT * FROM subdomain_coin_type 
+            WHERE subdomain_id = ${existingSubdomainId}
+          `;
           expect(coinRecords).toHaveLength(0);
           // Verify no text records exist
           const textRecords = await sqlForTests`
-        SELECT * FROM subdomain_text_record 
-        WHERE subdomain_id = ${existingSubdomainId}
-      `;
+            SELECT * FROM subdomain_text_record 
+            WHERE subdomain_id = ${existingSubdomainId}
+          `;
           expect(textRecords).toHaveLength(0);
         });
 
@@ -775,7 +785,7 @@ describe("set-name API E2E", () => {
             description: "New description",
           };
 
-          const updateReq = httpMocks.createRequest({
+          const updateReq = createRequest({
             method: "POST",
             headers: {
               authorization: TEST_API_KEY,
@@ -791,7 +801,7 @@ describe("set-name API E2E", () => {
             },
           });
 
-          const updateRes = httpMocks.createResponse();
+          const updateRes = createResponse();
           await handler(updateReq, updateRes);
           expect(updateRes._getStatusCode()).toBe(200);
 
@@ -822,7 +832,7 @@ describe("set-name API E2E", () => {
             2147492101: "0x5555555555555555555555555555555555555555",
           };
 
-          const updateReq = httpMocks.createRequest({
+          const updateReq = createRequest({
             method: "POST",
             headers: {
               authorization: TEST_API_KEY,
@@ -838,7 +848,7 @@ describe("set-name API E2E", () => {
             },
           });
 
-          const updateRes = httpMocks.createResponse();
+          const updateRes = createResponse();
           await handler(updateReq, updateRes);
           expect(updateRes._getStatusCode()).toBe(200);
 
@@ -873,7 +883,7 @@ describe("set-name API E2E", () => {
             2147492101: "0x7777777777777777777777777777777777777777",
           };
 
-          const updateReq = httpMocks.createRequest({
+          const updateReq = createRequest({
             method: "POST",
             headers: {
               authorization: TEST_API_KEY,
@@ -890,7 +900,7 @@ describe("set-name API E2E", () => {
             },
           });
 
-          const updateRes = httpMocks.createResponse();
+          const updateRes = createResponse();
           await handler(updateReq, updateRes);
           expect(updateRes._getStatusCode()).toBe(200);
 
