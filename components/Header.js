@@ -57,7 +57,7 @@ export default function Header({ subtitle }) {
                 className="text-xs font-bold cursor-pointer md:text-sm"
                 href="/admin"
               >
-                <button className="z-20 px-4 py-2 text-sm font-bold bg-orange-500 border border-black rounded-lg shadow cursor-pointer border-1 hover:bg-orange-700 text-brownblack-700 active:bg-orange-800">
+                <button className="z-20 px-4 py-2 text-sm font-bold bg-orange-500 rounded-lg cursor-pointer border-1 hover:bg-orange-700 text-brownblack-700 active:bg-orange-800">
                   Admin Login
                 </button>
               </Link>
