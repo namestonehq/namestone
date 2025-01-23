@@ -33,6 +33,22 @@ async function handler(req, res) {
     return res.status(400).json({ error: "Invalid ens name" });
   }
 
+  // check if domain exists
+  let domainQuery = await sql`
+    select * 
+    from domain 
+    where 
+      name = ${domainName} 
+        and 
+      network=${network} 
+    limit 1;`;
+
+  if (domainQuery.length == 0) {
+    return res
+      .status(400)
+      .json({ error: "Domain does not exist. Please use /enable-domain." });
+  }
+
   const allowedApi = await checkApiKey(apiKey, domainName);
   if (!allowedApi) {
     return res
@@ -63,15 +79,6 @@ async function handler(req, res) {
     contenthash_raw: rawContenthash || null,
   };
 
-  // check if domain exists
-  let domainQuery = await sql`
-  select * from domain where name = ${domainName} and network=${network} limit 1;`;
-
-  if (domainQuery.length == 0) {
-    return res
-      .status(400)
-      .json({ error: "Domain does not exist. Please use /enable-domain." });
-  }
   //// if Domain exists we update
   // check that domain is owned by user
   const apiQuery = await sql`
