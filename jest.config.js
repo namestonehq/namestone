@@ -14,6 +14,7 @@ module.exports = {
   },
   testEnvironment: "node",
   setupFiles: ["./jest.setup.js"],
+  globalSetup: "./jest.globalSetup.js",
 
   // Coverage configuration
   collectCoverage: true,
