@@ -223,9 +223,9 @@ describe("set-domain API E2E", () => {
 
           await handler(req, response);
 
-          expect(response._getStatusCode()).toBe(401);
+          expect(response._getStatusCode()).toBe(400);
           expect(JSON.parse(response._getData())).toEqual({
-            error: "You are not authorized to use this endpoint",
+            error: "Domain does not exist. Please use /enable-domain.",
           });
         });
       });
