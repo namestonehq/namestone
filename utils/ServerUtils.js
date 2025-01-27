@@ -312,7 +312,7 @@ export async function checkApiKey(apiKey, domain) {
 // function to check if user is an admin of the domain
 export async function getAdminToken(req, domain) {
   const token = await getToken({ req });
-  if (!token) {
+  if (!token || !domain) {
     return false;
   }
   const superAdminQuery = await sql`

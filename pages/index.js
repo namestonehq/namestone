@@ -1,4 +1,3 @@
-import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
 import landingProductImage3 from "../public/images/landing-product-image4.png";
@@ -42,16 +41,6 @@ export default function Home() {
   return (
     <div className="flex justify-center bg-neutral-50 ">
       <div className="w-full overflow-hidden flex flex-col max-w-[1536px]">
-        <Head>
-          <title> Create ENS Subdomains via API | NameStone</title>
-          <meta
-            name="description"
-            content="Create and issue free ENS subdomains via a REST API. Trusted by web3 leaders. Supported by ENS DAO."
-            key="desc"
-          />
-          <meta property="og:image" content="/opengraph-image.jpg" />
-          <link rel="icon" href="/favicon.ico" />
-        </Head>
         {/* Nav Bar */}
         <Header />
         {/* Main Section */}

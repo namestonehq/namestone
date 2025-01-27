@@ -1,6 +1,6 @@
 import sql from "../../../lib/db";
 import Cors from "micro-cors";
-import { getAdminToken, getNetwork } from "../../../utils/ServerUtils";
+import { getNetwork } from "../../../utils/ServerUtils";
 
 const cors = Cors({
   allowMethods: ["GET", "HEAD", "POST", "OPTIONS"],
@@ -54,15 +54,15 @@ async function handler(req, res) {
   const address = req.query.address;
   const includeTextRecords = req.query.text_records;
   const apiKey = headers.authorization || req.query.api_key;
-  // Check Admin token and API key
-  const adminToken = await getAdminToken(req, domain);
+  // Check API key
+
   const allowedApi = await checkApiKey(apiKey, domain);
 
   let domainIds = [];
   if (domain) {
     // Get domain from db
     let domainQuery;
-    if (allowedApi || adminToken) {
+    if (allowedApi) {
       domainQuery = await sql`
     select id from domain where name = ${domain} and network= ${network} limit 1`;
     } else {

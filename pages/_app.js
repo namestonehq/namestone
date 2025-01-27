@@ -16,6 +16,7 @@ import { useSession } from "next-auth/react";
 import { useEffect } from "react";
 import { alchemyProvider } from "wagmi/providers/alchemy";
 import { Toaster } from "react-hot-toast";
+import Head from "next/head";
 
 const { chains, publicClient, webSocketPublicClient } = configureChains(
   [mainnet, polygon, optimism, arbitrum, sepolia],
@@ -46,6 +47,25 @@ function MyApp({ Component, pageProps }) {
       <SessionProvider refetchInterval={0} session={pageProps.session}>
         <RainbowKitSiweNextAuthProvider>
           <RainbowKitProvider chains={chains}>
+            <Head>
+              <title>Create ENS Subdomains via API | NameStone</title>
+              <meta
+                property="og:title"
+                content="Create ENS Subdomains via API | NameStone"
+              />
+              <meta
+                name="description"
+                content="Create and issue free ENS subdomains via a REST API. Trusted by web3 leaders. Supported by ENS DAO."
+              />
+              <meta
+                property="og:description"
+                content="Create and issue free ENS subdomains via a REST API. Trusted by web3 leaders. Supported by ENS DAO."
+              />
+              <meta property="og:image" content="/opengraph-image.jpg" />
+              <meta property="og:type" content="website" />
+              <meta name="twitter:card" content="summary_large_image" />
+              <link rel="icon" href="/favicon.ico" />
+            </Head>
             <Toaster
               position="top-right"
               toastOptions={{
