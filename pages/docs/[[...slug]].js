@@ -289,15 +289,24 @@ export default function Docs({ content, fileName }) {
                         console.log("Code content:", codeString);
                         if (match) {
                           return (
-                            <div className="relative max-w-full overflow-hidden">
+                            <div className="relative max-w-full overflow-x-auto">
                               <SyntaxHighlighter
                                 style={vscDarkPlus}
                                 language={language}
                                 PreTag="pre"
                                 {...props}
-                                customStyle={{}}
+                                customStyle={{
+                                  width: "100%",
+                                  maxWidth: "100%",
+                                  overflowX: "auto",
+                                  whiteSpace: "pre-wrap",
+                                  wordBreak: "break-word",
+                                }}
                                 codeTagProps={{
-                                  className: "whitespace-pre break-words",
+                                  style: {
+                                    whiteSpace: "pre-wrap",
+                                    wordBreak: "break-word",
+                                  },
                                 }}
                                 wrapLines={true}
                                 wrapLongLines={true}
