@@ -117,7 +117,7 @@ model brand {
   footer_image              String?
   default_avatar            String?
   default_description       String?
-  share_with_data_providers Boolean @default(false)
+  share_with_data_providers Boolean @default(true)
   show_converse_link        Boolean @default(false)
   show_mailchain_link       Boolean @default(false)
 }
