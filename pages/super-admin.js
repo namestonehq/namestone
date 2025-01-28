@@ -527,6 +527,18 @@ export default function SuperAdmin() {
               onChange={(e) => changeBrandData("address", e.target.value)}
             />
             <div className="mb-2 text-sm font-bold text-brownblack-500">
+              Subname Limit{" "}
+              <span className="mb-2 text-xs italic font-normal opacity-75 text-brownblack-700">
+                (0 for no limit)
+              </span>
+            </div>
+
+            <input
+              className="w-full px-4 py-2 mb-4 border rounded-md border-brownblack-50"
+              value={brandData?.name_limit}
+              onChange={(e) => changeBrandData("name_limit", e.target.value)}
+            />
+            <div className="mb-2 text-sm font-bold text-brownblack-500">
               Content Hash
             </div>
             <input

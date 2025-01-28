@@ -36,9 +36,12 @@ export default async function handler(req, res) {
   }
 
   await sql`
-  update domain set ${sql(domainData, "address", "contenthash")} where id = ${
-    domainData.id
-  }`;
+  update domain set ${sql(
+    domainData,
+    "address",
+    "contenthash",
+    "name_limit"
+  )} where id = ${domainData.id}`;
 
   let textRecords = [];
   for (let i = 0; i < domainData.textRecords.length; i++) {

@@ -20,7 +20,7 @@ export default async function handler(req, res) {
   }
 
   const domainQuery = await sql`
-  select domain.id, domain.name, domain.address, domain.contenthash
+  select domain.id, domain.name, domain.address, domain.contenthash, domain.name_limit
   from domain
   where domain.name = ${req.query.domain}`;
 
