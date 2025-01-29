@@ -8,7 +8,6 @@ import { useState } from "react";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vscDarkPlus } from "react-syntax-highlighter/dist/cjs/styles/prism";
 import remarkGfm from "remark-gfm";
-import rehypeRaw from "rehype-raw";
 
 const navDict = {
   Introduction: { file: "index" },
@@ -218,7 +217,6 @@ export default function Docs({ content, fileName }) {
                 <div className="w-full max-w-full py-6 sm:py-10 sm:pl-10 ">
                   <ReactMarkdown
                     remarkPlugins={[remarkGfm]}
-                    rehypePlugins={[rehypeRaw]}
                     components={{
                       li: ({ node, ordered, ...props }) => {
                         if (typeof props.inline === "boolean")
