@@ -7,6 +7,7 @@ import { Icon } from "@iconify/react";
 import { useState } from "react";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vscDarkPlus } from "react-syntax-highlighter/dist/cjs/styles/prism";
+import remarkGfm from "remark-gfm";
 
 const navDict = {
   Introduction: { file: "index" },
@@ -215,6 +216,7 @@ export default function Docs({ content, fileName }) {
               <div className="justify-start flex-1 border-t sm:border-l border-brownblack-50">
                 <div className="w-full max-w-full py-6 sm:py-10 sm:pl-10 ">
                   <ReactMarkdown
+                    remarkPlugins={[remarkGfm]}
                     components={{
                       li: ({ node, ordered, ...props }) => {
                         if (typeof props.inline === "boolean")
@@ -285,8 +287,6 @@ export default function Docs({ content, fileName }) {
                           /\n$/,
                           ""
                         );
-                        console.log("language:", language);
-                        console.log("Code content:", codeString);
                         if (match) {
                           return (
                             <div className="relative max-w-full overflow-x-auto">
@@ -336,6 +336,38 @@ export default function Docs({ content, fileName }) {
                           );
                         }
                       },
+                      table: ({ node, ...props }) => (
+                        <div className="mb-6 overflow-x-auto">
+                          <table
+                            className="min-w-full border-collapse"
+                            {...props}
+                          />
+                        </div>
+                      ),
+                      thead: ({ node, ...props }) => (
+                        <thead className="bg-neutral-100" {...props} />
+                      ),
+                      tbody: ({ node, ...props }) => (
+                        <tbody className="bg-white" {...props} />
+                      ),
+                      tr: ({ node, ...props }) => (
+                        <tr
+                          className="border-b border-neutral-200"
+                          {...props}
+                        />
+                      ),
+                      th: ({ node, ...props }) => (
+                        <th
+                          className="px-6 py-3 text-sm font-semibold text-left text-neutral-900"
+                          {...props}
+                        />
+                      ),
+                      td: ({ node, ...props }) => (
+                        <td
+                          className="px-6 py-4 text-sm whitespace-normal text-neutral-900"
+                          {...props}
+                        />
+                      ),
                     }}
                   >
                     {network === "Mainnet"
