@@ -32,12 +32,11 @@ export default function Admin() {
   const [addNameModalOpen, setAddNameModalOpen] = useState(false);
   const [nameErrorMsg, setNameErrorMsg] = useState("");
   const [addressErrorMsg, setAddressErrorMsg] = useState("");
-  const [nameId, setNameId] = useState(null); // id of name to edit
   const [admins, setAdmins] = useState([]);
-  const [domainId, setDomainId] = useState(null);
   const [saveSettingsDisabled, setSaveSettingsDisabled] = useState(true);
   const [saveSettingsPending, setSaveSettingsPending] = useState(false);
   const [apiKey, setApiKey] = useState("loading");
+  const [publicDomain, setPublicDomain] = useState(false);
   const [adminErrorMsg, setAdminErrorMsg] = useState("");
   //add or edit
   const [activeTab, setActiveTab] = useState("Subnames");
@@ -76,15 +75,13 @@ export default function Admin() {
     }
   }, [authStatus, session, selectedBrand]);
 
-  // fetch to populate table
   useEffect(() => {
     if (!selectedBrand) return;
-    // get names and replace data
+    // list subdomains
     fetch(
       "/api/admin/list-subdomains?" +
         new URLSearchParams({
-          domain: selectedBrand?.domain,
-          network: selectedBrand?.network,
+          domain_id: selectedBrand?.domain_id,
         })
     ).then((res) => {
       res.json().then((data) => {
@@ -95,26 +92,16 @@ export default function Admin() {
         }
       });
     });
+    // Get domain settings (admins and API key)
     fetch(
-      "/api/admin/get-domain-admins?" +
-        new URLSearchParams({ domain: selectedBrand?.domain })
+      "/api/admin/get-domain-settings?" +
+        new URLSearchParams({ domain_id: selectedBrand?.domain_id })
     ).then((res) =>
       res.json().then((data) => {
         if (res.status === 200) {
           setAdmins(data.admins);
-          setDomainId(data.domain_id);
-        } else {
-          console.log(data);
-        }
-      })
-    );
-    fetch(
-      "/api/admin/get-api-key?" +
-        new URLSearchParams({ domain: selectedBrand?.domain })
-    ).then((res) =>
-      res.json().then((data) => {
-        if (res.status === 200) {
           setApiKey(data.api_key);
+          setPublicDomain(data.public_domain);
         } else {
           console.log(data);
         }
@@ -313,9 +300,10 @@ export default function Admin() {
     setSaveSettingsPending(true);
     const brandData = {
       admins: admins,
-      domain_id: domainId,
+      domain_id: selectedBrand.domain_id,
+      public_domain: publicDomain,
     };
-    fetch("/api/admin/save-admins", {
+    fetch("/api/admin/save-domain-settings", {
       method: "POST",
       body: JSON.stringify({ brandData: brandData }),
     })
@@ -552,6 +540,21 @@ export default function Admin() {
           )}
           {activeTab === "Settings" && (
             <div className="flex flex-col gap-4 ">
+              <div className="flex flex-col mt-6">
+                <label className="mb-2 text-sm font-bold text-brownblack-700">
+                  Make domain public
+                </label>
+                <input
+                  type="checkbox"
+                  id="publicDomain"
+                  checked={publicDomain}
+                  onChange={(e) => {
+                    setPublicDomain(e.target.checked);
+                    setSaveSettingsDisabled(false);
+                  }}
+                  className="w-4 h-4 rounded border-brownblack-50"
+                />
+              </div>
               <ApiKeyDisplay apiKey={apiKey} />
               <div className="mb-2 text-sm font-bold text-brownblack-700">
                 Domain Admins

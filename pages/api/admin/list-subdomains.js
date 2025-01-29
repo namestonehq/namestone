@@ -9,7 +9,7 @@ export default async function handler(req, res) {
   }
 
   // Get Domain && Name
-  if (!req.query.domain) {
+  if (!req.query.domain_id) {
     return res.status(400).json({ error: "Domain is required" });
   }
 
@@ -20,8 +20,7 @@ export default async function handler(req, res) {
   SELECT * FROM admin 
   join domain on admin.domain_id = domain.id
   WHERE admin.address = ${token.sub}
-  and domain.name = ${req.query.domain}
-  and domain.network=  ${req.query.network};`;
+  and domain.id = ${req.query.domain_id}`;
   if (superAdminQuery.length === 0 && adminQuery.length === 0) {
     return res.status(401).json({ error: "Unauthorized. Please refresh." });
   }
@@ -30,8 +29,7 @@ export default async function handler(req, res) {
   select subdomain.id, subdomain.name, subdomain.address, domain.name as domain  
   from subdomain join domain 
   on subdomain.domain_id = domain.id 
-  where domain.name = ${req.query.domain}
-  and domain.network=  ${req.query.network}
+  where domain.id = ${req.query.domain_id}
   order by subdomain.name`;
 
   return res.status(200).json(subdomainQuery);

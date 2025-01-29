@@ -8,7 +8,7 @@ export default async function handler(req, res) {
     return res.status(401).json({ error: "Unauthorized. Please refresh." });
   }
   // Get Domain && Name
-  if (!req.query.domain) {
+  if (!req.query.domain_id) {
     return res.status(400).json({ error: "Domain is required" });
   }
 

@@ -15,14 +15,14 @@ export default async function handler(req, res) {
     return res.status(401).json({ error: "Unauthorized. Please refresh." });
   }
   // Get Domain && Name
-  if (!req.query.domain) {
+  if (!req.query.domain_id) {
     return res.status(400).json({ error: "Domain is required" });
   }
 
   const domainQuery = await sql`
   select domain.id, domain.name, domain.address, domain.contenthash, domain.name_limit
   from domain
-  where domain.name = ${req.query.domain}`;
+  where domain.id = ${req.query.domain_id}`;
 
   // get text records from db
   const textRecordQuery = await sql`

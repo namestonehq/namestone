@@ -11,8 +11,7 @@ export default async function handler(req, res) {
 
   let adminData = JSON.parse(req.body).brandData;
 
-  console.log(adminData);
-  if (!adminData.admins || !adminData.domain_id) {
+  if (!adminData.admins || !adminData.domain_id || !adminData.public_domain) {
     return res.status(400).json({ error: "something went wrong" });
   }
 
@@ -49,5 +48,10 @@ export default async function handler(req, res) {
   await sql`
   insert into admin ${sql(insertPayload, "address", "domain_id")}
   `;
+
+  await sql`
+  update brand set share_with_data_providers = ${adminData.public_domain} where domain_id = ${adminData.domain_id}
+  `;
+
   return res.status(200).json({ success: true });
 }

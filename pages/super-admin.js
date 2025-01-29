@@ -65,7 +65,7 @@ export default function SuperAdmin() {
     } else if (selectedTab === "domain_info") {
       fetch(
         "/api/admin/get-domain-info?" +
-          new URLSearchParams({ domain: selectedBrand?.domain })
+          new URLSearchParams({ domain_id: selectedBrand?.domain_id })
       ).then((res) =>
         res.json().then((data) => {
           if (res.status === 200) {
