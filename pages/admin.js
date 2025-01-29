@@ -542,8 +542,12 @@ export default function Admin() {
             <div className="flex flex-col gap-4 ">
               <div className="flex flex-col mt-6">
                 <label className="mb-2 text-sm font-bold text-brownblack-700">
-                  Make domain public
+                  Make subnames public
                 </label>
+                <p className="mb-2 text-sm text-brownblack-500">
+                  Allow your subnames to be discovered and displayed by projects
+                  that interact with our api.
+                </p>
                 <input
                   type="checkbox"
                   id="publicDomain"
@@ -552,7 +556,9 @@ export default function Admin() {
                     setPublicDomain(e.target.checked);
                     setSaveSettingsDisabled(false);
                   }}
-                  className="w-4 h-4 rounded border-brownblack-50"
+                  className="w-6 h-6 rounded appearance-none border-2 border-brownblack-50 checked:bg-green-500 cursor-pointer checked:border-green-500 
+                    relative before:content-['✓'] before:absolute before:text-white before:left-1/2 before:top-1/2 before:-translate-x-1/2 before:-translate-y-1/2 
+                    before:opacity-0 checked:before:opacity-100 before:font-serif before:text-base"
                 />
               </div>
               <ApiKeyDisplay apiKey={apiKey} />
