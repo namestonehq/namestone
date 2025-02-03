@@ -33,7 +33,10 @@ curl -X POST \
 ## SDK Example with getSiweMessage
 
 ```typescript
-import NameStone, { AuthenticationError, NetworkError } from "namestone-sdk";
+import NameStone, {
+  AuthenticationError,
+  NetworkError,
+} from "@namestone/namestone-sdk";
 import { createWalletClient, custom } from "viem"; // if using viem for signing
 
 // Initialize the NameStone instance (no API key needed for initial setup)
