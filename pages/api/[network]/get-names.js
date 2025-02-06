@@ -42,14 +42,23 @@ async function handler(req, res) {
 
   // get offset and limit
   let limit = req.query.limit;
+  // Check that limit is a number and >= 0
+  if (limit && (isNaN(Number(limit)) || Number(limit) < 0)) {
+    return res.status(400).json({ error: "Invalid limit parameter" });
+  }
   if (!limit) {
     limit = 50;
   }
   limit = Math.min(limit, 1000);
   let offset = req.query.offset;
+  // Check that offset is a number and >= 0
+  if (offset && (isNaN(Number(offset)) || Number(offset) < 0)) {
+    return res.status(400).json({ error: "Invalid offset parameter" });
+  }
   if (!offset) {
     offset = 0;
   }
+
 
   const address = req.query.address;
   const includeTextRecords = req.query.text_records;
