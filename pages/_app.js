@@ -7,7 +7,7 @@ import { getDefaultConfig, RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { WagmiProvider } from "wagmi";
 import { arbitrum, mainnet, optimism, polygon, sepolia } from "wagmi/chains";
-import { publicProvider } from "wagmi/providers/public";
+import { http } from "wagmi";
 import { SessionProvider } from "next-auth/react";
 import { RainbowKitSiweNextAuthProvider } from "@rainbow-me/rainbowkit-siwe-next-auth";
 import ClaimContextWrapper from "../contexts/ClaimContext";
@@ -15,7 +15,6 @@ import { signOut } from "next-auth/react";
 import { useAccount } from "wagmi";
 import { useSession } from "next-auth/react";
 import { useEffect } from "react";
-import { alchemyProvider } from "wagmi/providers/alchemy";
 import { Toaster } from "react-hot-toast";
 import Head from "next/head";
 
@@ -25,10 +24,23 @@ const config = getDefaultConfig({
   appName: "NameStone",
   projectId: process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID,
   chains: [mainnet, polygon, optimism, arbitrum, sepolia],
-  providers: [
-    alchemyProvider({ apiKey: process.env.NEXT_PUBLIC_ALCHEMY_API_KEY }),
-    publicProvider(),
-  ],
+  transports: {
+    [mainnet.id]: http(
+      `https://eth-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_API_KEY}`
+    ),
+    [polygon.id]: http(
+      `https://polygon-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_API_KEY}`
+    ),
+    [optimism.id]: http(
+      `https://opt-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_API_KEY}`
+    ),
+    [arbitrum.id]: http(
+      `https://arb-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_API_KEY}`
+    ),
+    [sepolia.id]: http(
+      `https://eth-sepolia.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_API_KEY}`
+    ),
+  },
 });
 
 // If loading a variable font, you don't need to specify the font weight

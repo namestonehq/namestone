@@ -7,7 +7,7 @@ import Footer from "../components/Footer";
 import { useState, useEffect } from "react";
 import { useWalletClient } from "wagmi";
 import { createWalletClient, custom, createPublicClient, http } from "viem";
-import { mainnet, sepolia } from "wagmi";
+import { mainnet, sepolia } from "viem/chains";
 import XIcon from "../public/images/x-icon-red.png";
 import SuccessIcon from "../public/images/success-icon.png";
 import searchIcon from "../public/images/search-icon.svg";
@@ -17,7 +17,7 @@ import CustomConnectButton from "../components/CustomConnectButton";
 import Link from "next/link";
 import namestoneIcon from "../public/images/namestone-icon.svg";
 import { useSession } from "next-auth/react";
-import { useAccount, useSwitchNetwork } from "wagmi";
+import { useAccount, useSwitchChain } from "wagmi";
 import { addEnsContracts, ensSubgraphActions } from "@ensdomains/ensjs";
 import { setResolver } from "@ensdomains/ensjs/wallet";
 
@@ -51,7 +51,7 @@ export default function TryNamestone() {
   // fullyConnected means authenticated and connected
   const fullyConnected = isConnected && authStatus === "authenticated";
   const [network, setNetwork] = useState("Mainnet");
-  const { switchNetwork } = useSwitchNetwork();
+  const { switchChain } = useSwitchChain();
 
   const selectedDomain =
     filteredDomainList.length === 1 &&
@@ -154,7 +154,7 @@ export default function TryNamestone() {
         network === "Mainnet" ? NAMEWRAPPER : NAMEWRAPPER_SEPOLIA;
       const correctNetwork = network === "Mainnet" ? mainnet : sepolia;
       // Call switchNetwork and wait a moment for it to take effect
-      switchNetwork(correctNetwork.id);
+      switchChain(correctNetwork.id);
 
       // Wait for 2 seconds to allow the network switch to propagate
       await new Promise((resolve) => setTimeout(resolve, 1000));
