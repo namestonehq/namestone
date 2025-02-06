@@ -46,6 +46,17 @@ async function handler(req, res) {
   if (!domain) {
     return res.status(400).json({ message: "Missing required parameters" });
   }
+
+  // Check if domain exists in database
+  const domainCount = await sql`
+    SELECT 1
+    FROM domain 
+    WHERE name = ${domain} 
+    AND network = ${network}`;
+  if (domainCount.length === 0) {
+    return res.status(400).json({ error: "Domain does not exist" });
+  }
+
   const apiKey = headers.authorization || req.query.api_key;
   // Check API key
   const allowedApi = await checkApiKey(apiKey, domain, network);
@@ -56,10 +67,9 @@ async function handler(req, res) {
   }
 
   const domainQuery = await sql`
-    select id, address, name, contenthash_raw from domain where name = ${domain} and network = ${network} limit 1`;
-  if (domainQuery.length === 0) {
-    return res.status(400).json({ error: "Domain does not exist" });
-  }
+    select id, address, name, contenthash_raw 
+    from domain 
+    where name = ${domain} and network = ${network} limit 1`;
   const domainId = [domainQuery[0].id];
   const address = domainQuery[0].address;
   const domainName = domainQuery[0].name;
