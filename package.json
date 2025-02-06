@@ -15,9 +15,10 @@
     "@ensdomains/ensjs": "^4.0.1-alpha.0",
     "@headlessui/react": "^1.7.15",
     "@next/bundle-analyzer": "^13.4.2",
-    "@rainbow-me/rainbowkit": "^1.0.2",
+    "@rainbow-me/rainbowkit": "2",
     "@rainbow-me/rainbowkit-siwe-next-auth": "^0.3.0",
     "@sentry/nextjs": "^7.52.1",
+    "@tanstack/react-query": "^5.66.0",
     "canvas-confetti": "^1.6.0",
     "ethers": "5.7",
     "framer-motion": "^10.12.12",
@@ -46,8 +47,8 @@
     "remark-gfm": "3.0.1",
     "sharp": "^0.32.1",
     "siwe": "^2.3.2",
-    "viem": "^2.9.6",
-    "wagmi": "^1.2",
+    "viem": "2.x",
+    "wagmi": "2",
     "web3": "^4.7.0"
   },
   "devDependencies": {
