@@ -1,16 +1,32 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { getCsrfToken } from "next-auth/react";
-import { SiweMessage } from "siwe";
+import { parseSiweMessage, validateSiweMessage } from "viem/siwe";
+import { createPublicClient, http } from "viem";
+import { mainnet } from "viem/chains";
+
+const publicClient = createPublicClient({
+  chain: mainnet,
+  transport: http(
+    `https://eth-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_API_KEY}`
+  ),
+});
 
 export function getAuthOptions(req) {
   const providers = [
     CredentialsProvider({
       async authorize(credentials) {
         try {
-          const siwe = new SiweMessage(
-            JSON.parse(credentials?.message || "{}")
-          );
+          const siwe = parseSiweMessage(credentials?.message);
+          if (
+            !validateSiweMessage({
+              address: siwe?.address,
+              message: siwe,
+            })
+          ) {
+            return null;
+          }
+
           const nextAuthUrl = process.env.NEXTAUTH_URL;
           if (!nextAuthUrl) {
             return null;
@@ -28,11 +44,20 @@ export function getAuthOptions(req) {
             return null;
           }
 
-          await siwe.verify({ signature: credentials?.signature || "" });
+          const valid = await publicClient.verifyMessage({
+            address: siwe?.address,
+            message: credentials?.message,
+            signature: credentials?.signature,
+          });
+
+          if (!valid) {
+            return null;
+          }
           return {
             id: siwe.address,
           };
         } catch (e) {
+          console.error("SIWE authorization error:", e);
           return null;
         }
       },
