@@ -206,6 +206,7 @@ export default async function handler(req, res) {
     const email_subject2 = `Namestone API Key Created: ${name} - ${email}`;
     const email_message2 = `
     API Key Created For
+    Source: Try Namestone
     Name: ${name}
     Email: ${email}
     Wallet Address: ${wallet}

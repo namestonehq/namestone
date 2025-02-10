@@ -159,10 +159,12 @@ async function handler(req, res) {
     const email_subject = `Namestone API Key Created: ${company_name} - ${domain} - ${email}`;
     const email_message = `
     API Key Created For
+    Source: API
     Name: ${company_name}
     Email: ${email}
     Wallet Address: ${address}
     Domain: ${domain}
+    Network: ${network}
     `;
 
     const mailOptions = {
