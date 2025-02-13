@@ -12,6 +12,10 @@ import { Icon } from "@iconify/react";
 import AddNameModal from "../components/Admin/AddNameModal";
 import toast from "react-hot-toast";
 import _ from "lodash";
+import ConfirmationModal from "../components/Admin/ConfirmationModal";
+import { shortenAddress } from "../utils/FrontUtils";
+import { useEnsName, useEnsAvatar, useEnsAddress } from "wagmi";
+import { isAddress } from "ethers/lib/utils";
 
 const blankNameData = {
   name: "",
@@ -44,6 +48,13 @@ export default function Admin() {
   const [saveNamePending, setSaveNamePending] = useState(false);
   const [mainnetOpen, setMainnetOpen] = useState(true);
   const [sepoliaOpen, setSepoliaOpen] = useState(true);
+  const [deleteAdminModalOpen, setDeleteAdminModalOpen] = useState(false);
+  const [adminToDelete, setAdminToDelete] = useState({
+    index: null,
+    displayName: "",
+  });
+  // Add new state to track which admin row is being edited
+  const [editingIndex, setEditingIndex] = useState(null);
 
   //funtion to help set current name data
   function setCurrentNameHelper(value, key1, key2 = undefined) {
@@ -161,7 +172,7 @@ export default function Admin() {
   }
 
   // function to add and edit a name
-  function setName(nameData) {
+  async function setName(nameData) {
     if (!nameData.name) {
       setNameErrorMsg("*Name cannot be blank");
       return;
@@ -180,114 +191,124 @@ export default function Admin() {
     }
     setSaveNamePending(true);
 
-    fetch("/api/admin/set-subdomain", {
-      method: "POST",
-      body: JSON.stringify({
-        network: selectedBrand.network,
-        id: nameData.id,
-        name: nameData.name,
-        address: address,
-        contenthash: nameData.contenthash,
-        domain: selectedBrand.domain,
-        text_records: nameData.text_records,
-        coin_types: nameData.coin_types,
-      }),
-    }).then((res) => {
-      res
-        .json()
-        .then((data) => {
-          if (res.status === 200) {
-            setAddNameModalOpen(false);
-            setNameErrorMsg("");
-            setAddressErrorMsg("");
-            toast.success("Subdomain set successfully");
-          } else {
-            setNameErrorMsg(data.error);
-            console.log(data);
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-          console.res;
-        })
-        .finally(() => {
-          setSaveNamePending(false);
-          // get names and replace data
-          fetch(
-            "/api/admin/list-subdomains?" +
-              new URLSearchParams({
-                domain: selectedBrand?.domain,
-                network: selectedBrand?.network,
-              })
-          ).then((res) => {
-            res.json().then((data) => {
-              if (res.status === 200) {
-                setSubdomains(data);
-              } else {
-                console.log(data);
-              }
-            });
-          });
-        });
-    });
+    try {
+      const res = await fetch("/api/admin/set-subdomain", {
+        method: "POST",
+        body: JSON.stringify({
+          network: selectedBrand.network,
+          id: nameData.id,
+          name: nameData.name,
+          address: address,
+          contenthash: nameData.contenthash,
+          domain: selectedBrand.domain,
+          text_records: nameData.text_records,
+          coin_types: nameData.coin_types,
+        }),
+      });
+      const data = await res.json();
+
+      if (res.status === 200) {
+        setAddNameModalOpen(false);
+        setNameErrorMsg("");
+        setAddressErrorMsg("");
+        toast.success("Subdomain set successfully");
+
+        // Refresh the subdomains list
+        const subdomainsRes = await fetch(
+          "/api/admin/list-subdomains?" +
+            new URLSearchParams({
+              domain_id: selectedBrand?.domain_id,
+            })
+        );
+        const subdomainsData = await subdomainsRes.json();
+
+        if (subdomainsRes.status === 200) {
+          setSubdomains(subdomainsData);
+        } else {
+          console.log(subdomainsData);
+        }
+      } else {
+        setNameErrorMsg(data.error);
+        console.log(data);
+      }
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setSaveNamePending(false);
+    }
   }
   // function to delete a name
-  function deleteName(name) {
+  async function deleteName(name) {
     const url =
       selectedBrand.network === "mainnet"
         ? "/api/public_v1/delete-name"
         : "/api/public_v1_sepolia/delete-name";
 
-    fetch(url, {
-      method: "POST",
-      body: JSON.stringify({
-        name: name,
-        domain: selectedBrand.domain,
-      }),
-    }).then((res) => {
-      res
-        .json()
-        .then((data) => {
-          if (res.status === 200) {
-            // get names and replace data
-            fetch(
-              "/api/admin/list-subdomains?" +
-                new URLSearchParams({
-                  domain: selectedBrand?.domain,
-                  network: selectedBrand?.network,
-                })
-            ).then((res) => {
-              res.json().then((data) => {
-                if (res.status === 200) {
-                  setSubdomains(data);
-                  toast.success("Subdomain deleted successfully");
-                } else {
-                  console.log(data);
-                }
-              });
-            });
-          } else {
-            console.log(data);
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    });
+    try {
+      const res = await fetch(url, {
+        method: "POST",
+        body: JSON.stringify({
+          name: name,
+          domain: selectedBrand.domain,
+        }),
+      });
+      const data = await res.json();
+
+      if (res.status === 200) {
+        // Refresh the subdomains list
+        const subdomainsRes = await fetch(
+          "/api/admin/list-subdomains?" +
+            new URLSearchParams({
+              domain_id: selectedBrand?.domain_id,
+            })
+        );
+        const subdomainsData = await subdomainsRes.json();
+
+        if (subdomainsRes.status === 200) {
+          setSubdomains(subdomainsData);
+          toast.success("Subdomain deleted successfully");
+        } else {
+          console.log(subdomainsData);
+        }
+      } else {
+        console.log(data);
+      }
+    } catch (err) {
+      console.log(err);
+    }
   }
 
   // admins
   function addAdmin() {
+    const newIndex = admins.length;
     setAdmins((prevState) => {
       return [...prevState, ""];
     });
     setSaveSettingsDisabled(false);
+    // Set the new row to be in edit mode
+    setEditingIndex(newIndex);
   }
-  function deleteAdmin(index) {
-    let tempAdmins = admins;
-    tempAdmins.splice(index, 1);
-    setAdmins([...tempAdmins]);
+  function deleteAdmin(index, displayName) {
+    // If we're deleting the row being edited, clear the editing state
+    if (editingIndex === index) {
+      setEditingIndex(null);
+    }
+    // If we're deleting a row before the one being edited, adjust the editing index
+    else if (editingIndex > index) {
+      setEditingIndex(editingIndex - 1);
+    }
+    setAdminToDelete({
+      index,
+      displayName: displayName || admins[index],
+    });
+    setDeleteAdminModalOpen(true);
+  }
+  function confirmDeleteAdmin() {
+    let tempAdmins = [...admins]; // Create a new array to avoid mutating state directly
+    tempAdmins.splice(adminToDelete.index, 1);
+    setAdmins(tempAdmins);
     setSaveSettingsDisabled(false);
+    setDeleteAdminModalOpen(false);
   }
   function changeAdmin(index, address) {
     let tempAdmins = admins;
@@ -532,9 +553,11 @@ export default function Admin() {
               </div>
               <SubdomainTable
                 subdomains={subdomains}
+                admin={true}
                 deleteName={deleteName}
                 openEditNameModal={openEditNameModal}
-                admin={true}
+                selectedBrand={selectedBrand}
+                setSubdomains={setSubdomains}
               />
             </>
           )}
@@ -568,24 +591,20 @@ export default function Admin() {
               <div className="mb-2 text-sm font-bold text-brownblack-700">
                 Domain Admins
               </div>
-              {admins &&
-                admins.map((address, index) => (
-                  <div
+              <div className="mb-4">
+                {admins.map((address, index) => (
+                  <AdminRow
                     key={index}
-                    className="flex items-center justify-start mb-4"
-                  >
-                    <input
-                      className="w-[28rem] px-4 py-2 border rounded-md border-brownblack-50"
-                      value={address}
-                      onChange={(e) => changeAdmin(index, e.target.value)}
-                    />
-                    <Icon
-                      icon="bi:trash"
-                      className="w-6 h-6 mx-4 text-red-500 cursor-pointer"
-                      onClick={() => deleteAdmin(index)}
-                    />
-                  </div>
+                    address={address}
+                    index={index}
+                    onDelete={deleteAdmin}
+                    onChange={changeAdmin}
+                    totalAdmins={admins.length}
+                    editingIndex={editingIndex}
+                    setEditingIndex={setEditingIndex}
+                  />
                 ))}
+              </div>
               <button
                 className="mb-4 font-bold text-left text-orange-700 transition-colors duration-300 w-fit hover:text-orange-400"
                 onClick={addAdmin}
@@ -609,6 +628,17 @@ export default function Admin() {
       </div>
       {/*Right Bar*/}
       <div className="flex-1 bg-white"></div>
+
+      <ConfirmationModal
+        isOpen={deleteAdminModalOpen}
+        onClose={() => setDeleteAdminModalOpen(false)}
+        onConfirm={confirmDeleteAdmin}
+        title="Delete connected wallet as admin?"
+      >
+        {adminToDelete.displayName} will not have access to the admin panel.
+        Access to admin can be requested again from another admin or
+        alex@namestone.xyz.
+      </ConfirmationModal>
     </AuthContentContainer>
   );
 }
@@ -686,3 +716,226 @@ const CheckIcon = () => (
     <polyline points="20 6 9 17 4 12"></polyline>
   </svg>
 );
+
+function AdminRow({
+  address,
+  index,
+  onDelete,
+  onChange,
+  totalAdmins,
+  editingIndex,
+  setEditingIndex,
+}) {
+  const { data: session } = useSession();
+  const [isEditHovering, setIsEditHovering] = useState(false);
+
+  // Get initial ENS name for the address
+  const { data: initialEnsName } = useEnsName({ address });
+
+  const [editValue, setEditValue] = useState("");
+
+  useEffect(() => {
+    setEditValue(initialEnsName || address);
+  }, [initialEnsName, address]);
+
+  // ENS resolution hooks
+  const { data: ensNameFromAddress } = useEnsName({
+    address: isAddress(editValue) ? editValue : undefined,
+  });
+  const { data: ensAddress } = useEnsAddress({
+    name: editValue?.endsWith(".eth") ? editValue : undefined,
+  });
+
+  const ensName = editValue?.endsWith(".eth") ? editValue : ensNameFromAddress;
+  const { data: ensAvatar } = useEnsAvatar({ name: ensName });
+
+  const isValidAddress = editValue && (isAddress(editValue) || ensAddress);
+  const resolvedAddress =
+    ensAddress || (isAddress(editValue) ? editValue : null);
+  const displayName = ensName || shortenAddress(address);
+
+  // Check if current user is this admin
+  const isCurrentUser =
+    session?.address &&
+    session.address.toLowerCase() ===
+      (resolvedAddress || editValue).toLowerCase();
+
+  // Replace the isEditing state with computed value
+  const isEditing = index === editingIndex;
+
+  // Update setIsEditing calls to use setEditingIndex
+  const handleSetAddress = () => {
+    if (isValidAddress && resolvedAddress) {
+      onChange(index, resolvedAddress);
+      setEditingIndex(null);
+      setIsEditHovering(false);
+    }
+  };
+
+  return (
+    <div
+      className={`flex items-center justify-between p-2 mb-2 transition-colors border rounded-lg border-neutral-200 ${
+        isEditing || isEditHovering ? "bg-gray-50" : "bg-white"
+      }`}
+      onMouseEnter={() => setIsEditHovering(true)}
+      onMouseLeave={() => setIsEditHovering(false)}
+    >
+      {isEditing ? (
+        // EDITING MODE
+        <div className="flex flex-col w-full">
+          {/* Input field and cancel button */}
+          <div className="flex items-center justify-between w-full">
+            <input
+              className="flex-1 px-3 py-2 text-xs font-normal bg-white border rounded-lg text-neutral-900 border-neutral-200 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
+              style={{ lineHeight: "16px" }}
+              value={editValue}
+              onChange={(e) => setEditValue(e.target.value)}
+              placeholder="Enter ENS name or ETH address"
+              autoFocus
+            />
+            <button
+              onClick={() => {
+                setEditingIndex(null);
+                setIsEditHovering(false);
+                // Reset editValue back to initial value
+                setEditValue(initialEnsName || address);
+              }}
+              className="ml-4 text-sm font-normal text-orange-700 hover:text-orange-600"
+              style={{ lineHeight: "16px" }}
+            >
+              Cancel
+            </button>
+          </div>
+
+          {/* Dropdown with validation results */}
+          <div className="relative mt-1">
+            <div className="absolute z-10 w-full p-2 bg-white border rounded-lg shadow-lg border-neutral-200">
+              {!editValue ? (
+                // Empty state prompt
+                <div className="flex items-center px-3 py-2 text-sm text-gray-500">
+                  Enter a wallet address or ENS name
+                </div>
+              ) : isValidAddress ? (
+                // Valid address/ENS result
+                <button onClick={handleSetAddress}>
+                  <div className="flex items-center flex-1">
+                    <div className="relative flex items-center group">
+                      <div
+                        className={`relative w-8 h-8 mr-3 overflow-hidden border border-gray-200 rounded-full x`}
+                      >
+                        <div className="flex items-center justify-center w-full h-full text-gray-400">
+                          {ensAvatar ? (
+                            <Image
+                              src={ensAvatar}
+                              alt={displayName || "Admin"}
+                              width={32}
+                              height={32}
+                            />
+                          ) : (
+                            <Image
+                              src="/images/admin-default.svg"
+                              alt="Admin"
+                              width={32}
+                              height={32}
+                            />
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col">
+                      <div className="flex items-center">
+                        <div className="font-medium text-gray-900">
+                          {displayName}
+                        </div>
+                        {isCurrentUser && (
+                          <span className="px-2 py-0.5 ml-2 text-xs font-normal leading-4 text-neutral-900 bg-white border border-gray-200 rounded">
+                            You
+                          </span>
+                        )}
+                      </div>
+                      <div className="text-xs font-normal leading-4 text-gray-500">
+                        {resolvedAddress || editValue}
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              ) : (
+                // Invalid input error
+                <div className="flex items-center px-3 py-2 text-sm text-red-500">
+                  <Icon
+                    icon="ph:warning-circle-fill"
+                    className="w-4 h-4 mr-2"
+                  />
+                  Invalid Address
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      ) : (
+        // MAIN ROW DISPLAY
+        <>
+          {/* Admin info (avatar, name, address) */}
+          <div className="flex items-center flex-1">
+            <button
+              onClick={() => setEditingIndex(index)}
+              className="relative flex items-center group"
+            >
+              <div
+                className={`relative w-8 h-8 mr-3 overflow-hidden border border-gray-200 rounded-full ${
+                  isEditHovering ? "bg-gray-50" : "bg-white"
+                }`}
+              >
+                <div className="flex items-center justify-center w-full h-full text-gray-400">
+                  {isEditHovering ? (
+                    <Icon icon="clarity:edit-solid" width="16" />
+                  ) : ensAvatar ? (
+                    <Image
+                      src={ensAvatar}
+                      alt={displayName || "Admin"}
+                      width={32}
+                      height={32}
+                    />
+                  ) : (
+                    <Image
+                      src="/images/admin-default.svg"
+                      alt="Admin"
+                      width={32}
+                      height={32}
+                    />
+                  )}
+                </div>
+              </div>
+            </button>
+
+            <div className="flex flex-col">
+              {/* Display name and "You" badge */}
+              <div className="flex items-center">
+                <div className="font-medium text-gray-900">{displayName}</div>
+                {isCurrentUser && (
+                  <span className="px-2 py-0.5 ml-2 text-xs font-normal leading-4 text-neutral-900 bg-white border border-gray-200 rounded">
+                    You
+                  </span>
+                )}
+              </div>
+              {/* Resolved address */}
+              <div className="text-xs font-normal leading-4 text-gray-500">
+                {resolvedAddress || editValue}
+              </div>
+            </div>
+          </div>
+
+          {/* Delete button */}
+          {totalAdmins > 1 && (
+            <Icon
+              icon="ph:trash"
+              className="w-5 h-5 text-gray-400 transition-colors cursor-pointer hover:text-red-500"
+              onClick={() => onDelete(index, displayName)}
+            />
+          )}
+        </>
+      )}
+    </div>
+  );
+}
