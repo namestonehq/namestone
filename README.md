@@ -4,6 +4,8 @@
 </picture>
 </p>
 
+[![Tests Status](https://github.com/namestonehq/namestone/actions/workflows/install-and-build_app.yml/badge.svg?branch=main)](https://github.com/namestonehq/namestone/actions/workflows/install-and-build_app.yml)
+
 ## Table of contents
 
 - <a href="#about">What is Namestone?</a>
