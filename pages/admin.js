@@ -602,6 +602,8 @@ export default function Admin() {
                     totalAdmins={admins.length}
                     editingIndex={editingIndex}
                     setEditingIndex={setEditingIndex}
+                    admins={admins}
+                    setAdmins={setAdmins}
                   />
                 ))}
               </div>
@@ -635,8 +637,8 @@ export default function Admin() {
         onConfirm={confirmDeleteAdmin}
         title="Delete connected wallet as admin?"
       >
-        {adminToDelete.displayName} will not have access to the admin panel.
-        Access to admin can be requested again from another admin or
+        <b>{adminToDelete.displayName} </b>will not have access to the admin
+        panel. Access to admin can be requested again from another admin or
         alex@namestone.xyz.
       </ConfirmationModal>
     </AuthContentContainer>
@@ -725,29 +727,43 @@ function AdminRow({
   totalAdmins,
   editingIndex,
   setEditingIndex,
+  admins,
+  setAdmins,
 }) {
   const { data: session } = useSession();
   const [isEditHovering, setIsEditHovering] = useState(false);
-
-  // Get initial ENS name for the address
-  const { data: initialEnsName } = useEnsName({ address });
-
   const [editValue, setEditValue] = useState("");
 
-  useEffect(() => {
-    setEditValue(initialEnsName || address);
-  }, [initialEnsName, address]);
+  // Update ENS resolution hooks to use mainnet
+  const { data: initialEnsName } = useEnsName({
+    address,
+    chainId: 1, // Force mainnet
+  });
 
-  // ENS resolution hooks
+  // Set editValue to ENS name when it loads
+  useEffect(() => {
+    if (initialEnsName) {
+      setEditValue(initialEnsName);
+    } else {
+      setEditValue(address);
+    }
+  }, [initialEnsName]);
+
   const { data: ensNameFromAddress } = useEnsName({
     address: isAddress(editValue) ? editValue : undefined,
+    chainId: 1, // Force mainnet
   });
+
   const { data: ensAddress } = useEnsAddress({
     name: editValue?.endsWith(".eth") ? editValue : undefined,
+    chainId: 1, // Force mainnet
   });
 
   const ensName = editValue?.endsWith(".eth") ? editValue : ensNameFromAddress;
-  const { data: ensAvatar } = useEnsAvatar({ name: ensName });
+  const { data: ensAvatar } = useEnsAvatar({
+    name: ensName,
+    chainId: 1, // Force mainnet
+  });
 
   const isValidAddress = editValue && (isAddress(editValue) || ensAddress);
   const resolvedAddress =
@@ -795,6 +811,12 @@ function AdminRow({
             />
             <button
               onClick={() => {
+                // If this is a new row (empty address) and we're canceling, remove it
+                if (!address) {
+                  let tempAdmins = [...admins];
+                  tempAdmins.splice(index, 1);
+                  setAdmins(tempAdmins);
+                }
                 setEditingIndex(null);
                 setIsEditHovering(false);
                 // Reset editValue back to initial value
@@ -877,11 +899,11 @@ function AdminRow({
         // MAIN ROW DISPLAY
         <>
           {/* Admin info (avatar, name, address) */}
-          <div className="flex items-center flex-1">
-            <button
-              onClick={() => setEditingIndex(index)}
-              className="relative flex items-center group"
-            >
+          <div
+            className="flex items-center flex-1 cursor-pointer"
+            onClick={() => setEditingIndex(index)}
+          >
+            <button className="relative flex items-center group">
               <div
                 className={`relative w-8 h-8 mr-3 overflow-hidden border border-gray-200 rounded-full ${
                   isEditHovering ? "bg-gray-50" : "bg-white"
