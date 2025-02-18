@@ -17,6 +17,7 @@ import { useSession } from "next-auth/react";
 import { useEffect } from "react";
 import { Toaster } from "react-hot-toast";
 import Head from "next/head";
+import { createConfig, mainnetClient } from "wagmi";
 
 const queryClient = new QueryClient();
 
@@ -42,6 +43,17 @@ const config = getDefaultConfig({
     ),
   },
 });
+
+// Add mainnet-specific client configuration
+const mainnetConfig = {
+  ...config,
+  chains: [mainnet],
+  transports: {
+    [mainnet.id]: http(
+      `https://eth-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_API_KEY}`
+    ),
+  },
+};
 
 // If loading a variable font, you don't need to specify the font weight
 const inter = Inter({ subsets: ["latin"] });
