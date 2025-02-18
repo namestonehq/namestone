@@ -756,11 +756,11 @@ function AdminRow({
   });
 
   const { data: ensAddress } = useEnsAddress({
-    name: editValue?.endsWith(".eth") ? editValue : undefined,
+    name: editValue?.includes(".") ? editValue : undefined,
     chainId: 1, // Force mainnet
   });
 
-  const ensName = editValue?.endsWith(".eth") ? editValue : ensNameFromAddress;
+  const ensName = editValue?.includes(".") ? editValue : ensNameFromAddress;
   const { data: ensAvatar } = useEnsAvatar({
     name: ensName,
     chainId: 1, // Force mainnet
