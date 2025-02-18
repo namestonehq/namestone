@@ -1,7 +1,6 @@
 import postgres from "postgres";
 import dotenv from 'dotenv';
 
-
 dotenv.config();
 
 console.log("postgres-seed.js, seeding database at ", process.env.POSTGRES_URI);
@@ -227,7 +226,7 @@ async function main() {
 
     const secondaryDomain = await createDomain(network, domains.SECONDARY);
     await createSubdomains(secondaryDomain, SUBDOMAINS[network.toUpperCase()].SECONDARY);
-=======
+
 const TEST_ADDRESSES = {
   1: "0x1234567890123456789012345678901234567891",
   2: "0x1234567890123456789012345678901234567892",
