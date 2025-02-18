@@ -311,10 +311,11 @@ export default function Admin() {
     setDeleteAdminModalOpen(false);
   }
   function changeAdmin(index, address) {
-    let tempAdmins = admins;
-    tempAdmins.splice(index, 1);
-    tempAdmins[index] = address;
-    setAdmins([...tempAdmins]);
+    setAdmins((prevAdmins) => {
+      const newAdmins = [...prevAdmins];
+      newAdmins[index] = address;
+      return newAdmins;
+    });
     setSaveSettingsDisabled(false);
   }
   function saveSettings() {
