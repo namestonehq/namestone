@@ -4,17 +4,31 @@
 </picture>
 </p>
 
-[![Tests Status](https://github.com/namestonehq/namestone/actions/workflows/install-and-build_app.yml/badge.svg?branch=main)](https://github.com/namestonehq/namestone/actions/workflows/install-and-build_app.yml)
+<div align="center">
+  <h1>NameStone</h1>
+  <p>Forging Community Identity</p>
+  <p>
+    <a href="https://namestone.com">Official Website</a> |
+    <a href="https://namestone.com/docs">Documentation</a>
+  </p>
+</div>
 
 ## Table of contents
 
 - <a href="#about">What is Namestone?</a>
 - <a href="#how-it-works">How it works</a>
 - <a href="#getting-started">Getting Started</a>
+- <a href="#tests">Tests</a>
 
 <h2 id="about">What is Namestone?</h2>
 
-Namestone is a web3 identity management platform that enables domain owners to create and manage subdomains using ENS (Ethereum Name Service) wildcard resolution. It allows domain owners to programmatically create and manage subdomains for their users, making it easier to build identity and naming systems on Ethereum.
+Namestone is a web3 identity management platform that enables domain owners to create and manage subdomains using ENS (Ethereum Name Service) wildcard resolution. Our API is trusted by Web3 businesses and developers for seamless, gasless subdomain management and issuance.
+
+Key Features:
+- 🚀 Zero gas fees for subdomain creation
+- 💻 No-code Admin Panel for easy management
+- 🔌 REST API and QuickStart SDK integration
+- ⚡ Supports ENS resolution on Sepolia and Mainnet
 
 <h2 id="how-it-works">How it works</h2>
 
@@ -36,7 +50,6 @@ This approach provides several benefits:
 ## Getting Started
 
 ### Prerequisites
-
 #### Node.js and Yarn
 - [Node.js](https://nodejs.org/en/download/)
 - [Yarn](https://yarnpkg.com/getting-started/install)
@@ -97,6 +110,14 @@ cp .env.example .env
 ```
 
 Edit the `.env` file with your own values.
+
+(Optional) Get a WalletConnect Project ID:
+If you plan to use WalletConnect features:
+- Visit [WalletConnect Cloud](https://cloud.walletconnect.com/)
+- Sign up or log in
+- Create a new project
+- Copy the Project ID
+- Add it to your `.env` file as `NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID`
 
 3. Push the database migrations to the database:
 
