@@ -11,7 +11,11 @@ export default async function handler(req, res) {
 
   let adminData = JSON.parse(req.body).brandData;
 
-  if (!adminData.admins || !adminData.domain_id || !adminData.public_domain) {
+  if (
+    !adminData.admins ||
+    !adminData.domain_id ||
+    adminData.public_domain == undefined
+  ) {
     return res.status(400).json({ error: "something went wrong" });
   }
 

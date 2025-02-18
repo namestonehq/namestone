@@ -50,7 +50,6 @@ This approach provides several benefits:
 ## Getting Started
 
 ### Prerequisites
-
 #### Node.js and Yarn
 - [Node.js](https://nodejs.org/en/download/)
 - [Yarn](https://yarnpkg.com/getting-started/install)

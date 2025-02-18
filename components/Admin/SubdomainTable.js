@@ -3,6 +3,7 @@ import Link from "next/link";
 import { shortenAddress } from "../../utils/FrontUtils";
 import { Dialog } from "@headlessui/react";
 import { useState } from "react";
+import ConfirmationModal from "./ConfirmationModal";
 
 export default function SubdomainTable({
   subdomains,
@@ -14,50 +15,25 @@ export default function SubdomainTable({
 
   return (
     <>
-      <Dialog
-        className="relative z-50"
-        open={showModal !== null}
+      <ConfirmationModal
+        isOpen={showModal !== null}
         onClose={() => setShowModal(null)}
+        onConfirm={() => {
+          deleteName(showModal.name);
+          setShowModal(null);
+        }}
+        title="Are you sure?"
       >
-        {/* The backdrop, rendered as a fixed sibling to the panel container */}
-        <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
-
-        <div className="fixed inset-0 flex items-center justify-center p-4">
-          <Dialog.Panel className="w-full max-w-sm px-6 py-4 bg-white rounded-xl">
-            <Dialog.Title className="text-base font-bold text-brownblack-700">
-              Are you sure?
-            </Dialog.Title>
-            <Dialog.Description className="mt-4 text-left">
-              This will remove{" "}
-              <span className="font-bold">
-                {showModal?.name}.{showModal?.domain}
-              </span>{" "}
-              from{" "}
-              <span className="font-bold">
-                {shortenAddress(showModal?.address || "")}
-              </span>{" "}
-              and they will have to claim a new subdomain.
-            </Dialog.Description>
-            <div className="flex mt-6 items-left">
-              <button
-                className="px-6 py-2 mr-6 rounded-lg outline outline-1 outline-brownblack-100 text-brownblack-700 hover:bg-brownblack-20"
-                onClick={() => setShowModal(null)}
-              >
-                Cancel
-              </button>
-              <button
-                className="px-6 py-2 text-white bg-red-500 rounded-lg hover:bg-red-600"
-                onClick={() => {
-                  deleteName(showModal.name);
-                  setShowModal(null);
-                }}
-              >
-                Delete
-              </button>
-            </div>
-          </Dialog.Panel>
-        </div>
-      </Dialog>
+        This will remove{" "}
+        <span className="font-bold">
+          {showModal?.name}.{showModal?.domain}
+        </span>{" "}
+        from{" "}
+        <span className="font-bold">
+          {shortenAddress(showModal?.address || "")}
+        </span>{" "}
+        and they will have to claim a new subdomain.
+      </ConfirmationModal>
 
       <div className="w-full h-full overflow-x-auto border rounded-lg border-1 border-neutral-200">
         <table className="min-w-full divide-y divide-neutral-200">
