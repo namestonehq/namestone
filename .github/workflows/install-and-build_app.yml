@@ -1,4 +1,4 @@
-name: Run install and build on new PRs
+name: Build app and run API tests
 run-name: ${{ github.actor }} is testing out GitHub Actions
 on:
   pull_request:
