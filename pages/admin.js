@@ -605,6 +605,7 @@ export default function Admin() {
                     setEditingIndex={setEditingIndex}
                     admins={admins}
                     setAdmins={setAdmins}
+                    network={selectedBrand.network}
                   />
                 ))}
               </div>
@@ -730,40 +731,34 @@ function AdminRow({
   setEditingIndex,
   admins,
   setAdmins,
+  network,
 }) {
   const { data: session } = useSession();
   const [isEditHovering, setIsEditHovering] = useState(false);
   const [editValue, setEditValue] = useState("");
 
-  // Update ENS resolution hooks to use mainnet
+  // Update ENS resolution hooks to use the correct network
+  const chainId = network === "mainnet" ? 1 : 11155111; // 11155111 is Sepolia's chain ID
+
   const { data: initialEnsName } = useEnsName({
     address,
-    chainId: 1, // Force mainnet
+    chainId,
   });
-
-  // Set editValue to ENS name when it loads
-  useEffect(() => {
-    if (initialEnsName) {
-      setEditValue(initialEnsName);
-    } else {
-      setEditValue(address);
-    }
-  }, [initialEnsName]);
 
   const { data: ensNameFromAddress } = useEnsName({
     address: isAddress(editValue) ? editValue : undefined,
-    chainId: 1, // Force mainnet
+    chainId,
   });
 
   const { data: ensAddress } = useEnsAddress({
     name: editValue?.includes(".") ? editValue : undefined,
-    chainId: 1, // Force mainnet
+    chainId,
   });
 
   const ensName = editValue?.includes(".") ? editValue : ensNameFromAddress;
   const { data: ensAvatar } = useEnsAvatar({
     name: ensName,
-    chainId: 1, // Force mainnet
+    chainId,
   });
 
   const isValidAddress = editValue && (isAddress(editValue) || ensAddress);
