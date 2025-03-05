@@ -6,6 +6,8 @@ import { useSession } from "next-auth/react";
 import { Listbox, Dialog } from "@headlessui/react";
 import { Icon } from "@iconify/react";
 import Button from "../components/Button";
+import { v4 as uuidv4 } from "uuid";
+import toast from "react-hot-toast";
 
 export default function SuperAdmin() {
   const { data: session, status: authStatus } = useSession();
@@ -76,27 +78,14 @@ export default function SuperAdmin() {
           }
         })
       );
-    } else if (selectedTab === "admins") {
-      fetch(
-        "/api/admin/get-domain-admins?" +
-          new URLSearchParams({ domain: selectedBrand?.domain })
-      ).then((res) =>
-        res.json().then((data) => {
-          if (res.status === 200) {
-            setBrandData(data);
-            setDataLoading(false);
-          } else {
-            console.log(data);
-          }
-        })
-      );
     } else if (selectedTab === "api_key") {
       fetch(
         "/api/admin/get-api-key?" +
-          new URLSearchParams({ domain: selectedBrand?.domain })
+          new URLSearchParams({ domain_id: selectedBrand?.domain_id })
       ).then((res) =>
         res.json().then((data) => {
           if (res.status === 200) {
+            data.domain_id = selectedBrand?.domain_id;
             setBrandData(data);
             setDataLoading(false);
           } else {
@@ -182,43 +171,17 @@ export default function SuperAdmin() {
     setSaveDisabled(false);
   }
 
-  // admins
-  function addAdmin() {
-    setBrandData((prevState) => {
-      return {
-        domain_id: prevState.domain_id,
-        admins: [...prevState.admins, ""],
-      };
-    });
-    setSaveDisabled(false);
-  }
-  function deleteAdmin(index) {
-    let admins = brandData.admins;
-    admins.splice(index, 1);
-    setBrandData((prevState) => {
-      return { domain_id: prevState.domain_id, admins: admins };
-    });
-    setSaveDisabled(false);
-  }
-  function changeAdmin(index, address) {
-    let admins = brandData.admins;
-    admins[index] = address;
-    setBrandData((prevState) => {
-      return { domain_id: prevState.domain_id, admins: admins };
-    });
-    setSaveDisabled(false);
-  }
-
   function saveChanges() {
     let url;
     if (selectedTab === "brand_info") {
       url = "/api/admin/save-brand-info";
     } else if (selectedTab === "domain_info") {
       url = "/api/admin/save-domain-info";
-    } else if (selectedTab === "admins") {
-      url = "/api/admin/save-admins";
     } else if (selectedTab === "api_key") {
       url = "/api/admin/save-api-key";
+      if (!brandData.domain_id && selectedBrand) {
+        brandData.domain_id = selectedBrand.domain_id;
+      }
     }
     setSavePending(true);
     fetch(url, {
@@ -231,6 +194,11 @@ export default function SuperAdmin() {
         res.json().then((json) => {
           setSavePending(false);
           setSaveDisabled(true);
+
+          // Add toast notification for successful API key save
+          if (res.status === 200 && selectedTab === "api_key") {
+            toast.success("API key saved successfully");
+          }
         });
       })
       .catch((err) => {
@@ -326,14 +294,6 @@ export default function SuperAdmin() {
             >
               {" "}
               Domain Information
-            </div>
-            <div
-              onClick={() => changeTab("admins")}
-              className={`px-2 py-1 text-sm rounded-md cursor-pointer hover:bg-brownblack-20 ${
-                selectedTab === "admins" ? "bg-brownblack-20" : ""
-              }`}
-            >
-              Admins
             </div>
             <div
               onClick={() => changeTab("api_key")}
@@ -591,40 +551,6 @@ export default function SuperAdmin() {
             </div>
           </div>
         )}
-        {/* Admins */}
-        {!dataLoading && selectedTab === "admins" && (
-          <div className="flex-col items-start w-full p-6">
-            <div className="mb-1 text-base font-bold text-brownblack-700">
-              Domain Admins
-            </div>
-            <div className="mb-4 text-sm text-brownblack-700">
-              Wallets that have access to the admin page for this brand
-            </div>
-            {brandData?.admins &&
-              brandData.admins.map((address, index) => (
-                <div
-                  key={index}
-                  className="flex items-center justify-start mb-4"
-                >
-                  <input
-                    className="w-[80%] px-4 py-2 border rounded-md border-brownblack-50"
-                    value={address}
-                    onChange={(e) => changeAdmin(index, e.target.value)}
-                  />
-                  <Icon
-                    icon="bi:trash"
-                    className="w-6 h-6 mx-4 text-red-500 cursor-pointer"
-                    onClick={() => deleteAdmin(index)}
-                  />
-                </div>
-              ))}
-            <Button
-              buttonText="Add Admin"
-              className={"mb-8"}
-              onClick={addAdmin}
-            />
-          </div>
-        )}
         {/* API Key */}
         {!dataLoading && selectedTab === "api_key" && (
           <div className="flex-col items-start w-full p-6">
@@ -639,10 +565,38 @@ export default function SuperAdmin() {
                 <div className="mb-2 text-sm font-bold text-brownblack-500">
                   Key
                 </div>
-                <input
-                  className="w-[80%] px-4 py-2 border rounded-md border-brownblack-50"
-                  value={brandData?.api_key}
-                  onChange={(e) => changeBrandData("api_key", e.target.value)}
+                <div className="flex items-center w-full mb-4">
+                  <input
+                    className="w-full px-4 py-2 border rounded-md border-brownblack-50"
+                    value={brandData?.api_key}
+                    onChange={(e) => changeBrandData("api_key", e.target.value)}
+                  />
+                  <div
+                    className="flex items-center justify-center w-10 h-10 ml-2 text-white bg-orange-600 rounded-md cursor-pointer hover:bg-orange-700"
+                    onClick={() => {
+                      // Generate a UUID v4 for the API key
+                      const randomKey = uuidv4();
+                      changeBrandData("api_key", randomKey);
+                    }}
+                    title="Generate New Key"
+                  >
+                    <Icon icon="mdi:refresh" className="w-5 h-5" />
+                  </div>
+                </div>
+              </>
+            )}
+            {!brandData?.api_key && (
+              <>
+                <div className="mb-2 text-sm font-bold text-brownblack-500">
+                  No API key found. Generate one?
+                </div>
+                <Button
+                  buttonText="Generate API Key"
+                  onClick={() => {
+                    // Generate a UUID v4 for the API key
+                    const randomKey = uuidv4();
+                    changeBrandData("api_key", randomKey);
+                  }}
                 />
               </>
             )}
