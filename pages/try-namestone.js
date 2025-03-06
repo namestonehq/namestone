@@ -458,7 +458,7 @@ const SideText = () => (
       </div>
       <div className="flex gap-3">
         <div className="w-6 h-6 rounded-full bg-neutral-200">3</div>
-        <div>Update the name's resolver</div>
+        <div>Update the name&apos;s resolver</div>
       </div>
       <div className="flex gap-3">
         <div className="w-6 h-6 rounded-full bg-neutral-200">4</div>
