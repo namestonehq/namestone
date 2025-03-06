@@ -18,18 +18,12 @@ import Link from "next/link";
 import namestoneIcon from "../public/images/namestone-icon.svg";
 import { useSession } from "next-auth/react";
 import { useAccount, useSwitchChain } from "wagmi";
-import { addEnsContracts, ensSubgraphActions } from "@ensdomains/ensjs";
-import { setResolver } from "@ensdomains/ensjs/wallet";
+import { updateResolver } from "../utils/FrontUtils";
 
 export const providerUrl =
   "https://eth-mainnet.g.alchemy.com/v2/" +
   process.env.NEXT_PUBLIC_ALCHEMY_API_KEY; // replace with your actual project ID
 export const sepoliaProviderUrl = `https://eth-sepolia.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_API_KEY}`;
-
-const HYBRID_RESOLVER = "0xA87361C4E58B619c390f469B9E6F27d759715125";
-const SEPOOLIA_RESOLVER = "0x467893bFE201F8EfEa09BBD53fB69282e6001595";
-const NAMEWRAPPER = "0xD4416b13d2b3a9aBae7AcD5D6C2BbDBE25686401";
-const NAMEWRAPPER_SEPOLIA = "0x0635513f179D50A207757E05759CbD106d7dFcE8";
 
 export default function TryNamestone() {
   const { status: authStatus } = useSession();
@@ -59,6 +53,7 @@ export default function TryNamestone() {
       ? filteredDomainList[0]
       : null;
   const validResolver = selectedDomain?.validResolver;
+  const resolverStatus = selectedDomain?.resolverStatus || "invalid";
 
   useEffect(() => {
     if (
@@ -143,73 +138,62 @@ export default function TryNamestone() {
       });
   };
 
-  async function updateResolver() {
+  async function handleUpdateResolver() {
     if (fullyConnected) {
-      if (!walletClient) {
-        return;
-      }
-      const correctResolver =
-        network === "Mainnet" ? HYBRID_RESOLVER : SEPOOLIA_RESOLVER;
-      const correctNameWrapper =
-        network === "Mainnet" ? NAMEWRAPPER : NAMEWRAPPER_SEPOLIA;
-      const correctNetwork = network === "Mainnet" ? mainnet : sepolia;
-      // Call switchNetwork and wait a moment for it to take effect
-      switchChain(correctNetwork.id);
-
-      // Wait for 2 seconds to allow the network switch to propagate
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      if (selectedDomain?.resolver !== correctResolver) {
-        const wallet = createWalletClient({
-          chain: addEnsContracts(correctNetwork),
-          transport: custom(walletClient.transport),
-        });
-        console.log(wallet);
-        try {
-          setResolverButtonText("Waiting for approval...");
-          //TODO: get text records from domain
-          // const domainInfo = await getOnchainDomainInfo(domain);
-          // setSavedDomainInfo(domainInfo);
-          const hash = await setResolver(wallet, {
-            name: selectedDomain?.name,
-            contract:
-              selectedDomain?.owner === correctNameWrapper
-                ? "nameWrapper"
-                : "registry",
-            resolverAddress: correctResolver,
-            account: address,
-          });
-          setResolverButtonText("Pending");
-          try {
-            const client = createPublicClient({
-              transport: http(
-                network === "Mainnet" ? providerUrl : sepoliaProviderUrl || ""
-              ),
-            });
-            const transaction = await client.waitForTransactionReceipt({
-              hash,
-            });
-            setResolverButtonText("Success");
-            setChangeResolver((changeResolver) => {
-              changeResolver + 1;
-            });
-          } catch (e) {
-            console.log(e);
-            setResolverButtonText("Failed to update");
-            setTimeout(() => {
-              setResolverButtonText("Update");
-            }, 1500);
-          }
-        } catch (e) {
-          console.log(e);
-          setResolverButtonText("Failed");
-          setTimeout(() => {
-            setResolverButtonText("Update");
-          }, 1500);
-        }
-      }
+      await updateResolver({
+        walletClient,
+        selectedDomain,
+        network,
+        address,
+        setResolverButtonText,
+        setChangeResolver,
+        switchChain,
+      });
     }
   }
+
+  const getResolverStatusIcon = () => {
+    if (!selectedDomain) return null;
+
+    switch (resolverStatus) {
+      case "latest":
+        return (
+          <Image
+            src={SuccessIcon}
+            alt="success"
+            width={20}
+            height={20}
+            className="w-5 h-5"
+          />
+        );
+      case "old":
+        return (
+          <div
+            className="flex items-center justify-center w-5 h-5"
+            title="Using an older compatible resolver. We recommend updating to the latest version."
+          >
+            <Image
+              src={SuccessIcon}
+              alt="success"
+              width={20}
+              height={20}
+              className="w-5 h-5"
+            />
+          </div>
+        );
+      case "invalid":
+      default:
+        return (
+          <Image
+            src={XIcon}
+            alt="X"
+            width={20}
+            height={20}
+            className="w-5 h-5"
+          />
+        );
+    }
+  };
 
   return (
     <div className="flex justify-center bg-neutral-50">
@@ -361,7 +345,10 @@ export default function TryNamestone() {
                                 {filteredDomainList.map((domain, index) => (
                                   <div
                                     key={index}
-                                    onClick={() => setDomainInput(domain.name)}
+                                    onClick={() => {
+                                      setDomainInput(domain.name);
+                                      console.log(domain);
+                                    }}
                                     className="h-10 px-4 py-2 text-left border-b cursor-pointer border-neutral-300 hover:bg-neutral-100 overflow-ellipsis"
                                   >
                                     {domain.name}
@@ -388,24 +375,7 @@ export default function TryNamestone() {
                   >
                     Update Resolver
                   </label>
-                  {!validResolver && (
-                    <Image
-                      src={XIcon}
-                      alt="X"
-                      width={20}
-                      height={20}
-                      className="w-5 h-5"
-                    />
-                  )}
-                  {validResolver && (
-                    <Image
-                      src={SuccessIcon}
-                      alt="success"
-                      width={20}
-                      height={20}
-                      className="w-5 h-5"
-                    />
-                  )}
+                  {getResolverStatusIcon()}
                 </div>
                 <div className="flex justify-start w-full px-4 py-2 text-xs border border-solid rounded-lg border-brownblack-200">
                   {selectedDomain
@@ -414,8 +384,10 @@ export default function TryNamestone() {
                 </div>
                 <div className="flex w-full my-4">
                   <button
-                    onClick={updateResolver}
-                    disabled={validResolver || selectedDomain === null}
+                    onClick={handleUpdateResolver}
+                    disabled={
+                      resolverStatus === "latest" || selectedDomain === null
+                    }
                     className="px-6 py-2 font-bold rounded-lg bg-neutral-200 hover:bg-neutral-300 active:bg-neutral-400 disabled:bg-brownblack-300/[0.50]"
                   >
                     {resolverButtonText}
@@ -486,7 +458,7 @@ const SideText = () => (
       </div>
       <div className="flex gap-3">
         <div className="w-6 h-6 rounded-full bg-neutral-200">3</div>
-        <div>Update the name’s resolver</div>
+        <div>Update the name's resolver</div>
       </div>
       <div className="flex gap-3">
         <div className="w-6 h-6 rounded-full bg-neutral-200">4</div>

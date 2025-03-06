@@ -13,9 +13,17 @@ import AddNameModal from "../components/Admin/AddNameModal";
 import toast from "react-hot-toast";
 import _ from "lodash";
 import ConfirmationModal from "../components/Admin/ConfirmationModal";
-import { shortenAddress } from "../utils/FrontUtils";
-import { useEnsName, useEnsAvatar, useEnsAddress } from "wagmi";
+import { shortenAddress, updateResolver } from "../utils/FrontUtils";
+import {
+  useEnsName,
+  useEnsAvatar,
+  useEnsAddress,
+  useWalletClient,
+  useSwitchChain,
+} from "wagmi";
 import { isAddress } from "ethers/lib/utils";
+import ResolverAlertIcon from "../components/Admin/ResolverAlertIcon";
+import OwnershipRequiredModal from "../components/Admin/OwnershipRequiredModal";
 
 const blankNameData = {
   name: "",
@@ -55,6 +63,12 @@ export default function Admin() {
   });
   // Add new state to track which admin row is being edited
   const [editingIndex, setEditingIndex] = useState(null);
+  const { data: walletClient } = useWalletClient();
+  const { switchChain } = useSwitchChain();
+  const [resolverButtonText, setResolverButtonText] =
+    useState("Update Resolver");
+  const [changeResolver, setChangeResolver] = useState(0);
+  const [ownershipModalOpen, setOwnershipModalOpen] = useState(false);
 
   //funtion to help set current name data
   function setCurrentNameHelper(value, key1, key2 = undefined) {
@@ -357,6 +371,59 @@ export default function Admin() {
       setCurrentNameData(blankNameData);
     }
   }, [addNameModalOpen]);
+
+  // Update the handleUpdateResolver function to check ownership
+  const handleUpdateResolver = async () => {
+    if (!selectedBrand || !walletClient) return;
+
+    // Check if the connected wallet is the owner of the domain
+    const connectedAddress = session?.address?.toLowerCase();
+    const domainOwner = selectedBrand.owner?.toLowerCase();
+
+    if (connectedAddress !== domainOwner) {
+      // If not the owner, show the ownership required modal
+      setOwnershipModalOpen(true);
+      return;
+    }
+
+    // If owner, proceed with the update
+    await updateResolver({
+      walletClient,
+      selectedDomain: {
+        name: selectedBrand.domain,
+        resolver: selectedBrand.resolver,
+        owner: selectedBrand.owner,
+      },
+      network: selectedBrand.network === "mainnet" ? "Mainnet" : "Sepolia",
+      address: session?.address,
+      setResolverButtonText,
+      setChangeResolver,
+      switchChain,
+    });
+  };
+
+  // Add useEffect to refresh brand data when resolver is updated
+  useEffect(() => {
+    if (changeResolver > 0 && selectedBrand) {
+      // Refresh the brand data
+      fetch("/api/admin/allowed-brands").then((res) =>
+        res.json().then((data) => {
+          if (res.status === 200) {
+            setBrandUrls(data.brandUrls);
+            setBrandDict(data.brandDict);
+            // Keep the same selected brand but with updated data
+            const updatedBrand = data.brandDict[selectedBrand.url_slug];
+            if (updatedBrand) {
+              setSelectedBrand(updatedBrand);
+            }
+          } else {
+            console.log(data);
+          }
+        })
+      );
+    }
+  }, [changeResolver]);
+
   // if they haven't authenticated, they need to click connect
   if (authStatus !== "authenticated") {
     return (
@@ -402,6 +469,10 @@ export default function Admin() {
         nameErrorMsg={nameErrorMsg}
         addressErrorMsg={addressErrorMsg}
       />
+      <OwnershipRequiredModal
+        isOpen={ownershipModalOpen}
+        onClose={() => setOwnershipModalOpen(false)}
+      />
       {/*Left Bar*/}
       <div className="flex-grow flex-1 max-w-sm border-r-[1px] border-brownblack-20 ">
         <div className="ml-4 md:ml-16 mt-7">
@@ -435,7 +506,7 @@ export default function Admin() {
                       }`}
                       onClick={() => setSelectedBrand(brand)}
                     >
-                      <div className="flex  overflow-hidden rounded-full  w-[24px] h-[24px] mx-2">
+                      <div className="flex overflow-hidden rounded-full w-[24px] h-[24px] mx-2">
                         <Image
                           src={brand.default_avatar || placeholderImage}
                           width={24}
@@ -444,6 +515,11 @@ export default function Admin() {
                         />
                       </div>
                       <span className="hidden md:block">{brand.name}</span>
+                      {brand.resolverStatus === "incorrect" && (
+                        <div className="ml-auto mr-2">
+                          <ResolverAlertIcon className="w-4 h-4" />
+                        </div>
+                      )}
                     </div>
                   );
                 })}
@@ -479,7 +555,7 @@ export default function Admin() {
                       }`}
                       onClick={() => setSelectedBrand(brand)}
                     >
-                      <div className="flex  overflow-hidden rounded-full  w-[24px] h-[24px] mx-2">
+                      <div className="flex overflow-hidden rounded-full w-[24px] h-[24px] mx-2">
                         <Image
                           src={brand.default_avatar || placeholderImage}
                           width={24}
@@ -488,6 +564,11 @@ export default function Admin() {
                         />
                       </div>
                       <span className="hidden md:block">{brand.name}</span>
+                      {brand.resolverStatus === "incorrect" && (
+                        <div className="ml-auto mr-2">
+                          <ResolverAlertIcon className="w-4 h-4" />
+                        </div>
+                      )}
                     </div>
                   );
                 })}
@@ -498,6 +579,49 @@ export default function Admin() {
       {/*Main Content*/}
       <div className="flex-grow max-w-3xl flex-2">
         <div className="flex-col items-start w-full p-6">
+          {/* Resolver Alert */}
+          {selectedBrand?.hasResolverIssue && (
+            <div
+              className={`flex items-center justify-between w-full p-4 mb-4 rounded-lg ${
+                selectedBrand.resolverStatus === "incorrect"
+                  ? "bg-red-50"
+                  : "bg-orange-20"
+              }`}
+            >
+              <div className="flex items-center gap-2">
+                <ResolverAlertIcon
+                  color={
+                    selectedBrand.resolverStatus === "incorrect"
+                      ? "red"
+                      : "orange"
+                  }
+                />
+                <span>
+                  {selectedBrand.resolverStatus === "incorrect"
+                    ? "Resolver issue detected—please update to restore service."
+                    : "Your resolver is working but out of date."}
+                </span>
+              </div>
+              <button
+                onClick={handleUpdateResolver}
+                className={`px-4 py-1 text-sm font-medium ${
+                  resolverButtonText === "Success"
+                    ? "bg-green-500 text-white"
+                    : resolverButtonText === "Failed" ||
+                      resolverButtonText === "Failed to update"
+                    ? "bg-red-500 text-white"
+                    : "text-gray-700 bg-white border border-gray-300 hover:bg-gray-50"
+                } rounded-md transition-colors duration-300`}
+                disabled={
+                  resolverButtonText === "Waiting for approval..." ||
+                  resolverButtonText === "Pending"
+                }
+              >
+                {resolverButtonText}
+              </button>
+            </div>
+          )}
+
           {/* Brand Name */}
           <div className="flex items-center text-base font-bold text-brownblack-700">
             <div className="flex overflow-hidden rounded-full  w-[48px] h-[48px] mr-2">
@@ -949,7 +1073,10 @@ function AdminRow({
             <Icon
               icon="ph:trash"
               className="w-5 h-5 text-gray-400 transition-colors cursor-pointer hover:text-red-500"
-              onClick={() => onDelete(index, displayName)}
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete(index, displayName);
+              }}
             />
           )}
         </>

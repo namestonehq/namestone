@@ -35,7 +35,9 @@ const goodResolvers = [
   "0x2291053F49Cd008306b92f84a61c6a1bC9B5CB65",
   "0xA87361C4E58B619c390f469B9E6F27d759715125",
 ];
+const latestResolvers = ["0xA87361C4E58B619c390f469B9E6F27d759715125"];
 const goodSepoliaResolvers = ["0x467893bFE201F8EfEa09BBD53fB69282e6001595"];
+const latestSepoliaResolvers = ["0x467893bFE201F8EfEa09BBD53fB69282e6001595"];
 
 export default async function handler(req, res) {
   if (req.method !== "GET") {
@@ -81,19 +83,34 @@ export default async function handler(req, res) {
       ...filteredResult.map((item) => getResolver.batch({ name: item.name }))
     );
 
-    const enrichedData = filteredResult.map((item, index) => ({
-      name: item.name,
-      resolvedAddress: item.resolvedAddress,
-      parentName: item.parentName,
-      owner: item.owner,
-      createdAt: item.createdAt,
-      validResolver:
-        network == "Mainnet"
-          ? goodResolvers.includes(displayedData[index] || "")
-          : goodSepoliaResolvers.includes(displayedData[index] || ""),
-      expiryDate: item.expiryDate,
-      resolver: displayedData[index],
-    }));
+    const enrichedData = filteredResult.map((item, index) => {
+      const resolver = displayedData[index] || "";
+      const isMainnet = network === "Mainnet";
+      const validResolvers = isMainnet ? goodResolvers : goodSepoliaResolvers;
+      const latestResolverList = isMainnet
+        ? latestResolvers
+        : latestSepoliaResolvers;
+
+      let resolverStatus = "invalid";
+      if (validResolvers.includes(resolver)) {
+        resolverStatus = latestResolverList.includes(resolver)
+          ? "latest"
+          : "old";
+      }
+
+      return {
+        name: item.name,
+        resolvedAddress: item.resolvedAddress,
+        parentName: item.parentName,
+        owner: item.owner,
+        createdAt: item.createdAt,
+        validResolver: validResolvers.includes(resolver),
+        latestResolver: latestResolverList.includes(resolver),
+        resolverStatus: resolverStatus,
+        expiryDate: item.expiryDate,
+        resolver: resolver,
+      };
+    });
 
     res.status(200).json(enrichedData);
   } catch (error) {
