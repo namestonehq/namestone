@@ -208,21 +208,23 @@ export default function TryNamestone() {
         </Head>
 
         {/* Nav Bar */}
-        <div className="fixed z-40 flex flex-col w-full ">
-          <div className="flex w-full bg-gradient-to-r  h-[8px] from-[#FF8B36] to-[#FF4429]"></div>
-          <div className="flex justify-between w-full px-8 py-4 lg:px-32 backdrop-blur-sm">
-            <div className="flex items-center text-2xl font-bold">
-              <Link href="/" className="flex">
-                <Image
-                  className="h-[30px] mr-1  my-auto"
-                  priority
-                  src={namestoneIcon}
-                  alt="Forging Commmunity Identity"
-                />{" "}
-                <span className={`mr-1`}> NameStone </span>
-              </Link>
+        <div className="fixed z-40 flex flex-col w-full  max-w-[1536px] ">
+          <div className="flex w-full bg-gradient-to-r h-[8px] from-[#FF8B36] to-[#FF4429]"></div>
+          <div className="w-full backdrop-blur-sm">
+            <div className="flex justify-between w-full px-8 py-4 lg:px-32mx-auto">
+              <div className="flex items-center text-2xl font-bold">
+                <Link href="/" className="flex">
+                  <Image
+                    className="h-[30px] mr-1 my-auto"
+                    priority
+                    src={namestoneIcon}
+                    alt="Forging Commmunity Identity"
+                  />{" "}
+                  <span className={`mr-1`}> NameStone </span>
+                </Link>
+              </div>
+              <CustomConnectButton />
             </div>
-            <CustomConnectButton />
           </div>
         </div>
         {/* Form Section */}
