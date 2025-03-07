@@ -29,8 +29,8 @@ const blankNameData = {
   name: "",
   address: "",
   contenthash: "",
-  textRecords: [],
-  coinTypes: [],
+  text_records: [],
+  coin_types: [],
 };
 
 export default function Admin() {

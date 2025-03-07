@@ -106,9 +106,13 @@ export default async function handler(req, res) {
         "0xd17347fA0a6eeC89a226c96a9ae354F785e94241",
         "0x2291053F49Cd008306b92f84a61c6a1bC9B5CB65",
         "0xA87361C4E58B619c390f469B9E6F27d759715125",
+        "0xF142B308cF687d4358410a4cB885513b30A42025",
       ];
 
-      const latestResolvers = ["0xA87361C4E58B619c390f469B9E6F27d759715125"];
+      const latestResolvers = [
+        "0xA87361C4E58B619c390f469B9E6F27d759715125",
+        "0xF142B308cF687d4358410a4cB885513b30A42025",
+      ];
 
       let resolverStatus = "ok";
       if (!goodResolvers.includes(resolver)) {

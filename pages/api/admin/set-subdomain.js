@@ -4,7 +4,6 @@ import { getAdminToken } from "../../../utils/ServerUtils";
 
 export default async function handler(req, res) {
   const body = JSON.parse(req.body);
-
   const adminToken = await getAdminToken(req, body.domain);
   if (!adminToken) {
     return res
