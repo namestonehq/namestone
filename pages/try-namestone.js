@@ -19,10 +19,8 @@ import namestoneIcon from "../public/images/namestone-icon.svg";
 import { useSession } from "next-auth/react";
 import { useAccount, useSwitchChain } from "wagmi";
 import { updateResolver } from "../utils/FrontUtils";
-import sideMenuSvg from "../public/images/try-for-free-side-menu.svg";
-import keyIcon from "../public/images/try-for-free-key-icon.svg";
-import scriptIcon from "../public/images/try-for-free-script-icon-non-filled.svg";
-import scriptIconFilled from "../public/images/try-for-free-script-icon-filled.svg";
+import { SidePanel } from "../components/TryForFree/SidePanel";
+import { StylishVerticalDivider } from "../components/TryForFree/StylishVerticalDivider";
 
 export const providerUrl =
   "https://eth-mainnet.g.alchemy.com/v2/" +
@@ -48,7 +46,6 @@ export default function TryNamestone() {
   const [changeResolver, setChangeResolver] = useState(0);
   // fullyConnected means authenticated and connected
   const fullyConnected = isConnected && authStatus === "authenticated";
-  console.log(`[mendeleden-debug] fullyConnected: ${fullyConnected} --> is connected: ${isConnected} and auth status: ${authStatus}`);
   const [network, setNetwork] = useState("Mainnet");
   const { switchChain } = useSwitchChain();
 
@@ -214,7 +211,6 @@ export default function TryNamestone() {
 
         {/* Nav Bar */}
         <div className="fixed z-40 flex flex-col w-full max-w-[1536px]">
-          <div className="flex w-full bg-gradient-to-r h-[8px] from-[#FF8B36] to-[#FF4429]"></div>
           <div className="w-full backdrop-blur-sm">
             <div className="flex justify-between w-full px-8 py-4 lg:px-32">
               <div className="flex items-center text-2xl font-bold">
@@ -235,65 +231,12 @@ export default function TryNamestone() {
         
         {/* Main Content Area - Below Navbar */}
         <div className="flex w-full mt-[60px]">
-          {/* Side Panel - Desktop Only */}
-          <div className="hidden lg:block w-[494px] fixed left-1/2 transform -translate-x-[768px] h-[calc(100vh-60px)] z-10">
-            <div className="relative w-full h-full">
-              <Image 
-                src={sideMenuSvg} 
-                alt="Side Menu" 
-                className="absolute top-0 left-0 w-full h-full object-cover"
-                priority
-              />
-              <div className="relative z-10 flex flex-col items-start p-12 pt-16 text-left">
-                <div className="mt-8">
-                  <h2 className="text-xl font-semibold mb-6">Get Started</h2>
-                  
-                  <div className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 relative">
-                    {/* Connecting line that spans from first icon to second icon */}
-                    <div className="absolute left-[26px] top-[45px] w-[2px] h-[48px] bg-neutral-300 z-0"></div>
-                    
-                    {/* First Row - Key Icon and Text */}
-                    <div className="flex justify-center items-start">
-                      <Image
-                        src={keyIcon}
-                        alt="Key Icon"
-                        width={52}
-                        height={52}
-                      />
-                    </div>
-                    <div className="text-left">
-                      <h3 className="font-semibold">Get a key</h3>
-                      <p className="text-sm text-neutral-600">Configure domain and receive a key</p>
-                    </div>
-                    
-                    {/* Second Row - Empty space for the line */}
-                    <div className="h-[30px]"></div>
-                    <div></div> {/* Empty cell */}
-                    
-                    {/* Third Row - Script Icon and Text */}
-                    <div className="flex justify-center items-start">
-                      <div className="transition-all duration-300 ease-in-out">
-                        <Image
-                          src={scriptIconFilled}
-                          // src={!disableSend ? scriptIconFilled : scriptIcon}
-                          alt="Script Icon"
-                          width={52}
-                          height={52}
-                        />
-                      </div>
-                    </div>
-                    <div className="text-left">
-                      <h3 className="font-semibold">Create a subname</h3>
-                      <p className="text-sm text-neutral-600">Use your key to make a subname</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          <SidePanel disableSend={disableSend} />
+
+          <StylishVerticalDivider />
 
           {/* Form Section */}
-          <div className="relative flex justify-center w-full min-h-screen px-8 overflow-hidden text-center bg-white lg:ml-[494px]">
+          <div className="relative flex justify-center w-full min-h-screen px-8 overflow-hidden text-center bg-white lg:ml-[502px]">
             <div className="flex justify-center flex-col w-full lg:justify-between lg:mt-[80px] lg:px-32">
               {/* Background Image */}
               <Image
@@ -305,7 +248,7 @@ export default function TryNamestone() {
               {/* Main content */}
               <div className="z-10 flex flex-col items-center justify-start flex-1">
                 {/* Form Header - Mobile Only */}
-                <div className="flex flex-col items-center w-full max-w-md lg:hidden">
+                <div className="flex flex-col items-center w-full max-w-md">
                   <span className="mt-8 font-bold text-xl text-brownblack-700">
                     Get a free API Key
                   </span>
@@ -491,8 +434,6 @@ export default function TryNamestone() {
             </div>
           </div>
         </div>
-        {/* Footer */}
-        <Footer />
       </div>
     </div>
   );

@@ -40,20 +40,17 @@ const goodSepoliaResolvers = ["0x467893bFE201F8EfEa09BBD53fB69282e6001595"];
 const latestSepoliaResolvers = ["0x467893bFE201F8EfEa09BBD53fB69282e6001595"];
 
 export default async function handler(req, res) {
-  console.log(`[mendeleden-debug] get-domains called`);
   if (req.method !== "GET") {
     res.setHeader("Allow", ["GET"]);
     res.status(405).json({ error: "Method not allowed" });
     return;
   }
 
-  console.log(`[mendeleden-debug] get-domains called after method check`);
   const token = await getToken({ req });
   if (!token) {
     return res.status(401).json({ error: "Unauthorized. Please refresh." });
   }
 
-  console.log(`[mendeleden-debug] get-domains called after token check`);
   const address = token.sub;
 
   if (!address || !isAddress(address, { strict: false })) {
@@ -61,14 +58,10 @@ export default async function handler(req, res) {
     return;
   }
 
-  console.log(`[mendeleden-debug] get-domains called after address check`);
-
   if (!/^0x[a-fA-F0-9]{40}$/.test(address)) {
     res.status(400).json({ error: "Invalid address" });
     return;
   }
-
-  console.log(`[mendeleden-debug] get-domains called after address regex check`);
   // get network from url
   const network = req.query.network;
   if (!network) {
@@ -76,18 +69,13 @@ export default async function handler(req, res) {
     return;
   }
 
-  console.log(`[mendeleden-debug] get-domains called after network check`);
   try {
     const client = getNetworkClient(network);
-    console.log(`[mendeleden-debug] get-domains called after getNetworkClient`);
-    console.log(`[mendeleden-debug] calling client getNamesForAddress`);
     const result = await client.getNamesForAddress({
       address: address,
       pageSize: 1000,
     });
-    console.log(`results!`);
-    console.log(result);
-    console.log(`[mendeleden-debug] get-domains called after getNamesForAddress`);
+
     const filteredResult = result.filter((item) => item.name);
 
     const displayedData = await batch(
