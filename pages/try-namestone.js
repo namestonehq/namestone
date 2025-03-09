@@ -19,6 +19,10 @@ import namestoneIcon from "../public/images/namestone-icon.svg";
 import { useSession } from "next-auth/react";
 import { useAccount, useSwitchChain } from "wagmi";
 import { updateResolver } from "../utils/FrontUtils";
+import sideMenuSvg from "../public/images/try-for-free-side-menu.svg";
+import keyIcon from "../public/images/try-for-free-key-icon.svg";
+import scriptIcon from "../public/images/try-for-free-script-icon-non-filled.svg";
+import scriptIconFilled from "../public/images/try-for-free-script-icon-filled.svg";
 
 export const providerUrl =
   "https://eth-mainnet.g.alchemy.com/v2/" +
@@ -44,6 +48,7 @@ export default function TryNamestone() {
   const [changeResolver, setChangeResolver] = useState(0);
   // fullyConnected means authenticated and connected
   const fullyConnected = isConnected && authStatus === "authenticated";
+  console.log(`[mendeleden-debug] fullyConnected: ${fullyConnected} --> is connected: ${isConnected} and auth status: ${authStatus}`);
   const [network, setNetwork] = useState("Mainnet");
   const { switchChain } = useSwitchChain();
 
@@ -197,7 +202,7 @@ export default function TryNamestone() {
 
   return (
     <div className="flex justify-center bg-neutral-50">
-      <div className="w-full overflow-hidden flex flex-col max-w-[1536px]">
+      <div className="w-full overflow-hidden flex flex-col max-w-[1536px] relative">
         <Head>
           <title>Try for Free | Namestone</title>
           <meta
@@ -208,10 +213,10 @@ export default function TryNamestone() {
         </Head>
 
         {/* Nav Bar */}
-        <div className="fixed z-40 flex flex-col w-full  max-w-[1536px] ">
+        <div className="fixed z-40 flex flex-col w-full max-w-[1536px]">
           <div className="flex w-full bg-gradient-to-r h-[8px] from-[#FF8B36] to-[#FF4429]"></div>
           <div className="w-full backdrop-blur-sm">
-            <div className="flex justify-between w-full px-8 py-4 lg:px-32mx-auto">
+            <div className="flex justify-between w-full px-8 py-4 lg:px-32">
               <div className="flex items-center text-2xl font-bold">
                 <Link href="/" className="flex">
                   <Image
@@ -227,187 +232,262 @@ export default function TryNamestone() {
             </div>
           </div>
         </div>
-        {/* Form Section */}
-        <div className="relative flex justify-center w-full min-h-screen px-8 mt-16 overflow-hidden text-center bg-white lg:px-32">
-          <div className="flex justify-center w-full lg:justify-between lg:mt-[140px] ">
-            {/* Background Image */}
-            <Image
-              src={bgGraphic}
-              alt="Background Graphic"
-              className="absolute -z-6   h-[100%] right-20"
-            />
-            {/* side text */}
-            <div className="flex-1 hidden lg:flex">
-              <SideText />
-            </div>
-
-            {/* Main content */}
-
-            <div className="z-10 flex flex-col items-center justify-start flex-1 ">
-              <div className="flex flex-col items-start w-full max-w-md lg:hidden ">
-                <span className="mt-8 font-bold text-md text-brownblack-700">
-                  Get a free API Key
-                </span>
-                <div className="mb-6 text-sm text-center text-neutral-700">
-                  API key will be sent to your inbox.
-                </div>
-              </div>
-              <WhiteInput
-                labelText="Your Name"
-                placeholderText="e.g. Alex Slobodnik"
-                onChange={(e) => setNameInput(e.target.value)}
-                value={nameInput}
-                className={`bg-white`}
+        
+        {/* Main Content Area - Below Navbar */}
+        <div className="flex w-full mt-[60px]">
+          {/* Side Panel - Desktop Only */}
+          <div className="hidden lg:block w-[494px] fixed left-1/2 transform -translate-x-[768px] h-[calc(100vh-60px)] z-10">
+            <div className="relative w-full h-full">
+              <Image 
+                src={sideMenuSvg} 
+                alt="Side Menu" 
+                className="absolute top-0 left-0 w-full h-full object-cover"
+                priority
               />
-              <WhiteInput
-                labelText="Email"
-                placeholderText="e.g. youremail@email.com"
-                onChange={(e) => setEmailInput(e.target.value)}
-                value={emailInput}
-              />
-              {/* Select Domain + Resolver Box */}
-              <div className="w-full max-w-md px-4 pt-4 bg-white border rounded-lg shadow-lg ">
-                <div className="flex ">
-                  <div className="flex flex-col items-start w-full max-w-md mb-6">
-                    <div className="flex items-baseline justify-between w-full">
-                      <label
-                        htmlFor="name-input"
-                        className="mb-1 text-sm font-bold text-neutral-900"
-                      >
-                        Select Domain
-                      </label>
-                      {/* Toggle Network */}
-                      <div className="flex p-1 mt-2 mb-4 text-sm rounded-lg bg-neutral-200">
-                        <button
-                          onClick={() => {
-                            setNetwork("Mainnet");
-                            setDomainInput("");
-                          }}
-                          className={`px-4  rounded-lg transition ${
-                            network === "Mainnet"
-                              ? "bg-white shadow text-stone-900  py-1"
-                              : "bg-neutral-200"
-                          }`}
-                        >
-                          Mainnet
-                        </button>
-                        <button
-                          onClick={() => {
-                            setNetwork("Sepolia");
-                            setDomainInput("");
-                          }}
-                          className={`px-4 rounded-lg transition ${
-                            network === "Sepolia"
-                              ? "bg-white shadow text-black py-1"
-                              : "bg-neutral-200"
-                          }`}
-                        >
-                          Sepolia
-                        </button>
+              <div className="relative z-10 flex flex-col items-start p-12 pt-16 text-left">
+                <div className="mt-8">
+                  <h2 className="text-xl font-semibold mb-6">Get Started</h2>
+                  
+                  <div className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 relative">
+                    {/* Connecting line that spans from first icon to second icon */}
+                    <div className="absolute left-[26px] top-[45px] w-[2px] h-[48px] bg-neutral-300 z-0"></div>
+                    
+                    {/* First Row - Key Icon and Text */}
+                    <div className="flex justify-center items-start">
+                      <Image
+                        src={keyIcon}
+                        alt="Key Icon"
+                        width={52}
+                        height={52}
+                      />
+                    </div>
+                    <div className="text-left">
+                      <h3 className="font-semibold">Get a key</h3>
+                      <p className="text-sm text-neutral-600">Configure domain and receive a key</p>
+                    </div>
+                    
+                    {/* Second Row - Empty space for the line */}
+                    <div className="h-[30px]"></div>
+                    <div></div> {/* Empty cell */}
+                    
+                    {/* Third Row - Script Icon and Text */}
+                    <div className="flex justify-center items-start">
+                      <div className="transition-all duration-300 ease-in-out">
+                        <Image
+                          src={scriptIconFilled}
+                          // src={!disableSend ? scriptIconFilled : scriptIcon}
+                          alt="Script Icon"
+                          width={52}
+                          height={52}
+                        />
                       </div>
                     </div>
-
-                    <div className="relative w-full h-12">
-                      <div className="absolute flex-col w-full h-12">
-                        <div className="relative flex flex-1">
-                          <input
-                            type="text"
-                            id="select domain"
-                            placeholder={
-                              fullyConnected
-                                ? " slobo.eth"
-                                : " Connect Wallet to see domains"
-                            }
-                            onChange={(e) => setDomainInput(e.target.value)}
-                            value={domainInput}
-                            onFocus={() => {
-                              setDomainInputSelected(true);
-                            }}
-                            onBlur={() => {
-                              setTimeout(() => {
-                                setDomainInputSelected(false);
-                              }, 200);
-                            }}
-                            className="w-full h-10 p-4 border-neutral-300 border rounded-lg appearance-none focus:ring focus:ring-orange-400/[0.5] focus:outline-none"
-                            disabled={!fullyConnected}
-                          />
-                          <Image
-                            src={searchIcon}
-                            alt="search icon"
-                            width={24}
-                            height={24}
-                            className="absolute transform -translate-y-1/2 right-2 top-1/2"
-                          />
-                        </div>
-                        {/* Dropdown with domain list */}
-                        {domainInputSelected && (
-                          <div className="z-10 w-full max-w-md overflow-x-hidden overflow-y-scroll bg-white border rounded-lg shadow-lg max-h-40">
-                            {fullyConnected && (
-                              <>
-                                {filteredDomainList.map((domain, index) => (
-                                  <div
-                                    key={index}
-                                    onClick={() => {
-                                      setDomainInput(domain.name);
-                                      console.log(domain);
-                                    }}
-                                    className="h-10 px-4 py-2 text-left border-b cursor-pointer border-neutral-300 hover:bg-neutral-100 overflow-ellipsis"
-                                  >
-                                    {domain.name}
-                                  </div>
-                                ))}
-                                {filteredDomainList.length === 0 && (
-                                  <div className="h-10 px-4 py-2 text-left text-gray-400 border-b border-neutral-300">
-                                    No domains found
-                                  </div>
-                                )}
-                              </>
-                            )}
-                          </div>
-                        )}
-                      </div>
+                    <div className="text-left">
+                      <h3 className="font-semibold">Create a subname</h3>
+                      <p className="text-sm text-neutral-600">Use your key to make a subname</p>
                     </div>
                   </div>
                 </div>
-
-                <div className="flex justify-between w-full h-fit ">
-                  <label
-                    htmlFor="name-input"
-                    className="mb-2 text-sm font-bold text-neutral-900"
-                  >
-                    Update Resolver
-                  </label>
-                  {getResolverStatusIcon()}
-                </div>
-                <div className="flex justify-start w-full px-4 py-2 text-xs border border-solid rounded-lg border-brownblack-200">
-                  {selectedDomain
-                    ? selectedDomain.resolver
-                    : "Waiting for domain"}
-                </div>
-                <div className="flex w-full my-4">
-                  <button
-                    onClick={handleUpdateResolver}
-                    disabled={
-                      resolverStatus === "latest" || selectedDomain === null
-                    }
-                    className="px-6 py-2 font-bold rounded-lg bg-neutral-200 hover:bg-neutral-300 active:bg-neutral-400 disabled:bg-brownblack-300/[0.50]"
-                  >
-                    {resolverButtonText}
-                  </button>
-                </div>
               </div>
-              {errorMsg && (
-                <div className="h-6 mt-2 text-xs font-bold text-red-400">
-                  {errorMsg}
+            </div>
+          </div>
+
+          {/* Form Section */}
+          <div className="relative flex justify-center w-full min-h-screen px-8 overflow-hidden text-center bg-white lg:ml-[494px]">
+            <div className="flex justify-center flex-col w-full lg:justify-between lg:mt-[80px] lg:px-32">
+              {/* Background Image */}
+              <Image
+                src={bgGraphic}
+                alt="Background Graphic"
+                className="absolute -z-6 h-[100%] right-20"
+              />
+              
+              {/* Main content */}
+              <div className="z-10 flex flex-col items-center justify-start flex-1">
+                {/* Form Header - Mobile Only */}
+                <div className="flex flex-col items-center w-full max-w-md lg:hidden">
+                  <span className="mt-8 font-bold text-xl text-brownblack-700">
+                    Get a free API Key
+                  </span>
+                  <div className="mb-6 text-xs text-center text-neutral-600">
+                    Connect wallet to view domains you own.
+                  </div>
                 </div>
-              )}
-              <Button
-                buttonText="Get a key"
-                onClick={handleClick}
-                disabled={disableSend}
-                className="mt-4 mb-24"
-                pending={apiPending}
-              />{" "}
+                
+                <WhiteInput
+                  labelText="Your Name"
+                  placeholderText="e.g. Alex Slobodnik"
+                  onChange={(e) => setNameInput(e.target.value)}
+                  value={nameInput}
+                  className={`bg-white`}
+                />
+                <WhiteInput
+                  labelText="Email"
+                  placeholderText="e.g. youremail@email.com"
+                  onChange={(e) => setEmailInput(e.target.value)}
+                  value={emailInput}
+                />
+                {/* Select Domain + Resolver Box */}
+                <div className="w-full max-w-md">
+                  <div className="flex ">
+                    <div className="flex flex-col items-start w-full max-w-md mb-6">
+                      <div className="flex items-baseline justify-between w-full">
+                        <label
+                          htmlFor="name-input"
+                          className="mb-1 text-sm font-bold text-neutral-900"
+                        >
+                          Select Domain
+                        </label>
+                        {/* Toggle Network */}
+                        <div className="flex p-1 mt-2 mb-4 text-sm rounded-lg bg-neutral-200">
+                          <button
+                            onClick={() => {
+                              setNetwork("Mainnet");
+                              setDomainInput("");
+                            }}
+                            className={`px-4  rounded-lg transition ${
+                              network === "Mainnet"
+                                ? "bg-white shadow text-stone-900  py-1"
+                                : "bg-neutral-200"
+                            }`}
+                          >
+                            Mainnet
+                          </button>
+                          <button
+                            onClick={() => {
+                              setNetwork("Sepolia");
+                              setDomainInput("");
+                            }}
+                            className={`px-4 rounded-lg transition ${
+                              network === "Sepolia"
+                                ? "bg-white shadow text-black py-1"
+                                : "bg-neutral-200"
+                            }`}
+                          >
+                            Sepolia
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="relative w-full h-12">
+                        <div className="absolute flex-col w-full h-12">
+                          <div className="relative flex flex-1">
+                            <input
+                              type="text"
+                              id="select domain"
+                              placeholder={
+                                fullyConnected
+                                  ? " slobo.eth"
+                                  : " Connect Wallet to see domains"
+                              }
+                              onChange={(e) => setDomainInput(e.target.value)}
+                              value={domainInput}
+                              onFocus={() => {
+                                setDomainInputSelected(true);
+                              }}
+                              onBlur={() => {
+                                setTimeout(() => {
+                                  setDomainInputSelected(false);
+                                }, 200);
+                              }}
+                              className="w-full h-10 p-4 border-neutral-300 border rounded-lg appearance-none focus:ring focus:ring-orange-400/[0.5] focus:outline-none"
+                              disabled={!fullyConnected}
+                            />
+                            <Image
+                              src={searchIcon}
+                              alt="search icon"
+                              width={24}
+                              height={24}
+                              className="absolute transform -translate-y-1/2 right-2 top-1/2"
+                            />
+                          </div>
+                          {/* Dropdown with domain list */}
+                          {domainInputSelected && (
+                            <div className="z-10 w-full max-w-md overflow-x-hidden overflow-y-scroll bg-white border rounded-lg shadow-lg max-h-40">
+                              {fullyConnected && (
+                                <>
+                                  {filteredDomainList.map((domain, index) => (
+                                    <div
+                                      key={index}
+                                      onClick={() => {
+                                        setDomainInput(domain.name);
+                                        console.log(domain);
+                                      }}
+                                      className="h-10 px-4 py-2 text-left border-b cursor-pointer border-neutral-300 hover:bg-neutral-100 overflow-ellipsis"
+                                    >
+                                      {domain.name}
+                                    </div>
+                                  ))}
+                                  {filteredDomainList.length === 0 && (
+                                    <div className="h-10 px-4 py-2 text-left text-gray-400 border-b border-neutral-300">
+                                      No domains found
+                                    </div>
+                                  )}
+                                </>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="w-full max-w-md mb-4">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <div className="flex items-center gap-2 mb-1">
+                          <label
+                            htmlFor="name-input"
+                            className="block text-sm font-bold text-neutral-900"
+                          >
+                            Update Resolver
+                          </label>
+                        </div>
+                        <p className="text-xs text-neutral-600">
+                          Updates to NameStone&apos;s <a href="#" className="underline">verified resolver</a>
+                        </p>
+                      </div>
+                      <button
+                        onClick={handleUpdateResolver}
+                        disabled={
+                          resolverStatus === "latest" || selectedDomain === null
+                        }
+                        className={`px-6 py-2 font-bold rounded-lg ${
+                          resolverStatus === "latest" || selectedDomain === null
+                            ? "bg-white text-neutral-400 border border-neutral-200"
+                            : "bg-neutral-200 hover:bg-neutral-300 active:bg-neutral-400"
+                        }`}
+                      >
+                        {resolverButtonText}
+                      </button>
+                    </div>
+                    <div className={`flex justify-between items-center w-full px-4 py-2 mt-2 text-xs rounded-lg ${
+                      selectedDomain 
+                        ? "border border-solid border-brownblack-200" 
+                        : "bg-neutral-100"
+                    }`}>
+                      <div>
+                        {selectedDomain
+                          ? selectedDomain.resolver
+                          : "Waiting for domain..."}
+                      </div>
+                      {getResolverStatusIcon()}
+                    </div>
+                  </div>
+                </div>
+                {errorMsg && (
+                  <div className="h-6 mt-2 text-xs font-bold text-red-400">
+                    {errorMsg}
+                  </div>
+                )}
+                <Button
+                  buttonText="Get a key"
+                  onClick={handleClick}
+                  disabled={disableSend}
+                  className="mt-4 mb-24"
+                  pending={apiPending}
+                />{" "}
+              </div>
             </div>
           </div>
         </div>
@@ -437,35 +517,3 @@ function WhiteInput({ labelText, placeholderText, value, onChange }) {
     </div>
   );
 }
-
-{
-  /* SideText Component */
-}
-const SideText = () => (
-  <div className="flex flex-col items-start w-full max-w-md">
-    <h1 className="font-bold text-md text-brownblack-700">
-      Get a free API Key
-    </h1>
-    <div className="mt-6 mb-6 text-sm font-bold text-neutral-700">
-      How it works
-    </div>
-    <div className="flex flex-col gap-4">
-      <div className="flex gap-3">
-        <div className="w-6 h-6 rounded-full bg-neutral-200">1</div>
-        <div>Connect your wallet to list names you own</div>
-      </div>
-      <div className="flex gap-3">
-        <div className="w-6 h-6 rounded-full bg-neutral-200">2</div>
-        <div>Select a name and fill out your information</div>
-      </div>
-      <div className="flex gap-3">
-        <div className="w-6 h-6 rounded-full bg-neutral-200">3</div>
-        <div>Update the name&apos;s resolver</div>
-      </div>
-      <div className="flex gap-3">
-        <div className="w-6 h-6 rounded-full bg-neutral-200">4</div>
-        <div>Done. API key will be emailed to you</div>
-      </div>
-    </div>
-  </div>
-);
