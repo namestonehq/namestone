@@ -1,0 +1,41 @@
+services:
+  app:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID: ${NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID}
+        POSTGRES_URI: postgresql://postgres:namestone@db:5432/namestone-postgres
+        NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+    env_file:
+      - .env
+    depends_on:
+      - db
+    restart: unless-stopped
+    networks:
+      - app-network
+
+  db:
+    image: postgres:15
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=namestone
+      - POSTGRES_DB=namestone-postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  postgres_data: 
