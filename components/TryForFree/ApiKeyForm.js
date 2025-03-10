@@ -14,12 +14,22 @@ import { updateResolver } from "../../utils/FrontUtils";
 import { FormState } from "./formStates";
 
 /**
+ * Validates an email address
+ * @param {string} email - The email to validate
+ * @returns {boolean} Whether the email is valid
+ */
+const validateEmail = (email) => {
+  const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  return re.test(String(email).toLowerCase());
+};
+
+/**
  * ApiKeyForm component that displays the form to get an API key on the Try for Free page.
  * @param {Object} props Component props
- * @param {Function} props.handleApiKeySentSuccessfully Function to handle the API key sent successfully
+ * @param {Function} props.handleApiKeySentSuccessfully Function to handle when API key is sent successfully
  * @returns {JSX.Element} The ApiKeyForm component
  */
-export const ApiKeyForm = ({   handleApiKeySentSuccessfully }) => {
+export const ApiKeyForm = ({ handleApiKeySentSuccessfully }) => {
   const { status: authStatus } = useSession();
   const { data: walletClient } = useWalletClient();
   const { isConnected, address } = useAccount();
@@ -95,7 +105,27 @@ export const ApiKeyForm = ({   handleApiKeySentSuccessfully }) => {
   }, [domainInput, domainList, changeResolver]);
 
   const handleClick = () => {
+    // Reset error message
     setErrorMsg("");
+    
+    // Validate name
+    if (!nameInput.trim()) {
+      setErrorMsg("Please enter your name");
+      return;
+    }
+    
+    // Validate email
+    if (!emailInput.trim()) {
+      setErrorMsg("Please enter your email");
+      return;
+    }
+    
+    if (!validateEmail(emailInput)) {
+      setErrorMsg("Please enter a valid email address");
+      return;
+    }
+    
+    // Proceed with form submission
     setDisableSend(true);
     setApiPending(true);
     fetch("/api/send-try-namestone-email", {
@@ -116,7 +146,7 @@ export const ApiKeyForm = ({   handleApiKeySentSuccessfully }) => {
             handleApiKeySentSuccessfully(domainInput);
           } else {
             setDisableSend(false);
-            setErrorMsg(data.error);
+            setErrorMsg(data.error || "An error occurred. Please try again.");
             console.log(data);
           }
           setApiPending(false);
