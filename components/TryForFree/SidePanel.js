@@ -5,16 +5,17 @@ import sideMenuPng from "../../public/images/try-for-free-side-menu.png";
 import keyIcon from "../../public/images/try-for-free-key-icon.svg";
 import scriptIcon from "../../public/images/try-for-free-script-icon-non-filled.svg";
 import scriptIconFilled from "../../public/images/try-for-free-script-icon-filled.svg";
+import { FormState } from "./formStates";
 
 
 /**
  * SidePanel component that displays the left sidebar on the Try for Free page.
  * Shows a key icon and script icon with connecting line to illustrate the setup flow.
  * @param {Object} props Component props
- * @param {boolean} props.disableSend Whether the API key has been sent
+ * @param {FormState} props.formState Whether the API key has been sent
  * @returns {JSX.Element} The SidePanel component
  */
-export const SidePanel = ({ disableSend }) => {
+export const SidePanel = ({ formState }) => {
     return (
       <div className="hidden lg:block w-[494px] fixed left-1/2 transform -translate-x-[768px] h-[calc(100vh-60px)] z-10 bg-[#2914146f]">
         <div className="relative w-full h-full">
@@ -55,10 +56,10 @@ export const SidePanel = ({ disableSend }) => {
                 <div className="flex justify-center items-start">
                   <div className="transition-all duration-300 ease-in-out">
                     <Image
-                      src={!disableSend ? scriptIconFilled : scriptIcon}
+                      src={formState === FormState.API_KEY_SENT ? scriptIconFilled : scriptIcon}
                       alt="Script Icon"
-                      width={!disableSend ? 52 : 40}
-                      height={!disableSend ? 52 : 40}
+                      width={formState === FormState.API_KEY_SENT ? 52 : 40}
+                      height={formState === FormState.API_KEY_SENT ? 52 : 40}
                     />
                   </div>
                 </div>
