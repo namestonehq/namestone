@@ -4,6 +4,9 @@ import { mainnet, sepolia } from "viem/chains";
 import { createPublicClient, http, isAddress } from "viem";
 import { getToken } from "next-auth/jwt";
 
+const NAMEWRAPPER = "0xD4416b13d2b3a9aBae7AcD5D6C2BbDBE25686401";
+const NAMEWRAPPER_SEPOLIA = "0x0635513f179D50A207757E05759CbD106d7dFcE8";
+
 // Constants
 const providerUrl = `https://eth-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_API_KEY}`;
 const sepoliaProviderUrl = `https://eth-sepolia.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_API_KEY}`;
@@ -78,13 +81,13 @@ export default async function handler(req, res) {
 
     const filteredResult = result.filter((item) => item.name);
 
-    const displayedData = await batch(
+    const resolverData = await batch(
       client,
       ...filteredResult.map((item) => getResolver.batch({ name: item.name }))
     );
 
     const enrichedData = filteredResult.map((item, index) => {
-      const resolver = displayedData[index] || "";
+      const resolver = resolverData[index] || "";
       const isMainnet = network === "Mainnet";
       const validResolvers = isMainnet ? goodResolvers : goodSepoliaResolvers;
       const latestResolverList = isMainnet
@@ -97,12 +100,14 @@ export default async function handler(req, res) {
           ? "latest"
           : "old";
       }
-
+      const correctNameWrapper =
+        network === "Mainnet" ? NAMEWRAPPER : NAMEWRAPPER_SEPOLIA;
       return {
         name: item.name,
         resolvedAddress: item.resolvedAddress,
         parentName: item.parentName,
-        contractOwner: item.owner,
+        ownershipLevel:
+          item.owner === correctNameWrapper ? "nameWrapper" : "registry",
         createdAt: item.createdAt,
         validResolver: validResolvers.includes(resolver),
         latestResolver: latestResolverList.includes(resolver),
