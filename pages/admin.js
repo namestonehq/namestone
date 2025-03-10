@@ -392,7 +392,7 @@ export default function Admin() {
       selectedDomain: {
         name: selectedBrand.domain,
         resolver: selectedBrand.resolver,
-        owner: selectedBrand.owner,
+        contractOwner: selectedBrand.contractOwner,
       },
       network: selectedBrand.network === "mainnet" ? "Mainnet" : "Sepolia",
       address: session?.address,

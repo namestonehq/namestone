@@ -68,7 +68,7 @@ export const updateResolver = async ({
       const hash = await setResolver(wallet, {
         name: selectedDomain?.name,
         contract:
-          selectedDomain?.owner === correctNameWrapper
+          selectedDomain?.contractOwner === correctNameWrapper
             ? "nameWrapper"
             : "registry",
         resolverAddress: correctResolver,

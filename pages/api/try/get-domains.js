@@ -102,7 +102,7 @@ export default async function handler(req, res) {
         name: item.name,
         resolvedAddress: item.resolvedAddress,
         parentName: item.parentName,
-        owner: item.owner,
+        contractOwner: item.owner,
         createdAt: item.createdAt,
         validResolver: validResolvers.includes(resolver),
         latestResolver: latestResolverList.includes(resolver),

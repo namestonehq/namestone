@@ -99,6 +99,7 @@ export default async function handler(req, res) {
       const ownerIndex = index * 2 + 1;
 
       const resolver = mainnetResults[resolverIndex];
+      const contractOwner = mainnetResults[resolverIndex]?.owner;
       const owner = mainnetResults[ownerIndex]?.owner;
 
       const goodResolvers = [
@@ -125,6 +126,7 @@ export default async function handler(req, res) {
         ...brand,
         resolver,
         owner,
+        contractOwner,
         resolverStatus,
         hasResolverIssue: resolverStatus !== "ok",
       };
@@ -136,6 +138,7 @@ export default async function handler(req, res) {
 
       const resolver = sepoliaResults[resolverIndex];
       const owner = sepoliaResults[ownerIndex]?.owner;
+      const contractOwner = sepoliaResults[ownerIndex]?.owner;
 
       const goodResolvers = ["0x467893bFE201F8EfEa09BBD53fB69282e6001595"];
 
@@ -148,6 +151,7 @@ export default async function handler(req, res) {
         ...brand,
         resolver,
         owner,
+        contractOwner,
         resolverStatus,
         hasResolverIssue: resolverStatus !== "ok",
       };
