@@ -62,7 +62,7 @@ export default function AddNameModal({
 
   const TAB_CONTENT = {
     text: (
-      <div className="flex flex-col h-[66vh] overflow-y-scroll">
+      <div className="flex flex-col h-[66vh] overflow-y-scroll px-1">
         <div className="flex flex-col mt-4">
           {/* Avatar */}
           <div className="flex flex-row justify-between">
@@ -252,7 +252,7 @@ export default function AddNameModal({
       </div>
     ),
     addresses: (
-      <div className="flex flex-col gap-2 mt-4 h-[66vh] overflow-y-scroll">
+      <div className="flex flex-col gap-2 mt-4 h-[66vh] overflow-y-scroll px-1">
         {chains.map((chain) => (
           <div key={chain.coin_type}>
             <div className="text-sm font-bold text-brownblack-700">
