@@ -9,7 +9,7 @@ import Button from "../components/Button";
 import { ethers } from "ethers";
 import placeholderImage from "../public/images/placeholder-icon-image.png";
 import { Icon } from "@iconify/react";
-import AddNameModal from "../components/Admin/AddNameModal";
+import AdminNameModal from "../components/Admin/AdminNameModal";
 import toast from "react-hot-toast";
 import _ from "lodash";
 import ConfirmationModal from "../components/Admin/ConfirmationModal";
@@ -27,6 +27,7 @@ import OwnershipRequiredModal from "../components/Admin/OwnershipRequiredModal";
 
 const blankNameData = {
   name: "",
+  domain: "",
   address: "",
   contenthash: "",
   text_records: [],
@@ -41,7 +42,7 @@ export default function Admin() {
   const [selectedBrand, setSelectedBrand] = useState(null);
   const [subdomains, setSubdomains] = useState([]);
 
-  const [addNameModalOpen, setAddNameModalOpen] = useState(false);
+  const [adminNameModalOpen, setAdminNameModalOpen] = useState(false);
   const [nameErrorMsg, setNameErrorMsg] = useState("");
   const [addressErrorMsg, setAddressErrorMsg] = useState("");
   const [admins, setAdmins] = useState([]);
@@ -53,6 +54,7 @@ export default function Admin() {
   //add or edit
   const [activeTab, setActiveTab] = useState("Subnames");
   const [currentNameData, setCurrentNameData] = useState(blankNameData);
+  const [currentDomainData, setCurrentDomainData] = useState(blankNameData);
   const [saveNamePending, setSaveNamePending] = useState(false);
   const [mainnetOpen, setMainnetOpen] = useState(true);
   const [sepoliaOpen, setSepoliaOpen] = useState(true);
@@ -69,6 +71,7 @@ export default function Admin() {
     useState("Update Resolver");
   const [changeResolver, setChangeResolver] = useState(0);
   const [ownershipModalOpen, setOwnershipModalOpen] = useState(false);
+  const [editingDomain, setEditingDomain] = useState(false);
 
   //funtion to help set current name data
   function setCurrentNameHelper(value, key1, key2 = undefined) {
@@ -79,6 +82,17 @@ export default function Admin() {
       });
     } else {
       setCurrentNameData({ ...currentNameData, [key1]: value });
+    }
+  }
+  //function to help set current domain data
+  function setCurrentDomainHelper(value, key1, key2 = undefined) {
+    if (key2 !== undefined) {
+      setCurrentDomainData({
+        ...currentDomainData,
+        [key1]: { ...currentDomainData[key1], [key2]: value },
+      });
+    } else {
+      setCurrentDomainData({ ...currentDomainData, [key1]: value });
     }
   }
 
@@ -100,6 +114,7 @@ export default function Admin() {
     }
   }, [authStatus, session, selectedBrand]);
 
+  // fetch subdomains after selecting a brand
   useEffect(() => {
     if (!selectedBrand) return;
     // list subdomains
@@ -132,10 +147,20 @@ export default function Admin() {
         }
       })
     );
+    // get domain data
+    const url = "/api/admin/get-domain-info?";
+    fetch(
+      url + new URLSearchParams({ domain_id: selectedBrand.domain_id })
+    ).then((res) => {
+      res.json().then((data) => {
+        setCurrentDomainData(data);
+      });
+    });
   }, [selectedBrand]);
 
   function openAddNameModal() {
-    setAddNameModalOpen(true);
+    setEditingDomain(false);
+    setAdminNameModalOpen(true);
     let tempBlankNameData = _.cloneDeep(blankNameData);
     tempBlankNameData.domain = selectedBrand.domain;
     tempBlankNameData.id = 0;
@@ -144,6 +169,7 @@ export default function Admin() {
   }
 
   function openEditNameModal(index) {
+    setEditingDomain(false);
     // set currectNameData to what we know already
     let tempNameData = _.cloneDeep(blankNameData);
     tempNameData.name = subdomains[index].name;
@@ -182,11 +208,62 @@ export default function Admin() {
       });
     });
 
-    setAddNameModalOpen(true);
+    setAdminNameModalOpen(true);
+  }
+
+  function openEditDomainModal() {
+    setEditingDomain(true);
+    setAdminNameModalOpen(true);
+  }
+
+  // function to edit a domain
+  async function editDomainBackend(nameData) {
+    if (!nameData.address) {
+      setAddressErrorMsg("*Address cannot be blank");
+      return;
+    }
+    // check if address is valid ethereum address using ethers and convert to checksum
+    let address;
+    try {
+      address = ethers.utils.getAddress(nameData.address);
+    } catch (e) {
+      setAddressErrorMsg("*Invalid address");
+      return;
+    }
+    setSaveNamePending(true);
+
+    console.log("text_records", nameData.text_records);
+    try {
+      const res = await fetch("/api/admin/edit-domain", {
+        method: "POST",
+        body: JSON.stringify({
+          domain_id: nameData.id,
+          address: address,
+          contenthash: nameData.contenthash,
+          text_records: nameData.text_records,
+          coin_types: nameData.coin_types,
+        }),
+      });
+      const data = await res.json();
+
+      if (res.status === 200) {
+        setAdminNameModalOpen(false);
+        setNameErrorMsg("");
+        setAddressErrorMsg("");
+        toast.success("Domain edited successfully");
+      } else {
+        setNameErrorMsg(data.error);
+        console.log(data);
+      }
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setSaveNamePending(false);
+    }
   }
 
   // function to add and edit a name
-  async function setName(nameData) {
+  async function setNameBackend(nameData) {
     if (!nameData.name) {
       setNameErrorMsg("*Name cannot be blank");
       return;
@@ -222,7 +299,7 @@ export default function Admin() {
       const data = await res.json();
 
       if (res.status === 200) {
-        setAddNameModalOpen(false);
+        setAdminNameModalOpen(false);
         setNameErrorMsg("");
         setAddressErrorMsg("");
         toast.success("Subdomain set successfully");
@@ -365,12 +442,12 @@ export default function Admin() {
 
   // useEffect to wipe inputs and errors when modal is closed
   useEffect(() => {
-    if (!addNameModalOpen) {
+    if (!adminNameModalOpen) {
       setNameErrorMsg("");
       setAddressErrorMsg("");
       setCurrentNameData(blankNameData);
     }
-  }, [addNameModalOpen]);
+  }, [adminNameModalOpen]);
 
   // Update the handleUpdateResolver function to check ownership
   const handleUpdateResolver = async () => {
@@ -458,14 +535,17 @@ export default function Admin() {
 
   return (
     <AuthContentContainer>
-      <AddNameModal
-        open={addNameModalOpen}
-        setOpen={setAddNameModalOpen}
-        currentNameData={currentNameData}
-        setCurrentNameHelper={setCurrentNameHelper}
+      {/* Subname modal */}
+      <AdminNameModal
+        editingDomain={editingDomain}
+        open={adminNameModalOpen}
+        setOpen={setAdminNameModalOpen}
+        currentNameData={editingDomain ? currentDomainData : currentNameData}
+        setCurrentNameHelper={
+          editingDomain ? setCurrentDomainHelper : setCurrentNameHelper
+        }
         savePending={saveNamePending}
-        deleteName={deleteName}
-        setName={setName}
+        setName={editingDomain ? editDomainBackend : setNameBackend}
         nameErrorMsg={nameErrorMsg}
         addressErrorMsg={addressErrorMsg}
       />
@@ -632,7 +712,17 @@ export default function Admin() {
                 alt={selectedBrand.name}
               />
             </div>
-            <div className="text-2xl">{selectedBrand.name}</div>
+            <div className="flex items-center gap-2">
+              <div className="text-2xl">{selectedBrand.name}</div>
+              <button
+                onClick={() => {
+                  openEditDomainModal();
+                }}
+                className="p-1 text-gray-500 transition-colors hover:text-gray-700"
+              >
+                <Icon icon="heroicons:pencil-square" className="w-5 h-5" />
+              </button>
+            </div>
           </div>
           {/* Tab selection */}
           <div className="relative">

@@ -20,7 +20,7 @@ export default async function handler(req, res) {
   }
 
   const brandQuery = await sql`
-  select brand.id, domain.name as domain, brand.name, brand.url_slug, brand.claim_slug, brand.description, brand.banner_image, brand.footer_image, brand.default_avatar, brand.default_description,
+  select brand.id, domain.name as domain, domain.name_limit, brand.name, brand.url_slug, brand.claim_slug, brand.description, brand.banner_image, brand.footer_image, brand.default_avatar, brand.default_description,
   brand.share_with_data_providers, brand.show_converse_link, brand.show_mailchain_link
   from brand join domain 
   on brand.domain_id = domain.id 

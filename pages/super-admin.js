@@ -64,20 +64,6 @@ export default function SuperAdmin() {
           }
         })
       );
-    } else if (selectedTab === "domain_info") {
-      fetch(
-        "/api/admin/get-domain-info?" +
-          new URLSearchParams({ domain_id: selectedBrand?.domain_id })
-      ).then((res) =>
-        res.json().then((data) => {
-          if (res.status === 200) {
-            setBrandData(data);
-            setDataLoading(false);
-          } else {
-            console.log(data);
-          }
-        })
-      );
     } else if (selectedTab === "api_key") {
       fetch(
         "/api/admin/get-api-key?" +
@@ -135,37 +121,25 @@ export default function SuperAdmin() {
     setSaveDisabled(false);
   }
 
-  function changeBrandDataTextRecord(index, keyOrValue, text) {
-    let textRecords = brandData.textRecords;
-    textRecords[index][keyOrValue] = text;
-    setBrandData((prevState) => {
-      // shallow copy
-      let tempState = Object.assign({}, prevState);
-      tempState.textRecords = textRecords;
-      return tempState;
-    });
-    setSaveDisabled(false);
-  }
-
   function addTextRecord() {
-    let textRecords = brandData.textRecords;
+    let textRecords = brandData.text_records;
     textRecords.push(["", ""]);
     setBrandData((prevState) => {
       // shallow copy
       let tempState = Object.assign({}, prevState);
-      tempState.textRecords = textRecords;
+      tempState.text_records = textRecords;
       return tempState;
     });
     setSaveDisabled(false);
   }
 
   function deleteTextRecord(index) {
-    let textRecords = brandData.textRecords;
+    let textRecords = brandData.text_records;
     textRecords.splice(index, 1);
     setBrandData((prevState) => {
       // shallow copy
       let tempState = Object.assign({}, prevState);
-      tempState.textRecords = textRecords;
+      tempState.text_records = textRecords;
       return tempState;
     });
     setSaveDisabled(false);
@@ -175,8 +149,6 @@ export default function SuperAdmin() {
     let url;
     if (selectedTab === "brand_info") {
       url = "/api/admin/save-brand-info";
-    } else if (selectedTab === "domain_info") {
-      url = "/api/admin/save-domain-info";
     } else if (selectedTab === "api_key") {
       url = "/api/admin/save-api-key";
       if (!brandData.domain_id && selectedBrand) {
@@ -286,15 +258,7 @@ export default function SuperAdmin() {
             >
               Brand Information
             </div>
-            <div
-              onClick={() => changeTab("domain_info")}
-              className={`px-2 py-1 text-sm rounded-md cursor-pointer hover:bg-brownblack-20 ${
-                selectedTab === "domain_info" ? "bg-brownblack-20" : ""
-              }`}
-            >
-              {" "}
-              Domain Information
-            </div>
+
             <div
               onClick={() => changeTab("api_key")}
               className={`px-2 py-1 text-sm rounded-md cursor-pointer hover:bg-brownblack-20 ${
@@ -336,6 +300,18 @@ export default function SuperAdmin() {
             <div className="mb-4 text-sm text-brownblack-700">
               General information. Required for giveaways.
             </div>
+            <div className="mb-2 text-sm font-bold text-brownblack-500">
+              Subname Limit{" "}
+              <span className="mb-2 text-xs italic font-normal opacity-75 text-brownblack-700">
+                (0 for no limit)
+              </span>
+            </div>
+
+            <input
+              className="w-full px-4 py-2 mb-4 border rounded-md border-brownblack-50"
+              value={brandData?.name_limit}
+              onChange={(e) => changeBrandData("name_limit", e.target.value)}
+            />
             <div className="mb-2 text-sm font-bold text-brownblack-500">
               Brand Name
             </div>
@@ -461,94 +437,6 @@ export default function SuperAdmin() {
                 changeBrandData("default_avatar", e.target.value)
               }
             />
-          </div>
-        )}
-        {/* Domain Info */}
-        {!dataLoading && selectedTab === "domain_info" && (
-          <div className="flex-col items-start w-full p-6">
-            <div className="mb-1 text-base font-bold text-brownblack-700">
-              Domain Information
-            </div>
-            <div className="mb-4 text-sm text-brownblack-700">
-              Information for ENS name. Updates text record.{" "}
-            </div>
-            <div className="mb-2 text-sm font-bold text-brownblack-500">
-              Domain Name
-            </div>
-            <div className="mb-4 text-sm text-brownblack-700">
-              {brandData?.name}
-            </div>
-            <div className="mb-2 text-sm font-bold text-brownblack-500">
-              Resolved Address
-            </div>
-            <input
-              className="w-full px-4 py-2 mb-4 border rounded-md border-brownblack-50"
-              value={brandData?.address}
-              onChange={(e) => changeBrandData("address", e.target.value)}
-            />
-            <div className="mb-2 text-sm font-bold text-brownblack-500">
-              Subname Limit{" "}
-              <span className="mb-2 text-xs italic font-normal opacity-75 text-brownblack-700">
-                (0 for no limit)
-              </span>
-            </div>
-
-            <input
-              className="w-full px-4 py-2 mb-4 border rounded-md border-brownblack-50"
-              value={brandData?.name_limit}
-              onChange={(e) => changeBrandData("name_limit", e.target.value)}
-            />
-            <div className="mb-2 text-sm font-bold text-brownblack-500">
-              Content Hash
-            </div>
-            <input
-              className="w-full px-4 py-2 mb-4 border rounded-md border-brownblack-50"
-              value={brandData?.contenthash}
-              onChange={(e) => changeBrandData("contenthash", e.target.value)}
-            />
-            <div className="mb-1 text-base font-bold text-brownblack-700">
-              Text Records
-            </div>
-            <div>
-              {brandData?.textRecords &&
-                brandData.textRecords.map((textRecord, index) => (
-                  <div
-                    key={index}
-                    className="p-2 mb-2 border rounded-md border-brownblack-50"
-                  >
-                    <Icon
-                      icon="bi:trash"
-                      className="float-right w-4 h-4 text-red-500 cursor-pointer"
-                      onClick={() => deleteTextRecord(index)}
-                    />
-                    <div className="text-sm font-bold text-brownblack-700">
-                      key
-                    </div>
-                    <input
-                      className="w-full px-4 py-2 mb-4 border rounded-md border-brownblack-50"
-                      value={textRecord[0]}
-                      onChange={(e) =>
-                        changeBrandDataTextRecord(index, 0, e.target.value)
-                      }
-                    />
-                    <div className="text-sm font-bold text-brownblack-700">
-                      value
-                    </div>
-                    <input
-                      className="w-full px-4 py-2 mb-4 border rounded-md border-brownblack-50"
-                      value={textRecord[1]}
-                      onChange={(e) =>
-                        changeBrandDataTextRecord(index, 1, e.target.value)
-                      }
-                    />
-                  </div>
-                ))}
-              <Button
-                buttonText="Add Text Record"
-                className={"mb-8"}
-                onClick={addTextRecord}
-              />
-            </div>
           </div>
         )}
         {/* API Key */}
