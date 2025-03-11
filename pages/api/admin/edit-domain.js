@@ -1,48 +1,30 @@
 import sql from "../../../lib/db";
-import { normalize } from "viem/ens";
-import { getAdminToken, encodeContenthash } from "../../../utils/ServerUtils";
+import {
+  getAdminTokenById,
+  encodeContenthash,
+} from "../../../utils/ServerUtils";
 
 export default async function handler(req, res) {
   const body = JSON.parse(req.body);
-  const adminToken = await getAdminToken(req, body.domain);
+  const adminToken = await getAdminTokenById(req, body.domain_id);
+
   if (!adminToken) {
     return res
       .status(401)
       .json({ error: "You are not authorized to use this endpoint" });
   }
 
-  if (!body.domain) {
-    return res.status(400).json({ error: "Domain is required" });
-  }
-  if (typeof body.id !== "number") {
+  if (!body.domain_id) {
     return res.status(400).json({ error: "Id is required" });
   }
-  if (!body.network) {
-    return res.status(400).json({ error: "Network is required" });
-  }
 
-  let domain;
-  try {
-    domain = normalize(body.domain);
-  } catch (e) {
-    console.log(e);
-    return res.status(400).json({ error: "Invalid ens name" });
-  }
+  let domainId = body.domain_id;
 
-  let domainQuery;
-  let domainId = body.id;
-
-  // Check if domain exists already
-  domainQuery = await sql`
-  select domain.id, domain.address
-  from domain
-  where domain.name = ${domain} and domain.network = ${body.network}`;
-
-  // If domain exists and is different than current, warn user
-  if (domainQuery.length == 1 && domainQuery[0].id != domainId) {
-    return res.status(400).json({
-      error: `Domain already exists with a different ID`,
-    });
+  // make sure domain exists
+  const domainQuery = await sql`
+  select id from domain where id = ${domainId}`;
+  if (domainQuery.length == 0) {
+    return res.status(400).json({ error: "Domain does not exist" });
   }
 
   // Process contenthash if provided
@@ -61,24 +43,11 @@ export default async function handler(req, res) {
   }
 
   // update domain
-  if (domainId == 0) {
-    // Insert domain
-    domainQuery = await sql`
-    insert into domain (
-      name, address, network, contenthash
-    ) values (
-      ${domain}, ${body.address || null}, ${body.network}, ${contenthash}
-    )
-    returning id;`;
-    domainId = domainQuery[0].id;
-  } else {
-    await sql`
+  await sql`
     update domain
-    set name = ${domain},
-    address = ${body.address || null},
+    set address = ${body.address || null},
     contenthash = ${contenthash}
     where id = ${domainId}`;
-  }
 
   // Delete existing text records
   await sql`delete from domain_text_record
@@ -114,7 +83,7 @@ export default async function handler(req, res) {
 
   // log user engagement
   const jsonPayload = JSON.stringify({
-    name: domain,
+    domain_id: domainId,
     address: body.address,
   });
   await sql`

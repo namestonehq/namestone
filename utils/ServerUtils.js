@@ -328,6 +328,26 @@ export async function getAdminToken(req, domain) {
   return token;
 }
 
+// function to check if user is admin of domain by id
+export async function getAdminTokenById(req, domainId) {
+  const token = await getToken({ req });
+  if (!token || !domainId) {
+    return false;
+  }
+
+  const superAdminQuery = await sql`
+  SELECT * FROM super_admin WHERE address = ${token.sub}`;
+  const adminQuery = await sql`
+  SELECT * FROM admin
+  join domain on admin.domain_id = domain.id
+  WHERE admin.address = ${token.sub}
+  and domain.id = ${domainId}`;
+  if (superAdminQuery.length === 0 && adminQuery.length === 0) {
+    return false;
+  }
+  return token;
+}
+
 function matchProtocol(text) {
   return (
     text.match(/^(ipfs|sia|ipns|bzz|onion|onion3|arweave|ar):\/\/(.*)/) ||

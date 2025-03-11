@@ -136,36 +136,36 @@ export default function SuperAdmin() {
   }
 
   function changeBrandDataTextRecord(index, keyOrValue, text) {
-    let textRecords = brandData.textRecords;
+    let textRecords = brandData.text_records;
     textRecords[index][keyOrValue] = text;
     setBrandData((prevState) => {
       // shallow copy
       let tempState = Object.assign({}, prevState);
-      tempState.textRecords = textRecords;
+      tempState.text_records = textRecords;
       return tempState;
     });
     setSaveDisabled(false);
   }
 
   function addTextRecord() {
-    let textRecords = brandData.textRecords;
+    let textRecords = brandData.text_records;
     textRecords.push(["", ""]);
     setBrandData((prevState) => {
       // shallow copy
       let tempState = Object.assign({}, prevState);
-      tempState.textRecords = textRecords;
+      tempState.text_records = textRecords;
       return tempState;
     });
     setSaveDisabled(false);
   }
 
   function deleteTextRecord(index) {
-    let textRecords = brandData.textRecords;
+    let textRecords = brandData.text_records;
     textRecords.splice(index, 1);
     setBrandData((prevState) => {
       // shallow copy
       let tempState = Object.assign({}, prevState);
-      tempState.textRecords = textRecords;
+      tempState.text_records = textRecords;
       return tempState;
     });
     setSaveDisabled(false);

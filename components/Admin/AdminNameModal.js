@@ -41,13 +41,13 @@ const chains = [
   },
 ];
 
-export default function AddNameModal({
+export default function AdminNameModal({
+  editingDomain,
   open,
   setOpen,
   currentNameData,
   setCurrentNameHelper,
   setName,
-  deleteName,
   savePending,
   nameErrorMsg,
   addressErrorMsg,
@@ -289,7 +289,11 @@ export default function AddNameModal({
   const SUBNAME_CONTENT = (
     <>
       <Dialog.Title className="text-base font-bold text-brownblack-700">
-        {currentNameData === 0 ? "Add a subname" : "Edit Subname"}
+        {editingDomain
+          ? `Edit ${currentNameData.domain}`
+          : currentNameData === 0
+          ? "Add a subname"
+          : "Edit Subname"}
       </Dialog.Title>
       <hr className="border-0 h-[0.5px] bg-brownblack-200/50 my-4"></hr>
       <button
@@ -301,15 +305,21 @@ export default function AddNameModal({
         More Records <span className="text-sm">&gt;</span>
       </button>
       <div className="flex flex-col">
-        <div className="flex flex-row justify-between">
-          <div className="text-sm font-bold text-brownblack-700">Subname</div>
-          <div className="text-sm text-red-500">{nameErrorMsg}</div>
-        </div>
-        <input
-          className="w-full px-4 py-2 mb-4 border rounded-md border-brownblack-50"
-          value={currentNameData.name}
-          onChange={(e) => setCurrentNameHelper(e.target.value, "name")}
-        />
+        {!editingDomain && (
+          <>
+            <div className="flex flex-row justify-between">
+              <div className="text-sm font-bold text-brownblack-700">
+                Subname
+              </div>
+              <div className="text-sm text-red-500">{nameErrorMsg}</div>
+            </div>
+            <input
+              className="w-full px-4 py-2 mb-4 border rounded-md border-brownblack-50"
+              value={currentNameData.name}
+              onChange={(e) => setCurrentNameHelper(e.target.value, "name")}
+            />
+          </>
+        )}
         <div className="flex flex-row justify-between">
           <div className="text-sm font-bold text-brownblack-700">Address</div>
           <div className="text-sm text-red-500">{addressErrorMsg}</div>
@@ -340,8 +350,10 @@ export default function AddNameModal({
                 className="flex items-center gap-1 mt-2 mb-8 mr-auto text-xs text-orange-800 transition-colors duration-300 hover:text-orange-400"
                 onClick={() => setActiveTab("subname")}
               >
-                <span className="text-sm">&lt;</span> {currentNameData.name}.
-                {currentNameData.domain}
+                <span className="text-sm">&lt;</span>
+                {editingDomain
+                  ? currentNameData.domain
+                  : `${currentNameData.name}.${currentNameData.domain}`}
               </button>
 
               <div className="flex gap-6 mt-2 text-neutral-400">

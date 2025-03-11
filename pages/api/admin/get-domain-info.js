@@ -28,13 +28,27 @@ export default async function handler(req, res) {
   const textRecordQuery = await sql`
   select * from domain_text_record where domain_id = ${domainQuery[0].id} order by id `;
 
-  let textRecords = [];
+  let textRecords = {};
   textRecordQuery.map((record) => {
-    textRecords.push([record.key, record.value]);
+    textRecords[record.key] = record.value;
   });
 
-  let domainPayload = domainQuery[0];
-  domainPayload.textRecords = textRecords;
+  // get coin types from db
+  const coinTypesQuery = await sql`
+      SELECT * FROM domain_coin_type WHERE domain_id = ${domainQuery[0].id} order by id `;
 
+  const coinTypes = {};
+  coinTypesQuery.forEach((coin) => {
+    coinTypes[coin.coin_type] = coin.address;
+  });
+
+  const domainPayload = {
+    id: domainQuery[0].id,
+    address: domainQuery[0].address || "",
+    domain: domainQuery[0].name,
+    text_records: textRecords,
+    coin_types: coinTypes,
+    contenthash: domainQuery[0].contenthash || "",
+  };
   return res.status(200).json(domainPayload);
 }
