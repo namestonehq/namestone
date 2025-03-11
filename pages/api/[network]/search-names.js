@@ -58,7 +58,6 @@ async function handler(req, res) {
     offset = 0;
   }
 
-
   const domainQuery = await sql`
   select id from domain where name = ${domain} and network=${network} limit 1`;
 
@@ -70,7 +69,7 @@ async function handler(req, res) {
   let subdomainEntries;
   if (exactMatch === "1") {
     subdomainEntries = await sql`
-    SELECT subdomain.id AS id, subdomain.name AS name, subdomain.address AS address, domain.name AS domain, subdomain.created_at
+    SELECT subdomain.id AS id, subdomain.name AS name, subdomain.address AS address, domain.name AS domain, subdomain.created_at, subdomain.contenthash_raw as contenthash
     FROM subdomain
     JOIN domain ON subdomain.domain_id = domain.id
     WHERE domain_id = ${domainQuery[0].id}
@@ -79,7 +78,7 @@ async function handler(req, res) {
     LIMIT ${limit} OFFSET ${offset}`;
   } else {
     subdomainEntries = await sql`
-    SELECT subdomain.id AS id, subdomain.name AS name, subdomain.address AS address, domain.name AS domain, subdomain.created_at
+    SELECT subdomain.id AS id, subdomain.name AS name, subdomain.address AS address, domain.name AS domain, subdomain.created_at, subdomain.contenthash_raw as contenthash
     FROM subdomain
     JOIN domain ON subdomain.domain_id = domain.id
     WHERE domain_id = ${domainQuery[0].id}

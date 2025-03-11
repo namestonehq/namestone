@@ -584,7 +584,10 @@ export default function Admin() {
                           ? " bg-neutral-100"
                           : ""
                       }`}
-                      onClick={() => setSelectedBrand(brand)}
+                      onClick={() => {
+                        setSelectedBrand(brand);
+                        setResolverButtonText("Update Resolver");
+                      }}
                     >
                       <div className="flex overflow-hidden rounded-full w-[24px] h-[24px] mx-2">
                         <Image
@@ -633,7 +636,10 @@ export default function Admin() {
                           ? " bg-neutral-100"
                           : ""
                       }`}
-                      onClick={() => setSelectedBrand(brand)}
+                      onClick={() => {
+                        setSelectedBrand(brand);
+                        setResolverButtonText("Update Resolver");
+                      }}
                     >
                       <div className="flex overflow-hidden rounded-full w-[24px] h-[24px] mx-2">
                         <Image

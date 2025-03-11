@@ -1,6 +1,6 @@
 import sql from "../../../lib/db";
 import { normalize } from "viem/ens";
-import { getAdminToken } from "../../../utils/ServerUtils";
+import { getAdminToken, encodeContenthash } from "../../../utils/ServerUtils";
 
 export default async function handler(req, res) {
   const body = JSON.parse(req.body);
@@ -36,6 +36,22 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: "Invalid ens name" });
   }
 
+  // Get content hash and encode it
+  let contenthash = body.contenthash || null;
+  if (contenthash === "") {
+    contenthash = null;
+  }
+  let contenthashRaw = contenthash;
+  // encode contenthash from link to contenthash
+  if (contenthash) {
+    try {
+      contenthash = encodeContenthash(contenthash);
+    } catch (e) {
+      console.log(e);
+      return res.status(400).json({ error: "Invalid contenthash" });
+    }
+  }
+
   let subdomainQuery;
   let subdomainId = body.id;
   // Check if subdomain exists already
@@ -62,9 +78,9 @@ export default async function handler(req, res) {
     }
     subdomainQuery = await sql`
     insert into subdomain (
-      name, address, domain_id
+      name, address, domain_id, contenthash, contenthash_raw
     ) values (
-      ${name}, ${body.address}, ${domainQuery[0].id}
+      ${name}, ${body.address}, ${domainQuery[0].id}, ${contenthash}, ${contenthashRaw}
     )
     returning id;`;
     subdomainId = subdomainQuery[0].id;
@@ -72,7 +88,9 @@ export default async function handler(req, res) {
     await sql`
   update subdomain
   set name = ${name},
-  address = ${body.address}
+  address = ${body.address},
+  contenthash = ${contenthash},
+  contenthash_raw = ${contenthashRaw}
   where id = ${subdomainId}`;
   }
 

@@ -29,6 +29,7 @@ export default async function handler(req, res) {
 
   // Process contenthash if provided
   let contenthash = body.contenthash || null;
+  let rawContenthash = contenthash;
   if (contenthash === "") {
     contenthash = null;
   }
@@ -46,7 +47,8 @@ export default async function handler(req, res) {
   await sql`
     update domain
     set address = ${body.address || null},
-    contenthash = ${contenthash}
+    contenthash = ${contenthash},
+    contenthash_raw = ${rawContenthash || null}
     where id = ${domainId}`;
 
   // Delete existing text records

@@ -6,7 +6,6 @@ import {
 } from "../../../utils/ServerUtils";
 import Cors from "micro-cors";
 import { normalize } from "viem/ens";
-import { getDomainOwner } from "../../../utils/ServerUtils";
 
 const cors = Cors({
   allowMethods: ["GET", "HEAD", "POST"],
