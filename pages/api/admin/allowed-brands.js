@@ -104,11 +104,12 @@ export default async function handler(req, res) {
       const ownershipLevel = ownerData?.ownershipLevel;
 
       const goodResolvers = [
-        "0x7CE6Cf740075B5AF6b1681d67136B84431B43AbD",
-        "0xd17347fA0a6eeC89a226c96a9ae354F785e94241",
         "0x2291053F49Cd008306b92f84a61c6a1bC9B5CB65",
+        "0x828ec5bDe537B8673AF98D77bCB275ae1CA26D1f",
+        "0x84c5AdB77dd9f362A1a3480009992d8d47325dc3",
+        "0xd17347fA0a6eeC89a226c96a9ae354F785e94241",
         "0xA87361C4E58B619c390f469B9E6F27d759715125",
-        "0xF142B308cF687d4358410a4cB885513b30A42025",
+        "0xF142B308cF687d4358410a4cB885513b30A42025", // gasless DNS
       ];
 
       const latestResolvers = [
