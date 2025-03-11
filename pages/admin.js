@@ -320,6 +320,7 @@ export default function Admin() {
         }
       } else {
         setNameErrorMsg(data.error);
+        toast.error(data.error);
         console.log(data);
       }
     } catch (err) {
