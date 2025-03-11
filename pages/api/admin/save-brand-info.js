@@ -35,5 +35,11 @@ export default async function handler(req, res) {
     "show_mailchain_link"
   )} where id = ${brandData.id}`;
 
+  const domainIdQuery = await sql`
+  select domain_id from brand where id = ${brandData.id}`;
+  const domainId = domainIdQuery[0].domain_id;
+  await sql`
+  update domain set name_limit = ${brandData.name_limit} where id = ${domainId}`;
+
   return res.status(200).json({ success: true });
 }
