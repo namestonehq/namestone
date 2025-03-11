@@ -16,8 +16,6 @@ export const updateResolver = async ({
 }) => {
   const HYBRID_RESOLVER = "0xA87361C4E58B619c390f469B9E6F27d759715125";
   const SEPOOLIA_RESOLVER = "0x467893bFE201F8EfEa09BBD53fB69282e6001595";
-  const NAMEWRAPPER = "0xD4416b13d2b3a9aBae7AcD5D6C2BbDBE25686401";
-  const NAMEWRAPPER_SEPOLIA = "0x0635513f179D50A207757E05759CbD106d7dFcE8";
 
   const providerUrl =
     "https://eth-mainnet.g.alchemy.com/v2/" +
@@ -37,20 +35,10 @@ export const updateResolver = async ({
 
   const correctResolver =
     network === "Mainnet" ? HYBRID_RESOLVER : SEPOOLIA_RESOLVER;
-  const correctNameWrapper =
-    network === "Mainnet" ? NAMEWRAPPER : NAMEWRAPPER_SEPOLIA;
+
   const correctNetwork = network === "Mainnet" ? mainnet : sepolia;
 
-  console.log("correctResolver", correctResolver);
-  console.log("correctNameWrapper", correctNameWrapper);
-  console.log("correctNetwork", correctNetwork);
-  console.log("selectedDomain", selectedDomain);
-  console.log("address", address);
-  console.log("network", network);
-  console.log("walletClient", walletClient);
-  console.log("setResolverButtonText", setResolverButtonText);
-  console.log("setChangeResolver", setChangeResolver);
-  console.log("switchChain", switchChain);
+  console.log(selectedDomain);
   // Call switchNetwork and wait a moment for it to take effect
   switchChain(correctNetwork.id);
 
@@ -68,7 +56,7 @@ export const updateResolver = async ({
       const hash = await setResolver(wallet, {
         name: selectedDomain?.name,
         contract:
-          selectedDomain?.owner === correctNameWrapper
+          selectedDomain?.ownershipLevel === "nameWrapper"
             ? "nameWrapper"
             : "registry",
         resolverAddress: correctResolver,

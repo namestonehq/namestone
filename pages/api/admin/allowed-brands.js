@@ -99,7 +99,9 @@ export default async function handler(req, res) {
       const ownerIndex = index * 2 + 1;
 
       const resolver = mainnetResults[resolverIndex];
-      const owner = mainnetResults[ownerIndex]?.owner;
+      const ownerData = mainnetResults[ownerIndex];
+      const owner = ownerData?.owner;
+      const ownershipLevel = ownerData?.ownershipLevel;
 
       const goodResolvers = [
         "0x7CE6Cf740075B5AF6b1681d67136B84431B43AbD",
@@ -125,6 +127,7 @@ export default async function handler(req, res) {
         ...brand,
         resolver,
         owner,
+        ownershipLevel,
         resolverStatus,
         hasResolverIssue: resolverStatus !== "ok",
       };
@@ -135,7 +138,9 @@ export default async function handler(req, res) {
       const ownerIndex = index * 2 + 1;
 
       const resolver = sepoliaResults[resolverIndex];
-      const owner = sepoliaResults[ownerIndex]?.owner;
+      const ownerData = sepoliaResults[ownerIndex];
+      const owner = ownerData?.owner;
+      const ownershipLevel = ownerData?.ownershipLevel;
 
       const goodResolvers = ["0x467893bFE201F8EfEa09BBD53fB69282e6001595"];
 
@@ -148,6 +153,7 @@ export default async function handler(req, res) {
         ...brand,
         resolver,
         owner,
+        ownershipLevel,
         resolverStatus,
         hasResolverIssue: resolverStatus !== "ok",
       };
