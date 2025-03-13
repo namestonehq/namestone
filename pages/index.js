@@ -208,7 +208,9 @@ export default function Home() {
               <Image
                 src={burnerSite}
                 alt="burner site"
-                className="w-full sm:w-[600px]"
+                quality={90}
+                className="w-full sm:w-[600px] object-contain"
+                priority
               />
             </div>
           </div>
