@@ -107,24 +107,24 @@ export const ApiKeyForm = ({ handleApiKeySentSuccessfully }) => {
   const handleClick = () => {
     // Reset error message
     setErrorMsg("");
-    
+
     // Validate name
     if (!nameInput.trim()) {
       setErrorMsg("Please enter your name");
       return;
     }
-    
+
     // Validate email
     if (!emailInput.trim()) {
       setErrorMsg("Please enter your email");
       return;
     }
-    
+
     if (!validateEmail(emailInput)) {
       setErrorMsg("Please enter a valid email address");
       return;
     }
-    
+
     // Proceed with form submission
     setDisableSend(true);
     setApiPending(true);
@@ -232,7 +232,7 @@ export const ApiKeyForm = ({ handleApiKeySentSuccessfully }) => {
         {/* Main content */}
         <div className="z-10 flex flex-col items-center justify-start flex-1">
           {/* Form Header - Mobile Only */}
-          <div className="flex flex-col items-center w-full max-w-md">
+          <div className="hidden lg:flex lg:flex-col items-center w-full max-w-md">
             <span className="mt-8 font-bold text-xl text-brownblack-700">
               Get a free API Key
             </span>
@@ -240,6 +240,7 @@ export const ApiKeyForm = ({ handleApiKeySentSuccessfully }) => {
               Connect wallet to view domains you own.
             </div>
           </div>
+          <div className="lg:hidden h-4"></div>
           <WhiteInput
             labelText="Your Name"
             placeholderText="e.g. Alex Slobodnik"
@@ -369,12 +370,6 @@ export const ApiKeyForm = ({ handleApiKeySentSuccessfully }) => {
                       Update Resolver
                     </label>
                   </div>
-                  <p className="text-xs text-neutral-600">
-                    Updates to NameStone&apos;s{" "}
-                    <a href="#" className="underline">
-                      verified resolver
-                    </a>
-                  </p>
                 </div>
                 <button
                   onClick={handleUpdateResolver}
@@ -390,6 +385,12 @@ export const ApiKeyForm = ({ handleApiKeySentSuccessfully }) => {
                   {resolverButtonText}
                 </button>
               </div>
+              <p className="text-xs text-neutral-600 text-left">
+                Updates to NameStone&apos;s{" "}
+                <a href="#" className="underline">
+                  verified resolver
+                </a>
+              </p>
               <div
                 className={`flex justify-between items-center w-full px-4 py-2 mt-2 text-xs rounded-lg ${
                   selectedDomain

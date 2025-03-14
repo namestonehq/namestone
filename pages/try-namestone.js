@@ -7,6 +7,7 @@ import CustomConnectButton from "../components/CustomConnectButton";
 import Link from "next/link";
 import namestoneIcon from "../public/images/namestone-icon.svg";
 import { SidePanel } from "../components/TryForFree/SidePanel";
+import { TopPanel } from "../components/TryForFree/TopPanel";
 import { StylishVerticalDivider } from "../components/TryForFree/StylishVerticalDivider";
 import { ApiKeyForm } from "../components/TryForFree/ApiKeyForm";
 import { ApiKeySentDocs } from "../components/TryForFree/ApiKeySentDocs";
@@ -56,13 +57,17 @@ export default function TryNamestone() {
         </div>
         
         {/* Main Content Area - Below Navbar */}
-        <div className="flex w-full mt-[60px]">
-          <SidePanel formState={formState} />
-
-          <StylishVerticalDivider />
-
-          {formState === FormState.FORM && <ApiKeyForm handleApiKeySentSuccessfully={handleApiKeySentSuccessfully} />}
-          {formState === FormState.API_KEY_SENT && <ApiKeySentDocs userEnsDomain={userEnsDomain} walletAddress={walletClient?.account.address} />}
+        <div className="flex flex-col w-full mt-[60px]">
+          {/* Mobile Top Panel */}
+          <TopPanel formState={formState} />
+          
+          {/* Desktop Side Panel and Content */}
+          <div className="flex w-full">
+            <SidePanel formState={formState} />
+            <StylishVerticalDivider />
+            {formState === FormState.FORM && <ApiKeyForm handleApiKeySentSuccessfully={handleApiKeySentSuccessfully} />}
+            {formState === FormState.API_KEY_SENT && <ApiKeySentDocs userEnsDomain={userEnsDomain} walletAddress={walletClient?.account.address} />}
+          </div>
         </div>
       </div>
     </div>
