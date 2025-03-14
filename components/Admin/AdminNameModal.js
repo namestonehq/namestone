@@ -127,7 +127,7 @@ export default function AdminNameModal({
             onChange={(e) =>
               setCurrentNameHelper(e.target.value, "text_records", "header")
             }
-            placeholder="Software Engineer"
+            placeholder="https://"
           />
           {/* Status */}
           <div className="flex flex-row justify-between">
@@ -142,7 +142,7 @@ export default function AdminNameModal({
             onChange={(e) =>
               setCurrentNameHelper(e.target.value, "text_records", "status")
             }
-            placeholder="Available for work"
+            placeholder="Going to the moon!"
           />
         </div>
         {/* links */}
