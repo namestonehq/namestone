@@ -33,7 +33,7 @@ export default async function handler(req, res) {
       });
       brands = await sql`
       SELECT 
-      brand.domain_id, brand.name, brand.url_slug, domain.name as domain, domain.avatar, domain.network as network
+      brand.domain_id, brand.name, brand.url_slug, domain.name as domain, domain.network as network
       FROM brand join domain on brand.domain_id = domain.id where domain.id = ANY(${domain_ids}) order by brand.id;
     `;
     }
@@ -43,10 +43,25 @@ export default async function handler(req, res) {
     superAdmin = true;
     brands = await sql`
     SELECT 
-    brand.domain_id, brand.name, brand.url_slug, domain.name as domain, domain.avatar, domain.network as network
+    brand.domain_id, brand.name, brand.url_slug, domain.name as domain, domain.network as network
     FROM brand join domain on brand.domain_id = domain.id order by brand.id;
   `;
   }
+
+  // Get avatars for all domains from domain_text_record
+  const domainTextRecords = await sql`
+    SELECT domain_id, key, value FROM domain_text_record WHERE key = 'avatar';
+  `;
+  const domainAvatarDict = domainTextRecords.reduce((result, record) => {
+    const domainId = record.domain_id;
+    const avatar = record.value;
+    result[domainId] = avatar;
+    return result;
+  }, {});
+  // add avatars to brands
+  brands.forEach((brand) => {
+    brand.avatar = domainAvatarDict[brand.domain_id];
+  });
 
   // Get resolver information for each brand
   try {

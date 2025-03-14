@@ -34,6 +34,23 @@ const blankNameData = {
   coin_types: [],
 };
 
+// Add this function at the top level, outside of any component
+const isValidImageUrl = (url) => {
+  if (!url) return false;
+  // Check if it's a valid URL string that points to an image
+  try {
+    // Must be a string and start with http:// or https:// or data:image/
+    return (
+      typeof url === "string" &&
+      (url.startsWith("http://") ||
+        url.startsWith("https://") ||
+        url.startsWith("data:image/"))
+    );
+  } catch (e) {
+    return false;
+  }
+};
+
 export default function Admin() {
   const { data: session, status: authStatus } = useSession();
   const [brandUrls, setBrandUrls] = useState([]);
@@ -592,7 +609,11 @@ export default function Admin() {
                     >
                       <div className="flex overflow-hidden rounded-full w-[24px] h-[24px] mx-2">
                         <Image
-                          src={brand.avatar || placeholderImage}
+                          src={
+                            isValidImageUrl(brand.avatar)
+                              ? brand.avatar
+                              : placeholderImage
+                          }
                           width={24}
                           height={24}
                           alt={brand.name}
@@ -644,7 +665,11 @@ export default function Admin() {
                     >
                       <div className="flex overflow-hidden rounded-full w-[24px] h-[24px] mx-2">
                         <Image
-                          src={brand.avatar || placeholderImage}
+                          src={
+                            isValidImageUrl(brand.avatar)
+                              ? brand.avatar
+                              : placeholderImage
+                          }
                           width={24}
                           height={24}
                           alt={brand.name}
@@ -713,7 +738,11 @@ export default function Admin() {
           <div className="flex items-center text-base font-bold text-brownblack-700">
             <div className="flex overflow-hidden rounded-full  w-[48px] h-[48px] mr-2">
               <Image
-                src={selectedBrand.avatar || placeholderImage}
+                src={
+                  isValidImageUrl(selectedBrand.avatar)
+                    ? selectedBrand.avatar
+                    : placeholderImage
+                }
                 width={48}
                 height={48}
                 alt={selectedBrand.name}
@@ -1005,6 +1034,21 @@ function AdminRow({
     }
   };
 
+  // This can stay as is since it's used within this component
+  const isValidImageUrl = (url) => {
+    if (!url) return false;
+    try {
+      return (
+        typeof url === "string" &&
+        (url.startsWith("http://") ||
+          url.startsWith("https://") ||
+          url.startsWith("data:image/"))
+      );
+    } catch (e) {
+      return false;
+    }
+  };
+
   return (
     <div
       className={`flex items-center justify-between p-2 mb-2 transition-colors border rounded-lg border-neutral-200 ${
@@ -1065,7 +1109,11 @@ function AdminRow({
                         <div className="flex items-center justify-center w-full h-full text-gray-400">
                           {ensAvatar ? (
                             <Image
-                              src={ensAvatar}
+                              src={
+                                isValidImageUrl(ensAvatar)
+                                  ? ensAvatar
+                                  : placeholderImage
+                              }
                               alt={displayName || "Admin"}
                               width={32}
                               height={32}
@@ -1131,7 +1179,11 @@ function AdminRow({
                     <Icon icon="clarity:edit-solid" width="16" />
                   ) : ensAvatar ? (
                     <Image
-                      src={ensAvatar}
+                      src={
+                        isValidImageUrl(ensAvatar)
+                          ? ensAvatar
+                          : placeholderImage
+                      }
                       alt={displayName || "Admin"}
                       width={32}
                       height={32}
