@@ -592,7 +592,7 @@ export default function Admin() {
                     >
                       <div className="flex overflow-hidden rounded-full w-[24px] h-[24px] mx-2">
                         <Image
-                          src={brand.default_avatar || placeholderImage}
+                          src={brand.avatar || placeholderImage}
                           width={24}
                           height={24}
                           alt={brand.name}
@@ -644,7 +644,7 @@ export default function Admin() {
                     >
                       <div className="flex overflow-hidden rounded-full w-[24px] h-[24px] mx-2">
                         <Image
-                          src={brand.default_avatar || placeholderImage}
+                          src={brand.avatar || placeholderImage}
                           width={24}
                           height={24}
                           alt={brand.name}
@@ -713,7 +713,7 @@ export default function Admin() {
           <div className="flex items-center text-base font-bold text-brownblack-700">
             <div className="flex overflow-hidden rounded-full  w-[48px] h-[48px] mr-2">
               <Image
-                src={selectedBrand.default_avatar || placeholderImage}
+                src={selectedBrand.avatar || placeholderImage}
                 width={48}
                 height={48}
                 alt={selectedBrand.name}
