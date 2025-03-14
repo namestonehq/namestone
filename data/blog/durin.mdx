@@ -1,0 +1,60 @@
+---
+slug: "durin"
+title: "Deploy mintable L2 subdomains in minutes with Durin.dev"
+date: "2025-03-17"
+tags: ["ENS", "L2 Subdomains", "Durin"]
+draft: false
+summary: "Videos of a colorful, thin hardware wallet that could be mistaken for a credit card have been circulating online. What is Burner doing that makes it special?"
+---
+
+![Durin x banner](https://hackmd.io/_uploads/ByCYx1zhyl.jpg)
+
+Over 25,000 people attended ETHDenver this year. Everywhere you looked, developers sat scattered among long tables and inflatable bufficorn mascots, engrossed in dissecting their codebases (not to mention those located at buzzing side events).
+
+If that tells you anything, it's that web3 buidlers are busy buidling.
+
+Speed matters at hackathons. Developers will cut configuration time however they can to maximize interaction with a working project. That's why for leading web3 projects, offering a quick setup solution encourages more devs to build on it.
+
+That fast setup time hasn't always been the case for issuing ENS subdomains on L2s—until [Durin.dev](https://durin.dev/).
+
+**Launched late in 2024, Durin has seen over 150 contracts deployed through its framework.**
+
+![Durin_Opengraph](https://hackmd.io/_uploads/ryHPM7LoJl.jpg)
+
+## [Durin.dev](https://durin.dev/): an opinionated approach to issuing L2 subdomains
+
+Before, anyone who wanted to build a project that included issuing ENS subdomains on an L2 like Base or Linea needed expert-level knowledge on ENS infrastructure. There were no guides or opinionated approaches to doing it.
+
+Durin was created as a guide for issuing subnames on an L2. **It is an opinionated, open-source framework designed to get devs deploying mintable subdomains in minutes.**
+
+## The benefits of using Durin
+
+Durin isn’t just about saving time—it’s about empowering developers to innovate with ENS on L2s. With Durin, developers can:
+
+- -Deploy mintable L2 subdomains in minutes
+
+- -Use pre-built factory and template contracts
+
+- -Deploy on Sepolia and Mainnet
+
+- -Contribute (Durin is open source)
+
+## How does Durin work?
+
+Now for more technical talk. At its core, Durin enables the deployment of ENS subdomains as ERC-721 NFTs, meaning they're transferable. By providing education and templates on the key components such as the L2 Registry, L1 Resolver, and L2 Registrar, Durin ensures devs can start minting subnames in as little as a few minutes.
+
+![durin screenshot](https://hackmd.io/_uploads/BkY4Qnuske.jpg)
+
+Durin breaks down subdomain deployment into 5 simple steps, mostly involving just pressing a button:
+
+- **1.** Deploy the L2 Registry: You are choosing your ENS domain, Sepolia or mainnet, your preferred chain, and deploying a registry by pressing a button.
+
+- **2.** Configure L1 Resolver: Two buttons. One for updating your ENS name's resolver and to set a new record.
+
+- **3.** Customize Registrar: A customizable template is provided for you on Github. Choose how subnames will be minted by modifying the price or expiration.
+
+- **4.** Connect Registrar to Registry: call addRegistrar() on your registry with the address of your deployed registrar to connect the two contracts.
+
+- **5.** Done! Mint your first subname.
+
+All of Durin's resources are available on [GitHub](https://github.com/namestonehq/durin). Durin is built by [NameStone](https://namestone.com/try-namestone). Check out [Durin](https://durin.dev/) and reach out to slobo.eth with questions or feedback on [Telegram](https://t.me/superslobo). We always appreciate hearing suggestions from the community on ways to make Durin better.
