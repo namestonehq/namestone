@@ -79,6 +79,7 @@ export default function AdminNameModal({
             }
             placeholder="https://"
           />
+
           {/* Description */}
           <div className="flex flex-row justify-between">
             <div className="mb-2 text-sm font-bold text-brownblack-700">
@@ -112,6 +113,36 @@ export default function AdminNameModal({
               setCurrentNameHelper(e.target.value, "text_records", "location")
             }
             placeholder="New York City"
+          />
+          {/* Header */}
+          <div className="flex flex-row justify-between">
+            <div className="mb-2 text-sm font-bold text-brownblack-700">
+              Header
+            </div>
+            <div className="text-sm text-red-500">{nameErrorMsg}</div>
+          </div>
+          <input
+            className="w-full px-4 py-2 mb-4 border rounded-md ring-1 ring-gray-300 border-brownblack-50 focus:ring-2 focus:ring-orange-400 focus:outline-none"
+            value={currentNameData.text_records?.header || ""}
+            onChange={(e) =>
+              setCurrentNameHelper(e.target.value, "text_records", "header")
+            }
+            placeholder="Software Engineer"
+          />
+          {/* Status */}
+          <div className="flex flex-row justify-between">
+            <div className="mb-2 text-sm font-bold text-brownblack-700">
+              Status
+            </div>
+            <div className="text-sm text-red-500">{nameErrorMsg}</div>
+          </div>
+          <input
+            className="w-full px-4 py-2 mb-4 border rounded-md ring-1 ring-gray-300 border-brownblack-50 focus:ring-2 focus:ring-orange-400 focus:outline-none"
+            value={currentNameData.text_records?.status || ""}
+            onChange={(e) =>
+              setCurrentNameHelper(e.target.value, "text_records", "status")
+            }
+            placeholder="Available for work"
           />
         </div>
         {/* links */}

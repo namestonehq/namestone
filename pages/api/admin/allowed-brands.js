@@ -109,6 +109,7 @@ export default async function handler(req, res) {
         "0x84c5AdB77dd9f362A1a3480009992d8d47325dc3",
         "0xd17347fA0a6eeC89a226c96a9ae354F785e94241",
         "0xA87361C4E58B619c390f469B9E6F27d759715125",
+        "0x7CE6Cf740075B5AF6b1681d67136B84431B43AbD",
         "0xF142B308cF687d4358410a4cB885513b30A42025", // gasless DNS
       ];
 
