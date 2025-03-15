@@ -25,8 +25,8 @@ export default function TryNamestone() {
   };
 
   return (
-    <div className="flex justify-center bg-neutral-50">
-      <div className="w-full overflow-hidden flex flex-col max-w-[1536px] relative">
+    <div className="flex justify-center bg-white">
+      <div className="w-full flex flex-col max-w-[1536px] relative">
         <Head>
           <title>Try for Free | Namestone</title>
           <meta
@@ -55,22 +55,36 @@ export default function TryNamestone() {
             </div>
           </div>
         </div>
-        
+
         {/* Main Content Area - Below Navbar */}
         <div className="flex flex-col w-full mt-[60px]">
           {/* Mobile Top Panel */}
           <TopPanel formState={formState} />
-          
+
           {/* Desktop Side Panel and Content */}
-          <div className="flex w-full">
-            <SidePanel formState={formState} />
-            <StylishVerticalDivider />
-            {formState === FormState.FORM && <ApiKeyForm handleApiKeySentSuccessfully={handleApiKeySentSuccessfully} />}
-            {formState === FormState.API_KEY_SENT && <ApiKeySentDocs userEnsDomain={userEnsDomain} walletAddress={walletClient?.account.address} />}
+          <div className="flex flex-row w-full">
+            <div className="hidden lg:block w-1/3 sticky top-[60px] h-[calc(100vh-60px)]">
+              <SidePanel formState={formState} />
+              <div className="absolute right-0 top-0 h-full">
+                <StylishVerticalDivider />
+              </div>
+            </div>
+            <div className="w-full lg:w-2/3">
+              {formState === FormState.FORM && (
+                <ApiKeyForm
+                  handleApiKeySentSuccessfully={handleApiKeySentSuccessfully}
+                />
+              )}
+              {formState === FormState.API_KEY_SENT && (
+                <ApiKeySentDocs
+                  userEnsDomain={userEnsDomain}
+                  walletAddress={walletClient?.account.address}
+                />
+              )}
+            </div>
           </div>
         </div>
       </div>
     </div>
   );
 }
-

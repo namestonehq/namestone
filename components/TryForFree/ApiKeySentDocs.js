@@ -55,7 +55,7 @@ https://namestone.com/api/public_v1/set-name`;
   const displayAddress = formatWalletAddress(walletAddress);
 
   return (
-    <div className="relative flex justify-center w-full min-h-screen px-8 overflow-hidden text-left bg-white lg:ml-[502px]">
+    <div className="relative flex justify-center w-full min-h-screen px-8 pt-8 overflow-hidden text-left bg-white">
       <div className="flex flex-col w-full max-w-2xl py-16 lg:px-8">
         {/* Success Message */}
         <div className="flex items-center p-4 mb-8 bg-green-50 rounded-md">
@@ -79,7 +79,7 @@ https://namestone.com/api/public_v1/set-name`;
               <span className="text-gray-700">
                 Run the curl example and add your API key.
               </span>
-              <a href="#" className="ml-2 text-orange-500 hover:underline">
+              <a href="https://namestone.com/docs" className="ml-2 text-orange-500 hover:underline">
                 View all docs
               </a>
             </div>
@@ -158,9 +158,9 @@ https://namestone.com/api/public_v1/set-name`}</code>
               Quick Links
             </h3>
           </div>
-          <div className="p-4 bg-gray-100 rounded-md mb-6">
+          <div className="p-4 bg-[#F5F5F5] rounded-md mb-6">
             <a
-              href="#"
+              href="https://namestone.com/admin"
               className="flex items-center justify-between mb-4 text-orange-500 hover:underline"
             >
               <span>Admin Panel Login</span>
@@ -181,10 +181,10 @@ https://namestone.com/api/public_v1/set-name`}</code>
           </div>
 
           {/* View Docs Card - Only visible on large screens */}
-          <div className="p-4 bg-gray-100 rounded-md mb-6">
-            <div className="p-4 bg-gray-100 rounded-md mb-6">
+          <div className="p-4 bg-[#F5F5F5] rounded-md mb-6">
+            <div className="p-4 bg-[#F5F5F5] rounded-md mb-6">
               <a
-                href="https://docs.namestone.com"
+                href="https://namestone.com/docs"
                 className="flex items-center justify-between text-orange-500 hover:underline"
               >
                 <div>

@@ -220,14 +220,8 @@ export const ApiKeyForm = ({ handleApiKeySentSuccessfully }) => {
   };
 
   return (
-    <div className="relative flex justify-center w-full min-h-screen px-8 overflow-hidden text-center bg-white lg:ml-[502px]">
-      <div className="flex justify-center flex-col w-full lg:justify-between lg:mt-[80px] lg:px-32">
-        {/* Background Image */}
-        <Image
-          src={bgGraphic}
-          alt="Background Graphic"
-          className="absolute -z-6 h-[100%] right-20"
-        />
+    <div className="relative flex justify-center w-full min-h-screen px-8 pt-8 overflow-hidden text-center bg-white">
+      <div className="flex justify-center flex-col w-full lg:justify-between lg:mt-[80px] lg:px-16">
 
         {/* Main content */}
         <div className="z-10 flex flex-col items-center justify-start flex-1">

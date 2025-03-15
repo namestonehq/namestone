@@ -6,7 +6,7 @@ import React from "react";
 
 export const StylishVerticalDivider = () => {
     return (
-        <div className="hidden lg:flex fixed left-1/2 transform -translate-x-[274px] h-[calc(100vh-60px)] z-20 flex-col justify-between">
+        <div className="hidden lg:flex h-full z-20 flex-col justify-between bg-white">
             {/* First zigzag wrapper - positioned at the top */}
             <div className="flex flex-col items-center">
                 {/* Box with only right border */}
