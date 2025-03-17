@@ -54,6 +54,8 @@ const isValidImageUrl = (url) => {
 export default function Admin() {
   const { data: session, status: authStatus } = useSession();
   const [brandUrls, setBrandUrls] = useState([]);
+  const [isLoading, setIsLoading] = useState(true); // Add loading state
+  const [isSubdomainsLoading, setIsSubdomainsLoading] = useState(false); // Add subdomains loading state
 
   const [brandDict, setBrandDict] = useState({});
   const [selectedBrand, setSelectedBrand] = useState(null);
@@ -116,6 +118,7 @@ export default function Admin() {
   // fetch to get allowed domains after connect
   useEffect(() => {
     if (authStatus === "authenticated" && selectedBrand === null) {
+      setIsLoading(true); // Set loading to true when fetching
       fetch("/api/admin/allowed-brands").then((res) =>
         res.json().then((data) => {
           if (res.status === 200) {
@@ -126,6 +129,7 @@ export default function Admin() {
             setBrandUrls([]);
             console.log(data);
           }
+          setIsLoading(false); // Set loading to false when done
         })
       );
     }
@@ -134,6 +138,10 @@ export default function Admin() {
   // fetch subdomains after selecting a brand
   useEffect(() => {
     if (!selectedBrand) return;
+
+    // Set subdomains loading state to true
+    setIsSubdomainsLoading(true);
+
     // list subdomains
     fetch(
       "/api/admin/list-subdomains?" +
@@ -147,6 +155,7 @@ export default function Admin() {
         } else {
           console.log(data);
         }
+        setIsSubdomainsLoading(false); // Set loading to false when done
       });
     });
     // Get domain settings (admins and API key)
@@ -501,6 +510,7 @@ export default function Admin() {
   useEffect(() => {
     if (changeResolver > 0 && selectedBrand) {
       // Refresh the brand data
+      setIsLoading(true); // Set loading to true when refreshing
       fetch("/api/admin/allowed-brands").then((res) =>
         res.json().then((data) => {
           if (res.status === 200) {
@@ -514,6 +524,7 @@ export default function Admin() {
           } else {
             console.log(data);
           }
+          setIsLoading(false); // Set loading to false when done
         })
       );
     }
@@ -531,6 +542,21 @@ export default function Admin() {
       </AuthContentContainer>
     );
   }
+
+  // Show loading screen while data is being fetched
+  if (isLoading) {
+    return (
+      <AuthContentContainer>
+        <div className="flex flex-col items-center justify-center w-full h-screen">
+          <div className="w-16 h-16 border-4 border-gray-300 rounded-full border-t-black animate-spin"></div>
+          <div className="mt-4 text-sm font-medium text-brownblack-700">
+            Loading Names
+          </div>
+        </div>
+      </AuthContentContainer>
+    );
+  }
+
   // if not permission to view or no brand selected
   if (brandUrls.length === 0 || !selectedBrand) {
     return (
@@ -802,14 +828,23 @@ export default function Admin() {
                   + Add Name
                 </button>
               </div>
-              <SubdomainTable
-                subdomains={subdomains}
-                admin={true}
-                deleteName={deleteName}
-                openEditNameModal={openEditNameModal}
-                selectedBrand={selectedBrand}
-                setSubdomains={setSubdomains}
-              />
+              {isSubdomainsLoading ? (
+                <div className="flex flex-col items-center justify-center w-full py-16">
+                  <div className="w-12 h-12 border-4 border-gray-300 rounded-full border-t-black animate-spin"></div>
+                  <div className="mt-4 text-sm font-medium text-brownblack-700">
+                    Loading Subnames
+                  </div>
+                </div>
+              ) : (
+                <SubdomainTable
+                  subdomains={subdomains}
+                  admin={true}
+                  deleteName={deleteName}
+                  openEditNameModal={openEditNameModal}
+                  selectedBrand={selectedBrand}
+                  setSubdomains={setSubdomains}
+                />
+              )}
             </>
           )}
           {activeTab === "Settings" && (
