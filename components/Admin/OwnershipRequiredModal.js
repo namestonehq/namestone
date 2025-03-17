@@ -14,7 +14,7 @@ export default function OwnershipRequiredModal({ isOpen, onClose }) {
 
         <div className="relative z-10 w-full max-w-md p-6 mx-auto bg-white rounded-lg shadow-xl">
           <div className="flex items-center justify-between mb-4">
-            <Dialog.Title className="font-medium text-gray-900 text-md">
+            <Dialog.Title className="text-base font-bold text-gray-900">
               Ownership Required
             </Dialog.Title>
             <button
@@ -27,7 +27,7 @@ export default function OwnershipRequiredModal({ isOpen, onClose }) {
 
           <div className="mb-6 text-sm text-gray-500">
             <p className="mb-4">
-              The connected wallet does not have ownership of this domain.
+              This wallet <b>does not</b> own this domain.
             </p>
             <p>
               Please connect with the wallet that owns the domain and try again.
@@ -37,9 +37,9 @@ export default function OwnershipRequiredModal({ isOpen, onClose }) {
           <div className="flex justify-end">
             <button
               onClick={onClose}
-              className="px-4 py-2 text-sm font-medium text-white bg-orange-600 rounded-md hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
+              className="px-4 py-2 text-sm font-medium bg-orange-500 rounded-md text-neutral-900 hover:bg-orange-700 active:bg-orange-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
             >
-              Ok
+              Got it
             </button>
           </div>
         </div>
