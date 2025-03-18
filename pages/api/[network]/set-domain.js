@@ -1,9 +1,6 @@
 import sql from "../../../lib/db";
-import {
-  checkApiKey,
-  encodeContenthash,
-  getNetwork,
-} from "../../../utils/ServerUtils";
+import { checkApiKey, getNetwork } from "../../../utils/ServerUtils";
+import { encodeContenthash } from "../../../utils/ContentHashUtils.js";
 import Cors from "micro-cors";
 import { normalize } from "viem/ens";
 

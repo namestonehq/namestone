@@ -1,10 +1,11 @@
 import sql from "../../../lib/db";
 import { normalize } from "viem/ens";
-import { getAdminToken, encodeContenthash } from "../../../utils/ServerUtils";
+import { getAdminTokenById } from "../../../utils/ServerUtils";
+import { encodeContenthash } from "../../../utils/ContentHashUtils.js";
 
 export default async function handler(req, res) {
   const body = JSON.parse(req.body);
-  const adminToken = await getAdminToken(req, body.domain);
+  const adminToken = await getAdminTokenById(req, body.domain_id);
   if (!adminToken) {
     return res
       .status(401)
@@ -14,18 +15,20 @@ export default async function handler(req, res) {
   if (!body.name) {
     return res.status(400).json({ error: "Name is required" });
   }
-  if (!body.address) {
-    return res.status(400).json({ error: "Address is required" });
-  }
+
   if (typeof body.id !== "number") {
     return res.status(400).json({ error: "Id is required" });
   }
+  if (typeof body.domain_id !== "number" || body.domain_id <= 0) {
+    return res
+      .status(400)
+      .json({ error: "domain_id is required and must be a positive number" });
+  }
+  // domain is still needed for normalization
   if (!body.domain) {
     return res.status(400).json({ error: "Domain is required" });
   }
-  if (!body.network) {
-    return res.status(400).json({ error: "Network is required" });
-  }
+
   let domain;
   let name;
   try {
@@ -58,8 +61,7 @@ export default async function handler(req, res) {
   subdomainQuery = await sql`
   select subdomain.id, subdomain.address
   from subdomain
-  where subdomain.name = ${name} and subdomain.domain_id in
-  (select id from domain where name = ${domain} and network= ${body.network} limit 1)`;
+  where subdomain.name = ${name} and subdomain.domain_id = ${body.domain_id}`;
 
   // If subdomain exists and is different than current, warn user
   if (subdomainQuery.length == 1 && subdomainQuery[0].id != subdomainId) {
@@ -69,18 +71,12 @@ export default async function handler(req, res) {
   }
   // update subdomain
   if (subdomainId == 0) {
-    // Insert subdomain
-    const domainQuery = await sql`
-    select id from domain where name = ${domain} and network= ${body.network} limit 1`;
-
-    if (domainQuery.length === 0) {
-      return res.status(400).json({ error: "Domain does not exist" });
-    }
+    // Insert subdomain - now using domain_id directly
     subdomainQuery = await sql`
     insert into subdomain (
       name, address, domain_id, contenthash, contenthash_raw
     ) values (
-      ${name}, ${body.address}, ${domainQuery[0].id}, ${contenthash}, ${contenthashRaw}
+      ${name}, ${body.address}, ${body.domain_id}, ${contenthash}, ${contenthashRaw}
     )
     returning id;`;
     subdomainId = subdomainQuery[0].id;
@@ -131,6 +127,7 @@ export default async function handler(req, res) {
     name: name,
     address: body.address,
     domain: domain,
+    domain_id: body.domain_id,
   });
   await sql`
   insert into user_engagement (address, name, details)

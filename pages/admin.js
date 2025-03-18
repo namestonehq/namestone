@@ -24,6 +24,7 @@ import {
 import { isAddress } from "ethers/lib/utils";
 import ResolverAlertIcon from "../components/Admin/ResolverAlertIcon";
 import OwnershipRequiredModal from "../components/Admin/OwnershipRequiredModal";
+import { normalize } from "viem/ens";
 
 const blankNameData = {
   name: "",
@@ -268,7 +269,7 @@ export default function Admin() {
 
     console.log("text_records", nameData.text_records);
     try {
-      const res = await fetch("/api/admin/edit-domain", {
+      const res = await fetch("/api/admin/set-domain", {
         method: "POST",
         body: JSON.stringify({
           domain_id: nameData.id,
@@ -320,7 +321,7 @@ export default function Admin() {
       const res = await fetch("/api/admin/set-subdomain", {
         method: "POST",
         body: JSON.stringify({
-          network: selectedBrand.network,
+          domain_id: selectedBrand.domain_id,
           id: nameData.id,
           name: nameData.name,
           address: address,

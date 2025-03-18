@@ -10,7 +10,7 @@
 
 import { createRequest, createResponse } from "node-mocks-http";
 import handler from "./set-domain";
-import { encodeContenthash } from "../../../utils/ServerUtils";
+import { encodeContenthash } from "../../../utils/ContentHashUtils.js";
 import { default as sqlForTests } from "../../../test_utils/mock_db";
 import {
   setupTestDatabase,
@@ -203,7 +203,7 @@ describe("set-domain API E2E", () => {
           });
         });
 
-        // TODO: fix `set-domain` to first check if the domain is even in the database before checking the API key 
+        // TODO: fix `set-domain` to first check if the domain is even in the database before checking the API key
         // OR have a custom error thrown from inside `checkApiKey` to better inform the user
         test("setDomain_nonExistingDomain_returns400", async () => {
           const req = createRequest({
@@ -245,16 +245,16 @@ describe("set-domain API E2E", () => {
             SELECT * FROM domain WHERE id = ${testDomainId}
           `;
           expect(domain).toHaveLength(1);
-          
+
           // Clear any existing records
           await sqlForTests`DELETE FROM domain_coin_type WHERE domain_id = ${testDomainId}`;
           await sqlForTests`DELETE FROM domain_text_record WHERE domain_id = ${testDomainId}`;
-          
+
           const textRecords = await sqlForTests`
             SELECT * FROM domain_text_record WHERE domain_id = ${testDomainId}
           `;
           expect(textRecords).toHaveLength(0);
-          
+
           const coinTypes = await sqlForTests`
             SELECT * FROM domain_coin_type WHERE domain_id = ${testDomainId}
           `;
@@ -392,7 +392,7 @@ describe("set-domain API E2E", () => {
           await handler(req, response);
 
           expect(response._getStatusCode()).toBe(200);
-          
+
           // Verify domain update
           const [updatedDomain] = await sqlForTests`
             SELECT * FROM domain WHERE id = ${testDomainId}
@@ -447,11 +447,12 @@ describe("set-domain API E2E", () => {
         });
 
         test("successfully updates domain with contenthash", async () => {
-          const ipfsHash = "ipfs://QmTKB75Y73zhNbD3Y73xeXGjYrZHmaXXNxoZqGCagu7r8u";
+          const ipfsHash =
+            "ipfs://QmTKB75Y73zhNbD3Y73xeXGjYrZHmaXXNxoZqGCagu7r8u";
           const encodedHash = encodeContenthash(ipfsHash);
 
           const req = createRequest({
-            method: "POST", 
+            method: "POST",
             headers: {
               authorization: TEST_API_KEY,
             },
@@ -461,7 +462,7 @@ describe("set-domain API E2E", () => {
             body: {
               domain: TEST_DOMAIN,
               address: "0x1234567890123456789012345678901234567890",
-              contenthash: ipfsHash
+              contenthash: ipfsHash,
             },
           });
           const response = createResponse();
@@ -470,7 +471,7 @@ describe("set-domain API E2E", () => {
 
           expect(response._getStatusCode()).toBe(200);
           expect(JSON.parse(response._getData())).toEqual({
-            success: true
+            success: true,
           });
 
           // Verify contenthash was updated in database
@@ -487,11 +488,11 @@ describe("set-domain API E2E", () => {
          *   if (contenthash === "") {
          *     contenthash = null;
          *   }
-         * 
+         *
          */
         test("successfully updates domain with contenthash as empty string", async () => {
           const req = createRequest({
-            method: "POST", 
+            method: "POST",
             headers: {
               authorization: TEST_API_KEY,
             },
@@ -501,7 +502,7 @@ describe("set-domain API E2E", () => {
             body: {
               domain: TEST_DOMAIN,
               address: "0x1234567890123456789012345678901234567890",
-              contenthash: ""
+              contenthash: "",
             },
           });
           const response = createResponse();
@@ -510,7 +511,7 @@ describe("set-domain API E2E", () => {
 
           expect(response._getStatusCode()).toBe(200);
           expect(JSON.parse(response._getData())).toEqual({
-            success: true
+            success: true,
           });
 
           // Verify contenthash was updated in database
@@ -524,4 +525,4 @@ describe("set-domain API E2E", () => {
       });
     }
   );
-}); 
+});

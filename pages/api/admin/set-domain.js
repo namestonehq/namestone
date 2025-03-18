@@ -1,8 +1,6 @@
 import sql from "../../../lib/db";
-import {
-  getAdminTokenById,
-  encodeContenthash,
-} from "../../../utils/ServerUtils";
+import { getAdminTokenById } from "../../../utils/ServerUtils";
+import { encodeContenthash } from "../../../utils/ContentHashUtils.js";
 
 export default async function handler(req, res) {
   const body = JSON.parse(req.body);
@@ -23,6 +21,7 @@ export default async function handler(req, res) {
   // make sure domain exists
   const domainQuery = await sql`
   select id from domain where id = ${domainId}`;
+
   if (domainQuery.length == 0) {
     return res.status(400).json({ error: "Domain does not exist" });
   }

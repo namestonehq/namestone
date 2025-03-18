@@ -1,13 +1,8 @@
 import sql from "../lib/db.js";
 import { ethers } from "ethers";
-import contentHash from "@ensdomains/content-hash";
 import { createPublicClient, http } from "viem";
 import { mainnet, sepolia } from "viem/chains";
-import {
-  createSiweMessage,
-  generateSiweNonce,
-  parseSiweMessage,
-} from "viem/siwe";
+import { createSiweMessage, parseSiweMessage } from "viem/siwe";
 import { getOwner } from "@ensdomains/ensjs/public";
 import { addEnsContracts, ensSubgraphActions } from "@ensdomains/ensjs";
 import { getToken } from "next-auth/jwt";
@@ -346,69 +341,6 @@ export async function getAdminTokenById(req, domainId) {
     return false;
   }
   return token;
-}
-
-function matchProtocol(text) {
-  return (
-    text.match(/^(ipfs|sia|ipns|bzz|onion|onion3|arweave|ar):\/\/(.*)/) ||
-    text.match(/\/(ipfs)\/(.*)/) ||
-    text.match(/\/(ipns)\/(.*)/)
-  );
-}
-
-export function encodeContenthash(text) {
-  let content = text;
-  let contentType;
-  let encoded = false;
-  let error;
-  if (text) {
-    const matched = matchProtocol(text);
-    if (matched) {
-      [, contentType, content] = matched;
-    }
-    try {
-      if (contentType === "ipfs") {
-        if (content.length >= 4) {
-          encoded = `0x${contentHash.encode("ipfs-ns", content)}`;
-        }
-      } else if (contentType === "ipns") {
-        encoded = `0x${contentHash.encode("ipns-ns", content)}`;
-      } else if (contentType === "bzz") {
-        if (content.length >= 4) {
-          encoded = `0x${contentHash.fromSwarm(content)}`;
-        }
-      } else if (contentType === "onion") {
-        if (content.length === 16) {
-          encoded = `0x${contentHash.encode("onion", content)}`;
-        }
-      } else if (contentType === "onion3") {
-        if (content.length === 56) {
-          encoded = `0x${contentHash.encode("onion3", content)}`;
-        }
-      } else if (contentType === "sia") {
-        if (content.length === 46) {
-          encoded = `0x${contentHash.encode("skynet-ns", content)}`;
-        }
-      } else if (contentType === "arweave" || contentType === "ar") {
-        if (content.length === 43) {
-          encoded = `0x${contentHash.encode("arweave-ns", content)}`;
-        }
-      } else if (text.startsWith("0x")) {
-        encoded = text;
-      } else {
-        console.warn("Unsupported protocol or invalid value", {
-          contentType,
-          text,
-        });
-      }
-    } catch (err) {
-      const errorMessage = "Error encoding content hash";
-      console.warn(errorMessage, { text, encoded });
-      error = errorMessage;
-      throw "Error encoding content hash";
-    }
-  }
-  return encoded;
 }
 
 const resolverList = [

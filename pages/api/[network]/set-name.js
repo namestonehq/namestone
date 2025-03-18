@@ -1,9 +1,6 @@
 import sql from "../../../lib/db";
-import {
-  checkApiKey,
-  encodeContenthash,
-  getNetwork,
-} from "../../../utils/ServerUtils";
+import { checkApiKey, getNetwork } from "../../../utils/ServerUtils";
+import { encodeContenthash } from "../../../utils/ContentHashUtils.js";
 import Cors from "micro-cors";
 import { normalize } from "viem/ens";
 
@@ -26,9 +23,6 @@ async function handler(req, res) {
   }
   if (!body.domain) {
     return res.status(400).json({ error: "Missing domain" });
-  }
-  if (!body.address) {
-    return res.status(400).json({ error: "Missing address" });
   }
   if (!body.name) {
     return res.status(400).json({ error: "Missing name" });
