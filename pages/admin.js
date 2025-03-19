@@ -152,8 +152,8 @@ export default function Admin() {
     const { isValid, error, field } = validateEnsParams(
       nameValue,
       dataToValidate.address,
-      dataToValidate.coin_types,
-      dataToValidate.text_records,
+      dataToValidate.coin_types || {},
+      dataToValidate.text_records || {},
       dataToValidate.contenthash
     );
 
@@ -294,8 +294,8 @@ export default function Admin() {
     const { isValid, error, field } = validateEnsParams(
       nameData.domain,
       nameData.address,
-      nameData.coin_types,
-      nameData.text_records,
+      nameData.coin_types || {},
+      nameData.text_records || {},
       nameData.contenthash
     );
     setNameModalErrorMsg(error);
@@ -342,8 +342,8 @@ export default function Admin() {
     const { isValid, error, field } = validateEnsParams(
       nameData.name,
       nameData.address,
-      nameData.coin_types,
-      nameData.text_records,
+      nameData.coin_types || {},
+      nameData.text_records || {},
       nameData.contenthash
     );
     setNameModalErrorMsg(error);
@@ -1123,7 +1123,16 @@ function AdminRow({
     chainId,
   });
 
-  const ensName = editValue?.includes(".") ? editValue : ensNameFromAddress;
+  let ensName;
+  if (editValue) {
+    if (editValue.includes(".")) {
+      ensName = editValue;
+    } else if (isAddress(editValue)) {
+      ensName = ensNameFromAddress;
+    }
+  } else {
+    ensName = initialEnsName;
+  }
   const { data: ensAvatar } = useEnsAvatar({
     name: ensName,
     chainId,

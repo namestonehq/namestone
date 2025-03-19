@@ -335,7 +335,8 @@ function InputRow({
     const baseClass =
       "w-full px-4 py-2 mb-4 border rounded-md border-brownblack-50";
     const focusClass = "focus:ring-2 focus:ring-orange-400 focus:outline-none";
-    const errorClass = "ring-2 ring-red-500";
+    const errorClass =
+      "ring-2 ring-red-500 focus:ring-2 focus:ring-red-500 focus:outline-none";
 
     if (errorField === field) {
       return `${baseClass} ${errorClass}`;
