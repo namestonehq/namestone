@@ -286,7 +286,6 @@ export async function getEPSAddresses(hotAddress) {
 }
 
 export async function checkApiKey(apiKey, domain) {
-  console.log(apiKey, domain);
   if (!apiKey) {
     return false;
   }
@@ -297,7 +296,6 @@ export async function checkApiKey(apiKey, domain) {
     where domain.name = ${domain}
     and api_key.key = ${apiKey}`;
 
-  console.log(apiQuery);
   if (apiQuery.count == 1) {
     return true;
   }
@@ -361,7 +359,6 @@ export async function checkResolver(ensName, network = "mainnet") {
     } else {
       resolver = await client.getEnsResolver({ name: ensName });
     }
-    console.log("Resolver:", resolver);
     return resolverList.includes(resolver);
   } catch (error) {
     console.error("Error checking ENS resolver:", error);
@@ -381,7 +378,6 @@ export async function verifySignature(address, signature) {
           "Invalid Siwe message - Either it doesn't exist or has been used. Please request another.",
       };
     }
-    console.log("Siwe message:", siweQuery[0].message);
     console.log("Signature:", signature);
     const message = siweQuery[0].message;
     const preparedMessage = createSiweMessage(parseSiweMessage(message));
@@ -414,7 +410,6 @@ export async function getDomainOwner(domain, network = "mainnet") {
     } else {
       result = await getOwner(client, { name: domain });
     }
-    console.log(result);
     const ensAddress = result.owner;
     return ensAddress;
   } catch (error) {
@@ -424,7 +419,6 @@ export async function getDomainOwner(domain, network = "mainnet") {
 }
 
 export async function getOnchainDomainInfo(basename) {
-  console.log("Fetching domain for", basename);
   const address = await client.getEnsAddress({
     name: normalize(basename),
   });

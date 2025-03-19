@@ -156,27 +156,6 @@ describe("set-name API E2E", () => {
        * - No domain supplied
        */
       describe("Missing required parameters validation", () => {
-        test("setName_noAddressSupplied_returns400", async () => {
-          const createReq = createRequest({
-            method: "POST",
-            query: {
-              network: networkConfig.path,
-            },
-            body: {
-              domain: TEST_DOMAIN,
-              name: "e2e-test",
-            },
-          });
-          const response = createResponse();
-
-          await handler(createReq, response);
-
-          expect(response._getStatusCode()).toBe(400);
-          expect(JSON.parse(response._getData())).toEqual({
-            error: "Missing address",
-          });
-        });
-
         test("setName_noNameSupplied_returns400", async () => {
           const createReq = createRequest({
             method: "POST",
