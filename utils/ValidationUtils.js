@@ -1,31 +1,26 @@
 import { isAddress } from "viem";
 import { normalize } from "viem/ens";
 import { encodeContenthash } from "./ContentHashUtils.js";
+import { getCoinName } from "./ChainUtils.js";
 
 /**
- * Validates ENS-related parameters: address, name, and content hash
+ * Validates ENS-related parameters using object parameters
  * Returns an object with validation result and error information
  *
- * @param {string} address - Ethereum address to validate
- * @param {string} name - ENS name to validate
- * @param {string} contentHash - Content hash to validate (optional)
+ * @param {Object} params - Object containing all validation parameters
+ * @param {string} params.name - ENS name to validate
+ * @param {Object} params.addresses - Object of Ethereum addresses to validate (key=field name, value=address)
+ * @param {Object} params.urls - Object of avatar URLs to validate (key=field name, value=url) (optional)
+ * @param {string} params.contentHash - Content hash to validate (optional)
  * @returns {Object} - Validation result containing success status and error details
  */
 export function validateEnsParams(
   name,
   address,
-  avatar = null,
+  coin_types,
+  text_records,
   contentHash = null
 ) {
-  // Validate Ethereum address
-  if (address && !isAddress(address)) {
-    return {
-      isValid: false,
-      error: "Invalid Ethereum address",
-      field: "address",
-    };
-  }
-
   // Validate ENS name
   if (!name) {
     return {
@@ -46,30 +41,79 @@ export function validateEnsParams(
     };
   }
 
-  // Validate avatar URL (if provided)
-  if (avatar && avatar !== "") {
-    try {
-      // Check if it's a valid URL string that points to an image
-      if (
-        !(
-          typeof avatar === "string" &&
-          (avatar.startsWith("http://") ||
-            avatar.startsWith("https://") ||
-            avatar.startsWith("data:image/"))
-        )
-      ) {
-        return {
-          isValid: false,
-          error: "Avatar must be a url",
-          field: "avatar",
-        };
-      }
-    } catch (e) {
+  if (address && !isAddress(address)) {
+    return {
+      isValid: false,
+      error: "Invalid Ethereum address",
+      field: field,
+      value: address,
+    };
+  }
+  // Validate Ethereum addresses
+  for (const [field, address] of Object.entries(coin_types)) {
+    //skip non eth addresses
+    if (
+      !["Base", "Optimism", "Scroll", "Arbitrum"].includes(getCoinName(field))
+    ) {
+      continue;
+    }
+
+    //skip blank fields
+    if (!address) {
+      continue;
+    }
+
+    if (!isAddress(address)) {
       return {
         isValid: false,
-        error: "Invalid avatar URL",
-        field: "avatar",
+        error: `Invalid ${getCoinName(field)} address`,
+        field: field,
+        value: address,
       };
+    }
+  }
+
+  // Validate  URLs (if provided)
+  if (text_records && Object.keys(text_records).length > 0) {
+    for (const [field, url] of Object.entries(text_records)) {
+      // skip non url text records
+      if (!["url", "avatar", "header"].includes(field)) {
+        continue;
+      }
+      //skip blank fields
+      if (!url) {
+        continue;
+      }
+
+      try {
+        // Check if it's a valid URL string that points to an image
+        if (
+          !(
+            typeof url === "string" &&
+            (url.startsWith("http://") ||
+              url.startsWith("https://") ||
+              url.startsWith("data:image/"))
+          )
+        ) {
+          let displayField = capitalizeFirstLetter(field);
+          if (displayField === "Url") {
+            displayField = "Personal website";
+          }
+          return {
+            isValid: false,
+            error: `${displayField} must be a url`,
+            field: field,
+            value: url,
+          };
+        }
+      } catch (e) {
+        return {
+          isValid: false,
+          error: `Invalid ${field} URL`,
+          field: field,
+          value: url,
+        };
+      }
     }
   }
 
@@ -144,3 +188,7 @@ export default {
   isValidEnsName,
   isValidContentHash,
 };
+
+function capitalizeFirstLetter(val) {
+  return String(val).charAt(0).toUpperCase() + String(val).slice(1);
+}

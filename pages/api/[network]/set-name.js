@@ -78,11 +78,11 @@ async function handler(req, res) {
       return res.status(400).json({ error: "Invalid contenthash" });
     }
   }
-
+  const address = body.address || "";
   if (subdomainQuery.length > 0) {
     // Update subdomain
     await sql`
-    update subdomain set address = ${body.address},
+    update subdomain set address = ${address},
     contenthash = ${contenthash},
     contenthash_raw = ${contenthashRaw}
     where id = ${subdomainQuery[0].id}`;
@@ -112,7 +112,7 @@ async function handler(req, res) {
     insert into subdomain (
       name, address, domain_id, contenthash, contenthash_raw
     ) values (
-      ${name}, ${body.address}, ${domainQuery[0].id}, ${contenthash}, ${contenthashRaw}
+      ${name}, ${address}, ${domainQuery[0].id}, ${contenthash}, ${contenthashRaw}
     )
     returning id;`;
 
@@ -158,7 +158,7 @@ async function handler(req, res) {
   });
   await sql`
   insert into user_engagement (address, name, details)
-  values (${body.address},'set_name', ${jsonPayload})`;
+  values (${address},'set_name', ${jsonPayload})`;
 
   return res.status(200).json({ success: true });
 }

@@ -70,7 +70,7 @@ async function handler(req, res) {
 
   let domainData = {
     name: domainName,
-    address: data.address || null,
+    address: data.address || "",
     contenthash: contenthash || null,
     contenthash_raw: rawContenthash || null,
   };

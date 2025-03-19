@@ -63,8 +63,13 @@ export default async function handler(req, res) {
   from subdomain
   where subdomain.name = ${name} and subdomain.domain_id = ${body.domain_id}`;
 
+  const address = body.address || "";
+
   // If subdomain exists and is different than current, warn user
-  if (subdomainQuery.length == 1 && subdomainQuery[0].id != subdomainId) {
+  if (
+    subdomainQuery.length > 1 ||
+    (subdomainQuery.length == 1 && subdomainQuery[0].id != subdomainId)
+  ) {
     return res.status(400).json({
       error: `Name claimed by another address`,
     });
@@ -76,7 +81,7 @@ export default async function handler(req, res) {
     insert into subdomain (
       name, address, domain_id, contenthash, contenthash_raw
     ) values (
-      ${name}, ${body.address}, ${body.domain_id}, ${contenthash}, ${contenthashRaw}
+      ${name}, ${address}, ${body.domain_id}, ${contenthash}, ${contenthashRaw}
     )
     returning id;`;
     subdomainId = subdomainQuery[0].id;
@@ -84,7 +89,7 @@ export default async function handler(req, res) {
     await sql`
   update subdomain
   set name = ${name},
-  address = ${body.address},
+  address = ${address},
   contenthash = ${contenthash},
   contenthash_raw = ${contenthashRaw}
   where id = ${subdomainId}`;

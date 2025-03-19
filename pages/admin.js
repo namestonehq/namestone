@@ -138,28 +138,27 @@ export default function Admin() {
     if (!dataToValidate) return;
     console.log(dataToValidate);
 
-    // Only run validation if we have the required fields
-    if (
-      dataToValidate.name ||
-      dataToValidate.address ||
-      (dataToValidate.text_records && dataToValidate.text_records.avatar) ||
+    const nameValue = editingDomain
+      ? dataToValidate.domain
+      : dataToValidate.name;
+
+    console.log(
+      nameValue,
+      dataToValidate.address,
+      dataToValidate.coin_types,
+      dataToValidate.text_records,
       dataToValidate.contenthash
-    ) {
-      const avatarValue = dataToValidate.text_records?.avatar || null;
-      const nameValue = editingDomain
-        ? dataToValidate.domain
-        : dataToValidate.name;
+    );
+    const { isValid, error, field } = validateEnsParams(
+      nameValue,
+      dataToValidate.address,
+      dataToValidate.coin_types,
+      dataToValidate.text_records,
+      dataToValidate.contenthash
+    );
 
-      const { isValid, error, field } = validateEnsParams(
-        nameValue,
-        dataToValidate.address,
-        avatarValue,
-        dataToValidate.contenthash
-      );
-
-      setNameModalErrorMsg(error);
-      setNameModalErrorField(field);
-    }
+    setNameModalErrorMsg(error);
+    setNameModalErrorField(field);
   }, [adminNameModalOpen, editingDomain, currentDomainData, currentNameData]);
 
   // fetch to get allowed domains after connect
@@ -295,7 +294,8 @@ export default function Admin() {
     const { isValid, error, field } = validateEnsParams(
       nameData.domain,
       nameData.address,
-      nameData.text_records?.avatar,
+      nameData.coin_types,
+      nameData.text_records,
       nameData.contenthash
     );
     setNameModalErrorMsg(error);
@@ -339,11 +339,11 @@ export default function Admin() {
   // function to add and edit a name
   async function setNameBackend(nameData) {
     //Validate
-    console.log(nameData);
     const { isValid, error, field } = validateEnsParams(
       nameData.name,
       nameData.address,
-      nameData.text_records?.avatar,
+      nameData.coin_types,
+      nameData.text_records,
       nameData.contenthash
     );
     setNameModalErrorMsg(error);

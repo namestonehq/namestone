@@ -22,19 +22,20 @@ const TEST_DOMAIN_SEPOLIA = "test-sepolia.eth";
 const TEST_API_KEY_MAINNET = "test-api-key-mainnet";
 const TEST_API_KEY_SEPOLIA = "test-api-key-sepolia";
 const TEST_ADDRESS = "0x1234567890123456789012345678901234567890";
-const TEST_CONTENTHASH = "ipfs://QmTest";
+const TEST_CONTENTHASH =
+  "ipfs://bafybeihpam4mwedda5afxtvss3ynsdkoln5p64bwhihlfuqi5lmyzzhdqm";
 const SUPPORTED_NETWORKS = [
-  { 
-    path: "public_v1", 
-    name: "mainnet", 
+  {
+    path: "public_v1",
+    name: "mainnet",
     domain: TEST_DOMAIN_MAINNET,
-    apiKey: TEST_API_KEY_MAINNET 
+    apiKey: TEST_API_KEY_MAINNET,
   },
-  { 
-    path: "public_v1_sepolia", 
-    name: "sepolia", 
+  {
+    path: "public_v1_sepolia",
+    name: "sepolia",
     domain: TEST_DOMAIN_SEPOLIA,
-    apiKey: TEST_API_KEY_SEPOLIA 
+    apiKey: TEST_API_KEY_SEPOLIA,
   },
 ];
 
@@ -218,10 +219,11 @@ describe("get-domain API E2E", () => {
 
         test("getDomain_wrongNetworkApiKey_returns401", async () => {
           // Try to access using the API key from the other network
-          const wrongApiKey = networkConfig.name === "mainnet" 
-            ? TEST_API_KEY_SEPOLIA 
-            : TEST_API_KEY_MAINNET;
-          
+          const wrongApiKey =
+            networkConfig.name === "mainnet"
+              ? TEST_API_KEY_SEPOLIA
+              : TEST_API_KEY_MAINNET;
+
           const req = createRequest({
             method: "GET",
             query: {
@@ -270,8 +272,8 @@ describe("get-domain API E2E", () => {
               url: "https://example.com",
             },
             coin_types: {
-              "60": "0xETHAddress",
-              "2147483785": "0xMATICAddress",
+              60: "0xETHAddress",
+              2147483785: "0xMATICAddress",
             },
           });
         });
@@ -281,9 +283,10 @@ describe("get-domain API E2E", () => {
             method: "GET",
             query: {
               network: networkConfig.path,
-              domain: networkConfig.domain === TEST_DOMAIN_MAINNET 
-                ? TEST_DOMAIN_SEPOLIA 
-                : TEST_DOMAIN_MAINNET,
+              domain:
+                networkConfig.domain === TEST_DOMAIN_MAINNET
+                  ? TEST_DOMAIN_SEPOLIA
+                  : TEST_DOMAIN_MAINNET,
             },
             headers: {
               authorization: networkConfig.apiKey,
