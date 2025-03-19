@@ -41,7 +41,7 @@ export default function SubdomainTable({
             <tr className=" bg-neutral-100">
               <th className="px-6 py-3 text-left ">
                 <span className="text-sm font-bold text-brownblack-700">
-                  Subname
+                  Name
                 </span>
                 <span className="pl-2 text-xs font-normal text-brownblack-700">
                   Total: {subdomains.length}

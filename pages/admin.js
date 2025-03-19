@@ -24,7 +24,7 @@ import {
 import { isAddress } from "ethers/lib/utils";
 import ResolverAlertIcon from "../components/Admin/ResolverAlertIcon";
 import OwnershipRequiredModal from "../components/Admin/OwnershipRequiredModal";
-import { normalize } from "viem/ens";
+import { validateEnsParams } from "../utils/ValidationUtils";
 
 const blankNameData = {
   name: "",
@@ -63,8 +63,8 @@ export default function Admin() {
   const [subdomains, setSubdomains] = useState([]);
 
   const [adminNameModalOpen, setAdminNameModalOpen] = useState(false);
-  const [nameErrorMsg, setNameErrorMsg] = useState("");
-  const [addressErrorMsg, setAddressErrorMsg] = useState("");
+  const [nameModalErrorMsg, setNameModalErrorMsg] = useState("");
+  const [nameModalErrorField, setNameModalErrorField] = useState(null);
   const [admins, setAdmins] = useState([]);
   const [saveSettingsDisabled, setSaveSettingsDisabled] = useState(true);
   const [saveSettingsPending, setSaveSettingsPending] = useState(false);
@@ -106,7 +106,7 @@ export default function Admin() {
     if (key2 !== undefined) {
       setCurrentNameData({
         ...currentNameData,
-        [key1]: { ...currentNameData[key1], [key2]: value },
+        [key2]: { ...currentNameData[key2], [key1]: value },
       });
     } else {
       setCurrentNameData({ ...currentNameData, [key1]: value });
@@ -114,15 +114,51 @@ export default function Admin() {
   }
   //function to help set current domain data
   function setCurrentDomainHelper(value, key1, key2 = undefined) {
+    setNameModalErrorField(null);
+    setNameModalErrorMsg("");
     if (key2 !== undefined) {
       setCurrentDomainData({
         ...currentDomainData,
-        [key1]: { ...currentDomainData[key1], [key2]: value },
+        [key2]: { ...currentDomainData[key2], [key1]: value },
       });
     } else {
       setCurrentDomainData({ ...currentDomainData, [key1]: value });
     }
   }
+
+  // useEffect to validate ENS data when currentDomainData or currentNameData changes
+  useEffect(() => {
+    if (!adminNameModalOpen) return;
+
+    // Determine which data to validate based on whether we're editing a domain
+    const dataToValidate = editingDomain ? currentDomainData : currentNameData;
+
+    // Skip validation if data isn't loaded yet or if we're in the middle of an operation
+    if (!dataToValidate) return;
+
+    // Only run validation if we have the required fields
+    if (
+      dataToValidate.name ||
+      dataToValidate.address ||
+      (dataToValidate.text_records && dataToValidate.text_records.avatar) ||
+      dataToValidate.contenthash
+    ) {
+      const avatarValue = dataToValidate.text_records?.avatar || null;
+      const nameValue = editingDomain
+        ? dataToValidate.domain
+        : dataToValidate.name;
+
+      const { isValid, error, field } = validateEnsParams(
+        nameValue,
+        dataToValidate.address,
+        avatarValue,
+        dataToValidate.contenthash
+      );
+
+      setNameModalErrorMsg(error);
+      setNameModalErrorField(field);
+    }
+  }, [adminNameModalOpen, editingDomain, currentDomainData, currentNameData]);
 
   // fetch to get allowed domains after connect
   useEffect(() => {
@@ -246,25 +282,26 @@ export default function Admin() {
     setAdminNameModalOpen(true);
   }
 
-  function openEditDomainModal() {
+  function openSetDomainModal() {
     setEditingDomain(true);
     setAdminNameModalOpen(true);
   }
 
   // function to edit a domain
-  async function editDomainBackend(nameData) {
-    if (!nameData.address) {
-      setAddressErrorMsg("*Address cannot be blank");
+  async function setDomainBackend(nameData) {
+    //Validate
+    const { isValid, error, field } = validateEnsParams(
+      nameData.domain,
+      nameData.address,
+      nameData.text_records?.avatar,
+      nameData.contenthash
+    );
+    setNameModalErrorMsg(error);
+    setNameModalErrorField(field);
+    if (!isValid) {
       return;
     }
-    // check if address is valid ethereum address using ethers and convert to checksum
-    let address;
-    try {
-      address = ethers.utils.getAddress(nameData.address);
-    } catch (e) {
-      setAddressErrorMsg("*Invalid address");
-      return;
-    }
+
     setSaveNamePending(true);
 
     console.log("text_records", nameData.text_records);
@@ -273,7 +310,7 @@ export default function Admin() {
         method: "POST",
         body: JSON.stringify({
           domain_id: nameData.id,
-          address: address,
+          address: nameData.address,
           contenthash: nameData.contenthash,
           text_records: nameData.text_records,
           coin_types: nameData.coin_types,
@@ -283,11 +320,11 @@ export default function Admin() {
 
       if (res.status === 200) {
         setAdminNameModalOpen(false);
-        setNameErrorMsg("");
-        setAddressErrorMsg("");
+        setNameModalErrorMsg("");
+        setNameModalErrorField(null);
         toast.success("Domain edited successfully");
       } else {
-        setNameErrorMsg(data.error);
+        setNameModalErrorMsg(data.error);
         console.log(data);
       }
     } catch (err) {
@@ -299,20 +336,17 @@ export default function Admin() {
 
   // function to add and edit a name
   async function setNameBackend(nameData) {
-    if (!nameData.name) {
-      setNameErrorMsg("*Name cannot be blank");
-      return;
-    }
-    if (!nameData.address) {
-      setAddressErrorMsg("*Address cannot be blank");
-      return;
-    }
-    // check if address is valid ethereum address using ethers and convert to checksum
-    let address;
-    try {
-      address = ethers.utils.getAddress(nameData.address);
-    } catch (e) {
-      setAddressErrorMsg("*Invalid address");
+    //Validate
+    console.log(nameData);
+    const { isValid, error, field } = validateEnsParams(
+      nameData.name,
+      nameData.address,
+      nameData.text_records?.avatar,
+      nameData.contenthash
+    );
+    setNameModalErrorMsg(error);
+    setNameModalErrorField(field);
+    if (!isValid) {
       return;
     }
     setSaveNamePending(true);
@@ -324,7 +358,7 @@ export default function Admin() {
           domain_id: selectedBrand.domain_id,
           id: nameData.id,
           name: nameData.name,
-          address: address,
+          address: nameData.address,
           contenthash: nameData.contenthash,
           domain: selectedBrand.domain,
           text_records: nameData.text_records,
@@ -335,9 +369,9 @@ export default function Admin() {
 
       if (res.status === 200) {
         setAdminNameModalOpen(false);
-        setNameErrorMsg("");
-        setAddressErrorMsg("");
-        toast.success("Subdomain set successfully");
+        setNameModalErrorMsg("");
+        setNameModalErrorField(null);
+        toast.success("Name set successfully");
 
         // Refresh the subdomains list
         const subdomainsRes = await fetch(
@@ -354,7 +388,7 @@ export default function Admin() {
           console.log(subdomainsData);
         }
       } else {
-        setNameErrorMsg(data.error);
+        setNameModalErrorMsg(data.error);
         toast.error(data.error);
         console.log(data);
       }
@@ -393,7 +427,7 @@ export default function Admin() {
 
         if (subdomainsRes.status === 200) {
           setSubdomains(subdomainsData);
-          toast.success("Subdomain deleted successfully");
+          toast.success("Name deleted successfully");
         } else {
           console.log(subdomainsData);
         }
@@ -479,8 +513,8 @@ export default function Admin() {
   // useEffect to wipe inputs and errors when modal is closed
   useEffect(() => {
     if (!adminNameModalOpen) {
-      setNameErrorMsg("");
-      setAddressErrorMsg("");
+      setNameModalErrorMsg("");
+      setNameModalErrorField(null);
       setCurrentNameData(blankNameData);
     }
   }, [adminNameModalOpen]);
@@ -598,9 +632,9 @@ export default function Admin() {
           editingDomain ? setCurrentDomainHelper : setCurrentNameHelper
         }
         savePending={saveNamePending}
-        setName={editingDomain ? editDomainBackend : setNameBackend}
-        nameErrorMsg={nameErrorMsg}
-        addressErrorMsg={addressErrorMsg}
+        setName={editingDomain ? setDomainBackend : setNameBackend}
+        errorMsg={nameModalErrorMsg}
+        errorField={nameModalErrorField}
       />
       <OwnershipRequiredModal
         isOpen={ownershipModalOpen}
@@ -610,7 +644,7 @@ export default function Admin() {
       <div className="flex-grow flex-1 max-w-sm border-r-[1px] border-brownblack-20 ">
         <div className="ml-4 md:ml-16 mt-7">
           <div className="w-full mb-4 text-sm font-bold md:text-base text-brownblack-700">
-            Names
+            Domains
           </div>
           <div
             className="flex pr-2 cursor-pointer"
@@ -785,7 +819,7 @@ export default function Admin() {
               <div className="text-2xl">{selectedBrand.name}</div>
               <button
                 onClick={() => {
-                  openEditDomainModal();
+                  openSetDomainModal();
                 }}
                 className="p-1 text-gray-500 transition-colors hover:text-gray-700"
               >

@@ -49,8 +49,8 @@ export default function AdminNameModal({
   setCurrentNameHelper,
   setName,
   savePending,
-  nameErrorMsg,
-  addressErrorMsg,
+  errorMsg,
+  errorField,
 }) {
   const [activeTab, setActiveTab] = useState("subname"); // subname, text, address
   const tabs = ["text", "addresses"];
@@ -69,15 +69,14 @@ export default function AdminNameModal({
             <div className="mb-2 text-sm font-bold text-brownblack-700">
               Avatar
             </div>
-            <div className="text-sm text-red-500">{nameErrorMsg}</div>
           </div>
-          <input
-            className="w-full px-4 py-2 mb-4 border rounded-md ring-1 ring-gray-300 border-brownblack-50 focus:ring-2 focus:ring-orange-400 focus:outline-none"
-            value={currentNameData.text_records?.avatar || ""}
-            onChange={(e) =>
-              setCurrentNameHelper(e.target.value, "text_records", "avatar")
-            }
+          <InputRow
+            fieldName="avatar"
+            value={currentNameData.text_records?.avatar}
             placeholder="https://"
+            key2="text_records"
+            setCurrentNameHelper={setCurrentNameHelper}
+            errorField={errorField}
           />
 
           {/* Description */}
@@ -85,64 +84,59 @@ export default function AdminNameModal({
             <div className="mb-2 text-sm font-bold text-brownblack-700">
               Description
             </div>
-            <div className="text-sm text-red-500">{nameErrorMsg}</div>
           </div>
-          <input
-            className="w-full px-4 py-2 mb-4 border rounded-md ring-1 ring-gray-300 border-brownblack-50 focus:ring-2 focus:ring-orange-400 focus:outline-none"
-            value={currentNameData.text_records?.description || ""}
-            onChange={(e) =>
-              setCurrentNameHelper(
-                e.target.value,
-                "text_records",
-                "description"
-              )
-            }
+          <InputRow
+            fieldName="description"
+            value={currentNameData.text_records?.description}
             placeholder="Open source developer coding on ens"
+            key2="text_records"
+            setCurrentNameHelper={setCurrentNameHelper}
+            errorField={errorField}
           />
+
           {/* Location */}
           <div className="flex flex-row justify-between">
             <div className="mb-2 text-sm font-bold text-brownblack-700">
               Location
             </div>
-            <div className="text-sm text-red-500">{nameErrorMsg}</div>
           </div>
-          <input
-            className="w-full px-4 py-2 mb-4 border rounded-md ring-1 ring-gray-300 border-brownblack-50 focus:ring-2 focus:ring-orange-400 focus:outline-none"
-            value={currentNameData.text_records?.location || ""}
-            onChange={(e) =>
-              setCurrentNameHelper(e.target.value, "text_records", "location")
-            }
+          <InputRow
+            fieldName="location"
+            value={currentNameData.text_records?.location}
             placeholder="New York City"
+            key2="text_records"
+            setCurrentNameHelper={setCurrentNameHelper}
+            errorField={errorField}
           />
+
           {/* Header */}
           <div className="flex flex-row justify-between">
             <div className="mb-2 text-sm font-bold text-brownblack-700">
               Header
             </div>
-            <div className="text-sm text-red-500">{nameErrorMsg}</div>
           </div>
-          <input
-            className="w-full px-4 py-2 mb-4 border rounded-md ring-1 ring-gray-300 border-brownblack-50 focus:ring-2 focus:ring-orange-400 focus:outline-none"
-            value={currentNameData.text_records?.header || ""}
-            onChange={(e) =>
-              setCurrentNameHelper(e.target.value, "text_records", "header")
-            }
+          <InputRow
+            fieldName="header"
+            value={currentNameData.text_records?.header}
             placeholder="https://"
+            key2="text_records"
+            setCurrentNameHelper={setCurrentNameHelper}
+            errorField={errorField}
           />
+
           {/* Status */}
           <div className="flex flex-row justify-between">
             <div className="mb-2 text-sm font-bold text-brownblack-700">
               Status
             </div>
-            <div className="text-sm text-red-500">{nameErrorMsg}</div>
           </div>
-          <input
-            className="w-full px-4 py-2 mb-4 border rounded-md ring-1 ring-gray-300 border-brownblack-50 focus:ring-2 focus:ring-orange-400 focus:outline-none"
-            value={currentNameData.text_records?.status || ""}
-            onChange={(e) =>
-              setCurrentNameHelper(e.target.value, "text_records", "status")
-            }
+          <InputRow
+            fieldName="status"
+            value={currentNameData.text_records?.status}
             placeholder="Going to the moon!"
+            key2="text_records"
+            setCurrentNameHelper={setCurrentNameHelper}
+            errorField={errorField}
           />
         </div>
         {/* links */}
@@ -153,129 +147,65 @@ export default function AdminNameModal({
             </div>
           </div>
           {/* Website */}
-          <div className="relative">
-            <Image
-              src="/images/icon-link.png"
-              width={18}
-              height={18}
-              alt="x"
-              className="absolute top-3 left-3"
-            ></Image>
-            <input
-              className="w-full px-4 py-2 pl-10 mb-4 border rounded-md ring-1 ring-gray-300 border-brownblack-50 focus:ring-2 focus:ring-orange-400 focus:outline-none"
-              placeholder="https://"
-              value={currentNameData.text_records?.url || ""}
-              onChange={(e) =>
-                setCurrentNameHelper(e.target.value, "text_records", "url")
-              }
-            />
-          </div>
+          <InputRow
+            imgUrl="/images/icon-link.png"
+            fieldName="url"
+            value={currentNameData.text_records?.url}
+            placeholder="https://"
+            key2="text_records"
+            setCurrentNameHelper={setCurrentNameHelper}
+            errorField={errorField}
+          />
           {/* X */}
-          <div className="relative">
-            <Image
-              src="/images/logo-x-black.png"
-              width={18}
-              height={18}
-              alt="x"
-              className="absolute top-3 left-3"
-            ></Image>
-            <input
-              className="w-full px-4 py-2 pl-10 mb-4 border rounded-md ring-1 ring-gray-300 border-brownblack-50 focus:ring-2 focus:ring-orange-400 focus:outline-none"
-              placeholder="@namestonehq"
-              value={currentNameData.text_records?.["com.twitter"] || ""}
-              onChange={(e) =>
-                setCurrentNameHelper(
-                  e.target.value,
-                  "text_records",
-                  "com.twitter"
-                )
-              }
-            />
-          </div>
+          <InputRow
+            imgUrl="/images/logo-x-black.png"
+            fieldName="com.twitter"
+            value={currentNameData.text_records?.["com.twitter"]}
+            placeholder="@namestonehq"
+            key2="text_records"
+            setCurrentNameHelper={setCurrentNameHelper}
+            errorField={errorField}
+          />
           {/* Github */}
-          <div className="relative">
-            <Image
-              src="/images/logo-github-brown.svg"
-              width={18}
-              height={18}
-              alt="x"
-              className="absolute top-3 left-3"
-            ></Image>
-            <input
-              className="w-full px-4 py-2 pl-10 mb-4 border rounded-md ring-1 ring-gray-300 border-brownblack-50 focus:ring-2 focus:ring-orange-400 focus:outline-none"
-              placeholder="resolverworks"
-              value={currentNameData.text_records?.["com.github"] || ""}
-              onChange={(e) =>
-                setCurrentNameHelper(
-                  e.target.value,
-                  "text_records",
-                  "com.github"
-                )
-              }
-            />
-          </div>
+          <InputRow
+            imgUrl="/images/logo-github-brown.svg"
+            fieldName="com.github"
+            value={currentNameData.text_records?.["com.github"]}
+            placeholder="resolverworks"
+            key2="text_records"
+            setCurrentNameHelper={setCurrentNameHelper}
+            errorField={errorField}
+          />
           {/* Discord */}
-          <div className="relative">
-            <Image
-              src="/images/logo-discord.png"
-              width={18}
-              height={18}
-              alt="x"
-              className="absolute top-3 left-3"
-            ></Image>
-            <input
-              className="w-full px-4 py-2 pl-10 mb-4 border rounded-md ring-1 ring-gray-300 border-brownblack-50 focus:ring-2 focus:ring-orange-400 focus:outline-none"
-              placeholder="slobo.eth"
-              value={currentNameData.text_records?.["com.discord"] || ""}
-              onChange={(e) =>
-                setCurrentNameHelper(
-                  e.target.value,
-                  "text_records",
-                  "com.discord"
-                )
-              }
-            />
-          </div>
+          <InputRow
+            imgUrl="/images/logo-discord.png"
+            fieldName="com.discord"
+            value={currentNameData.text_records?.["com.discord"]}
+            placeholder="slobo.eth"
+            key2="text_records"
+            setCurrentNameHelper={setCurrentNameHelper}
+            errorField={errorField}
+          />
           {/* Telegram */}
-          <div className="relative">
-            <Image
-              src="/images/logo-telegram.png"
-              width={18}
-              height={18}
-              alt="x"
-              className="absolute top-3 left-3"
-            ></Image>
-            <input
-              className="w-full px-4 py-2 pl-10 mb-4 border rounded-md ring-1 ring-gray-300 border-brownblack-50 focus:ring-2 focus:ring-orange-400 focus:outline-none"
-              placeholder="superslobo"
-              value={currentNameData.text_records?.["com.telegram"] || ""}
-              onChange={(e) =>
-                setCurrentNameHelper(
-                  e.target.value,
-                  "text_records",
-                  "com.telegram"
-                )
-              }
-            />
-          </div>
+          <InputRow
+            imgUrl="/images/logo-telegram.png"
+            fieldName="com.telegram"
+            value={currentNameData.text_records?.["com.telegram"]}
+            placeholder="superslobo"
+            key2="text_records"
+            setCurrentNameHelper={setCurrentNameHelper}
+            errorField={errorField}
+          />
           {/* IPFS */}
-          <div className="relative">
-            <Image
-              src="/images/logo-ipfs.png"
-              width={18}
-              height={18}
-              alt="x"
-              className="absolute top-3 left-3"
-            ></Image>
-            <input
-              className="w-full px-4 py-2 pl-10 mb-4 border rounded-md ring-1 ring-gray-300 border-brownblack-50 focus:ring-2 focus:ring-orange-400 focus:outline-none"
-              placeholder="ipfs://bafyb...."
-              value={currentNameData.contenthash}
-              onChange={(e) =>
-                setCurrentNameHelper(e.target.value, "contenthash")
-              }
-            />
-          </div>
+          <InputRow
+            imgUrl="/images/logo-ipfs.png"
+            fieldName="contenthash"
+            value={currentNameData.contenthash}
+            placeholder="ipfs://bafyb...."
+            key2={undefined}
+            setCurrentNameHelper={setCurrentNameHelper}
+            errorField={errorField}
+          />
           {/* <button className="text-xs text-left text-orange-800">
           + Text Record
         </button> */}
@@ -289,27 +219,15 @@ export default function AdminNameModal({
             <div className="text-sm font-bold text-brownblack-700">
               {chain.name}
             </div>
-            <div className="relative">
-              <Image
-                src={chain.logo}
-                width={18}
-                height={18}
-                alt="x"
-                className="absolute top-3 left-3"
-              ></Image>
-              <input
-                className="w-full px-4 py-2 pl-10 mb-4 border rounded-md ring-1 ring-gray-300 border-brownblack-50 focus:ring-2 focus:ring-orange-400 focus:outline-none"
-                placeholder={chain.placeholder}
-                value={currentNameData.coin_types?.[chain.coin_type] || ""}
-                onChange={(e) =>
-                  setCurrentNameHelper(
-                    e.target.value,
-                    "coin_types",
-                    chain.coin_type
-                  )
-                }
-              />
-            </div>
+            <InputRow
+              imgUrl={chain.logo}
+              fieldName={chain.coin_type.toString()}
+              value={currentNameData.coin_types?.[chain.coin_type]}
+              placeholder={chain.placeholder}
+              key2="coin_types"
+              setCurrentNameHelper={setCurrentNameHelper}
+              errorField={errorField}
+            />
           </div>
         ))}
         {/* <button className="text-xs text-left text-orange-800">+ Address</button> */}
@@ -323,8 +241,8 @@ export default function AdminNameModal({
         {editingDomain
           ? `Edit ${currentNameData.domain}`
           : currentNameData === 0
-          ? "Add a subname"
-          : "Edit Subname"}
+          ? "Add a Name"
+          : "Edit Name"}
       </Dialog.Title>
       <hr className="border-0 h-[0.5px] bg-brownblack-200/50 my-4"></hr>
       <button
@@ -339,26 +257,28 @@ export default function AdminNameModal({
         {!editingDomain && (
           <>
             <div className="flex flex-row justify-between">
-              <div className="text-sm font-bold text-brownblack-700">
-                Subname
-              </div>
-              <div className="text-sm text-red-500">{nameErrorMsg}</div>
+              <div className="text-sm font-bold text-brownblack-700">Name</div>
             </div>
-            <input
-              className="w-full px-4 py-2 mb-4 border rounded-md border-brownblack-50"
+            <InputRow
+              fieldName="name"
               value={currentNameData.name}
-              onChange={(e) => setCurrentNameHelper(e.target.value, "name")}
+              placeholder=""
+              key2={undefined}
+              setCurrentNameHelper={setCurrentNameHelper}
+              errorField={errorField}
             />
           </>
         )}
         <div className="flex flex-row justify-between">
           <div className="text-sm font-bold text-brownblack-700">Address</div>
-          <div className="text-sm text-red-500">{addressErrorMsg}</div>
         </div>
-        <input
-          className="w-full px-4 py-2 mb-4 font-mono text-sm border rounded-md border-brownblack-50"
+        <InputRow
+          fieldName="address"
           value={currentNameData.address}
-          onChange={(e) => setCurrentNameHelper(e.target.value, "address")}
+          placeholder=""
+          key2={undefined}
+          setCurrentNameHelper={setCurrentNameHelper}
+          errorField={errorField}
         />
       </div>
     </>
@@ -412,6 +332,7 @@ export default function AdminNameModal({
             currentNameData={currentNameData}
             setName={setName}
             savePending={savePending}
+            errorMsg={errorMsg}
           />
         </Dialog.Panel>
       </div>
@@ -419,20 +340,64 @@ export default function AdminNameModal({
   );
 }
 
-function ButtonRow({ currentNameData, setName, savePending }) {
+function ButtonRow({ currentNameData, setName, savePending, errorMsg }) {
   return (
-    <div className="flex flex-row-reverse justify-between w-full">
+    <div className="flex flex-row-reverse items-center justify-between w-full gap-2">
       <button
-        className={`flex  items-center justify-center py-2 min-w-[100px] text-sm font-bold rounded-lg disabled:cursor-not-allowed text-brownblack-700 md:block ${
-          savePending ? "bg-orange-300" : "bg-orange-500"
+        className={`flex items-center justify-center py-2 min-w-[100px] text-sm font-bold rounded-lg disabled:cursor-not-allowed text-brownblack-700 md:block ${
+          savePending || errorMsg ? "bg-orange-300" : "bg-orange-500"
         }`}
         onClick={() => {
           setName(currentNameData);
         }}
-        disabled={savePending}
+        disabled={savePending || !!errorMsg}
       >
         {savePending ? "..." : "Save"}
       </button>
+      {errorMsg && <div className="text-sm text-red-500">{errorMsg}</div>}
+    </div>
+  );
+}
+
+function InputRow({
+  imgUrl,
+  fieldName,
+  value,
+  placeholder,
+  key2,
+  setCurrentNameHelper,
+  errorField,
+}) {
+  // Helper function to determine input class based on error field
+  const getInputClass = (field) => {
+    const baseClass =
+      "w-full px-4 py-2 mb-4 border rounded-md border-brownblack-50";
+    const focusClass = "focus:ring-2 focus:ring-orange-400 focus:outline-none";
+    const errorClass = "ring-2 ring-red-500";
+
+    if (errorField === field) {
+      return `${baseClass} ${errorClass}`;
+    }
+    return `${baseClass} ring-1 ring-gray-300 ${focusClass}`;
+  };
+
+  return (
+    <div className="relative">
+      {imgUrl && (
+        <Image
+          src={imgUrl}
+          width={18}
+          height={18}
+          alt="icon"
+          className="absolute top-3 left-3"
+        ></Image>
+      )}
+      <input
+        className={`${getInputClass(fieldName)} ${imgUrl ? "pl-[40px]" : ""}`}
+        placeholder={placeholder}
+        value={value || ""}
+        onChange={(e) => setCurrentNameHelper(e.target.value, fieldName, key2)}
+      />
     </div>
   );
 }
