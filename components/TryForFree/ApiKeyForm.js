@@ -381,7 +381,7 @@ export const ApiKeyForm = ({ handleApiKeySentSuccessfully }) => {
               </div>
               <p className="text-xs text-neutral-600 text-left">
                 Updates to NameStone&apos;s{" "}
-                <a href="#" className="underline">
+                <a href="https://etherscan.io/address/0xA87361C4E58B619c390f469B9E6F27d759715125" className="underline" target="_blank" rel="noopener noreferrer">
                   verified resolver
                 </a>
               </p>
