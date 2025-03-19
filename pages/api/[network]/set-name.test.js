@@ -909,6 +909,53 @@ describe("set-name API E2E", () => {
             expect(record.address).toBe(newCoinTypes[record.coin_type]);
           }
         });
+
+        test("e2e successfully updates subdomain with empty address", async () => {
+          // First, ensure the subdomain has a non-empty address
+          await sqlForTests`
+            UPDATE subdomain 
+            SET address = '0x1234567890123456789012345678901234567890'
+            WHERE id = ${existingSubdomainId}
+          `;
+
+          // Update with empty address
+          const updateReq = createRequest({
+            method: "POST",
+            headers: {
+              authorization: TEST_API_KEY,
+            },
+            query: {
+              network: networkConfig.path,
+            },
+            body: {
+              domain: TEST_DOMAIN,
+              name: existingSubdomainName,
+              address: "", // Empty address
+              text_records: {
+                email: "empty@example.com",
+              },
+            },
+          });
+
+          const updateRes = createResponse();
+          await handler(updateReq, updateRes);
+          expect(updateRes._getStatusCode()).toBe(200);
+
+          // Verify address was updated to empty string
+          const [updatedSubdomain] = await sqlForTests`
+            SELECT * FROM subdomain WHERE id = ${existingSubdomainId}
+          `;
+          expect(updatedSubdomain.address).toBe("");
+
+          // Verify text records were updated
+          const textRecords = await sqlForTests`
+            SELECT * FROM subdomain_text_record 
+            WHERE subdomain_id = ${existingSubdomainId}
+          `;
+          expect(textRecords).toHaveLength(1);
+          expect(textRecords[0].key).toBe("email");
+          expect(textRecords[0].value).toBe("empty@example.com");
+        });
       });
     }
   );
