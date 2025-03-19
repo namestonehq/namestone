@@ -18,7 +18,7 @@ export function validateEnsParams(
   contentHash = null
 ) {
   // Validate Ethereum address
-  if (!isAddress(address)) {
+  if (address && !isAddress(address)) {
     return {
       isValid: false,
       error: "Invalid Ethereum address",

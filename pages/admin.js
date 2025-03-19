@@ -839,7 +839,7 @@ export default function Admin() {
                     : "border-transparent hover:border-orange-400" // Unselected with hover effect
                 }`}
               >
-                Subnames
+                Names
               </button>
               <button
                 onClick={() => setActiveTab("Settings")}
@@ -877,7 +877,7 @@ export default function Admin() {
                         <tr className="bg-neutral-100">
                           <th className="px-6 py-3 text-left">
                             <span className="text-sm font-bold text-brownblack-700">
-                              Subname
+                              Name
                             </span>
                             <span className="pl-2 text-xs font-normal text-brownblack-700">
                               Total: -
@@ -933,11 +933,11 @@ export default function Admin() {
               <div className="flex flex-row items-center justify-between gap-2">
                 <div className="flex flex-col mt-6">
                   <label className="mb-2 text-sm font-bold text-brownblack-700">
-                    Make subnames public
+                    Make Names public
                   </label>
                   <p className="mb-2 text-sm text-brownblack-500">
-                    Allow your subnames to be discovered and displayed by
-                    projects that interact with our api.
+                    Allow your names to be discovered and displayed by projects
+                    that interact with our api.
                   </p>
                 </div>
                 <input
