@@ -686,10 +686,10 @@ export default function Admin() {
                           }
                           width={24}
                           height={24}
-                          alt={brand.name}
+                          alt={brand.domain}
                         />
                       </div>
-                      <span className="hidden md:block">{brand.name}</span>
+                      <span className="hidden md:block">{brand.domain}</span>
                       {brand.resolverStatus === "incorrect" && (
                         <div className="ml-auto mr-2">
                           <ResolverAlertIcon className="w-4 h-4" />
@@ -741,10 +741,10 @@ export default function Admin() {
                           }
                           width={24}
                           height={24}
-                          alt={brand.name}
+                          alt={brand.domain}
                         />
                       </div>
-                      <span className="hidden md:block">{brand.name}</span>
+                      <span className="hidden md:block">{brand.domain}</span>
                       {brand.resolverStatus === "incorrect" && (
                         <div className="ml-auto mr-2">
                           <ResolverAlertIcon className="w-4 h-4" />
@@ -803,7 +803,7 @@ export default function Admin() {
             </div>
           )}
 
-          {/* Brand Name */}
+          {/* Domain Name */}
           <div className="flex items-center text-base font-bold text-brownblack-700">
             <div className="flex overflow-hidden rounded-full  w-[48px] h-[48px] mr-2">
               <Image
@@ -814,11 +814,11 @@ export default function Admin() {
                 }
                 width={48}
                 height={48}
-                alt={selectedBrand.name}
+                alt={selectedBrand.domain}
               />
             </div>
             <div className="flex items-center gap-2">
-              <div className="text-2xl">{selectedBrand.name}</div>
+              <div className="text-2xl">{selectedBrand.domain}</div>
               <button
                 onClick={() => {
                   openSetDomainModal();
