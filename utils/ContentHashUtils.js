@@ -62,6 +62,7 @@ export function encodeContenthash(text) {
           contentType,
           text,
         });
+        throw new Error("Unsupported protocol or invalid value");
       }
     } catch (err) {
       const errorMessage = "Error encoding content hash";

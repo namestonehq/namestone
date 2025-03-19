@@ -25,6 +25,7 @@ import { isAddress } from "ethers/lib/utils";
 import ResolverAlertIcon from "../components/Admin/ResolverAlertIcon";
 import OwnershipRequiredModal from "../components/Admin/OwnershipRequiredModal";
 import { validateEnsParams } from "../utils/ValidationUtils";
+import { data } from "autoprefixer";
 
 const blankNameData = {
   name: "",
@@ -135,6 +136,7 @@ export default function Admin() {
 
     // Skip validation if data isn't loaded yet or if we're in the middle of an operation
     if (!dataToValidate) return;
+    console.log(dataToValidate);
 
     // Only run validation if we have the required fields
     if (
