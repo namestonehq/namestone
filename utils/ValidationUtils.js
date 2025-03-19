@@ -45,12 +45,12 @@ export function validateEnsParams(
     return {
       isValid: false,
       error: "Invalid Ethereum address",
-      field: field,
+      field: "address",
       value: address,
     };
   }
   // Validate Ethereum addresses
-  for (const [field, address] of Object.entries(coin_types)) {
+  for (const [field, value] of Object.entries(coin_types)) {
     //skip non eth addresses
     if (
       !["Base", "Optimism", "Scroll", "Arbitrum"].includes(getCoinName(field))
@@ -59,16 +59,16 @@ export function validateEnsParams(
     }
 
     //skip blank fields
-    if (!address) {
+    if (!value) {
       continue;
     }
 
-    if (!isAddress(address)) {
+    if (!isAddress(value)) {
       return {
         isValid: false,
         error: `Invalid ${getCoinName(field)} address`,
         field: field,
-        value: address,
+        value: value,
       };
     }
   }
