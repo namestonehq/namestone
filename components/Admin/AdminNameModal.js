@@ -364,6 +364,7 @@ function InputRow({
         className={`${getInputClass(fieldName)} ${imgUrl ? "pl-[40px]" : ""}`}
         placeholder={placeholder}
         value={value || ""}
+        style={{ fontFamily: ensFontFallback }}
         onChange={(e) => setCurrentNameHelper(e.target.value, fieldName, key2)}
       />
     </div>
