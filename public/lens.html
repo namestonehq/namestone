@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="icon" type="image/png" href="./favicon.png">
+	<title>TOR Lensing</title>
+	<style>
+		.hide {
+			display: none !important;
+		}
+
+		body {
+			margin: 3rem;
+			background: #eee;
+		}
+
+		header {
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: space-between;
+			gap: 4px 8px;
+		}
+
+		h1 {
+			margin: 0;
+		}
+
+		#github {
+			flex: 1;
+			text-align: right;
+			display: flex;
+			flex-direction: column;
+			white-space: pre;
+		}
+
+		table {
+			border-collapse: collapse;
+			width: 100%;
+			background-color: #fff;
+		}
+
+		table,
+		td,
+		td {
+			border: 1px solid #aaa;
+		}
+
+		th {
+			background-color: #ddd;
+		}
+
+		th.key {
+			text-align: right;
+		}
+
+		td {
+			overflow-wrap: anywhere;
+			padding: 4px;
+			width: 30%;
+		}
+
+		td.null {
+			background-color: #ccc;
+		}
+
+		tr:nth-child(even) {
+			background-color: #f0f0f0;
+		}
+	</style>
+	<script type="importmap">
+{
+	"imports": {
+		"@namestone/enson": "https://cdn.jsdelivr.net/npm/@namestone/enson@0.0.21/+esm",
+		"@adraffy/cid": "https://cdn.jsdelivr.net/npm/@adraffy/cid@0.0.6/+esm",
+		"@adraffy/ens-normalize": "https://cdn.jsdelivr.net/npm/@adraffy/ens-normalize@1.11.0/+esm",
+		"@ensdomains/address-encoder": "https://cdn.jsdelivr.net/npm/@ensdomains/address-encoder@1.1.2/+esm",
+		"@noble/hashes/utils": "https://cdn.jsdelivr.net/npm/@noble/hashes@1.4.0/esm/utils.js",
+		"@noble/hashes/sha3": "https://cdn.jsdelivr.net/npm/@noble/hashes@1.4.0/esm/sha3.js",
+		"ethers": "https://cdn.jsdelivr.net/npm/ethers@6.13.5/+esm"
+	}
+}
+</script>
+</head>
+
+<body>
+	<header>
+		<h1>TOR Lensing</h1>
+		<div id="github">
+			<a
+				href="https://github.com/namestonehq/TheOffchainResolver.sol">namestonehq/TheOffchainResolver.sol</a>
+		</div>
+	</header>
+	<script type="module">
+		// "@noble/hashes/crypto": "./noble-utils-shim.js",
+
+		import { ethers } from 'ethers';
+		import { Profile, Record, Coin } from '@namestone/enson';
+
+		const provider = new ethers.JsonRpcProvider('https://eth.drpc.org', 1, { staticNetwork: true, batchMaxCount: 5 });
+
+		const name = new URLSearchParams(window.location.search).get('name') || 'raffy.eth';
+
+		const resolver = await provider.getResolver(name);
+
+		const contract = new ethers.Contract(resolver.address, [
+			'function resolve(bytes, bytes) view returns (bytes)',
+			'function supportsInterface(bytes4) view returns (bool)',
+		], provider);
+		const multi_abi = new ethers.Interface([
+			'function multicall(bytes[]) view returns (bytes[])'
+		]);
+
+		const [extended, onchain] = await Promise.all([
+			contract.supportsInterface('0x9061b923'),
+			//contract.supportsInterface('0x73302a25'),
+			contract.supportsInterface('0x727cc20d'), // onchain(bytes32)
+		]);
+
+		console.log({ extended, onchain });
+
+		async function get_profile(name, profile, lens) {
+			const dns = ethers.dnsEncode(name, 255);
+			const calls = profile.makeGetters({ name });
+			const record = new Record();
+			const opts = { enableCcipRead: lens !== true };
+			try {
+				if (onchain) {
+					let data = multi_abi.encodeFunctionData('multicall', [calls]);
+					if (lens === true) {
+						data = ethers.concat(['0xFFFFFF00', data])
+					} else if (lens === false) {
+						data = ethers.concat(['0x000000FF', data])
+					}
+					const answer = await contract.resolve(dns, data, opts);
+					const [answers] = multi_abi.decodeFunctionResult('multicall', answer);
+					record.parseCalls(calls, answers);
+				} else if (lens === undefined) {
+					if (extended) {
+						await Promise.allSettled(calls.map(async call => {
+							const answer = await contract.resolve(dns, call, { enableCcipRead: true });
+							record.parseCall(call, answer);
+						}));
+					} else {
+						await Promise.allSettled(calls.map(async call => {
+							const answer = await provider.call({ to: contract.target, data: call }, opts);
+							record.parseCall(call, answer);
+						}));
+					}
+				}
+			} catch (err) {
+				console.log(err);
+			}
+			return record;
+		}
+
+		let profile = Profile.ENS();
+		profile.setText('name');
+		profile.setText('location');
+		profile.setCoin('xch');
+		profile.pubkey = false;
+
+		const records = await Promise.all([
+			get_profile(name, profile, false),
+			get_profile(name, profile, true),
+			get_profile(name, profile),
+		]);
+
+		let table = create('table');
+		table.innerHTML = `
+<tr>
+	<th></th>
+	<th>Offchain</th>
+	<th>Onchain</th>
+	<th>${onchain ? 'Hybrid' : 'Unknown'}</th>
+</tr>`;
+		document.body.append(table);
+
+		function add_row(key, xs) {
+			if (!xs.some(x => x)) return;
+			let tr = create('tr');
+			tr.append(create('th', { innerHTML: key }));
+			for (let x of xs) {
+				if (x) {
+					tr.append(create('td', { innerText: x }));
+				} else {
+					tr.append(create('td', { className: 'null' }));
+				}
+			}
+			table.append(tr);
+		}
+
+
+		for (let key of profile.texts) {
+			add_row(key, records.map(r => r.text(key)));
+		}
+		if (profile.addr0) {
+			add_row(`$eth`, records.map(r => r.getAddress(60)));
+		}
+		for (let type of profile.coins) {
+			let coin = Coin.fromType(type);
+			add_row(`$${coin.name} (${coin.type})`, records.map(r => r.getAddress(coin)));
+		}
+		if (profile.chash) {
+			add_row('#chash', records.map(r => r.getChash()?.toURL()));
+		}
+		if (profile.pubkey) {
+			add_row('#pubkey', records.map(r => r.getPubkey()));
+		}
+
+		function create(el, args, ...a) {
+			if (typeof el === 'string') el = document.createElement(el);
+			if (args) {
+				for (let [k, v] of Object.entries(args)) {
+					if (!v) continue;
+					if (v instanceof Function) {
+						el.addEventListener(k, v);
+					} else if (k === 'dataset') {
+						Object.assign(el.dataset, v);
+					} else if (k === 'className') {
+						for (let x of [v].flat(Infinity)) {
+							if (typeof x === 'string') {
+								el.classList.add(x);
+							} else if (x) {
+								Object.entries(x).forEach(([k, v]) => el.classList.toggle(k, !!v));
+							}
+						}
+					} else {
+						el[k] = v;
+					}
+				}
+			}
+			el.append(...a);
+			return el;
+		}
+	</script>
+</body>
+
+</html>
