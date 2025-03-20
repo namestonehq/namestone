@@ -2,6 +2,7 @@ import { Dialog } from "@headlessui/react";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import { chains } from "../../utils/ChainUtils";
+import { ensFontFallback } from "../../utils/FrontUtils";
 
 export default function AdminNameModal({
   editingDomain,
@@ -199,7 +200,10 @@ export default function AdminNameModal({
 
   const SUBNAME_CONTENT = (
     <>
-      <Dialog.Title className="text-base font-bold text-brownblack-700">
+      <Dialog.Title
+        className="text-base font-bold text-brownblack-700"
+        style={{ fontFamily: ensFontFallback }}
+      >
         {editingDomain
           ? `Edit ${currentNameData.domain}`
           : currentNameData === 0
@@ -262,6 +266,7 @@ export default function AdminNameModal({
               <button
                 className="flex items-center gap-1 mt-2 mb-8 mr-auto text-xs text-orange-800 transition-colors duration-300 hover:text-orange-400"
                 onClick={() => setActiveTab("subname")}
+                style={{ fontFamily: ensFontFallback }}
               >
                 <span className="text-sm">&lt;</span>
                 {editingDomain

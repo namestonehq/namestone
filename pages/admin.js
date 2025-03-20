@@ -13,7 +13,11 @@ import AdminNameModal from "../components/Admin/AdminNameModal";
 import toast from "react-hot-toast";
 import _ from "lodash";
 import ConfirmationModal from "../components/Admin/ConfirmationModal";
-import { shortenAddress, updateResolver } from "../utils/FrontUtils";
+import {
+  shortenAddress,
+  updateResolver,
+  ensFontFallback,
+} from "../utils/FrontUtils";
 import {
   useEnsName,
   useEnsAvatar,
@@ -689,7 +693,12 @@ export default function Admin() {
                           alt={brand.domain}
                         />
                       </div>
-                      <span className="hidden md:block">{brand.domain}</span>
+                      <span
+                        className="hidden md:block"
+                        style={{ fontFamily: ensFontFallback }}
+                      >
+                        {brand.domain}
+                      </span>
                       {brand.resolverStatus === "incorrect" && (
                         <div className="ml-auto mr-2">
                           <ResolverAlertIcon className="w-4 h-4" />
@@ -744,7 +753,12 @@ export default function Admin() {
                           alt={brand.domain}
                         />
                       </div>
-                      <span className="hidden md:block">{brand.domain}</span>
+                      <span
+                        className="hidden md:block"
+                        style={{ fontFamily: ensFontFallback }}
+                      >
+                        {brand.domain}
+                      </span>
                       {brand.resolverStatus === "incorrect" && (
                         <div className="ml-auto mr-2">
                           <ResolverAlertIcon className="w-4 h-4" />
@@ -818,7 +832,9 @@ export default function Admin() {
               />
             </div>
             <div className="flex items-center gap-2">
-              <div className="text-2xl">{selectedBrand.domain}</div>
+              <div className="text-2xl" style={{ fontFamily: ensFontFallback }}>
+                {selectedBrand.domain}
+              </div>
               <button
                 onClick={() => {
                   openSetDomainModal();

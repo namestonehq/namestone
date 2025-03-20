@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import { shortenAddress } from "../../utils/FrontUtils";
+import { shortenAddress, ensFontFallback } from "../../utils/FrontUtils";
 import { Dialog } from "@headlessui/react";
 import { useState } from "react";
 import ConfirmationModal from "./ConfirmationModal";
@@ -25,7 +25,7 @@ export default function SubdomainTable({
         title="Are you sure?"
       >
         This will remove{" "}
-        <span className="font-bold">
+        <span className="font-bold" style={{ fontFamily: ensFontFallback }}>
           {showModal?.name}.{showModal?.domain}
         </span>{" "}
         from{" "}
@@ -67,6 +67,7 @@ export default function SubdomainTable({
                     className="underline "
                     target="_blank"
                     rel="noreferrer"
+                    style={{ fontFamily: ensFontFallback }}
                   >
                     {subdomain.name}.{subdomain.domain}
                   </Link>

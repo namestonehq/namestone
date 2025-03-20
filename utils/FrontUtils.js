@@ -4,6 +4,10 @@ export const shortenAddress = (address) => {
   return address.slice(0, 6) + "..." + address.slice(-4);
 };
 
+// Font fallback for proper emoji and special character rendering
+export const ensFontFallback =
+  "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'";
+
 // Update resolver for a domain
 export const updateResolver = async ({
   walletClient,
