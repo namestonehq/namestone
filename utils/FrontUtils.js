@@ -44,7 +44,7 @@ export const updateResolver = async ({
 
   console.log(selectedDomain);
   // Call switchNetwork and wait a moment for it to take effect
-  switchChain(correctNetwork.id);
+  await switchChain({ chainId: correctNetwork.id });
 
   // Wait for 1 second to allow the network switch to propagate
   await new Promise((resolve) => setTimeout(resolve, 1000));

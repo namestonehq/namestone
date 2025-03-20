@@ -19,7 +19,8 @@ import { FormState } from "./formStates";
  * @returns {boolean} Whether the email is valid
  */
 const validateEmail = (email) => {
-  const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  const re =
+    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   return re.test(String(email).toLowerCase());
 };
 
@@ -222,19 +223,18 @@ export const ApiKeyForm = ({ handleApiKeySentSuccessfully }) => {
   return (
     <div className="relative flex justify-center w-full min-h-screen px-8 pt-8 overflow-hidden text-center bg-white">
       <div className="flex justify-center flex-col w-full lg:justify-between lg:mt-[80px] lg:px-16">
-
         {/* Main content */}
         <div className="z-10 flex flex-col items-center justify-start flex-1">
           {/* Form Header - Mobile Only */}
-          <div className="hidden lg:flex lg:flex-col items-center w-full max-w-md">
-            <span className="mt-8 font-bold text-xl text-brownblack-700">
+          <div className="items-center hidden w-full max-w-md lg:flex lg:flex-col">
+            <span className="mt-8 text-xl font-bold text-brownblack-700">
               Get a free API Key
             </span>
             <div className="mb-6 text-xs text-center text-neutral-600">
               Connect wallet to view domains you own.
             </div>
           </div>
-          <div className="lg:hidden h-4"></div>
+          <div className="h-4 lg:hidden"></div>
           <WhiteInput
             labelText="Your Name"
             placeholderText="e.g. Alex Slobodnik"
@@ -354,7 +354,7 @@ export const ApiKeyForm = ({ handleApiKeySentSuccessfully }) => {
             </div>
 
             <div className="w-full max-w-md mb-4">
-              <div className="flex justify-between items-start">
+              <div className="flex items-start justify-between">
                 <div>
                   <div className="flex items-center gap-2 mb-1">
                     <label
@@ -379,9 +379,14 @@ export const ApiKeyForm = ({ handleApiKeySentSuccessfully }) => {
                   {resolverButtonText}
                 </button>
               </div>
-              <p className="text-xs text-neutral-600 text-left">
+              <p className="text-xs text-left text-neutral-600">
                 Updates to NameStone&apos;s{" "}
-                <a href="https://etherscan.io/address/0xA87361C4E58B619c390f469B9E6F27d759715125" className="underline" target="_blank" rel="noopener noreferrer">
+                <a
+                  href="https://etherscan.io/address/0xA87361C4E58B619c390f469B9E6F27d759715125"
+                  className="underline"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   verified resolver
                 </a>
               </p>
