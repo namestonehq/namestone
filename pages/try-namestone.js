@@ -11,17 +11,26 @@ import { TopPanel } from "../components/TryForFree/TopPanel";
 import { StylishVerticalDivider } from "../components/TryForFree/StylishVerticalDivider";
 import { ApiKeyForm } from "../components/TryForFree/ApiKeyForm";
 import { ApiKeySentDocs } from "../components/TryForFree/ApiKeySentDocs";
-import { FormState } from "../components/TryForFree/formStates";
+import { FormState, Network } from "../components/TryForFree/formStates";
 import { useWalletClient } from "wagmi";
 
 export default function TryNamestone() {
   const { data: walletClient } = useWalletClient();
   const [formState, setFormState] = useState(FormState.FORM);
   const [userEnsDomain, setUserEnsDomain] = useState("");
+  const [network, setNetwork] = useState(Network.MAINNET);
 
   const handleApiKeySentSuccessfully = (ensDomain) => {
     setFormState(FormState.API_KEY_SENT);
     setUserEnsDomain(ensDomain);
+  };
+
+  const handleNetworkChange = (network) => {
+    if (network === "Sepolia") {
+      setNetwork(Network.SEPOLIA);
+    } else if (network === "Mainnet") {
+      setNetwork(Network.MAINNET);
+    }
   };
 
   return (
@@ -73,12 +82,14 @@ export default function TryNamestone() {
               {formState === FormState.FORM && (
                 <ApiKeyForm
                   handleApiKeySentSuccessfully={handleApiKeySentSuccessfully}
+                  handleNetworkChange={handleNetworkChange}
                 />
               )}
               {formState === FormState.API_KEY_SENT && (
                 <ApiKeySentDocs
                   userEnsDomain={userEnsDomain}
                   walletAddress={walletClient?.account.address}
+                  network={network}
                 />
               )}
             </div>

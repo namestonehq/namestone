@@ -2,19 +2,23 @@ import React from "react";
 import Image from "next/image";
 import CheckmarkIcon from "../../public/images/icon-checkmark.svg";
 import ArrowTopRightOnSquareIcon from "../../public/images/icon-arrow-organge-top-right.svg";
+import { Network } from "./formStates";
+
 /**
  * ApiKeySentDocs component that displays documentation after an API key has been sent.
  * Shows a success message, steps to create a subdomain, and a code example.
  * @param {Object} props Component props
  * @param {string} props.userEnsDomain The user's ENS domain name
  * @param {string} props.walletAddress The user's wallet address
+ * @param {string} props.network The network the user is using
  * @returns {JSX.Element} The ApiKeySentDocs component
  */
 export const ApiKeySentDocs = ({
   userEnsDomain = "<yourdomain>.eth",
   walletAddress = "0x229...CB65",
+  network = Network.MAINNET,
 }) => {
-  const handleCopyCode = () => {
+  const handleCopyCode = (network) => {
     const code = `curl -X POST \\
   -H 'Content-Type: application/json' \\
   -H 'Authorization: YOUR_API_KEY' \\
@@ -27,7 +31,7 @@ export const ApiKeySentDocs = ({
         "avatar": "https://ens.domains/assets/ens_logo_text_dark.svg"
       }
     }' \\
-https://namestone.com/api/public_v1/set-name`;
+https://namestone.com/api/${network === Network.MAINNET ? "public_v1" : "public_v1_sepolia"}/set-name`;
 
     navigator.clipboard
       .writeText(code)
@@ -106,7 +110,7 @@ https://namestone.com/api/public_v1/set-name`;
             <div className="flex items-center justify-between p-3 bg-gray-800 rounded-t-md">
               <span className="text-sm font-medium text-white">Set-name</span>
               <button
-                onClick={handleCopyCode}
+                onClick={() => handleCopyCode(network)}
                 className="flex items-center px-2 py-1 text-sm text-gray-300 hover:text-white"
               >
                 <svg
@@ -139,7 +143,7 @@ https://namestone.com/api/public_v1/set-name`;
         "avatar": "https://ens.domains/assets/ens_logo_text_dark.svg"
       }
     }' \\
-https://namestone.com/api/public_v1/set-name`}</code>
+https://namestone.com/api/${network === Network.MAINNET ? "public_v1" : "public_v1_sepolia"}/set-name`}</code>
             </pre>
           </div>
         </div>
