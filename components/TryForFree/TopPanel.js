@@ -30,7 +30,7 @@ export const TopPanel = ({ formState }) => {
       </div>
         
       {/* Content */}
-      <div className="relative z-10 max-w-md p-6 pb-10">
+      <div className="relative z-10 max-w-md p-6 pb-10 sm:mx-auto md:mx-auto lg:mx-0">
         <h2 className="text-lg font-semibold mb-6">Get Started</h2>
 
         <div className="space-y-6">
