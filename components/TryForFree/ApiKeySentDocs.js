@@ -3,6 +3,7 @@ import Image from "next/image";
 import CheckmarkIcon from "../../public/images/icon-checkmark.svg";
 import ArrowTopRightOnSquareIcon from "../../public/images/icon-arrow-organge-top-right.svg";
 import { Network } from "./formStates";
+import toast from "react-hot-toast";
 
 /**
  * ApiKeySentDocs component that displays documentation after an API key has been sent.
@@ -36,10 +37,36 @@ https://namestone.com/api/${network === Network.MAINNET ? "public_v1" : "public_
     navigator.clipboard
       .writeText(code)
       .then(() => {
-        alert("Code copied to clipboard!");
+        toast.success('Code copied to clipboard!', {
+          style: {
+            background: '#F0FDF4',
+            color: '#166534',
+            border: '1px solid #DCFCE7',
+            padding: '12px 16px',
+            maxWidth: '320px',
+            margin: '0 auto',
+            borderRadius: '6px',
+            fontWeight: '500',
+          },
+          icon: '✓',
+          duration: 3000,
+        });
       })
       .catch((err) => {
         console.error("Failed to copy code: ", err);
+        toast.error('Failed to copy code', {
+          style: {
+            background: '#FEF2F2',
+            color: '#B91C1C',
+            border: '1px solid #FEE2E2',
+            padding: '12px 16px',
+            maxWidth: '320px',
+            margin: '0 auto',
+            borderRadius: '6px',
+            fontWeight: '500',
+          },
+          duration: 3000,
+        });
       });
   };
 
