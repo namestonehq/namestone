@@ -2,19 +2,24 @@ import React from "react";
 import Image from "next/image";
 import CheckmarkIcon from "../../public/images/icon-checkmark.svg";
 import ArrowTopRightOnSquareIcon from "../../public/images/icon-arrow-organge-top-right.svg";
+import { Network } from "./formStates";
+import toast from "react-hot-toast";
+
 /**
  * ApiKeySentDocs component that displays documentation after an API key has been sent.
  * Shows a success message, steps to create a subdomain, and a code example.
  * @param {Object} props Component props
  * @param {string} props.userEnsDomain The user's ENS domain name
  * @param {string} props.walletAddress The user's wallet address
+ * @param {string} props.network The network the user is using
  * @returns {JSX.Element} The ApiKeySentDocs component
  */
 export const ApiKeySentDocs = ({
   userEnsDomain = "<yourdomain>.eth",
   walletAddress = "0x229...CB65",
+  network = Network.MAINNET,
 }) => {
-  const handleCopyCode = () => {
+  const handleCopyCode = (network) => {
     const code = `curl -X POST \\
   -H 'Content-Type: application/json' \\
   -H 'Authorization: YOUR_API_KEY' \\
@@ -27,15 +32,41 @@ export const ApiKeySentDocs = ({
         "avatar": "https://ens.domains/assets/ens_logo_text_dark.svg"
       }
     }' \\
-https://namestone.com/api/public_v1/set-name`;
+https://namestone.com/api/${network === Network.MAINNET ? "public_v1" : "public_v1_sepolia"}/set-name`;
 
     navigator.clipboard
       .writeText(code)
       .then(() => {
-        alert("Code copied to clipboard!");
+        toast.success('Code copied to clipboard!', {
+          style: {
+            background: '#F0FDF4',
+            color: '#166534',
+            border: '1px solid #DCFCE7',
+            padding: '12px 16px',
+            maxWidth: '320px',
+            margin: '0 auto',
+            borderRadius: '6px',
+            fontWeight: '500',
+          },
+          icon: '✓',
+          duration: 3000,
+        });
       })
       .catch((err) => {
         console.error("Failed to copy code: ", err);
+        toast.error('Failed to copy code', {
+          style: {
+            background: '#FEF2F2',
+            color: '#B91C1C',
+            border: '1px solid #FEE2E2',
+            padding: '12px 16px',
+            maxWidth: '320px',
+            margin: '0 auto',
+            borderRadius: '6px',
+            fontWeight: '500',
+          },
+          duration: 3000,
+        });
       });
   };
 
@@ -106,7 +137,7 @@ https://namestone.com/api/public_v1/set-name`;
             <div className="flex items-center justify-between p-3 bg-gray-800 rounded-t-md">
               <span className="text-sm font-medium text-white">Set-name</span>
               <button
-                onClick={handleCopyCode}
+                onClick={() => handleCopyCode(network)}
                 className="flex items-center px-2 py-1 text-sm text-gray-300 hover:text-white"
               >
                 <svg
@@ -139,7 +170,7 @@ https://namestone.com/api/public_v1/set-name`;
         "avatar": "https://ens.domains/assets/ens_logo_text_dark.svg"
       }
     }' \\
-https://namestone.com/api/public_v1/set-name`}</code>
+https://namestone.com/api/${network === Network.MAINNET ? "public_v1" : "public_v1_sepolia"}/set-name`}</code>
             </pre>
           </div>
         </div>

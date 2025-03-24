@@ -28,9 +28,13 @@ const validateEmail = (email) => {
  * ApiKeyForm component that displays the form to get an API key on the Try for Free page.
  * @param {Object} props Component props
  * @param {Function} props.handleApiKeySentSuccessfully Function to handle when API key is sent successfully
+ * @param {Function} props.handleNetworkChange Function to handle when network is changed
  * @returns {JSX.Element} The ApiKeyForm component
  */
-export const ApiKeyForm = ({ handleApiKeySentSuccessfully }) => {
+export const ApiKeyForm = ({
+  handleApiKeySentSuccessfully,
+  handleNetworkChange,
+}) => {
   const { status: authStatus } = useSession();
   const { data: walletClient } = useWalletClient();
   const { isConnected, address } = useAccount();
@@ -220,6 +224,11 @@ export const ApiKeyForm = ({ handleApiKeySentSuccessfully }) => {
     }
   };
 
+  const clickHandlerNetworkChange = (network) => {
+    setNetwork(network);
+    handleNetworkChange(network);
+  };
+
   return (
     <div className="relative flex justify-center w-full min-h-screen px-8 pt-8 overflow-hidden text-center bg-white">
       <div className="flex justify-center flex-col w-full lg:justify-between lg:mt-[80px] lg:px-16">
@@ -263,7 +272,7 @@ export const ApiKeyForm = ({ handleApiKeySentSuccessfully }) => {
                   <div className="flex p-1 mt-2 mb-4 text-sm rounded-lg bg-neutral-200">
                     <button
                       onClick={() => {
-                        setNetwork("Mainnet");
+                        clickHandlerNetworkChange("Mainnet");
                         setDomainInput("");
                       }}
                       className={`px-4  rounded-lg transition ${
@@ -276,7 +285,7 @@ export const ApiKeyForm = ({ handleApiKeySentSuccessfully }) => {
                     </button>
                     <button
                       onClick={() => {
-                        setNetwork("Sepolia");
+                        clickHandlerNetworkChange("Sepolia");
                         setDomainInput("");
                       }}
                       className={`px-4 rounded-lg transition ${
