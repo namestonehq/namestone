@@ -207,7 +207,7 @@ export default function AdminNameModal({
       >
         {editingDomain
           ? `Edit ${currentNameData.domain}`
-          : currentNameData === 0
+          : currentNameData.id === 0
           ? "Add a Name"
           : "Edit Name"}
       </Dialog.Title>

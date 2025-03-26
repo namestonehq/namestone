@@ -15,7 +15,7 @@ export default function MobileSubdomainList({
   if (!subdomains || subdomains.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center w-full py-8 text-center border rounded-lg border-1 border-neutral-200">
-        <span className="text-sm text-gray-500">No subdomains found</span>
+        <span className="text-sm text-gray-500">No names found</span>
       </div>
     );
   }
