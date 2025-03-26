@@ -1,8 +1,9 @@
 import React, { useState, useRef, useEffect } from "react";
 import Image from "next/image";
-import { Icon } from "@iconify/react";
 import placeholderImage from "../../../public/images/placeholder-icon-image.png";
 import { ensFontFallback } from "../../../utils/FrontUtils";
+import { Icon } from "@iconify/react";
+import pencilIcon from "../../../public/images/icon-pencil-fill.svg";
 
 const isValidImageUrl = (url) => {
   if (!url) return false;
@@ -83,7 +84,7 @@ export default function NameSelector({
               }}
               className="p-1 text-gray-500 transition-colors hover:text-gray-700 px-4"
             >
-              <Icon icon="heroicons:pencil-square" className="w-5 h-5" />
+              <Image src={pencilIcon} alt="pencil" className="w-8 h-8" />
             </button>
           )}
         </div>
@@ -91,7 +92,7 @@ export default function NameSelector({
 
       {/* Dropdown content */}
       {isOpen && (
-        <div className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg">
+        <div className="absolute z-50 w-[calc(100%-56px)] left-0 mt-1 bg-white border border-gray-300 rounded-md shadow-lg">
           {/* Tabs */}
           <div className="flex border-b border-gray-300">
             <button

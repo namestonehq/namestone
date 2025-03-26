@@ -32,6 +32,7 @@ import { data } from "autoprefixer";
 import NameSelector from "../components/Admin/Mobile/NameSelector";
 import SubnamesTableLoading from "../components/Admin/SubnamesTableLoading";
 import MobileSubdomainList from "../components/Admin/Mobile/MobileSubdomainList";
+import pencilIcon from "../public/images/icon-pencil-fill.svg";
 
 const blankNameData = {
   name: "",
@@ -830,7 +831,7 @@ export default function Admin() {
           {/* Resolver Alert */}
           {selectedBrand?.hasResolverIssue && (
             <div
-              className={`flex items-center justify-between w-full p-4 mb-4 rounded-lg ${
+              className={`flex md:flex-row flex-col items-center justify-between w-[90%] md:w-full p-4 mb-4 mt-4 md:mt-0 mx-auto md:mx-0 rounded-lg ${
                 selectedBrand.resolverStatus === "incorrect"
                   ? "bg-red-50"
                   : "bg-orange-20"
@@ -838,13 +839,14 @@ export default function Admin() {
             >
               <div className="flex items-center gap-2">
                 <ResolverAlertIcon
+                  className="md:w-5 md:h-5 w-6 h-6"
                   color={
                     selectedBrand.resolverStatus === "incorrect"
                       ? "red"
                       : "orange"
                   }
                 />
-                <span>
+                <span className="text-sm md:text-base">
                   {selectedBrand.resolverStatus === "incorrect"
                     ? "Resolver issue detected—please update to restore service."
                     : "Your resolver is working but out of date."}
@@ -898,12 +900,12 @@ export default function Admin() {
               }}
               className="h-[50px] flex items-center justify-center px-4 text-gray-500 transition-colors hover:text-gray-700 hover:bg-gray-100 border border-gray-300 rounded-r-lg border-l-0"
             >
-              <Icon icon="heroicons:pencil-square" className="w-5 h-5" />
+              <Image src={pencilIcon} alt="Edit" className="w-5 h-5" />
             </button>
           </div>
           {/* Tab selection */}
           <div className="relative ">
-            <div className="flex gap-8 mt-8 sm:px-0 px-4">
+            <div className="flex gap-8 mt-8 md:px-0 px-4">
               <button
                 onClick={() => setActiveTab("Subnames")}
                 className={`relative border-b-2 transition-colors duration-300 pb-2 
@@ -933,7 +935,7 @@ export default function Admin() {
           {/* Table */}
           {activeTab === "Subnames" && (
             <>
-              <div className="flex w-full">
+              <div className="flex w-full sm:px-0 px-4">
                 <button
                   className={
                     "py-1 px-3 mr-0 my-4 h-11 font-bold text-sm  text-brownblack-700 bg-orange-500 hover:bg-orange-700 active:bg-orange-800 disabled:bg-orange-500/[0.50] flex items-center justify-center min-w-[150px] mx-auto rounded-lg disabled:cursor-not-allowed md:block"

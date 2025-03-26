@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { shortenAddress, ensFontFallback } from "../../../utils/FrontUtils";
-import { Icon } from "@iconify/react";
 import ConfirmationModal from "../ConfirmationModal";
+import pencilIcon from "../../../public/images/icon-pencil-fill.svg";
+import Image from "next/image";
 
 export default function MobileSubdomainList({
   subdomains,
@@ -42,16 +43,17 @@ export default function MobileSubdomainList({
       </ConfirmationModal>
 
       <div className="w-full">
-        <div className="mb-2 text-base font-bold text-black bg-gray-100 py-2 px-4 border-t border-b border-neutral-200">
+        <div className="text-base font-bold text-black bg-gray-100 py-2 px-4 border-t border-b border-neutral-200">
           Subname
         </div>
         <div className="w-full overflow-hidden">
           {subdomains.map((subdomain, index) => (
-            <div 
-              key={index} 
+            <div
+              key={index}
               className="flex flex-col py-3 px-4 border-b border-neutral-200"
             >
               <div className="flex items-center justify-between">
+                <div>
                 <Link
                   href={`https://app.ens.domains/${subdomain.name}.${subdomain.domain}`}
                   className="font-medium text-black"
@@ -61,22 +63,23 @@ export default function MobileSubdomainList({
                 >
                   {subdomain.name}.{subdomain.domain}
                 </Link>
+                <div className="text-xs text-gray-500 mt-1">
+                  <Link
+                    href={`https://etherscan.io/address/${subdomain.address}`}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    {shortenAddress(subdomain.address)}
+                  </Link>
+                  </div>
+                </div>
                 <button
                   onClick={() => openEditNameModal(index)}
                   className="text-gray-500"
                   aria-label="Edit subdomain"
                 >
-                  <Icon icon="heroicons:pencil-square" className="w-5 h-5" />
+                  <Image src={pencilIcon} alt="pencil" className="w-8 h-8" />
                 </button>
-              </div>
-              <div className="text-xs text-gray-500 mt-1">
-                <Link
-                  href={`https://etherscan.io/address/${subdomain.address}`}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  {shortenAddress(subdomain.address)}
-                </Link>
               </div>
             </div>
           ))}
