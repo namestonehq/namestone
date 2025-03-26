@@ -649,7 +649,7 @@ export default function Admin() {
         onClose={() => setOwnershipModalOpen(false)}
       />
       {/*Left Bar*/}
-      <div className="flex-grow flex-1 max-w-sm border-r-[1px] border-brownblack-20 hidden sm:block">
+      <div className="flex-grow flex-1 max-w-sm border-r-[1px] border-brownblack-20 hidden md:block">
         <div className="ml-4 md:ml-16 mt-7">
           <div className="w-full mb-4 text-sm font-bold md:text-base text-brownblack-700">
             Domains
@@ -774,8 +774,8 @@ export default function Admin() {
         </div>
       </div>
       {/*Main Content*/}
-      <div className="sm:flex-grow max-w-3xl w-full flex-2">
-        <div className="flex-col items-start w-full sm:p-6">
+      <div className="md:flex-grow max-w-3xl w-full flex-2">
+        <div className="flex-col items-start w-full md:p-6">
           {/* Mobile domain selector */}
           <NameSelector 
             mainnetDomains={brandUrls
@@ -912,7 +912,7 @@ export default function Admin() {
               ) : (
                 <>
                   {/* Desktop table view */}
-                  <div className="hidden sm:block">
+                  <div className="hidden md:block">
                     <SubdomainTable
                       subdomains={subdomains}
                       admin={true}
@@ -924,7 +924,7 @@ export default function Admin() {
                   </div>
                   
                   {/* Mobile list view */}
-                  <div className="block sm:hidden px-4">
+                  <div className="block md:hidden">
                     <MobileSubdomainList
                       subdomains={subdomains}
                       deleteName={deleteName}
@@ -936,7 +936,7 @@ export default function Admin() {
             </>
           )}
           {activeTab === "Settings" && (
-            <div className="flex flex-col gap-4 w-[28rem] ">
+            <div className="flex flex-col gap-4 w-full max-w-[28rem] px-4 md:px-0">
               <div className="flex flex-row items-center justify-between gap-2">
                 <div className="flex flex-col mt-6">
                   <label className="mb-2 text-sm font-bold text-brownblack-700">
@@ -961,6 +961,7 @@ export default function Admin() {
                 />
               </div>
 
+              
               <ApiKeyDisplay apiKey={apiKey} />
               <div className="mb-2 text-sm font-bold text-brownblack-700">
                 Domain Admins
@@ -1037,7 +1038,7 @@ function ApiKeyDisplay({ apiKey }) {
         API Key
       </label>
       <div
-        className="relative flex items-center h-10 pl-3 border rounded-lg border-neutral-200 hover:cursor-pointer bg-gray-50 w-[28rem]"
+        className="relative flex items-center h-10 pl-3 border rounded-lg border-neutral-200 hover:cursor-pointer bg-gray-50 w-full"
         onMouseEnter={() => setIsObscured(false)}
         onMouseLeave={() => setIsObscured(true)}
       >

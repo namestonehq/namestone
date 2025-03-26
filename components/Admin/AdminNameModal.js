@@ -236,7 +236,7 @@ export default function AdminNameModal({
           </>
         )}
         <div className="flex flex-row justify-between">
-          <div className="text-sm font-bold text-brownblack-700">Address</div>
+          <div className="text-sm font-bold text-brownblack-700">ETH Address</div>
         </div>
         <InputRow
           fieldName="address"

@@ -54,7 +54,7 @@ export default function NameSelector({
 
   return (
     <div
-      className="relative w-full sm:hidden border-b border-gray-300"
+      className="relative w-full md:hidden border-b border-gray-300"
       ref={dropdownRef}
     >
       {/* Selected domain display */}
