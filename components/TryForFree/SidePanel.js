@@ -17,7 +17,7 @@ import { FormState } from "./formStates";
  */
 export const SidePanel = ({ formState }) => {
     return (
-      <div className="hidden lg:block w-full h-full z-10 bg-white">
+      <div className="hidden md:block w-full h-full z-10 bg-white">
         <div className="relative w-full h-full">
           <Image 
             src={sideMenuSvg} 
