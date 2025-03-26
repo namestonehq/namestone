@@ -613,16 +613,54 @@ export default function Admin() {
     return (
       <AuthContentContainer>
         <div className="flex flex-col items-center justify-center px-8 mx-auto text-center">
-          <div className="text-sm font-bold text-brownblack-700">
-            <div> This wallet does not have access to the admin panel.</div>
-            <div> Is this a mistake?</div>
+          {/* Wallet not recognized message */}
+          <div className="flex flex-col items-center text-center mb-6">
+            <p className="text-sm text-brownblack-700 font-medium mb-6">
+              Wallet not recognized as admin for any names.
+            </p>
+
+            <div className="w-full bg-gray-50 p-4 rounded-lg">
+              <h3 className="text-sm font-semibold text-brownblack-700 mb-2">
+                New here?
+              </h3>
+              <p className="text-sm text-brownblack-600 mb-3">
+                Get a free API key and add this address as admin.
+              </p>
+              <Link
+                href="/try-namestone"
+                className="flex items-center justify-center text-orange-500 text-sm font-medium mx-auto"
+              >
+                <Icon
+                  icon="tabler:external-link"
+                  className="mr-2"
+                  width="16"
+                  height="16"
+                />
+                Generate a key
+              </Link>
+            </div>
+
+            <div className="mt-6 text-center bg-gray-50 p-4 rounded-lg">
+              <h3 className="text-sm font-semibold text-brownblack-700 mb-2">
+                Not seeing your name?
+              </h3>
+              <p className="text-sm text-brownblack-600 mb-3">
+                Connect with another wallet or email Alex for help.
+              </p>
+              <a
+                href="mailto:alex@namestone.xyz"
+                className="flex items-center justify-center text-orange-500 text-sm font-medium mx-auto"
+              >
+                <Icon
+                  icon="tabler:external-link"
+                  className="mr-2"
+                  width="16"
+                  height="16"
+                />
+                alex@namestone.xyz
+              </a>
+            </div>
           </div>
-          <Link
-            className="mt-2 text-sm text-orange-800 hover:underline"
-            href="mailto:alex@namestone.com"
-          >
-            Contact Alex
-          </Link>
         </div>
       </AuthContentContainer>
     );
@@ -777,15 +815,13 @@ export default function Admin() {
       <div className="md:flex-grow max-w-3xl w-full flex-2">
         <div className="flex-col items-start w-full md:p-6">
           {/* Mobile domain selector */}
-          <NameSelector 
+          <NameSelector
             mainnetDomains={brandUrls
-              .filter(brandUrl => brandDict[brandUrl].network === "mainnet")
-              .map(brandUrl => brandDict[brandUrl])
-            }
+              .filter((brandUrl) => brandDict[brandUrl].network === "mainnet")
+              .map((brandUrl) => brandDict[brandUrl])}
             sepoliaDomains={brandUrls
-              .filter(brandUrl => brandDict[brandUrl].network === "sepolia")
-              .map(brandUrl => brandDict[brandUrl])
-            }
+              .filter((brandUrl) => brandDict[brandUrl].network === "sepolia")
+              .map((brandUrl) => brandDict[brandUrl])}
             selectedDomain={selectedBrand}
             onSelectDomain={handleBrandSelectionWithLoading}
             onEditDomain={openSetDomainModal}
@@ -922,7 +958,7 @@ export default function Admin() {
                       setSubdomains={setSubdomains}
                     />
                   </div>
-                  
+
                   {/* Mobile list view */}
                   <div className="block md:hidden">
                     <MobileSubdomainList
@@ -961,7 +997,6 @@ export default function Admin() {
                 />
               </div>
 
-              
               <ApiKeyDisplay apiKey={apiKey} />
               <div className="mb-2 text-sm font-bold text-brownblack-700">
                 Domain Admins
