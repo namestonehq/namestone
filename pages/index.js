@@ -33,7 +33,7 @@ import kirillCoin from "../public/images/kirill-coin.png";
 import nickCoin from "../public/images/nick-coin.jpeg";
 import timCoin from "../public/images/tim-coin.jpg";
 import zachCoin from "../public/images/zach-coin.jpg";
-
+import edenCoin from "../public/images/eden-coin.png";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
 
@@ -504,6 +504,30 @@ export default function Home() {
                 <div className="self-stretch text-sm font-normal leading-normal">
                   Financial software engineer with a passion for solving
                   problems.
+                </div>
+              </div>
+            </div>
+            {/*Eden*/}
+            <div className="inline-flex items-center justify-start max-w-xl gap-6">
+              <Image
+                width={88}
+                src={edenCoin}
+                alt="Eden"
+                className="rounded-full grayscale"
+              />
+              <div className="inline-flex flex-col items-start justify-center gap-2 grow shrink basis-0">
+                <div className="self-stretch text-base font-bold leading-7 ">
+                  <Link
+                    href={"https://app.ens.domains/builtbyeden.eth"}
+                    target="_blank"
+                    className="transition-colors duration-300 hover:text-ens-100"
+                  >
+                    builtbyeden.eth
+                  </Link>
+                </div>
+                <div className="self-stretch text-sm font-normal leading-normal">
+                  Full-stack developer with experience at Oracle and Google
+                  building large-scale systems.
                 </div>
               </div>
             </div>
