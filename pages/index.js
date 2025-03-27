@@ -33,7 +33,7 @@ import kirillCoin from "../public/images/kirill-coin.png";
 import nickCoin from "../public/images/nick-coin.jpeg";
 import timCoin from "../public/images/tim-coin.jpg";
 import zachCoin from "../public/images/zach-coin.jpg";
-import edenCoin from "../public/images/eden-coin.png";
+import edenCoin from "../public/images/eden-coin.jpg";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
 
