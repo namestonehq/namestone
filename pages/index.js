@@ -461,7 +461,7 @@ export default function Home() {
                   </Link>
                 </div>
                 <div className="self-stretch text-sm font-normal leading-normal">
-                  Lead Software Engineer
+                  Founder, CTO
                 </div>
               </div>
             </div>
