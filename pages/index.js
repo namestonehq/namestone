@@ -443,7 +443,7 @@ export default function Home() {
                   </Link>
                 </div>
                 <div className="self-stretch text-sm font-normal leading-normal">
-                  Web3 Founder, open source developer and ENS Steward.
+                  Founder
                 </div>
               </div>
             </div>
@@ -461,7 +461,7 @@ export default function Home() {
                   </Link>
                 </div>
                 <div className="self-stretch text-sm font-normal leading-normal">
-                  Web3 Founder, builder and leader of tech teams.
+                  Lead Software Engineer
                 </div>
               </div>
             </div>
@@ -479,7 +479,7 @@ export default function Home() {
                   </Link>
                 </div>
                 <div className="self-stretch text-sm font-normal leading-normal">
-                  UI/UX Designer crafting intuitive product experiences.
+                  UI/UX Designer
                 </div>
               </div>
             </div>
@@ -502,8 +502,7 @@ export default function Home() {
                   </Link>
                 </div>
                 <div className="self-stretch text-sm font-normal leading-normal">
-                  Financial software engineer with a passion for solving
-                  problems.
+                  Smart Contract Developer
                 </div>
               </div>
             </div>
@@ -526,8 +525,7 @@ export default function Home() {
                   </Link>
                 </div>
                 <div className="self-stretch text-sm font-normal leading-normal">
-                  Full-stack developer with experience at Oracle and Google
-                  building large-scale systems.
+                  Full Stack Developer
                 </div>
               </div>
             </div>
@@ -615,7 +613,7 @@ export default function Home() {
                   </Link>
                 </div>
                 <div className="self-stretch text-sm font-normal leading-normal">
-                  Hype Man
+                  Marketing Strategist
                 </div>
               </div>
             </div>
