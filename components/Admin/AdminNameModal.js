@@ -322,7 +322,7 @@ export default function AdminNameModal({
             </>
           )}
           {
-            currentNameData.id !== 0 ? (
+            (currentNameData.id !== 0 && !editingDomain) ? (
               <SaveAndDeleteButtonRow
                 currentNameData={currentNameData}
                 setName={setName}
