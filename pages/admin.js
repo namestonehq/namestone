@@ -33,6 +33,7 @@ import NameSelector from "../components/Admin/Mobile/NameSelector";
 import SubnamesTableLoading from "../components/Admin/SubnamesTableLoading";
 import MobileSubdomainList from "../components/Admin/Mobile/MobileSubdomainList";
 import pencilIcon from "../public/images/icon-pencil-fill.svg";
+import DeleteSubnameDialog from "../components/Admin/DeleteSubnameDialog";
 
 const blankNameData = {
   name: "",
@@ -100,6 +101,12 @@ export default function Admin() {
   const [changeResolver, setChangeResolver] = useState(0);
   const [ownershipModalOpen, setOwnershipModalOpen] = useState(false);
   const [editingDomain, setEditingDomain] = useState(false);
+  const [deleteSubnameModalOpen, setDeleteSubnameModalOpen] = useState(false);
+  const [subnameToDelete, setSubnameToDelete] = useState({
+    name: null,
+    domain: null,
+    address: null
+  });
 
   // Function to handle brand selection with loading state
   const handleBrandSelectionWithLoading = (brand) => {
@@ -407,6 +414,18 @@ export default function Admin() {
       setSaveNamePending(false);
     }
   }
+
+  async function openDeleteSubnameModal(name, domain, address) {
+    // Close the admin name modal before opening the delete confirmation modal
+    setAdminNameModalOpen(false);
+    setSubnameToDelete({
+      name,
+      domain,
+      address
+    });
+    setDeleteSubnameModalOpen(true);
+  }
+
   // function to delete a name
   async function deleteName(name) {
     const url =
@@ -445,6 +464,13 @@ export default function Admin() {
       }
     } catch (err) {
       console.log(err);
+    } finally {
+      setDeleteSubnameModalOpen(false);
+      setSubnameToDelete({
+        name: null,
+        domain: null,
+        address: null
+      });
     }
   }
 
@@ -682,6 +708,7 @@ export default function Admin() {
         setName={editingDomain ? setDomainBackend : setNameBackend}
         errorMsg={nameModalErrorMsg}
         errorField={nameModalErrorField}
+        openDeleteSubnameModal={openDeleteSubnameModal}
       />
       <OwnershipRequiredModal
         isOpen={ownershipModalOpen}
@@ -954,8 +981,8 @@ export default function Admin() {
                     <SubdomainTable
                       subdomains={subdomains}
                       admin={true}
-                      deleteName={deleteName}
                       openEditNameModal={openEditNameModal}
+                      openDeleteSubnameModal={openDeleteSubnameModal}
                       selectedBrand={selectedBrand}
                       setSubdomains={setSubdomains}
                     />
@@ -965,7 +992,7 @@ export default function Admin() {
                   <div className="block md:hidden">
                     <MobileSubdomainList
                       subdomains={subdomains}
-                      deleteName={deleteName}
+                      openDeleteSubnameModal={openDeleteSubnameModal}
                       openEditNameModal={openEditNameModal}
                     />
                   </div>
@@ -1043,6 +1070,22 @@ export default function Admin() {
       </div>
       {/*Right Bar*/}
       <div className="flex-1 bg-white"></div>
+
+      <DeleteSubnameDialog
+        isOpen={deleteSubnameModalOpen}
+        onClose={() => {
+          setDeleteSubnameModalOpen(false);
+          setSubnameToDelete({
+            name: null,
+            domain: null,
+            address: null
+          });
+        }}
+        onDelete={deleteName}
+        subname={subnameToDelete.name}
+        domain={subnameToDelete.domain}
+        address={subnameToDelete.address}
+      />
 
       <ConfirmationModal
         isOpen={deleteAdminModalOpen}

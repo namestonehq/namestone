@@ -15,6 +15,7 @@ export default function AdminNameModal({
   savePending,
   errorMsg,
   errorField,
+  openDeleteSubnameModal,
 }) {
   const [activeTab, setActiveTab] = useState("subname"); // subname, text, address
   const tabs = ["text", "addresses"];
@@ -237,7 +238,9 @@ export default function AdminNameModal({
           </>
         )}
         <div className="flex flex-row justify-between">
-          <div className="text-sm font-bold text-brownblack-700">ETH Address</div>
+          <div className="text-sm font-bold text-brownblack-700">
+            ETH Address
+          </div>
         </div>
         <InputRow
           fieldName="address"
@@ -261,17 +264,27 @@ export default function AdminNameModal({
       <div className="fixed inset-0 flex items-center justify-center p-4">
         <Dialog.Panel className="w-full max-w-[496px] px-6 py-4 bg-white rounded-lg relative">
           {/* X icon in the top-right corner */}
-          <button 
+          <button
             className="absolute top-4 right-4 text-brownblack-400 hover:text-brownblack-700 transition-colors"
             onClick={() => setOpen(false)}
             aria-label="Close dialog"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
               <line x1="18" y1="6" x2="6" y2="18"></line>
               <line x1="6" y1="6" x2="18" y2="18"></line>
             </svg>
           </button>
-          
+
           {activeTab === "subname" ? (
             SUBNAME_CONTENT
           ) : (
@@ -308,19 +321,66 @@ export default function AdminNameModal({
               {TAB_CONTENT[activeTab]}
             </>
           )}
-          <ButtonRow
-            currentNameData={currentNameData}
-            setName={setName}
-            savePending={savePending}
-            errorMsg={errorMsg}
-          />
+          {
+            currentNameData.id !== 0 ? (
+              <SaveAndDeleteButtonRow
+                currentNameData={currentNameData}
+                setName={setName}
+                savePending={savePending}
+                errorMsg={errorMsg}
+                openDeleteSubnameModal={openDeleteSubnameModal}
+              />
+            ) : (
+              <JustSaveButtonRow
+                currentNameData={currentNameData}
+                setName={setName}
+                savePending={savePending}
+                errorMsg={errorMsg}
+              />
+            )
+          }
         </Dialog.Panel>
       </div>
     </Dialog>
   );
 }
 
-function ButtonRow({ currentNameData, setName, savePending, errorMsg }) {
+
+function SaveAndDeleteButtonRow({ currentNameData, setName, savePending, errorMsg, openDeleteSubnameModal }) {
+  return (
+    <div className="flex flex-col items-center justify-between w-full gap-2">
+    <div>
+      {errorMsg && <div className="text-sm text-red-500">{errorMsg}</div>}{" "}
+    </div>
+    <div className="flex flex-row-reverse items-center justify-between w-full gap-2">
+      <button
+        className={`flex items-center justify-center py-2 min-w-[100px] text-sm font-bold rounded-lg disabled:cursor-not-allowed text-brownblack-700 md:block ${
+          savePending || errorMsg ? "bg-orange-300" : "bg-orange-500"
+        }`}
+        onClick={() => {
+          setName(currentNameData);
+        }}
+        disabled={savePending || !!errorMsg}
+      >
+        {savePending ? "..." : "Save"}
+      </button>
+      <button
+        className={`flex items-center justify-center py-2 min-w-[100px] text-sm font-bold rounded-lg disabled:cursor-not-allowed text-brownblack-700 md:block ${
+          savePending ? "bg-red-300" : "bg-red-500"
+        }`}
+        onClick={() => {
+          openDeleteSubnameModal(currentNameData.name, currentNameData.domain, currentNameData.address);
+        }}
+        disabled={savePending}
+      >
+        {savePending ? "..." : "Delete"}
+      </button>
+      </div>
+    </div>
+  );
+}
+
+function JustSaveButtonRow({ currentNameData, setName, savePending, errorMsg }) {
   return (
     <div className="flex flex-row-reverse items-center justify-between w-full gap-2">
       <button
