@@ -927,7 +927,7 @@ export default function Admin() {
               }}
               className="h-[50px] flex items-center justify-center px-4 text-gray-500 transition-colors hover:text-gray-700 hover:bg-gray-100 border border-gray-300 rounded-r-lg border-l-0"
             >
-              <Image src={pencilIcon} alt="Edit" className="w-5 h-5" />
+              <Image src={pencilIcon} alt="Edit" className="w-8 h-8" />
             </button>
           </div>
           {/* Tab selection */}
