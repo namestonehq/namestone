@@ -6,7 +6,6 @@ import Link from "next/link";
 import SubdomainTable from "../components/Admin/SubdomainTable";
 import { useSession } from "next-auth/react";
 import Button from "../components/Button";
-import { ethers } from "ethers";
 import placeholderImage from "../public/images/placeholder-icon-image.png";
 import { Icon } from "@iconify/react";
 import AdminNameModal from "../components/Admin/AdminNameModal";
@@ -30,6 +29,11 @@ import ResolverAlertIcon from "../components/Admin/ResolverAlertIcon";
 import OwnershipRequiredModal from "../components/Admin/OwnershipRequiredModal";
 import { validateEnsParams } from "../utils/ValidationUtils";
 import { data } from "autoprefixer";
+import NameSelector from "../components/Admin/Mobile/NameSelector";
+import SubnamesTableLoading from "../components/Admin/SubnamesTableLoading";
+import MobileSubdomainList from "../components/Admin/Mobile/MobileSubdomainList";
+import pencilIcon from "../public/images/icon-pencil-fill.svg";
+import DeleteSubnameDialog from "../components/Admin/DeleteSubnameDialog";
 
 const blankNameData = {
   name: "",
@@ -97,6 +101,12 @@ export default function Admin() {
   const [changeResolver, setChangeResolver] = useState(0);
   const [ownershipModalOpen, setOwnershipModalOpen] = useState(false);
   const [editingDomain, setEditingDomain] = useState(false);
+  const [deleteSubnameModalOpen, setDeleteSubnameModalOpen] = useState(false);
+  const [subnameToDelete, setSubnameToDelete] = useState({
+    name: null,
+    domain: null,
+    address: null
+  });
 
   // Function to handle brand selection with loading state
   const handleBrandSelectionWithLoading = (brand) => {
@@ -404,6 +414,18 @@ export default function Admin() {
       setSaveNamePending(false);
     }
   }
+
+  async function openDeleteSubnameModal(name, domain, address) {
+    // Close the admin name modal before opening the delete confirmation modal
+    setAdminNameModalOpen(false);
+    setSubnameToDelete({
+      name,
+      domain,
+      address
+    });
+    setDeleteSubnameModalOpen(true);
+  }
+
   // function to delete a name
   async function deleteName(name) {
     const url =
@@ -442,6 +464,13 @@ export default function Admin() {
       }
     } catch (err) {
       console.log(err);
+    } finally {
+      setDeleteSubnameModalOpen(false);
+      setSubnameToDelete({
+        name: null,
+        domain: null,
+        address: null
+      });
     }
   }
 
@@ -611,16 +640,54 @@ export default function Admin() {
     return (
       <AuthContentContainer>
         <div className="flex flex-col items-center justify-center px-8 mx-auto text-center">
-          <div className="text-sm font-bold text-brownblack-700">
-            <div> This wallet does not have access to the admin panel.</div>
-            <div> Is this a mistake?</div>
+          {/* Wallet not recognized message */}
+          <div className="flex flex-col items-center text-center mb-6">
+            <p className="text-sm text-brownblack-700 font-medium mb-6">
+              Wallet not recognized as admin for any names.
+            </p>
+
+            <div className="w-full bg-gray-50 p-4 rounded-lg">
+              <h3 className="text-sm font-semibold text-brownblack-700 mb-2">
+                New here?
+              </h3>
+              <p className="text-sm text-brownblack-600 mb-3">
+                Get a free API key and add this address as admin.
+              </p>
+              <Link
+                href="/try-namestone"
+                className="flex items-center justify-center text-orange-500 text-sm font-medium mx-auto"
+              >
+                <Icon
+                  icon="tabler:external-link"
+                  className="mr-2"
+                  width="16"
+                  height="16"
+                />
+                Generate a key
+              </Link>
+            </div>
+
+            <div className="mt-6 text-center bg-gray-50 p-4 rounded-lg">
+              <h3 className="text-sm font-semibold text-brownblack-700 mb-2">
+                Not seeing your name?
+              </h3>
+              <p className="text-sm text-brownblack-600 mb-3">
+                Connect with another wallet or email Alex for help.
+              </p>
+              <a
+                href="mailto:alex@namestone.xyz"
+                className="flex items-center justify-center text-orange-500 text-sm font-medium mx-auto"
+              >
+                <Icon
+                  icon="tabler:external-link"
+                  className="mr-2"
+                  width="16"
+                  height="16"
+                />
+                alex@namestone.xyz
+              </a>
+            </div>
           </div>
-          <Link
-            className="mt-2 text-sm text-orange-800 hover:underline"
-            href="mailto:alex@namestone.com"
-          >
-            Contact Alex
-          </Link>
         </div>
       </AuthContentContainer>
     );
@@ -641,13 +708,14 @@ export default function Admin() {
         setName={editingDomain ? setDomainBackend : setNameBackend}
         errorMsg={nameModalErrorMsg}
         errorField={nameModalErrorField}
+        openDeleteSubnameModal={openDeleteSubnameModal}
       />
       <OwnershipRequiredModal
         isOpen={ownershipModalOpen}
         onClose={() => setOwnershipModalOpen(false)}
       />
       {/*Left Bar*/}
-      <div className="flex-grow flex-1 max-w-sm border-r-[1px] border-brownblack-20 ">
+      <div className="flex-grow flex-1 max-w-sm border-r-[1px] border-brownblack-20 hidden md:block">
         <div className="ml-4 md:ml-16 mt-7">
           <div className="w-full mb-4 text-sm font-bold md:text-base text-brownblack-700">
             Domains
@@ -772,12 +840,25 @@ export default function Admin() {
         </div>
       </div>
       {/*Main Content*/}
-      <div className="flex-grow max-w-3xl flex-2">
-        <div className="flex-col items-start w-full p-6">
+      <div className="md:flex-grow max-w-3xl w-full flex-2">
+        <div className="flex-col items-start w-full md:p-6">
+          {/* Mobile domain selector */}
+          <NameSelector
+            mainnetDomains={brandUrls
+              .filter((brandUrl) => brandDict[brandUrl].network === "mainnet")
+              .map((brandUrl) => brandDict[brandUrl])}
+            sepoliaDomains={brandUrls
+              .filter((brandUrl) => brandDict[brandUrl].network === "sepolia")
+              .map((brandUrl) => brandDict[brandUrl])}
+            selectedDomain={selectedBrand}
+            onSelectDomain={handleBrandSelectionWithLoading}
+            onEditDomain={openSetDomainModal}
+          />
+
           {/* Resolver Alert */}
           {selectedBrand?.hasResolverIssue && (
             <div
-              className={`flex items-center justify-between w-full p-4 mb-4 rounded-lg ${
+              className={`flex md:flex-row flex-col items-center justify-between w-[90%] md:w-full p-4 mb-4 mt-4 md:mt-0 mx-auto md:mx-0 rounded-lg ${
                 selectedBrand.resolverStatus === "incorrect"
                   ? "bg-red-50"
                   : "bg-orange-20"
@@ -785,13 +866,14 @@ export default function Admin() {
             >
               <div className="flex items-center gap-2">
                 <ResolverAlertIcon
+                  className="md:w-5 md:h-5 w-6 h-6"
                   color={
                     selectedBrand.resolverStatus === "incorrect"
                       ? "red"
                       : "orange"
                   }
                 />
-                <span>
+                <span className="text-sm md:text-base">
                   {selectedBrand.resolverStatus === "incorrect"
                     ? "Resolver issue detected—please update to restore service."
                     : "Your resolver is working but out of date."}
@@ -818,36 +900,39 @@ export default function Admin() {
           )}
 
           {/* Domain Name */}
-          <div className="flex items-center text-base font-bold text-brownblack-700">
-            <div className="flex overflow-hidden rounded-full  w-[48px] h-[48px] mr-2">
-              <Image
-                src={
-                  isValidImageUrl(selectedBrand.avatar)
-                    ? selectedBrand.avatar
-                    : placeholderImage
-                }
-                width={48}
-                height={48}
-                alt={selectedBrand.domain}
-              />
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="text-2xl" style={{ fontFamily: ensFontFallback }}>
+          <div className="items-center text-base font-bold text-brownblack-700 hidden md:flex">
+            <div className="flex items-center h-[50px] border border-gray-300 rounded-l-lg px-4">
+              <div className="flex overflow-hidden rounded-full w-[36px] h-[36px]">
+                <Image
+                  src={
+                    isValidImageUrl(selectedBrand.avatar)
+                      ? selectedBrand.avatar
+                      : placeholderImage
+                  }
+                  width={36}
+                  height={36}
+                  alt={selectedBrand.domain}
+                />
+              </div>
+              <div
+                className="text-2xl px-3 flex items-center"
+                style={{ fontFamily: ensFontFallback }}
+              >
                 {selectedBrand.domain}
               </div>
-              <button
-                onClick={() => {
-                  openSetDomainModal();
-                }}
-                className="p-1 text-gray-500 transition-colors hover:text-gray-700"
-              >
-                <Icon icon="heroicons:pencil-square" className="w-5 h-5" />
-              </button>
             </div>
+            <button
+              onClick={() => {
+                openSetDomainModal();
+              }}
+              className="h-[50px] flex items-center justify-center px-4 text-gray-500 transition-colors hover:text-gray-700 hover:bg-gray-100 border border-gray-300 rounded-r-lg border-l-0"
+            >
+              <Image src={pencilIcon} alt="Edit" className="w-8 h-8" />
+            </button>
           </div>
           {/* Tab selection */}
-          <div className="relative">
-            <div className="flex gap-8 mt-8">
+          <div className="relative ">
+            <div className="flex gap-8 mt-8 md:px-0 px-4">
               <button
                 onClick={() => setActiveTab("Subnames")}
                 className={`relative border-b-2 transition-colors duration-300 pb-2 
@@ -857,7 +942,7 @@ export default function Admin() {
                     : "border-transparent hover:border-orange-400" // Unselected with hover effect
                 }`}
               >
-                Names
+                Subnames
               </button>
               <button
                 onClick={() => setActiveTab("Settings")}
@@ -877,7 +962,7 @@ export default function Admin() {
           {/* Table */}
           {activeTab === "Subnames" && (
             <>
-              <div className="flex w-full">
+              <div className="flex w-full sm:px-0 px-4">
                 <button
                   className={
                     "py-1 px-3 mr-0 my-4 h-11 font-bold text-sm  text-brownblack-700 bg-orange-500 hover:bg-orange-700 active:bg-orange-800 disabled:bg-orange-500/[0.50] flex items-center justify-center min-w-[150px] mx-auto rounded-lg disabled:cursor-not-allowed md:block"
@@ -888,66 +973,35 @@ export default function Admin() {
                 </button>
               </div>
               {isSubdomainsLoading ? (
-                <div className="w-full">
-                  <div className="overflow-hidden border rounded-lg border-1 border-neutral-200">
-                    <table className="min-w-full divide-y divide-neutral-200">
-                      <thead>
-                        <tr className="bg-neutral-100">
-                          <th className="px-6 py-3 text-left">
-                            <span className="text-sm font-bold text-brownblack-700">
-                              Name
-                            </span>
-                            <span className="pl-2 text-xs font-normal text-brownblack-700">
-                              Total: -
-                            </span>
-                          </th>
-                          <th className="px-6 py-3 text-sm font-bold text-left text-brownblack-700">
-                            Address
-                          </th>
-                          <th className="px-6 py-3 text-sm font-bold text-left text-brownblack-700">
-                            Actions
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody className="bg-white divide-y divide-neutral-200">
-                        {[...Array(8)].map((_, index) => (
-                          <tr key={index}>
-                            <td className="px-6 py-4">
-                              <div className="flex items-center">
-                                <div className="w-1/3 h-4 bg-gray-200 rounded animate-pulse"></div>
-                                <div className="mx-1">.</div>
-                                <div className="w-1/3 h-4 bg-gray-200 rounded animate-pulse"></div>
-                              </div>
-                            </td>
-                            <td className="px-6 py-4">
-                              <div className="w-24 h-4 bg-gray-200 rounded animate-pulse"></div>
-                            </td>
-                            <td className="px-6 py-2">
-                              <div className="flex space-x-4">
-                                <div className="w-10 h-4 bg-gray-200 rounded animate-pulse"></div>
-                                <div className="h-4 bg-gray-200 rounded w-14 animate-pulse"></div>
-                              </div>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
+                <SubnamesTableLoading />
               ) : (
-                <SubdomainTable
-                  subdomains={subdomains}
-                  admin={true}
-                  deleteName={deleteName}
-                  openEditNameModal={openEditNameModal}
-                  selectedBrand={selectedBrand}
-                  setSubdomains={setSubdomains}
-                />
+                <>
+                  {/* Desktop table view */}
+                  <div className="hidden md:block">
+                    <SubdomainTable
+                      subdomains={subdomains}
+                      admin={true}
+                      openEditNameModal={openEditNameModal}
+                      openDeleteSubnameModal={openDeleteSubnameModal}
+                      selectedBrand={selectedBrand}
+                      setSubdomains={setSubdomains}
+                    />
+                  </div>
+
+                  {/* Mobile list view */}
+                  <div className="block md:hidden">
+                    <MobileSubdomainList
+                      subdomains={subdomains}
+                      openDeleteSubnameModal={openDeleteSubnameModal}
+                      openEditNameModal={openEditNameModal}
+                    />
+                  </div>
+                </>
               )}
             </>
           )}
           {activeTab === "Settings" && (
-            <div className="flex flex-col gap-4 w-[28rem] ">
+            <div className="flex flex-col gap-4 w-full max-w-[28rem] px-4 md:px-0">
               <div className="flex flex-row items-center justify-between gap-2">
                 <div className="flex flex-col mt-6">
                   <label className="mb-2 text-sm font-bold text-brownblack-700">
@@ -1017,6 +1071,22 @@ export default function Admin() {
       {/*Right Bar*/}
       <div className="flex-1 bg-white"></div>
 
+      <DeleteSubnameDialog
+        isOpen={deleteSubnameModalOpen}
+        onClose={() => {
+          setDeleteSubnameModalOpen(false);
+          setSubnameToDelete({
+            name: null,
+            domain: null,
+            address: null
+          });
+        }}
+        onDelete={deleteName}
+        subname={subnameToDelete.name}
+        domain={subnameToDelete.domain}
+        address={subnameToDelete.address}
+      />
+
       <ConfirmationModal
         isOpen={deleteAdminModalOpen}
         onClose={() => setDeleteAdminModalOpen(false)}
@@ -1048,7 +1118,7 @@ function ApiKeyDisplay({ apiKey }) {
         API Key
       </label>
       <div
-        className="relative flex items-center h-10 pl-3 border rounded-lg border-neutral-200 hover:cursor-pointer bg-gray-50 w-[28rem]"
+        className="relative flex items-center h-10 pl-3 border rounded-lg border-neutral-200 hover:cursor-pointer bg-gray-50 w-full"
         onMouseEnter={() => setIsObscured(false)}
         onMouseLeave={() => setIsObscured(true)}
       >

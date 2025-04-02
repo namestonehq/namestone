@@ -8,33 +8,12 @@ import ConfirmationModal from "./ConfirmationModal";
 export default function SubdomainTable({
   subdomains,
   admin,
-  deleteName,
   openEditNameModal,
+  openDeleteSubnameModal
 }) {
-  const [showModal, setShowModal] = useState(null);
 
   return (
     <>
-      <ConfirmationModal
-        isOpen={showModal !== null}
-        onClose={() => setShowModal(null)}
-        onConfirm={() => {
-          deleteName(showModal.name);
-          setShowModal(null);
-        }}
-        title="Are you sure?"
-      >
-        This will remove{" "}
-        <span className="font-bold" style={{ fontFamily: ensFontFallback }}>
-          {showModal?.name}.{showModal?.domain}
-        </span>{" "}
-        from{" "}
-        <span className="font-bold">
-          {shortenAddress(showModal?.address || "")}
-        </span>{" "}
-        and they will have to claim a new subdomain.
-      </ConfirmationModal>
-
       <div className="w-full h-full overflow-x-auto border rounded-lg border-1 border-neutral-200">
         <table className="min-w-full divide-y divide-neutral-200">
           <thead>
@@ -92,11 +71,7 @@ export default function SubdomainTable({
                     </button>
                     <button
                       onClick={() =>
-                        setShowModal({
-                          name: subdomain.name,
-                          domain: subdomain.domain,
-                          address: subdomain.address,
-                        })
+                        openDeleteSubnameModal(subdomain.name, subdomain.domain, subdomain.address)
                       }
                       className="text-red-600 rounded-lg hover:underline"
                     >
