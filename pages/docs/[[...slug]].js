@@ -85,7 +85,7 @@ export default function Docs({ content, fileName }) {
 
           <div className="flex justify-start w-full px-8 lg:px-32 pt-[76px] md:pt-[88px]  max-w-[1536px]">
             {/* Desktop Menu */}
-            <div className="flex-col items-start justify-start hidden py-10 border-t border-brownblack-50 sm:flex">
+            <div className="flex-col items-start justify-start hidden py-10 border-t border-neutral-200 sm:flex">
               {/* Toggle Network */}
               <div className="flex p-1 mt-2 mb-4 text-sm rounded-lg bg-neutral-200">
                 <button
@@ -113,14 +113,14 @@ export default function Docs({ content, fileName }) {
                 <div key={item}>
                   <Link
                     href={`/docs/${navDict[item].file}`}
-                    className={`flex text-sm  text-neutral-900 font-bold text-left justify-between items-center rounded-md py-1 my-1 px-3 cursor-pointer w-[250px] ${
+                    className={`flex text-sm  text-neutral-900 font-bold text-left justify-between items-center rounded-md py-1 my-1 mr-4 px-3 cursor-pointer w-[250px] ${
                       fileName === navDict[item].file ? "bg-neutral-200" : ""
                     }`}
                   >
                     {item}
                   </Link>
                   {navDict[item].children && (
-                    <div className="flex flex-col items-start justify-start ml-4">
+                    <div className="flex flex-col items-start justify-start mx-4">
                       {Object.keys(navDict[item].children).map((child) => (
                         <Link
                           key={child}
@@ -139,10 +139,10 @@ export default function Docs({ content, fileName }) {
                 </div>
               ))}
             </div>
-            <div className="flex flex-col">
+            <div className="flex flex-col min-w-0 flex-1">
               <div
                 onClick={() => setMenuOpen(!menuOpen)}
-                className="flex items-start justify-between py-2 border-t border-brownblack-50 sm:hidden text-neutral-900"
+                className="flex items-start justify-between py-2 border-t border-neutral-200 sm:hidden text-neutral-900"
               >
                 {/* Name of current page */}
                 <div className="text-sm font-bold text-left">
@@ -153,7 +153,7 @@ export default function Docs({ content, fileName }) {
               </div>
               {/* Mobile Menu */}
               {menuOpen && (
-                <div className="flex flex-col items-start justify-start w-full p-2 bg-white border rounded-md border-brownblack-50 sm:hidden">
+                <div className="flex flex-col items-start justify-start w-full p-2 bg-white border rounded-md border-neutral-200 sm:hidden">
                   {/* Toggle Network */}
                   <div className="flex p-1 mt-2 mb-4 text-sm rounded-lg bg-neutral-200">
                     <button
@@ -213,8 +213,8 @@ export default function Docs({ content, fileName }) {
                 </div>
               )}
 
-              <div className="justify-start flex-1 border-t sm:border-l border-brownblack-50">
-                <div className="w-full max-w-full py-6 sm:py-10 sm:pl-10 ">
+              <div className="justify-start flex-1 border-t sm:border-l border-neutral-200">
+                <div className="w-full py-6 sm:py-10 sm:pl-10">
                   <ReactMarkdown
                     remarkPlugins={[remarkGfm]}
                     components={{
@@ -223,7 +223,7 @@ export default function Docs({ content, fileName }) {
                           props.inline = props.inline.toString();
                         return (
                           <li
-                            className={`mb-6 ${
+                            className={`mb-3 last:mb-6 ${
                               ordered ? "" : "list-disc"
                             } ml-6`}
                             {...props}
@@ -239,7 +239,7 @@ export default function Docs({ content, fileName }) {
                       ),
                       h2: ({ node, ...props }) => (
                         <div
-                          className="mb-5  text-[20px] font-bold whitespace-normal break-all"
+                          className="mb-5  text-[20px] font-semibold whitespace-normal break-all pb-2 border-b border-neutral-200"
                           {...props}
                         />
                       ),
@@ -263,7 +263,7 @@ export default function Docs({ content, fileName }) {
                       ),
                       a: ({ node, ...props }) => (
                         <a
-                          className="text-orange-800 break-all whitespace-normal"
+                          className="text-orange-800 break-words whitespace-normal"
                           {...props}
                         />
                       ),
@@ -321,7 +321,7 @@ export default function Docs({ content, fileName }) {
                             props.inline = props.inline.toString();
                           return (
                             <code
-                              className="px-2 py-1 whitespace-break-spaces flex-wrap  border-neutral-200 border bg-neutral-100 rounded-lg break-all text-[14px]  leading-5 "
+                              className="px-2 py-1 whitespace-nowrap border-neutral-200 border bg-neutral-100 rounded-lg break-words text-[13px]  leading-5 "
                               {...props}
                             />
                           );
@@ -337,11 +337,13 @@ export default function Docs({ content, fileName }) {
                         }
                       },
                       table: ({ node, ...props }) => (
-                        <div className="mb-6 overflow-x-auto">
-                          <table
-                            className="min-w-full border-collapse"
-                            {...props}
-                          />
+                        <div className="w-full overflow-x-auto mb-6">
+                          <div className="inline-block min-w-full">
+                            <table
+                              className="w-full divide-y divide-neutral-200 rounded-lg overflow-hidden"
+                              {...props}
+                            />
+                          </div>
                         </div>
                       ),
                       thead: ({ node, ...props }) => (
@@ -352,19 +354,19 @@ export default function Docs({ content, fileName }) {
                       ),
                       tr: ({ node, ...props }) => (
                         <tr
-                          className="border-b border-neutral-200"
+                          className="border-b border-neutral-200 last:border-b-0"
                           {...props}
                         />
                       ),
                       th: ({ node, ...props }) => (
                         <th
-                          className="px-6 py-3 text-sm font-semibold text-left text-neutral-900"
+                          className="px-4 py-4 text-xs font-semibold text-left text-neutral-900"
                           {...props}
                         />
                       ),
                       td: ({ node, ...props }) => (
                         <td
-                          className="px-6 py-4 text-sm whitespace-normal text-neutral-900"
+                          className="px-4 py-6 text-xs whitespace-normal text-neutral-900"
                           {...props}
                         />
                       ),

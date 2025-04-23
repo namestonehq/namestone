@@ -1,16 +1,17 @@
 # Set Name
 
-This POST route is used to set a name for a given address and domain. It will overwrite existing names.  
-If a name does not exist this route will create it.
+This POST route creates a name (subdomain) for a given address and domain. If the name already exists, it will be overwritten. If it doesn’t, this route will create it.
 
 ## Parameters
 
-- `name` (string): The name being set, i.e., the "example" in example.testbrand.eth.
-- `domain` (string): The domain ("testbrand.eth").
-- `address` (string)(Optional): The ethereum address the name points to.
-- `contenthash` (string)(Optional): The link for an ipfs or ipns website.
-- `text_records` (object)(Optional): An object containing key-value pairs representing the text records to be set.
-- `coin_types` (object)(Optional): An object containing key-value pairs representing L2 chains and their resolved address.
+| Parameter      | Type   | Required | Description                                                                                                                  |
+| -------------- | ------ | -------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `name`         | string | Yes      | The name being set, i.e., the "example" in example.testbrand.eth.                                                            |
+| `domain`       | string | Yes      | The domain (e.g. "testbrand.eth").                                                                                           |
+| `address`      | string | No       | The Ethereum address the name points to.                                                                                     |
+| `contenthash`  | string | No       | The link for an [IPFS](https://docs.ipfs.tech/) or [IPNS](https://docs.ipfs.tech/concepts/ipns/#mutability-in-ipfs) website. |
+| `text_records` | object | No       | An object containing key-value pairs of the text records to be set.                                                          |
+| `coin_types`   | object | No       | An object containing key-value pairs of L2 chains and their resolved address.                                                |
 
 ## Multichain Address Resolution
 

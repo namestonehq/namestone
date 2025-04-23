@@ -1,19 +1,25 @@
 # Enable Domain
 
-In order to use this endpoint, you must first sign a message from [Get SIWE Message](./get-siwe-message).
+To enable a domain for NameStone programmatically, call this POST route. It returns an API key.
 
-This POST route programmatically enables new domains for NameStone. It returns an API key.
-Note: Your domain's resolver must be NameStone's resolver: `0xA87361C4E58B619c390f469B9E6F27d759715125`.
+**Endpoint Prerequisites:**
+
+- You must first sign a message from the [Get SIWE Message](./get-siwe-message) endpoint.
+- Your domain must use the NameStone resolver: `0xA87361C4E58B619c390f469B9E6F27d759715125`. Learn more about [updating the resolver](https://support.ens.domains/en/articles/8845494-how-to-update-the-resolver-record).
+
+Prefer a UI? Fill out our [form](https://namestone.com/try-namestone) instead.
 
 ## Parameters
 
-- `company_name` (string): The name of your company.
-- `email` (string): Your email to send the api key to
-- `address` (string): The Ethereum address that owns the domain.
-- `domain` (string): The domain (e.g. "testbrand.eth").
-- `signature` (string): The message from [get-siwe-message](./get-siwe-message), signed with your Ethereum address.
-- `api_key` (string)(optional): To use an existing NameStone API key that your wallet has access to, add it here.
-- `cycle_key` ("1" or "0")(optional): If 1 and the api key already exists, the key will be cycled.
+| Parameter      | Type       | Required | Description                                                                                 |
+| -------------- | ---------- | -------- | ------------------------------------------------------------------------------------------- |
+| `company_name` | string     | Yes      | The name of your company.                                                                   |
+| `email`        | string     | Yes      | Your email which will receive the API key.                                                  |
+| `address`      | string     | Yes      | The Ethereum address that owns the domain.                                                  |
+| `domain`       | string     | Yes      | The domain (e.g. "testbrand.eth") you wish to enable.                                       |
+| `signature`    | string     | Yes      | The message from [get-siwe-message](./get-siwe-message), signed with your Ethereum address. |
+| `api_key`      | string     | No       | To use an existing NameStone API key that your wallet has access to, add it here.           |
+| `cycle_key`    | "1" or "0" | No       | If 1 and the API key already exists, the key will be cycled.                                |
 
 ## Curl Example
 

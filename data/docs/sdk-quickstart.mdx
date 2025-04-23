@@ -1,14 +1,16 @@
 # SDK Quickstart
 
-We have a [typescript SDK](https://github.com/namestonehq/namestone-sdk) for users who prefer to interact with our api through typesafe methods.
+This guide helps you get started with our TypeScript SDK if you prefer type-safe methods.​ Each of our API pages includes an SDK example. Visit the [SDK GitHub](https://github.com/namestonehq/namestone-sdk) for more information.
 
-Install the SDK through npm
+## Setup
+
+Install the SDK through npm:
 
 ```
 npm install @namestone/namestone-sdk
 ```
 
-Initialize the Namestone client.
+Initialize the Namestone client:
 
 ```ts
 import NameStone, {
@@ -20,7 +22,7 @@ import NameStone, {
 const ns = new NameStone("YOUR_API_KEY_HERE");
 ```
 
-Then call with the relevant methods.
+Then call with the relevant methods:
 
 ```ts
 const domain = "testbrand.eth";
@@ -41,5 +43,3 @@ const domain = "testbrand.eth";
   }
 })();
 ```
-
-Each of our api pages includes an SDK example and you can visit the [SDK github](https://github.com/namestonehq/namestone-sdk) for more information.

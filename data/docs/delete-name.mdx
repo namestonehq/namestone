@@ -1,11 +1,13 @@
 # Delete Name
 
-This POST route is used to delete a name for a given domain.
+This POST route deletes a name (subdomain) for a given domain.
 
 ## Parameters
 
-- `name` (string): The name being deleted, i.e., the "example" in example.testbrand.eth.
-- `domain` (string): The domain ("testbrand.eth").
+| Parameter | Type   | Required | Description                                                           |
+| --------- | ------ | -------- | --------------------------------------------------------------------- |
+| `name`    | string | Yes      | The name being deleted, i.e., the "example" in example.testbrand.eth. |
+| `domain`  | string | Yes      | The domain (e.g. "testbrand.eth").                                    |
 
 ## Curl Example
 

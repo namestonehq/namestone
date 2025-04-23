@@ -1,13 +1,15 @@
 # Set Domain
 
-This POST route is used to set domain records. It should only be used for domains already enabled in namestone. To enable a new domain use enable-domain.
+This POST route sets domain records. It should only be used for domains already enabled in NameStone. To enable a new domain use [enable-domain](https://namestone.com/docs/enable-domain).
 
 ## Parameters
 
-- `domain` (string): The domain ("testbrand.eth").
-- `address` (string)(Optional): The ethereum address the name points to.
-- `contenthash` (string)(Optional): The link for an ipfs or ipns website.
-- `text_records` (object)(Optional): An object containing key-value pairs representing the text records to be set.
+| Parameter      | Type   | Required | Description                                                                                                                  |
+| -------------- | ------ | -------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `domain`       | string | Yes      | The domain (e.g. "testbrand.eth").                                                                                           |
+| `address`      | string | No       | The Ethereum address the name points to.                                                                                     |
+| `contenthash`  | string | No       | The link for an [IPFS](https://docs.ipfs.tech/) or [IPNS](https://docs.ipfs.tech/concepts/ipns/#mutability-in-ipfs) website. |
+| `text_records` | object | No       | An object containing key-value pairs representing the text records to be set.                                                |
 
 ## Curl Example
 
