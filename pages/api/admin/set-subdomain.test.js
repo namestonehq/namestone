@@ -24,13 +24,14 @@ import {
 import { encodeContenthash } from "../../../utils/ContentHashUtils.js";
 import { normalize } from "viem/ens";
 
-// Mock the getAdminTokenById function
+// Mock the ServerUtils functions
 jest.mock("../../../utils/ServerUtils", () => ({
   getAdminTokenById: jest.fn(),
+  getClientIp: jest.fn(() => "127.0.0.1")
 }));
 
-// Import the mocked function
-import { getAdminTokenById } from "../../../utils/ServerUtils";
+// Import the mocked functions
+import { getAdminTokenById, getClientIp } from "../../../utils/ServerUtils";
 
 const TEST_ADMIN_ADDRESS = "0xAdminAddress123456789012345678901234567890";
 

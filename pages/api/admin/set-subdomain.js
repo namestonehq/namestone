@@ -1,6 +1,6 @@
 import sql from "../../../lib/db";
 import { normalize } from "viem/ens";
-import { getAdminTokenById } from "../../../utils/ServerUtils";
+import { getAdminTokenById, getClientIp } from "../../../utils/ServerUtils";
 import { encodeContenthash } from "../../../utils/ContentHashUtils.js";
 
 export default async function handler(req, res) {
@@ -128,11 +128,13 @@ export default async function handler(req, res) {
   }
 
   // log user engagement
+  const clientIp = getClientIp(req);
   const jsonPayload = JSON.stringify({
     name: name,
     address: body.address,
     domain: domain,
     domain_id: body.domain_id,
+    ip_address: clientIp
   });
   await sql`
   insert into user_engagement (address, name, details)

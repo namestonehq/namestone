@@ -3,6 +3,7 @@ import {
   checkApiKey,
   getAdminToken,
   getNetwork,
+  getClientIp,
 } from "../../../utils/ServerUtils";
 import Cors from "micro-cors";
 
@@ -66,7 +67,8 @@ async function handler(req, res) {
   where id = ${subdomainQuery[0].id}`;
 
   // log user engagement
-  const jsonPayload = JSON.stringify({ name: name, domain: domain });
+  const clientIp = getClientIp(req);
+  const jsonPayload = JSON.stringify({ name: name, domain: domain, ip_address: clientIp });
   await sql`
   insert into user_engagement (address, name, details)
   values ('api_key','revoke_name', ${jsonPayload})`;

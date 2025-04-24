@@ -1,6 +1,6 @@
 import { getToken } from "next-auth/jwt";
 import sql from "../../lib/db";
-import { getAvailability, getEligibility } from "../../utils/ServerUtils";
+import { getAvailability, getEligibility, getClientIp } from "../../utils/ServerUtils";
 import { normalize } from "viem/ens";
 
 export default async function handler(req, res) {
@@ -74,7 +74,8 @@ export default async function handler(req, res) {
   }
 
   // log user engagement
-  const jsonPayload = JSON.stringify({ name: name, domain: domain });
+  const clientIp = getClientIp(req);
+  const jsonPayload = JSON.stringify({ name: name, domain: domain, ip_address: clientIp });
   await sql`insert into user_engagement (
     address, name, details
   ) values (

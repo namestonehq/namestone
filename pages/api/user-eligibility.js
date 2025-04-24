@@ -1,5 +1,5 @@
 import { getToken } from "next-auth/jwt";
-import { getEligibility } from "../../utils/ServerUtils";
+import { getEligibility, getClientIp } from "../../utils/ServerUtils";
 import sql from "../../lib/db";
 
 // Add the list of ethereum addresses
@@ -18,7 +18,8 @@ export default async function handler(req, res) {
 
   // log user engagement
   const userAddress = token.sub;
-  const jsonPayload = JSON.stringify({ ...{ domain: domain }, ...payload });
+  const clientIp = getClientIp(req);
+  const jsonPayload = JSON.stringify({ ...{ domain: domain }, ...payload, ip_address: clientIp });
   await sql`insert into user_engagement (
     address, name, details
   ) values (

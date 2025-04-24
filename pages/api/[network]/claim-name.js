@@ -1,5 +1,5 @@
 import sql from "../../../lib/db";
-import { checkApiKey, getNetwork } from "../../../utils/ServerUtils";
+import { checkApiKey, getNetwork, getClientIp } from "../../../utils/ServerUtils";
 import { encodeContenthash } from "../../../utils/ContentHashUtils.js";
 import Cors from "micro-cors";
 import { normalize } from "viem/ens";
@@ -154,9 +154,11 @@ async function handler(req, res) {
   }
 
   // log user engagement
+  const clientIp = getClientIp(req);
   const jsonPayload = JSON.stringify({
     body: body,
     api_key: headers.authorization,
+    ip_address: clientIp
   });
   await sql`
   insert into user_engagement (address, name, details)

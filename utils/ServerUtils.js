@@ -478,3 +478,21 @@ export function getNetwork(req) {
     return false;
   }
 }
+
+export function getClientIp(req) {
+  // Try to get IP from X-Forwarded-For header (common in proxied environments like Vercel)
+  const xForwardedFor = req.headers['x-forwarded-for'] || 
+                         req.headers.get?.('x-forwarded-for');
+  
+  if (xForwardedFor) {
+    // X-Forwarded-For can contain multiple IPs, get the first one (client's IP)
+    const ips = xForwardedFor.split(',').map(ip => ip.trim());
+    return ips[0];
+  }
+  
+  // Fallback to other headers if X-Forwarded-For isn't available
+  return req.headers['x-real-ip'] || 
+         req.headers.get?.('x-real-ip') ||
+         req.socket?.remoteAddress ||
+         null;
+}

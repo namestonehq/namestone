@@ -19,6 +19,15 @@ import {
   teardownTestDatabase,
 } from "../../../test_utils/test_db_setup";
 
+// Mock the ServerUtils function
+jest.mock("../../../utils/ServerUtils", () => ({
+  checkApiKey: jest.fn(),
+  getNetwork: jest.fn(),
+  getClientIp: jest.fn(() => "127.0.0.1")
+}));
+
+import { checkApiKey, getNetwork, getClientIp } from "../../../utils/ServerUtils";
+
 const TEST_DOMAIN_MAINNET = "test-mainnet.eth";
 const TEST_DOMAIN_SEPOLIA = "test-sepolia.eth";
 const TEST_API_KEY_MAINNET = "test-api-key-mainnet";

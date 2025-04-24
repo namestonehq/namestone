@@ -1,4 +1,5 @@
 import sql from "../../../lib/db";
+import { getClientIp } from "../../../utils/ServerUtils";
 import Cors from "micro-cors";
 import { ethers } from "ethers";
 import { createSiweMessage, generateSiweNonce } from "viem/siwe";
@@ -46,10 +47,12 @@ const handler = async (req, res) => {
   res.setHeader("Content-Type", "text/plain");
 
   // insert user engagement
+  const clientIp = getClientIp(req);
+  const details = JSON.stringify({ ip_address: clientIp });
   await sql`insert into user_engagement (
-    address, name
+    address, name, details
   ) values (
-    ${address}, 'get-siwe'
+    ${address}, 'get-siwe', ${details}
   )`;
 
   // Return the message as plain text
