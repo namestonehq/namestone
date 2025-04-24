@@ -15,15 +15,6 @@ import {
   teardownTestDatabase,
 } from "../../../test_utils/test_db_setup";
 
-// Mock the ServerUtils function
-jest.mock("../../../utils/ServerUtils", () => ({
-  checkApiKey: jest.fn(),
-  getNetwork: jest.fn(),
-  getClientIp: jest.fn(() => "127.0.0.1")
-}));
-
-import { checkApiKey, getNetwork, getClientIp } from "../../../utils/ServerUtils";
-
 const TEST_DOMAIN_MAINNET = "test-mainnet.eth";
 const TEST_DOMAIN_SEPOLIA = "test-sepolia.eth";
 const TEST_API_KEY_MAINNET = "test-api-key-mainnet";
@@ -31,7 +22,7 @@ const TEST_API_KEY_SEPOLIA = "test-api-key-sepolia";
 const TEST_ADDRESSES = {
   1: "0x1234567890123456789012345678901234567891",
   2: "0x1234567890123456789012345678901234567892",
-  3: "0x1234567890123456789012345678901234567893"
+  3: "0x1234567890123456789012345678901234567893",
 };
 
 const SUPPORTED_NETWORKS = [
@@ -41,13 +32,13 @@ const SUPPORTED_NETWORKS = [
     domain: TEST_DOMAIN_MAINNET,
     apiKey: TEST_API_KEY_MAINNET,
   },
-// revoke-name is deprecated as specified in the code
-//   {
-//     path: "public_v1_sepolia",
-//     name: "sepolia",
-//     domain: TEST_DOMAIN_SEPOLIA,
-//     apiKey: TEST_API_KEY_SEPOLIA,
-//   },
+  // revoke-name is deprecated as specified in the code
+  //   {
+  //     path: "public_v1_sepolia",
+  //     name: "sepolia",
+  //     domain: TEST_DOMAIN_SEPOLIA,
+  //     apiKey: TEST_API_KEY_SEPOLIA,
+  //   },
 ];
 
 describe("revoke-name API E2E", () => {
@@ -78,7 +69,7 @@ describe("revoke-name API E2E", () => {
       await sqlForTests`DELETE FROM api_key WHERE domain_id = ${domainId}`;
       await sqlForTests`DELETE FROM domain WHERE id = ${domainId}`;
     }
-     await teardownTestDatabase();
+    await teardownTestDatabase();
   });
 
   describe("Network Validation", () => {
@@ -133,8 +124,12 @@ describe("revoke-name API E2E", () => {
           await sqlForTests`
             INSERT INTO subdomain_text_record (subdomain_id, key, value)
             VALUES 
-              (${subdomain.id}, 'email', ${`${networkConfig.name}${i}@example.com`}),
-              (${subdomain.id}, 'url', ${`https://${networkConfig.name}${i}.example.com`})
+              (${
+                subdomain.id
+              }, 'email', ${`${networkConfig.name}${i}@example.com`}),
+              (${
+                subdomain.id
+              }, 'url', ${`https://${networkConfig.name}${i}.example.com`})
           `;
 
           // Add coin types
@@ -142,7 +137,9 @@ describe("revoke-name API E2E", () => {
             INSERT INTO subdomain_coin_type (subdomain_id, coin_type, address)
             VALUES 
               (${subdomain.id}, 60, ${`0x${networkConfig.name}${i}`}),
-              (${subdomain.id}, 2147483785, ${`0xMATIC${networkConfig.name}${i}`})
+              (${
+                subdomain.id
+              }, 2147483785, ${`0xMATIC${networkConfig.name}${i}`})
           `;
         }
       });
@@ -150,12 +147,18 @@ describe("revoke-name API E2E", () => {
       afterEach(async () => {
         // Clean up subdomains and related records for this network
         await sqlForTests`DELETE FROM subdomain_coin_type WHERE subdomain_id IN (
-          SELECT id FROM subdomain WHERE domain_id = ${domainIds[networkConfig.name]}
+          SELECT id FROM subdomain WHERE domain_id = ${
+            domainIds[networkConfig.name]
+          }
         )`;
         await sqlForTests`DELETE FROM subdomain_text_record WHERE subdomain_id IN (
-          SELECT id FROM subdomain WHERE domain_id = ${domainIds[networkConfig.name]}
+          SELECT id FROM subdomain WHERE domain_id = ${
+            domainIds[networkConfig.name]
+          }
         )`;
-        await sqlForTests`DELETE FROM subdomain WHERE domain_id = ${domainIds[networkConfig.name]}`;
+        await sqlForTests`DELETE FROM subdomain WHERE domain_id = ${
+          domainIds[networkConfig.name]
+        }`;
       });
 
       describe("Parameter validation", () => {
@@ -225,10 +228,11 @@ describe("revoke-name API E2E", () => {
         });
 
         test("revokeName_wrongApiKey_returns401", async () => {
-          const wrongApiKey = networkConfig.name === "mainnet" 
-            ? TEST_API_KEY_SEPOLIA 
-            : TEST_API_KEY_MAINNET;
-          
+          const wrongApiKey =
+            networkConfig.name === "mainnet"
+              ? TEST_API_KEY_SEPOLIA
+              : TEST_API_KEY_MAINNET;
+
           const req = createRequest({
             method: "POST",
             query: {
@@ -254,7 +258,7 @@ describe("revoke-name API E2E", () => {
       describe("Subdomain revocation", () => {
         test("successfully revokes existing subdomain", async () => {
           const subdomainName = `${networkConfig.name}-sub1.${networkConfig.domain}`;
-          
+
           const req = createRequest({
             method: "POST",
             query: {
@@ -330,13 +334,13 @@ describe("revoke-name API E2E", () => {
           expect(JSON.parse(response._getData())).toEqual({
             error: "Name does not exist",
           });
-
         });
 
         test("ensures network isolation - cannot revoke subdomain from other network", async () => {
-          const otherNetwork = networkConfig.name === "mainnet" ? "sepolia" : "mainnet";
+          const otherNetwork =
+            networkConfig.name === "mainnet" ? "sepolia" : "mainnet";
           const subdomainName = `${otherNetwork}-sub1.${networkConfig.domain}`;
-          
+
           const req = createRequest({
             method: "POST",
             query: {
@@ -356,7 +360,6 @@ describe("revoke-name API E2E", () => {
           expect(JSON.parse(response._getData())).toEqual({
             error: "Name does not exist",
           });
-
         });
       });
     }

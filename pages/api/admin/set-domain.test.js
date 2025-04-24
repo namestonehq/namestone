@@ -26,7 +26,7 @@ import { encodeContenthash } from "../../../utils/ContentHashUtils.js";
 // Mock the ServerUtils functions
 jest.mock("../../../utils/ServerUtils", () => ({
   getAdminTokenById: jest.fn(),
-  getClientIp: jest.fn(() => "127.0.0.1")
+  getClientIp: jest.fn(() => "127.0.0.1"),
 }));
 
 // Import the mocked functions
