@@ -1,16 +1,19 @@
 # Get Names
 
-This GET route fetches all names for a user or domain. Ordered alphabetically.  
-API_Key is optional. If it is not included it will not get private names.  
-If it is included it will get only your names (public and private).
+This GET route returns a list of names (subdomains) associated with a specific domain and/or address. Names are fetched in alphabetical order.
+Including an API key is optional but recommended when interacting with your own domains.
+
+_Note: Names may not be discoverable if the domain is using NameStone's resolver **and** the domain owner has marked them private. Include your API key to ensure access to all subnames for your domain. Review your domain's privacy settings in the [admin panel](https://namestone.com/admin)._
 
 ## Parameters
 
-- `domain` (string)(Optional): The domain for the user name. If not included route will return all names for all domains tied to your API key.
-- `address` (string)(Optional): The address of the user (or addresses of users separated by commas). If not included route will return all names.
-- `text_records` (1 or 0)(Optional): Whether or not the the route returns text records. 1 by default.
-- `limit` (integer)(Optional): Number of names returned in request. Default 50.
-- `offset` (integer)(Optional): Offset the returned names window. Default 0.
+| Parameter      | Type    | Required | Description                                                                                                             |
+| -------------- | ------- | -------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `domain`       | string  | No       | The domain (e.g. "testbrand.eth"). If omitted, the route will return all subnames for all domains tied to your API key. |
+| `address`      | string  | No       | One or more Ethereum addresses (separated by commas). If omitted, the route will return all names.                      |
+| `text_records` | 1 or 0  | No       | Whether or not the route returns text records. 1 by default.                                                            |
+| `limit`        | integer | No       | Number of names returned in request. Default 50.                                                                        |
+| `offset`       | integer | No       | Offset the returned names window. Default 0.                                                                            |
 
 ## Curl Example
 
@@ -85,4 +88,4 @@ const address = "0x57632Ba9A844af0AB7d5cdf98b0056c8d87e3A85";
 ]
 ```
 
-NameStone supports multichain address resolution to any L2 chain permitted within [ENS](https://github.com/satoshilabs/slips/blob/master/slip-0044.md)
+NameStone supports multichain address resolution to any L2 chain permitted within [ENS](https://github.com/satoshilabs/slips/blob/master/slip-0044.md).

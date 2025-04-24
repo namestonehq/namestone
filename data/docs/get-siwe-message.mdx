@@ -5,9 +5,11 @@ Libraries such as [viem](https://viem.sh/docs/actions/wallet/signMessage.html) o
 
 ## Parameters
 
-- `address` (string): Your Ethereum address. This address should own the domain name you plan to use with NameStone.
-- `domain` (string)(optional): The domain sending the SIWE message. If not filled out, it defaults to namestone.com. The format should be "yourdomain.tld".
-- `uri` (string)(optional): The URI sending the SIWE message. If not filled out, it defaults to "https://namestone.com/api/public_v1/get-siwe-message"
+| Parameter | Type   | Required | Description                                                                                                              |
+| --------- | ------ | -------- | ------------------------------------------------------------------------------------------------------------------------ |
+| `address` | string | Yes      | Your Ethereum address. This address should own the domain name you plan to use with NameStone.                           |
+| `domain`  | string | No       | The domain sending the SIWE message. If not included, it defaults to namestone.com. Format: "yourdomain.tld".            |
+| `uri`     | string | No       | The URI sending the SIWE message. If not included, it defaults to "https://namestone.com/api/public_v1/get-siwe-message" |
 
 ## Curl Example
 
