@@ -155,7 +155,6 @@ async function handler(req, res) {
   const clientIp = getClientIp(req);
   const jsonPayload = JSON.stringify({
     body: body,
-    api_key: headers.authorization,
     ip_address: clientIp
   });
   await sql`
