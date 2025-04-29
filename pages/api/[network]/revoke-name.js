@@ -1,5 +1,9 @@
 import sql from "../../../lib/db";
-import { checkApiKey, getNetwork, getClientIp } from "../../../utils/ServerUtils";
+import {
+  checkApiKey,
+  getNetwork,
+  getClientIp,
+} from "../../../utils/ServerUtils";
 import Cors from "micro-cors";
 
 const cors = Cors({
@@ -40,7 +44,7 @@ async function handler(req, res) {
   }
 
   const subdomainQuery = await sql`
-  select subdomain.id 
+  select subdomain.id, subdomain.address
   from subdomain 
   where name = ${name} and domain_id in 
   (select id from domain where name = ${domain} and network=${network} limit 1)`;
@@ -60,7 +64,12 @@ async function handler(req, res) {
 
   // log user engagement
   const clientIp = getClientIp(req);
-  const jsonPayload = JSON.stringify({ name: name, domain: domain, ip_address: clientIp });
+  const jsonPayload = JSON.stringify({
+    name: name,
+    domain: domain,
+    ip_address: clientIp,
+    address: subdomainQuery[0].address,
+  });
   await sql`
   insert into user_engagement (address, name, details)
   values ('api_key','revoke_name', ${jsonPayload})`;
