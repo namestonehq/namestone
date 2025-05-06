@@ -5,6 +5,123 @@ import { batch, getResolver, getOwner } from "@ensdomains/ensjs/public";
 import { mainnet, sepolia } from "viem/chains";
 import { createPublicClient, http } from "viem";
 
+// Utility function to split array into chunks
+function chunkArray(array, size) {
+  const chunks = [];
+  for (let i = 0; i < array.length; i += size) {
+    chunks.push(array.slice(i, i + size));
+  }
+  return chunks;
+}
+
+async function makeBatchRequests(client, brands) {
+  return await batch(
+    client,
+    ...brands.flatMap((brand) => [
+      getResolver.batch({ name: brand.domain }),
+      getOwner.batch({ name: brand.domain }),
+    ])
+  );
+}
+
+/**
+ * Process batched requests for a list of brands
+ * @param {*} client
+ * @param {*} brands
+ * @param {*} batchSize
+ * @returns
+ */
+async function processBatchedRequests(client, brands, batchSize = 100) {
+  // Split brands into chunks of batchSize
+  const chunks = chunkArray(brands, batchSize);
+
+  // Process each chunk and collect results
+  const allResults = [];
+  for (const chunk of chunks) {
+    const chunkResults = await makeBatchRequests(client, chunk);
+    allResults.push(...chunkResults);
+  }
+  return allResults;
+}
+
+/**
+ * Process batched requests for a list of brands with retry logic
+ * @param {*} client
+ * @param {*} brands
+ * @param {*} batchSize
+ * @param {*} maxRetries
+ * @param {*} retryDelay
+ * @returns
+ */
+async function processBatchedRequestsWithRetry(
+  client,
+  brands,
+  batchSize = 10,
+  maxRetries = 3
+) {
+  const chunks = chunkArray(brands, batchSize);
+
+  const allResults = [];
+  for (const chunk of chunks) {
+    let retryCount = 0;
+    let success = false;
+    let chunkResults;
+
+    while (!success && retryCount < maxRetries) {
+      try {
+        chunkResults = await makeBatchRequests(client, chunk);
+        success = true;
+      } catch (error) {
+        retryCount++;
+        if (retryCount === maxRetries) {
+          console.error(
+            `Failed to process chunk after ${maxRetries} retries:`,
+            error
+          );
+          throw error;
+        }
+        console.warn(`Retry attempt ${retryCount} for chunk processing`);
+      }
+    }
+
+    allResults.push(...chunkResults);
+  }
+
+  return allResults;
+}
+
+async function fetchMainnetResults(isSuperAdmin, mainnetBrands, mainnetClient) {
+  // keep previous code branch for non-super admins
+  if (!isSuperAdmin) {
+    return await batch(
+      mainnetClient,
+      ...mainnetBrands.flatMap((brand) => [
+        getResolver.batch({ name: brand.domain }),
+        getOwner.batch({ name: brand.domain }),
+      ])
+    );
+  }
+
+  // process in batches for super admins
+  return await processBatchedRequests(mainnetClient, mainnetBrands);
+}
+
+async function fetchSepoliaResults(isSuperAdmin, sepoliaBrands, sepoliaClient) {
+  // keep previous code branch for non-super admins
+  if (!isSuperAdmin) {
+    return await batch(
+      sepoliaClient,
+      ...sepoliaBrands.flatMap((brand) => [
+        getResolver.batch({ name: brand.domain }),
+        getOwner.batch({ name: brand.domain }),
+      ])
+    );
+  }
+
+  // process in batches for super admins
+  return await processBatchedRequests(sepoliaClient, sepoliaBrands);
+}
+
 // Constants
 const providerUrl = `https://eth-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_API_KEY}`;
 const sepoliaProviderUrl = `https://eth-sepolia.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_API_KEY}`;
@@ -85,28 +202,17 @@ export default async function handler(req, res) {
     );
 
     // Batch calls for mainnet
-    const mainnetResults =
-      mainnetBrands.length > 0
-        ? await batch(
-            mainnetClient,
-            ...mainnetBrands.flatMap((brand) => [
-              getResolver.batch({ name: brand.domain }),
-              getOwner.batch({ name: brand.domain }),
-            ])
-          )
-        : [];
-
+    const mainnetResults = await fetchMainnetResults(
+      superAdmin,
+      mainnetBrands,
+      mainnetClient
+    );
     // Batch calls for sepolia
-    const sepoliaResults =
-      sepoliaBrands.length > 0
-        ? await batch(
-            sepoliaClient,
-            ...sepoliaBrands.flatMap((brand) => [
-              getResolver.batch({ name: brand.domain }),
-              getOwner.batch({ name: brand.domain }),
-            ])
-          )
-        : [];
+    const sepoliaResults = await fetchSepoliaResults(
+      superAdmin,
+      sepoliaBrands,
+      sepoliaClient
+    );
 
     // Process results
     const mainnetBrandsWithResolver = mainnetBrands.map((brand, index) => {
