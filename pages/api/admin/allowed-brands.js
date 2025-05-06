@@ -5,7 +5,12 @@ import { batch, getResolver, getOwner } from "@ensdomains/ensjs/public";
 import { mainnet, sepolia } from "viem/chains";
 import { createPublicClient, http } from "viem";
 
-// Utility function to split array into chunks
+/**
+ * Splits an array into smaller chunks of specified size
+ * @param {Array} array - The array to be split into chunks
+ * @param {number} size - The size of each chunk
+ * @returns {Array<Array>} Array of chunks
+ */
 function chunkArray(array, size) {
   const chunks = [];
   for (let i = 0; i < array.length; i += size) {
@@ -14,6 +19,12 @@ function chunkArray(array, size) {
   return chunks;
 }
 
+/**
+ * Makes batch requests to the ENS client for resolver and owner information
+ * @param {Object} client - The ENS client instance
+ * @param {Array<Object>} brands - Array of brand objects containing domain information
+ * @returns {Promise<Array>} Array of resolver and owner results
+ */
 async function makeBatchRequests(client, brands) {
   return await batch(
     client,
@@ -25,13 +36,14 @@ async function makeBatchRequests(client, brands) {
 }
 
 /**
- * Process batched requests for a list of brands
- * @param {*} client
- * @param {*} brands
- * @param {*} batchSize
- * @returns
+ * Processes ENS requests in batches with configurable chunk size
+ * Optimized for handling large numbers of domains efficiently
+ * @param {Object} client - The ENS client instance
+ * @param {Array<Object>} brands - Array of brand objects containing domain information
+ * @param {number} batchSize - Number of brands to process in each batch (default: 50)
+ * @returns {Promise<Array>} Combined results from all batches
  */
-async function processBatchedRequests(client, brands, batchSize = 100) {
+async function processBatchedRequests(client, brands, batchSize = 50) {
   // Split brands into chunks of batchSize
   const chunks = chunkArray(brands, batchSize);
 
@@ -45,18 +57,17 @@ async function processBatchedRequests(client, brands, batchSize = 100) {
 }
 
 /**
- * Process batched requests for a list of brands with retry logic
- * @param {*} client
- * @param {*} brands
- * @param {*} batchSize
- * @param {*} maxRetries
- * @param {*} retryDelay
- * @returns
+ * Processes ENS requests in batches with retry logic for failed requests
+ * @param {Object} client - The ENS client instance
+ * @param {Array<Object>} brands - Array of brand objects containing domain information
+ * @param {number} batchSize - Number of brands to process in each batch (default: 50)
+ * @param {number} maxRetries - Maximum number of retry attempts for failed requests (default: 3)
+ * @returns {Promise<Array>} Combined results from all batches
  */
 async function processBatchedRequestsWithRetry(
   client,
   brands,
-  batchSize = 10,
+  batchSize = 50,
   maxRetries = 3
 ) {
   const chunks = chunkArray(brands, batchSize);
@@ -90,6 +101,15 @@ async function processBatchedRequestsWithRetry(
   return allResults;
 }
 
+/**
+ * Fetches ENS information for mainnet domains
+ * Uses batched processing for super admins to handle large numbers of domains efficiently
+ * Uses direct batch processing for regular users
+ * @param {boolean} isSuperAdmin - Whether the user is a super admin
+ * @param {Array<Object>} mainnetBrands - Array of brand objects for mainnet domains
+ * @param {Object} mainnetClient - The mainnet ENS client instance
+ * @returns {Promise<Array>} Array of resolver and owner results for mainnet domains
+ */
 async function fetchMainnetResults(isSuperAdmin, mainnetBrands, mainnetClient) {
   // keep previous code branch for non-super admins
   if (!isSuperAdmin) {
@@ -106,6 +126,15 @@ async function fetchMainnetResults(isSuperAdmin, mainnetBrands, mainnetClient) {
   return await processBatchedRequests(mainnetClient, mainnetBrands);
 }
 
+/**
+ * Fetches ENS information for Sepolia testnet domains
+ * Uses batched processing for super admins to handle large numbers of domains efficiently
+ * Uses direct batch processing for regular users
+ * @param {boolean} isSuperAdmin - Whether the user is a super admin
+ * @param {Array<Object>} sepoliaBrands - Array of brand objects for Sepolia domains
+ * @param {Object} sepoliaClient - The Sepolia ENS client instance
+ * @returns {Promise<Array>} Array of resolver and owner results for Sepolia domains
+ */
 async function fetchSepoliaResults(isSuperAdmin, sepoliaBrands, sepoliaClient) {
   // keep previous code branch for non-super admins
   if (!isSuperAdmin) {
