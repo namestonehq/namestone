@@ -36,6 +36,11 @@ const resolutionList = [
     gateway: "Namestone Gateway (Legacy) - gasless dns",
     network: "mainnet",
   },
+  {
+    name: "status.durinexample.eth",
+    gateway: "Durin Gateway v2",
+    network: "mainnet",
+  },
 ];
 
 const mainnetClient = createPublicClient({
