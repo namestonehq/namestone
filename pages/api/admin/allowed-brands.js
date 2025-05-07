@@ -6,36 +6,6 @@ import { mainnet, sepolia } from "viem/chains";
 import { createPublicClient, http } from "viem";
 
 /**
- * Splits an array into smaller chunks of specified size
- * @param {Array} array - The array to be split into chunks
- * @param {number} size - The size of each chunk
- * @returns {Array<Array>} Array of chunks
- */
-function chunkArray(array, size) {
-  const chunks = [];
-  for (let i = 0; i < array.length; i += size) {
-    chunks.push(array.slice(i, i + size));
-  }
-  return chunks;
-}
-
-/**
- * Makes batch requests to the ENS client for resolver and owner information
- * @param {Object} client - The ENS client instance
- * @param {Array<Object>} brands - Array of brand objects containing domain information
- * @returns {Promise<Array>} Array of resolver and owner results
- */
-async function makeBatchRequests(client, brands) {
-  return await batch(
-    client,
-    ...brands.flatMap((brand) => [
-      getResolver.batch({ name: brand.domain }),
-      getOwner.batch({ name: brand.domain }),
-    ])
-  );
-}
-
-/**
  * Processes ENS requests in batches with configurable chunk size
  * Optimized for handling large numbers of domains efficiently
  * @param {Object} client - The ENS client instance
@@ -44,111 +14,25 @@ async function makeBatchRequests(client, brands) {
  * @returns {Promise<Array>} Combined results from all batches
  */
 async function processBatchedRequests(client, brands, batchSize = 50) {
-  // Split brands into chunks of batchSize
-  const chunks = chunkArray(brands, batchSize);
+  // Split brands into chunks
+  const chunks = [];
+  for (let i = 0; i < brands.length; i += batchSize) {
+    chunks.push(brands.slice(i, i + batchSize));
+  }
 
   // Process each chunk and collect results
   const allResults = [];
   for (const chunk of chunks) {
-    const chunkResults = await makeBatchRequests(client, chunk);
-    allResults.push(...chunkResults);
-  }
-  return allResults;
-}
-
-/**
- * Processes ENS requests in batches with retry logic for failed requests
- * @param {Object} client - The ENS client instance
- * @param {Array<Object>} brands - Array of brand objects containing domain information
- * @param {number} batchSize - Number of brands to process in each batch (default: 50)
- * @param {number} maxRetries - Maximum number of retry attempts for failed requests (default: 3)
- * @returns {Promise<Array>} Combined results from all batches
- */
-async function processBatchedRequestsWithRetry(
-  client,
-  brands,
-  batchSize = 50,
-  maxRetries = 3
-) {
-  const chunks = chunkArray(brands, batchSize);
-
-  const allResults = [];
-  for (const chunk of chunks) {
-    let retryCount = 0;
-    let success = false;
-    let chunkResults;
-
-    while (!success && retryCount < maxRetries) {
-      try {
-        chunkResults = await makeBatchRequests(client, chunk);
-        success = true;
-      } catch (error) {
-        retryCount++;
-        if (retryCount === maxRetries) {
-          console.error(
-            `Failed to process chunk after ${maxRetries} retries:`,
-            error
-          );
-          throw error;
-        }
-        console.warn(`Retry attempt ${retryCount} for chunk processing`);
-      }
-    }
-
-    allResults.push(...chunkResults);
-  }
-
-  return allResults;
-}
-
-/**
- * Fetches ENS information for mainnet domains
- * Uses batched processing for super admins to handle large numbers of domains efficiently
- * Uses direct batch processing for regular users
- * @param {boolean} isSuperAdmin - Whether the user is a super admin
- * @param {Array<Object>} mainnetBrands - Array of brand objects for mainnet domains
- * @param {Object} mainnetClient - The mainnet ENS client instance
- * @returns {Promise<Array>} Array of resolver and owner results for mainnet domains
- */
-async function fetchMainnetResults(isSuperAdmin, mainnetBrands, mainnetClient) {
-  // keep previous code branch for non-super admins
-  if (!isSuperAdmin) {
-    return await batch(
-      mainnetClient,
-      ...mainnetBrands.flatMap((brand) => [
+    const chunkResults = await batch(
+      client,
+      ...chunk.flatMap((brand) => [
         getResolver.batch({ name: brand.domain }),
         getOwner.batch({ name: brand.domain }),
       ])
     );
+    allResults.push(...chunkResults);
   }
-
-  // process in batches for super admins
-  return await processBatchedRequests(mainnetClient, mainnetBrands);
-}
-
-/**
- * Fetches ENS information for Sepolia testnet domains
- * Uses batched processing for super admins to handle large numbers of domains efficiently
- * Uses direct batch processing for regular users
- * @param {boolean} isSuperAdmin - Whether the user is a super admin
- * @param {Array<Object>} sepoliaBrands - Array of brand objects for Sepolia domains
- * @param {Object} sepoliaClient - The Sepolia ENS client instance
- * @returns {Promise<Array>} Array of resolver and owner results for Sepolia domains
- */
-async function fetchSepoliaResults(isSuperAdmin, sepoliaBrands, sepoliaClient) {
-  // keep previous code branch for non-super admins
-  if (!isSuperAdmin) {
-    return await batch(
-      sepoliaClient,
-      ...sepoliaBrands.flatMap((brand) => [
-        getResolver.batch({ name: brand.domain }),
-        getOwner.batch({ name: brand.domain }),
-      ])
-    );
-  }
-
-  // process in batches for super admins
-  return await processBatchedRequests(sepoliaClient, sepoliaBrands);
+  return allResults;
 }
 
 // Constants
@@ -231,16 +115,14 @@ export default async function handler(req, res) {
     );
 
     // Batch calls for mainnet
-    const mainnetResults = await fetchMainnetResults(
-      superAdmin,
-      mainnetBrands,
-      mainnetClient
+    const mainnetResults = await processBatchedRequests(
+      mainnetClient,
+      mainnetBrands
     );
     // Batch calls for sepolia
-    const sepoliaResults = await fetchSepoliaResults(
-      superAdmin,
-      sepoliaBrands,
-      sepoliaClient
+    const sepoliaResults = await processBatchedRequests(
+      sepoliaClient,
+      sepoliaBrands
     );
 
     // Process results
