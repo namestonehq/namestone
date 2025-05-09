@@ -5,6 +5,36 @@ import { batch, getResolver, getOwner } from "@ensdomains/ensjs/public";
 import { mainnet, sepolia } from "viem/chains";
 import { createPublicClient, http } from "viem";
 
+/**
+ * Processes ENS requests in batches with configurable chunk size
+ * Optimized for handling large numbers of domains efficiently
+ * @param {Object} client - The ENS client instance
+ * @param {Array<Object>} brands - Array of brand objects containing domain information
+ * @param {number} batchSize - Number of brands to process in each batch (default: 50)
+ * @returns {Promise<Array>} Combined results from all batches
+ */
+async function processBatchedRequests(client, brands, batchSize = 50) {
+  // Split brands into chunks
+  const chunks = [];
+  for (let i = 0; i < brands.length; i += batchSize) {
+    chunks.push(brands.slice(i, i + batchSize));
+  }
+
+  // Process each chunk and collect results
+  const allResults = [];
+  for (const chunk of chunks) {
+    const chunkResults = await batch(
+      client,
+      ...chunk.flatMap((brand) => [
+        getResolver.batch({ name: brand.domain }),
+        getOwner.batch({ name: brand.domain }),
+      ])
+    );
+    allResults.push(...chunkResults);
+  }
+  return allResults;
+}
+
 // Constants
 const providerUrl = `https://eth-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_API_KEY}`;
 const sepoliaProviderUrl = `https://eth-sepolia.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_API_KEY}`;
@@ -85,28 +115,15 @@ export default async function handler(req, res) {
     );
 
     // Batch calls for mainnet
-    const mainnetResults =
-      mainnetBrands.length > 0
-        ? await batch(
-            mainnetClient,
-            ...mainnetBrands.flatMap((brand) => [
-              getResolver.batch({ name: brand.domain }),
-              getOwner.batch({ name: brand.domain }),
-            ])
-          )
-        : [];
-
+    const mainnetResults = await processBatchedRequests(
+      mainnetClient,
+      mainnetBrands
+    );
     // Batch calls for sepolia
-    const sepoliaResults =
-      sepoliaBrands.length > 0
-        ? await batch(
-            sepoliaClient,
-            ...sepoliaBrands.flatMap((brand) => [
-              getResolver.batch({ name: brand.domain }),
-              getOwner.batch({ name: brand.domain }),
-            ])
-          )
-        : [];
+    const sepoliaResults = await processBatchedRequests(
+      sepoliaClient,
+      sepoliaBrands
+    );
 
     // Process results
     const mainnetBrandsWithResolver = mainnetBrands.map((brand, index) => {
