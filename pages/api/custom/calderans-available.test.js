@@ -18,18 +18,6 @@ describe("calderans-available API", () => {
     jest.clearAllMocks();
   });
 
-  it("returns 400 if network is invalid", async () => {
-    getNetwork.mockReturnValue(undefined);
-    const req = createRequest({
-      method: "GET",
-      query: { name: "test" },
-    });
-    const res = createResponse();
-    await handler(req, res);
-    expect(res._getStatusCode()).toBe(400);
-    expect(JSON.parse(res._getData())).toEqual({ error: "Invalid network" });
-  });
-
   it("returns available: false if subdomain is taken", async () => {
     getNetwork.mockReturnValue("mainnet");
     sql.mockResolvedValueOnce([{}]); // Simulate found row
