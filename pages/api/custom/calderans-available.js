@@ -8,13 +8,16 @@ const cors = Cors({
 });
 
 async function handler(req, res) {
-  const network = getNetwork(req);
-  if (!network) {
-    return res.status(400).json({ error: "Invalid network" });
-  }
-
   // Check required parameters
   let name = req.query.name;
+
+  if (!name) {
+    return res.status(400).json({
+      available: false,
+      message: "Name parameter is required",
+    });
+  }
+
   name = name.toLowerCase();
 
   let subdomainAvailable = await sql`
