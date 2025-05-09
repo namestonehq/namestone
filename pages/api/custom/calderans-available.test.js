@@ -19,7 +19,6 @@ describe("calderans-available API", () => {
   });
 
   it("returns available: false if subdomain is taken", async () => {
-    getNetwork.mockReturnValue("mainnet");
     sql.mockResolvedValueOnce([{}]); // Simulate found row
     const req = createRequest({
       method: "GET",
@@ -35,7 +34,6 @@ describe("calderans-available API", () => {
   });
 
   it("returns available: true if subdomain is available", async () => {
-    getNetwork.mockReturnValue("mainnet");
     sql.mockResolvedValueOnce([]); // Simulate no row found
     const req = createRequest({
       method: "GET",
