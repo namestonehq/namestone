@@ -4,26 +4,29 @@ import { shortenAddress, ensFontFallback } from "../../utils/FrontUtils";
 import { Dialog } from "@headlessui/react";
 import { useState } from "react";
 import ConfirmationModal from "./ConfirmationModal";
+import { formatNameCount } from "../../utils/FrontUtils";
 
 export default function SubdomainTable({
   subdomains,
   admin,
   openEditNameModal,
-  openDeleteSubnameModal
+  openDeleteSubnameModal,
+  totalNames,
+  showPagination
 }) {
 
   return (
     <>
-      <div className="w-full h-full overflow-x-auto border rounded-lg border-1 border-neutral-200">
+      <div className={`w-full h-full overflow-x-auto border border-1 border-neutral-200 rounded-t-lg ${showPagination ? '' : 'rounded-b-lg'}`}>
         <table className="min-w-full divide-y divide-neutral-200">
           <thead>
             <tr className=" bg-neutral-100">
               <th className="px-6 py-3 text-left ">
                 <span className="text-sm font-bold text-brownblack-700">
-                  Name
+                  Subname
                 </span>
                 <span className="pl-2 text-xs font-normal text-brownblack-700">
-                  Total: {subdomains.length}
+                  {formatNameCount(totalNames)}
                 </span>
               </th>
               <th className="px-6 py-3 text-sm font-bold text-left text-brownblack-700">
