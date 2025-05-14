@@ -3,7 +3,11 @@ import sql from "../../../lib/db";
 import { v4 as uuidv4 } from "uuid";
 import { ethers } from "ethers";
 import { normalize } from "viem/ens";
-import { checkResolver, getNetwork } from "../../../utils/ServerUtils";
+import {
+  checkResolver,
+  getNetwork,
+  getClientIp,
+} from "../../../utils/ServerUtils";
 import Cors from "micro-cors";
 import { verifySignature, getDomainOwner } from "../../../utils/ServerUtils";
 
@@ -80,6 +84,16 @@ async function handler(req, res) {
       return res.status(400).json({ error: validSignature.error });
     }
     ////  END OWNERSHIP CHECKS
+
+    // log user engagement
+    const clientIp = getClientIp(req);
+    const jsonPayload = JSON.stringify({
+      body: req.body,
+      ip_address: clientIp,
+    });
+    await sql`
+    insert into user_engagement (address, name, details)
+    values (${address}, 'enable_domain', ${jsonPayload})`;
 
     // check if domain exists and cycle key is true we change the api_key
     if (domainQuery.length > 0 && cycle_key === "1") {
