@@ -68,8 +68,21 @@ async function handler(req, res) {
     let domainQuery = await sql`
      select * from domain where name = ${domainName.toLowerCase()} and network = ${network} limit 1;`;
 
+    // check if domain has a good resolver
+    let goodResolver = await checkResolver(domainName, network);
+    if (!goodResolver) {
+      return res.status(400).json({ error: "Invalid domain resolver" });
+    }
+
+    // check if signature is valid
+    const validSignature = await verifySignature(address, signature);
+    if (!validSignature.success) {
+      return res.status(400).json({ error: validSignature.error });
+    }
+    ////  END OWNERSHIP CHECKS
+
+    // check if domain exists and cycle key is true we change the api_key
     if (domainQuery.length > 0 && cycle_key === "1") {
-      // if domain exists and cycle key is true we change the api_key
       let apiKey = uuidv4();
       await sql`
       update api_key set key = ${apiKey} where domain_id = ${domainQuery[0].id};`;
@@ -87,18 +100,6 @@ async function handler(req, res) {
         api_key: existingApiKeyQuery[0].key,
         domain: domainName,
       });
-    }
-
-    // check if domain has a good resolver
-    let goodResolver = await checkResolver(domainName, network);
-    if (!goodResolver) {
-      return res.status(400).json({ error: "Invalid domain resolver" });
-    }
-
-    // check if signature is valid
-    const validSignature = await verifySignature(address, signature);
-    if (!validSignature.success) {
-      return res.status(400).json({ error: validSignature.error });
     }
 
     let insertDomain = { name: domainName, name_limit: 1000, network: network };
