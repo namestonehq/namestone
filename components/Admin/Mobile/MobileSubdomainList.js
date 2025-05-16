@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 import Link from "next/link";
-import { shortenAddress, ensFontFallback } from "../../../utils/FrontUtils";
+import {
+  shortenAddress,
+  ensFontFallback,
+  formatNameCount,
+} from "../../../utils/FrontUtils";
 import ConfirmationModal from "../ConfirmationModal";
 import pencilIcon from "../../../public/images/icon-pencil-fill.svg";
 import Image from "next/image";
@@ -9,6 +13,7 @@ export default function MobileSubdomainList({
   subdomains,
   deleteName,
   openEditNameModal,
+  totalNames,
 }) {
   const [showModal, setShowModal] = useState(null);
 
@@ -45,6 +50,9 @@ export default function MobileSubdomainList({
       <div className="w-full">
         <div className="text-base font-bold text-black bg-gray-100 py-2 px-4 border-t border-b border-neutral-200">
           Subname
+          <span className="pl-2 text-xs font-normal text-brownblack-700">
+            {formatNameCount(totalNames)}
+          </span>
         </div>
         <div className="w-full overflow-hidden">
           {subdomains.map((subdomain, index) => (
@@ -54,23 +62,23 @@ export default function MobileSubdomainList({
             >
               <div className="flex items-center justify-between">
                 <div>
-                <Link
-                  href={`https://app.ens.domains/${subdomain.name}.${subdomain.domain}`}
-                  className="font-medium text-black"
-                  target="_blank"
-                  rel="noreferrer"
-                  style={{ fontFamily: ensFontFallback }}
-                >
-                  {subdomain.name}.{subdomain.domain}
-                </Link>
-                <div className="text-xs text-gray-500 mt-1">
                   <Link
-                    href={`https://etherscan.io/address/${subdomain.address}`}
+                    href={`https://app.ens.domains/${subdomain.name}.${subdomain.domain}`}
+                    className="font-medium text-black"
                     target="_blank"
                     rel="noreferrer"
+                    style={{ fontFamily: ensFontFallback }}
                   >
-                    {shortenAddress(subdomain.address)}
+                    {subdomain.name}.{subdomain.domain}
                   </Link>
+                  <div className="text-xs text-gray-500 mt-1">
+                    <Link
+                      href={`https://etherscan.io/address/${subdomain.address}`}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      {shortenAddress(subdomain.address)}
+                    </Link>
                   </div>
                 </div>
                 <button

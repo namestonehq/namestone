@@ -34,6 +34,7 @@ import SubnamesTableLoading from "../components/Admin/SubnamesTableLoading";
 import MobileSubdomainList from "../components/Admin/Mobile/MobileSubdomainList";
 import pencilIcon from "../public/images/icon-pencil-fill.svg";
 import DeleteSubnameDialog from "../components/Admin/DeleteSubnameDialog";
+import SubnamesPaginationControls from "../components/Admin/SubnamesPaginationControls";
 
 const blankNameData = {
   name: "",
@@ -70,6 +71,12 @@ export default function Admin() {
   const [brandDict, setBrandDict] = useState({});
   const [selectedBrand, setSelectedBrand] = useState(null);
   const [subdomains, setSubdomains] = useState([]);
+  const [pagination, setPagination] = useState({
+    total: 0,
+    limit: 20,
+    offset: 0,
+    totalPages: 0
+  });
 
   const [adminNameModalOpen, setAdminNameModalOpen] = useState(false);
   const [nameModalErrorMsg, setNameModalErrorMsg] = useState("");
@@ -207,13 +214,17 @@ export default function Admin() {
       "/api/admin/list-subdomains?" +
         new URLSearchParams({
           domain_id: selectedBrand?.domain_id,
+          limit: pagination.limit,
+          offset: pagination.offset
         })
     ).then((res) => {
-      res.json().then((data) => {
+      res.json().then((response) => {
         if (res.status === 200) {
+          const { data, pagination: paginationData } = response;
           setSubdomains(data);
+          setPagination(paginationData);
         } else {
-          console.log(data);
+          console.log(response);
         }
         setIsSubdomainsLoading(false); // Set loading to false when done
       });
@@ -242,7 +253,7 @@ export default function Admin() {
         setCurrentDomainData(data);
       });
     });
-  }, [selectedBrand]);
+  }, [selectedBrand, pagination.offset, pagination.limit]);
 
   function openAddNameModal() {
     setEditingDomain(false);
@@ -607,6 +618,16 @@ export default function Admin() {
       );
     }
   }, [changeResolver]);
+
+  const handlePageChange = (newOffset) => {
+    setPagination(prev => ({
+      ...prev,
+      offset: newOffset
+    }));
+  };
+
+  // Determine if pagination should be shown
+  const showPagination = (pagination.totalPages > 1 || Math.ceil(pagination.total / pagination.limit) > 1);
 
   // if they haven't authenticated, they need to click connect
   if (authStatus !== "authenticated") {
@@ -985,7 +1006,16 @@ export default function Admin() {
                       openDeleteSubnameModal={openDeleteSubnameModal}
                       selectedBrand={selectedBrand}
                       setSubdomains={setSubdomains}
+                      totalNames={pagination.total}
+                      showPagination={showPagination}
                     />
+                    {showPagination && (
+                      <SubnamesPaginationControls 
+                        pagination={pagination}
+                        onPageChange={handlePageChange}
+                        isLoading={isSubdomainsLoading}
+                      />
+                    )}
                   </div>
 
                   {/* Mobile list view */}
@@ -994,7 +1024,15 @@ export default function Admin() {
                       subdomains={subdomains}
                       openDeleteSubnameModal={openDeleteSubnameModal}
                       openEditNameModal={openEditNameModal}
+                      totalNames={pagination.total}
                     />
+                    {showPagination && (
+                      <SubnamesPaginationControls 
+                        pagination={pagination}
+                        onPageChange={handlePageChange}
+                        isLoading={isSubdomainsLoading}
+                      />
+                    )}
                   </div>
                 </>
               )}
