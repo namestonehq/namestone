@@ -116,7 +116,11 @@ async function handler(req, res) {
       });
     }
 
-    let insertDomain = { name: domainName, name_limit: 1000, network: network };
+    let insertDomain = {
+      name: domainName,
+      name_limit: 100000,
+      network: network,
+    };
     domainQuery = await sql`
   insert into domain ${sql(insertDomain, "name", "name_limit", "network")}
   returning id;`;

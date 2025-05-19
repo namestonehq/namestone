@@ -70,7 +70,7 @@ export default async function handler(req, res) {
 
     let insertDomain = {
       name: domain,
-      name_limit: 1000,
+      name_limit: 100000,
       address: address,
       network: network,
     };
