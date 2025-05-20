@@ -316,6 +316,8 @@ describe("get-domains API E2E", () => {
      */
     describe("Pagination", () => {
       // Set up additional domains for pagination tests
+      let additionalDomainIds = [];
+      
       beforeAll(async () => {
         for (let i = 1; i <= 3; i++) {
           const [domain] = await sqlForTests`
@@ -332,6 +334,8 @@ describe("get-domains API E2E", () => {
             RETURNING id
           `;
           
+          additionalDomainIds.push(domain.id);
+          
           await sqlForTests`
             INSERT INTO admin (domain_id, address)
             VALUES (${domain.id}, ${TEST_ADMIN_ADDRESS})
@@ -340,16 +344,11 @@ describe("get-domains API E2E", () => {
       });
 
       afterAll(async () => {
-        await sqlForTests`
-          DELETE FROM admin WHERE domain_id IN (
-            SELECT id FROM domain 
-            WHERE name LIKE ${'test-domain-' + networkConfig.name + '-%'}
-          )
-        `;
-        await sqlForTests`
-          DELETE FROM domain 
-          WHERE name LIKE ${'test-domain-' + networkConfig.name + '-%'}
-        `;
+        for (const domainId of additionalDomainIds) {
+          await sqlForTests`DELETE FROM admin WHERE domain_id = ${domainId}`;
+          await sqlForTests`DELETE FROM domain WHERE id = ${domainId}`;
+        }
+        additionalDomainIds = [];
       });
 
       test("respects limit parameter", async () => {
@@ -423,7 +422,8 @@ describe("get-domains API E2E", () => {
 
         expect(response._getStatusCode()).toBe(200);
         const responseData = JSON.parse(response._getData());
-        expect(responseData.length).toBeGreaterThanOrEqual(3);
+        // With 1 original domain + 3 added domains, offset 1 should return 3 domains
+        expect(responseData.length).toBe(3);
       });
 
       test("returns 400 for non-numeric offset", async () => {
@@ -488,18 +488,7 @@ describe("get-domains API E2E", () => {
      * Tests that the endpoint properly isolates data by network
      */
     describe("Network Isolation", () => {
-      // Create a cross-network admin to test network isolation
-      beforeAll(async () => {
-        // Add the same admin to a domain in another network for testing
-        const otherNetwork = SUPPORTED_NETWORKS.find(n => n.name !== networkConfig.name);
-        if (otherNetwork) {
-          await sqlForTests`
-            INSERT INTO admin (domain_id, address)
-            VALUES (${domainIds[otherNetwork.name]}, ${TEST_ADMIN_ADDRESS})
-          `;
-        }
-      });
-
+      // This test relies on the data created in the main beforeAll
       test("only returns domains from the specified network", async () => {
         const req = createRequest({
           method: "GET",
