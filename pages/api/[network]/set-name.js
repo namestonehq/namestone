@@ -1,5 +1,9 @@
 import sql from "../../../lib/db";
-import { checkApiKey, getNetwork, getClientIp } from "../../../utils/ServerUtils";
+import {
+  checkApiKey,
+  getNetwork,
+  getClientIp,
+} from "../../../utils/ServerUtils";
 import { encodeContenthash } from "../../../utils/ContentHashUtils.js";
 import Cors from "micro-cors";
 import { normalize } from "viem/ens";
@@ -32,14 +36,6 @@ async function handler(req, res) {
   const allowedApi = await checkApiKey(
     headers.authorization || req.query.api_key,
     body.domain
-  );
-  console.log(
-    "allowedApi",
-    allowedApi,
-    headers.authorization,
-    req.query.api_key,
-    body.domain,
-    network
   );
   if (!allowedApi) {
     return res
@@ -155,7 +151,7 @@ async function handler(req, res) {
   const clientIp = getClientIp(req);
   const jsonPayload = JSON.stringify({
     body: body,
-    ip_address: clientIp
+    ip_address: clientIp,
   });
   await sql`
   insert into user_engagement (address, name, details)
