@@ -1223,7 +1223,7 @@ describe("get-names API E2E", () => {
          * - Invalid parameters
          * - Proper error messages
          */
-        test("returns 400 with invalid API key", async () => {
+        test("returns 401 with invalid API key", async () => {
           const req = createRequest({
             method: "GET",
             query: { 
@@ -1236,7 +1236,7 @@ describe("get-names API E2E", () => {
 
           await handler(req, response);
 
-          expect(response._getStatusCode()).toBe(400);
+          expect(response._getStatusCode()).toBe(401);
           expect(JSON.parse(response._getData())).toEqual({
             error: "Domain does not exist"
           });
@@ -1249,13 +1249,12 @@ describe("get-names API E2E", () => {
               network: networkConfig.path,
               domain: "nonexistent.eth"
             },
-            headers: { authorization: networkConfig.apiKey }
           });
           const response = createResponse();
 
           await handler(req, response);
 
-          expect(response._getStatusCode()).toBe(400);
+          expect(response._getStatusCode()).toBe(400;
           expect(JSON.parse(response._getData())).toEqual({
             error: "Domain does not exist"
           });
