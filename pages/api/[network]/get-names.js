@@ -59,13 +59,16 @@ async function handler(req, res) {
     offset = 0;
   }
 
-
   const address = req.query.address;
   const includeTextRecords = req.query.text_records;
   const apiKey = headers.authorization || req.query.api_key;
   // Check API key
 
   const allowedApi = await checkApiKey(apiKey, domain);
+  // if apiKey exists and is not allowed, return 401
+  if (apiKey && !allowedApi) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
 
   let domainIds = [];
   if (domain) {
