@@ -32,38 +32,40 @@ export const ApiKeySentDocs = ({
         "avatar": "https://ens.domains/assets/ens_logo_text_dark.svg"
       }
     }' \\
-https://namestone.com/api/${network === Network.MAINNET ? "public_v1" : "public_v1_sepolia"}/set-name`;
+https://namestone.com/api/${
+      network === Network.MAINNET ? "public_v1" : "public_v1_sepolia"
+    }/set-name`;
 
     navigator.clipboard
       .writeText(code)
       .then(() => {
-        toast.success('Code copied to clipboard!', {
+        toast.success("Code copied to clipboard!", {
           style: {
-            background: '#F0FDF4',
-            color: '#166534',
-            border: '1px solid #DCFCE7',
-            padding: '12px 16px',
-            maxWidth: '320px',
-            margin: '0 auto',
-            borderRadius: '6px',
-            fontWeight: '500',
+            background: "#F0FDF4",
+            color: "#166534",
+            border: "1px solid #DCFCE7",
+            padding: "12px 16px",
+            maxWidth: "320px",
+            margin: "0 auto",
+            borderRadius: "6px",
+            fontWeight: "500",
           },
-          icon: '✓',
+          icon: "✓",
           duration: 3000,
         });
       })
       .catch((err) => {
         console.error("Failed to copy code: ", err);
-        toast.error('Failed to copy code', {
+        toast.error("Failed to copy code", {
           style: {
-            background: '#FEF2F2',
-            color: '#B91C1C',
-            border: '1px solid #FEE2E2',
-            padding: '12px 16px',
-            maxWidth: '320px',
-            margin: '0 auto',
-            borderRadius: '6px',
-            fontWeight: '500',
+            background: "#FEF2F2",
+            color: "#B91C1C",
+            border: "1px solid #FEE2E2",
+            padding: "12px 16px",
+            maxWidth: "320px",
+            margin: "0 auto",
+            borderRadius: "6px",
+            fontWeight: "500",
           },
           duration: 3000,
         });
@@ -89,7 +91,7 @@ https://namestone.com/api/${network === Network.MAINNET ? "public_v1" : "public_
     <div className="relative flex justify-center w-full min-h-screen px-8 pt-8 overflow-hidden text-left bg-white">
       <div className="flex flex-col w-full max-w-2xl py-16 lg:px-8">
         {/* Success Message */}
-        <div className="flex items-center p-4 mb-8 bg-green-50 rounded-md">
+        <div className="flex items-center p-4 mb-8 rounded-md bg-green-50">
           <Image src={CheckmarkIcon} alt="Checkmark" className="w-5 h-5 mr-3" />
           <span className="text-base font-medium">API Key Sent</span>
           <span className="ml-2 text-gray-600">Check your inbox.</span>
@@ -110,7 +112,10 @@ https://namestone.com/api/${network === Network.MAINNET ? "public_v1" : "public_
               <span className="text-gray-700">
                 Run the curl example and add your API key.
               </span>
-              <a href="https://namestone.com/docs" className="ml-2 text-orange-500 hover:underline">
+              <a
+                href="https://namestone.com/docs"
+                className="ml-2 text-orange-500 hover:underline"
+              >
                 View all docs
               </a>
             </div>
@@ -162,15 +167,16 @@ https://namestone.com/api/${network === Network.MAINNET ? "public_v1" : "public_
   -H 'Content-Type: application/json' \\
   -H 'Authorization: YOUR_API_KEY' \\
   -d '{
-      "domain": "${userEnsDomain}",
-      "name": "example",
-      "address": "0x534631Bcf33BD0b69fB20A93d2fdb9e4D4dD42CF",
-      },
-      "text_records": {
-        "avatar": "https://ens.domains/assets/ens_logo_text_dark.svg"
-      }
-    }' \\
-https://namestone.com/api/${network === Network.MAINNET ? "public_v1" : "public_v1_sepolia"}/set-name`}</code>
+        "domain": "${userEnsDomain}",
+        "name": "example",
+        "address": "0x534631Bcf33BD0b69fB20A93d2fdb9e4D4dD42CF",
+        "text_records": {
+          "avatar": "https://ens.domains/assets/ens_logo_text_dark.svg"
+        }
+      }' \\
+https://namestone.com/api/${
+                network === Network.MAINNET ? "public_v1" : "public_v1_sepolia"
+              }/set-name`}</code>
             </pre>
           </div>
         </div>
