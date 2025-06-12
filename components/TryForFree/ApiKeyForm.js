@@ -85,7 +85,9 @@ export const ApiKeyForm = ({
   // fetch to get domains after connect
   useEffect(() => {
     if (fullyConnected) {
-      fetch("/api/try/get-domains?network=" + network).then((res) =>
+      fetch("/api/try/get-domains?network=" + network, {
+        cache: "no-store",
+      }).then((res) =>
         res.json().then((data) => {
           console.log(data);
           if (res.status === 200) {
