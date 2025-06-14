@@ -100,3 +100,36 @@ export const updateResolver = async ({
     }
   }
 };
+
+/**
+ * Converts a number to a human-readable format with k/M suffixes
+ * @param {number} count - The number to format
+ * @returns {string} - Formatted string (e.g., 1000 -> 1k, 1500 -> 1.5k)
+ */
+export const formatNameCount = (count) => {
+  if (!count && count !== 0) return '';
+  
+  // Convert to number if it's a string
+  const num = typeof count === 'string' ? parseInt(count, 10) : count;
+  
+  // Handle thousands
+  if (num >= 1000 && num < 1000000) {
+    const formatted = (num / 1000).toFixed(1);
+    // Remove decimal if it's .0
+    return formatted.endsWith('.0') 
+      ? `${formatted.slice(0, -2)}k` 
+      : `${formatted}k`;
+  }
+  
+  // Handle millions
+  if (num >= 1000000) {
+    const formatted = (num / 1000000).toFixed(1);
+    // Remove decimal if it's .0
+    return formatted.endsWith('.0') 
+      ? `${formatted.slice(0, -2)}M` 
+      : `${formatted}M`;
+  }
+  
+  // Return the number as is for values less than 1000
+  return num.toString();
+};
