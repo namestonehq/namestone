@@ -16,6 +16,7 @@ const navDict = {
     file: "api-routes",
     children: {
       "Set Name": { file: "set-name" },
+      "Set Names": { file: "set-names" },
       "Get Names": { file: "get-names" },
       "Search Names": { file: "search-names" },
       "Delete Name": { file: "delete-name" },
@@ -33,6 +34,7 @@ const fileNameLookup = {
   "sdk-quickstart": "SDK Quickstart",
   "api-routes": "API",
   "set-name": "Set Name",
+  "set-names": "Set Name",
   "get-names": "Get Names",
   "search-names": "Search Names",
   "delete-name": "Delete Name",
@@ -139,7 +141,7 @@ export default function Docs({ content, fileName }) {
                 </div>
               ))}
             </div>
-            <div className="flex flex-col min-w-0 flex-1">
+            <div className="flex flex-col flex-1 min-w-0">
               <div
                 onClick={() => setMenuOpen(!menuOpen)}
                 className="flex items-start justify-between py-2 border-t border-neutral-200 sm:hidden text-neutral-900"
@@ -337,10 +339,10 @@ export default function Docs({ content, fileName }) {
                         }
                       },
                       table: ({ node, ...props }) => (
-                        <div className="w-full overflow-x-auto mb-6">
+                        <div className="w-full mb-6 overflow-x-auto">
                           <div className="inline-block min-w-full">
                             <table
-                              className="w-full divide-y divide-neutral-200 rounded-lg overflow-hidden"
+                              className="w-full overflow-hidden divide-y rounded-lg divide-neutral-200"
                               {...props}
                             />
                           </div>
