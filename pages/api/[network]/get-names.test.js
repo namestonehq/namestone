@@ -1324,7 +1324,7 @@ describe("get-names API E2E", () => {
 
             expect(response._getStatusCode()).toBe(401);
             expect(JSON.parse(response._getData())).toEqual({
-              error: "Domain does not exist",
+              error: "Unauthorized",
             });
           });
 
