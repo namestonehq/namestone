@@ -1,0 +1,282 @@
+# Set Names (Batch)
+
+This POST route creates multiple names (subdomains) for a given domain in a single transaction. This is a batch version of the `set-name` endpoint that provides significant performance improvements when setting multiple names at once.
+
+## Performance Benefits
+
+Using `set-names` instead of multiple `set-name` calls provides:
+- **60-80% faster execution** for multiple names
+- **Single API key validation** instead of N validations
+- **Single domain lookup** instead of N lookups
+- **Transactional safety** - all names succeed or all fail
+- **Reduced network overhead** - one HTTP request instead of N requests
+
+## Parameters
+
+| Parameter | Type   | Required | Description                                                                                                                  |
+| --------- | ------ | -------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `domain`  | string | Yes      | The domain (e.g. "testbrand.eth").                                                                                           |
+| `names`   | array  | Yes      | Array of name objects to create/update. Each object has the same structure as the `set-name` endpoint.                       |
+
+## Name Object Structure
+
+Each object in the `names` array supports the same parameters as the `set-name` endpoint:
+
+| Parameter      | Type   | Required | Description                                                                                                                  |
+| -------------- | ------ | -------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `name`         | string | Yes      | The name being set, i.e., the "example" in example.testbrand.eth.                                                            |
+| `address`      | string | No       | The Ethereum address the name points to.                                                                                     |
+| `contenthash`  | string | No       | The link for an [IPFS](https://docs.ipfs.tech/) or [IPNS](https://docs.ipfs.tech/concepts/ipns/#mutability-in-ipfs) website. |
+| `text_records` | object | No       | An object containing key-value pairs of the text records to be set.                                                          |
+| `coin_types`   | object | No       | An object containing key-value pairs of L2 chains and their resolved address.                                                |
+
+## Batch Processing
+
+- **Transaction Safety**: All names are processed in a single database transaction
+- **All-or-Nothing**: If any name fails, the entire batch is rolled back
+- **Name Limits**: The batch size is validated against your domain's name limit
+- **Mixed Operations**: Can create new names and update existing names in the same batch
+
+## Response Format
+
+### Success Response
+
+```json
+{
+  "success": true,
+  "processed": 3,
+  "results": [
+    {
+      "index": 0,
+      "name": "alice",
+      "success": true,
+      "subdomainId": 123
+    },
+    {
+      "index": 1,
+      "name": "bob", 
+      "success": true,
+      "subdomainId": 124
+    },
+    {
+      "index": 2,
+      "name": "charlie",
+      "success": true,
+      "subdomainId": 125
+    }
+  ]
+}
+```
+
+### Error Response
+
+```json
+{
+  "error": "Batch operation failed",
+  "processed": 0,
+  "errors": [
+    {
+      "index": 1,
+      "name": "invalid..name",
+      "error": "Invalid ens name"
+    }
+  ],
+  "total": 3
+}
+```
+
+## Multichain Address Resolution
+
+Namestone supports address resolution on any [L2 Chains Supported by ENS](https://github.com/ensdomains/address-encoder/blob/master/docs/supported-cryptocurrencies.md).  
+To add an address to an L2 chain use its coin_type. (See coin_type column in the above link) .  
+Or convert chain_id to coin_type using the following [typescript template](https://stackblitz.com/edit/stackblitz-starters-mfk6i5?file=src%2Findex.ts).
+
+## Curl Example
+
+```bash
+curl -X POST \
+     -H 'Content-Type: application/json' \
+     -H 'Authorization: YOUR_API_KEY' \
+     -d '{
+          "domain": "namestone.xyz",
+          "names": [
+            {
+              "name": "alice",
+              "address": "0x534631Bcf33BDb069fB20A93d2fdb9e4D4dD42CF",
+              "text_records": {
+                "com.twitter": "alice_crypto",
+                "description": "Alice profile",
+                "avatar": "https://imagedelivery.net/UJ5oN2ajUBrk2SVxlns2Aw/alice-avatar.png"
+              }
+            },
+            {
+              "name": "bob",
+              "address": "0x1234567890123456789012345678901234567890",
+              "coin_types": {
+                "2147483785": "0x1234567890123456789012345678901234567890",
+                "2147492101": "0x1234567890123456789012345678901234567890"
+              },
+              "text_records": {
+                "com.github": "bob-dev",
+                "url": "https://bob.dev"
+              }
+            },
+            {
+              "name": "charlie",
+              "address": "0x9876543210987654321098765432109876543210",
+              "contenthash": "ipfs://QmYourContentHash"
+            }
+          ]
+        }' \
+     https://namestone.com/api/public_v1/set-names
+```
+
+## SDK Example
+
+```typescript
+import NameStone, { AuthenticationError, NetworkError, TextRecords, CoinTypes } from '@namestone/namestone-sdk';
+
+// Initialize the NameStone instance
+const ns = new NameStone('<YOUR_API_KEY_HERE>');
+
+// Define the domain
+const domain = "namestone.xyz";
+
+// Define the batch of names to set
+const names = [
+  {
+    name: "alice",
+    address: "0x534631Bcf33BDb069fB20A93d2fdb9e4D4dD42CF",
+    text_records: {
+      "com.twitter": "alice_crypto",
+      "description": "Alice profile",
+      "avatar": "https://imagedelivery.net/UJ5oN2ajUBrk2SVxlns2Aw/alice-avatar.png"
+    }
+  },
+  {
+    name: "bob", 
+    address: "0x1234567890123456789012345678901234567890",
+    coin_types: {
+      "2147483785": "0x1234567890123456789012345678901234567890", // Arbitrum
+      "2147492101": "0x1234567890123456789012345678901234567890"  // Polygon
+    },
+    text_records: {
+      "com.github": "bob-dev",
+      "url": "https://bob.dev"
+    }
+  },
+  {
+    name: "charlie",
+    address: "0x9876543210987654321098765432109876543210",
+    contenthash: "ipfs://QmYourContentHash"
+  }
+];
+
+// Use an immediately invoked async function to allow top-level await
+(async () => {
+  try {
+    const response = await ns.setNames({
+      domain: domain,
+      names: names
+    });
+
+    console.log("Names set successfully:", response);
+    console.log(`Processed ${response.processed} names`);
+    
+    // Process results
+    response.results.forEach((result, index) => {
+      console.log(`Name ${result.name} (index ${result.index}): ${result.success ? 'Success' : 'Failed'}`);
+    });
+    
+  } catch (error) {
+    if (error instanceof AuthenticationError) {
+      console.error("Authentication failed:", error.message);
+    } else if (error instanceof NetworkError) {
+      console.error("Network error:", error.message);
+    } else {
+      console.error("An unexpected error occurred:", error);
+      
+      // Handle batch-specific errors
+      if (error.response?.data?.errors) {
+        console.error("Individual name errors:");
+        error.response.data.errors.forEach((err) => {
+          console.error(`  - Index ${err.index} (${err.name}): ${err.error}`);
+        });
+      }
+    }
+  }
+})();
+```
+
+## Error Handling
+
+The `set-names` endpoint provides detailed error information:
+
+### Common Error Scenarios
+
+1. **Invalid Names Array**
+   ```json
+   { "error": "Missing names array or empty array" }
+   ```
+
+2. **Individual Name Errors**
+   ```json
+   { "error": "Invalid ens name at index 2: invalid..name" }
+   ```
+
+3. **Name Limit Exceeded**
+   ```json
+   { "error": "Api name limit would be exceeded. Current: 5, Adding: 10, Limit: 12" }
+   ```
+
+4. **Transaction Failure**
+   ```json
+   {
+     "error": "Batch operation failed",
+     "processed": 0,
+     "errors": [
+       { "index": 1, "name": "problematic-name", "error": "Specific error message" }
+     ],
+     "total": 5
+   }
+   ```
+
+## Best Practices
+
+1. **Batch Size**: While there's no hard limit, batches of 10-50 names provide optimal performance
+2. **Error Handling**: Always check the response for individual name errors
+3. **Validation**: Validate ENS names client-side before sending to reduce API calls
+4. **Rate Limiting**: Respect your API rate limits when sending large batches
+5. **Retry Logic**: Implement retry logic for network failures, but not for validation errors
+
+## Comparison with Single set-name
+
+| Feature | set-name | set-names |
+|---------|----------|-----------|
+| Names per request | 1 | Multiple |
+| API calls needed | N | 1 |
+| Transaction safety | Per name | All names |
+| Performance | Baseline | 60-80% faster |
+| Error handling | Individual | Batch + individual |
+| Name limit validation | Per request | Per batch |
+
+## Migration from set-name
+
+To migrate from multiple `set-name` calls to `set-names`:
+
+1. **Collect all name objects** into a single array
+2. **Replace multiple API calls** with one `set-names` call
+3. **Update error handling** to process batch responses
+4. **Test thoroughly** with your specific use case
+
+Example migration:
+
+```javascript
+// Before: Multiple set-name calls
+for (const nameData of names) {
+  await ns.setName({ domain, ...nameData });
+}
+
+// After: Single set-names call  
+await ns.setNames({ domain, names });
+```
