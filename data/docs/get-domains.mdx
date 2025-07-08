@@ -1,0 +1,72 @@
+# Get Domains
+
+This GET route retrieves all domains where the specified address is an admin. It returns information about each domain including address, contenthash, text records, and coin types.
+
+## Parameters
+
+| Parameter       | Type   | Required | Description                                                                         |
+| --------------- | ------ | -------- | ----------------------------------------------------------------------------------- |
+| `admin-address` | string | Yes      | The Ethereum address that is an admin of the domains to retrieve.                   |
+| `limit`         | number | No       | The number of domains to return (default: 50, max: 1000).                           |
+| `offset`        | number | No       | The number of domains to skip (default: 0).                                         |
+| `text_records`  | string | No       | Set to "0" to exclude text records and coin types from the response (default: "1"). |
+
+## Response
+
+The response is an array of domain objects with the following properties:
+
+| Property       | Type   | Description                                                                     |
+| -------------- | ------ | ------------------------------------------------------------------------------- |
+| `domain`       | string | The domain name (e.g., "namestone.xyz").                                        |
+| `address`      | string | The Ethereum address the domain resolves to.                                    |
+| `contenthash`  | string | The IPFS or IPNS contenthash for the domain's website, if set.                  |
+| `text_records` | object | An object containing key-value pairs of the domain's text records (if included).|
+| `coin_types`   | object | An object containing key-value pairs of L2 chains and their addresses (if included). |
+
+## Error Codes
+
+| Status Code | Description                                       |
+| ----------- | ------------------------------------------------- |
+| 400         | Bad request. Invalid parameters or network.       |
+| 500         | Server error.                                     |
+
+## Curl Example
+
+```
+curl -X GET \
+     -H 'Content-Type: application/json' \
+     'https://namestone.com/api/public_v1/get-domains?admin-address=0x534631Bcf33BDb069fB20A93d2fdb9e4D4dD42CF'
+```
+
+## Example Response
+
+```json
+[
+  {
+    "domain": "namestone.xyz",
+    "address": "0x534631Bcf33BDb069fB20A93d2fdb9e4D4dD42CF",
+    "contenthash": "ipfs://QmUbTVz1L4uEvAPg5QcSu8Rifq2CtTc4SYmasXLAYkFQbp",
+    "text_records": {
+      "com.twitter": "namestonehq",
+      "com.github": "resolverworks",
+      "url": "https://www.namestone.xyz",
+      "description": "Namestone ENS Resolver"
+    },
+    "coin_types": {
+      "60": "0x534631Bcf33BDb069fB20A93d2fdb9e4D4dD42CF",
+      "2147483785": "0x534631Bcf33BDb069fB20A93d2fdb9e4D4dD42CF"
+    }
+  },
+  {
+    "domain": "example.eth",
+    "address": "0xA47632346786AD59c8590Bd4898D84B4eAB97644",
+    "contenthash": null,
+    "text_records": {
+      "description": "Example domain"
+    },
+    "coin_types": {}
+  }
+]
+```
+
+This endpoint is particularly useful for domain administrators who need to manage multiple domains and want to retrieve a comprehensive list of all domains under their administration.
