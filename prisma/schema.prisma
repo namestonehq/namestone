@@ -98,6 +98,8 @@ model admin {
   domain_id Int
   domain    domain  @relation(fields: [domain_id], references: [id])
   address   String?
+
+  @@unique([domain_id, address])
 }
 
 model super_admin {
