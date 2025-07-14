@@ -75,7 +75,7 @@ export default function Admin() {
     total: 0,
     limit: 20,
     offset: 0,
-    totalPages: 0
+    totalPages: 0,
   });
 
   const [adminNameModalOpen, setAdminNameModalOpen] = useState(false);
@@ -112,7 +112,7 @@ export default function Admin() {
   const [subnameToDelete, setSubnameToDelete] = useState({
     name: null,
     domain: null,
-    address: null
+    address: null,
   });
 
   // Function to handle brand selection with loading state
@@ -215,7 +215,7 @@ export default function Admin() {
         new URLSearchParams({
           domain_id: selectedBrand?.domain_id,
           limit: pagination.limit,
-          offset: pagination.offset
+          offset: pagination.offset,
         })
     ).then((res) => {
       res.json().then((response) => {
@@ -405,6 +405,8 @@ export default function Admin() {
           "/api/admin/list-subdomains?" +
             new URLSearchParams({
               domain_id: selectedBrand?.domain_id,
+              limit: pagination.limit,
+              offset: pagination.offset,
             })
         );
         const subdomainsData = await subdomainsRes.json();
@@ -432,7 +434,7 @@ export default function Admin() {
     setSubnameToDelete({
       name,
       domain,
-      address
+      address,
     });
     setDeleteSubnameModalOpen(true);
   }
@@ -460,6 +462,8 @@ export default function Admin() {
           "/api/admin/list-subdomains?" +
             new URLSearchParams({
               domain_id: selectedBrand?.domain_id,
+              limit: pagination.limit,
+              offset: pagination.offset,
             })
         );
         const subdomainsData = await subdomainsRes.json();
@@ -480,7 +484,7 @@ export default function Admin() {
       setSubnameToDelete({
         name: null,
         domain: null,
-        address: null
+        address: null,
       });
     }
   }
@@ -620,20 +624,22 @@ export default function Admin() {
   }, [changeResolver]);
 
   const handlePageChange = (newOffset) => {
-    setPagination(prev => ({
+    setPagination((prev) => ({
       ...prev,
-      offset: newOffset
+      offset: newOffset,
     }));
   };
 
   // Determine if pagination should be shown
-  const showPagination = (pagination.totalPages > 1 || Math.ceil(pagination.total / pagination.limit) > 1);
+  const showPagination =
+    pagination.totalPages > 1 ||
+    Math.ceil(pagination.total / pagination.limit) > 1;
 
   // if they haven't authenticated, they need to click connect
   if (authStatus !== "authenticated") {
     return (
       <AuthContentContainer>
-        <div className="flex items-center justify-center mx-auto text-center">
+        <div className="flex justify-center items-center mx-auto text-center">
           <div className="text-sm font-bold text-brownblack-700">
             Connect your wallet to view.{" "}
           </div>
@@ -646,8 +652,8 @@ export default function Admin() {
   if (isLoading) {
     return (
       <AuthContentContainer>
-        <div className="flex flex-col items-center justify-center w-full h-screen">
-          <div className="w-16 h-16 border-4 border-gray-300 rounded-full border-t-black animate-spin"></div>
+        <div className="flex flex-col justify-center items-center w-full h-screen">
+          <div className="w-16 h-16 rounded-full border-4 border-gray-300 animate-spin border-t-black"></div>
           <div className="mt-4 text-sm font-medium text-brownblack-700">
             Loading Names
           </div>
@@ -660,23 +666,23 @@ export default function Admin() {
   if (brandUrls.length === 0 || !selectedBrand) {
     return (
       <AuthContentContainer>
-        <div className="flex flex-col items-center justify-center px-8 mx-auto text-center">
+        <div className="flex flex-col justify-center items-center px-8 mx-auto text-center">
           {/* Wallet not recognized message */}
-          <div className="flex flex-col items-center text-center mb-6">
-            <p className="text-sm text-brownblack-700 font-medium mb-6">
+          <div className="flex flex-col items-center mb-6 text-center">
+            <p className="mb-6 text-sm font-medium text-brownblack-700">
               Wallet not recognized as admin for any names.
             </p>
 
-            <div className="w-full bg-gray-50 p-4 rounded-lg">
-              <h3 className="text-sm font-semibold text-brownblack-700 mb-2">
+            <div className="p-4 w-full bg-gray-50 rounded-lg">
+              <h3 className="mb-2 text-sm font-semibold text-brownblack-700">
                 New here?
               </h3>
-              <p className="text-sm text-brownblack-600 mb-3">
+              <p className="mb-3 text-sm text-brownblack-600">
                 Get a free API key and add this address as admin.
               </p>
               <Link
                 href="/try-namestone"
-                className="flex items-center justify-center text-orange-500 text-sm font-medium mx-auto"
+                className="flex justify-center items-center mx-auto text-sm font-medium text-orange-500"
               >
                 <Icon
                   icon="tabler:external-link"
@@ -688,16 +694,16 @@ export default function Admin() {
               </Link>
             </div>
 
-            <div className="mt-6 text-center bg-gray-50 p-4 rounded-lg">
-              <h3 className="text-sm font-semibold text-brownblack-700 mb-2">
+            <div className="p-4 mt-6 text-center bg-gray-50 rounded-lg">
+              <h3 className="mb-2 text-sm font-semibold text-brownblack-700">
                 Not seeing your name?
               </h3>
-              <p className="text-sm text-brownblack-600 mb-3">
+              <p className="mb-3 text-sm text-brownblack-600">
                 Connect with another wallet or email Alex for help.
               </p>
               <a
                 href="mailto:alex@namestone.xyz"
-                className="flex items-center justify-center text-orange-500 text-sm font-medium mx-auto"
+                className="flex justify-center items-center mx-auto text-sm font-medium text-orange-500"
               >
                 <Icon
                   icon="tabler:external-link"
@@ -737,21 +743,21 @@ export default function Admin() {
       />
       {/*Left Bar*/}
       <div className="flex-grow flex-1 max-w-sm border-r-[1px] border-brownblack-20 hidden md:block">
-        <div className="ml-4 md:ml-16 mt-7">
-          <div className="w-full mb-4 text-sm font-bold md:text-base text-brownblack-700">
+        <div className="mt-7 ml-4 md:ml-16">
+          <div className="mb-4 w-full text-sm font-bold md:text-base text-brownblack-700">
             Domains
           </div>
           <div
             className="flex pr-2 cursor-pointer"
             onClick={() => setMainnetOpen(!mainnetOpen)}
           >
-            <div className="w-full my-1 text-xs text-brownblack-700">
+            <div className="my-1 w-full text-xs text-brownblack-700">
               Mainnet
             </div>
             {mainnetOpen ? "-" : "+"}
           </div>
           {mainnetOpen && (
-            <div className="flex flex-col w-full ">
+            <div className="flex flex-col w-full">
               {brandUrls
                 .filter((brandUrl) => {
                   return brandDict[brandUrl].network === "mainnet";
@@ -789,7 +795,7 @@ export default function Admin() {
                         {brand.domain}
                       </span>
                       {brand.resolverStatus === "incorrect" && (
-                        <div className="ml-auto mr-2">
+                        <div className="mr-2 ml-auto">
                           <ResolverAlertIcon className="w-4 h-4" />
                         </div>
                       )}
@@ -804,14 +810,14 @@ export default function Admin() {
             className="flex pr-2 cursor-pointer"
             onClick={() => setSepoliaOpen(!sepoliaOpen)}
           >
-            <div className="w-full my-1 text-xs text-brownblack-700">
+            <div className="my-1 w-full text-xs text-brownblack-700">
               Sepolia
             </div>
             {sepoliaOpen ? "-" : "+"}
           </div>
 
           {sepoliaOpen && (
-            <div className="flex flex-col w-full ">
+            <div className="flex flex-col w-full">
               {brandUrls
                 .filter((brandUrl) => {
                   return brandDict[brandUrl].network === "sepolia";
@@ -849,7 +855,7 @@ export default function Admin() {
                         {brand.domain}
                       </span>
                       {brand.resolverStatus === "incorrect" && (
-                        <div className="ml-auto mr-2">
+                        <div className="mr-2 ml-auto">
                           <ResolverAlertIcon className="w-4 h-4" />
                         </div>
                       )}
@@ -861,7 +867,7 @@ export default function Admin() {
         </div>
       </div>
       {/*Main Content*/}
-      <div className="md:flex-grow max-w-3xl w-full flex-2">
+      <div className="w-full max-w-3xl md:flex-grow flex-2">
         <div className="flex-col items-start w-full md:p-6">
           {/* Mobile domain selector */}
           <NameSelector
@@ -885,9 +891,9 @@ export default function Admin() {
                   : "bg-orange-20"
               }`}
             >
-              <div className="flex items-center gap-2">
+              <div className="flex gap-2 items-center">
                 <ResolverAlertIcon
-                  className="md:w-5 md:h-5 w-6 h-6"
+                  className="w-6 h-6 md:w-5 md:h-5"
                   color={
                     selectedBrand.resolverStatus === "incorrect"
                       ? "red"
@@ -921,7 +927,7 @@ export default function Admin() {
           )}
 
           {/* Domain Name */}
-          <div className="items-center text-base font-bold text-brownblack-700 hidden md:flex">
+          <div className="hidden items-center text-base font-bold text-brownblack-700 md:flex">
             <div className="flex items-center h-[50px] border border-gray-300 rounded-l-lg px-4">
               <div className="flex overflow-hidden rounded-full w-[36px] h-[36px]">
                 <Image
@@ -936,7 +942,7 @@ export default function Admin() {
                 />
               </div>
               <div
-                className="text-2xl px-3 flex items-center"
+                className="flex items-center px-3 text-2xl"
                 style={{ fontFamily: ensFontFallback }}
               >
                 {selectedBrand.domain}
@@ -952,8 +958,8 @@ export default function Admin() {
             </button>
           </div>
           {/* Tab selection */}
-          <div className="relative ">
-            <div className="flex gap-8 mt-8 md:px-0 px-4">
+          <div className="relative">
+            <div className="flex gap-8 px-4 mt-8 md:px-0">
               <button
                 onClick={() => setActiveTab("Subnames")}
                 className={`relative border-b-2 transition-colors duration-300 pb-2 
@@ -983,7 +989,7 @@ export default function Admin() {
           {/* Table */}
           {activeTab === "Subnames" && (
             <>
-              <div className="flex w-full sm:px-0 px-4">
+              <div className="flex px-4 w-full sm:px-0">
                 <button
                   className={
                     "py-1 px-3 mr-0 my-4 h-11 font-bold text-sm  text-brownblack-700 bg-orange-500 hover:bg-orange-700 active:bg-orange-800 disabled:bg-orange-500/[0.50] flex items-center justify-center min-w-[150px] mx-auto rounded-lg disabled:cursor-not-allowed md:block"
@@ -1010,7 +1016,7 @@ export default function Admin() {
                       showPagination={showPagination}
                     />
                     {showPagination && (
-                      <SubnamesPaginationControls 
+                      <SubnamesPaginationControls
                         pagination={pagination}
                         onPageChange={handlePageChange}
                         isLoading={isSubdomainsLoading}
@@ -1027,7 +1033,7 @@ export default function Admin() {
                       totalNames={pagination.total}
                     />
                     {showPagination && (
-                      <SubnamesPaginationControls 
+                      <SubnamesPaginationControls
                         pagination={pagination}
                         onPageChange={handlePageChange}
                         isLoading={isSubdomainsLoading}
@@ -1040,7 +1046,7 @@ export default function Admin() {
           )}
           {activeTab === "Settings" && (
             <div className="flex flex-col gap-4 w-full max-w-[28rem] px-4 md:px-0">
-              <div className="flex flex-row items-center justify-between gap-2">
+              <div className="flex flex-row gap-2 justify-between items-center">
                 <div className="flex flex-col mt-6">
                   <label className="mb-2 text-sm font-bold text-brownblack-700">
                     Make Names public
@@ -1116,7 +1122,7 @@ export default function Admin() {
           setSubnameToDelete({
             name: null,
             domain: null,
-            address: null
+            address: null,
           });
         }}
         onDelete={deleteName}
@@ -1156,7 +1162,7 @@ function ApiKeyDisplay({ apiKey }) {
         API Key
       </label>
       <div
-        className="relative flex items-center h-10 pl-3 border rounded-lg border-neutral-200 hover:cursor-pointer bg-gray-50 w-full"
+        className="flex relative items-center pl-3 w-full h-10 bg-gray-50 rounded-lg border border-neutral-200 hover:cursor-pointer"
         onMouseEnter={() => setIsObscured(false)}
         onMouseLeave={() => setIsObscured(true)}
       >
@@ -1166,7 +1172,7 @@ function ApiKeyDisplay({ apiKey }) {
 
         <button
           onClick={copyToClipboard}
-          className="absolute text-gray-500 transform -translate-y-1/2 right-2 top-1/2 hover:text-gray-700 focus:outline-none"
+          className="absolute right-2 top-1/2 text-gray-500 transform -translate-y-1/2 hover:text-gray-700 focus:outline-none"
           aria-label="Copy API key"
         >
           {isCopied ? (
@@ -1312,9 +1318,9 @@ function AdminRow({
         // EDITING MODE
         <div className="flex flex-col w-full">
           {/* Input field and cancel button */}
-          <div className="flex items-center justify-between w-full">
+          <div className="flex justify-between items-center w-full">
             <input
-              className="flex-1 px-3 py-2 text-xs font-normal bg-white border rounded-lg text-neutral-900 border-neutral-200 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
+              className="flex-1 px-3 py-2 text-xs font-normal bg-white rounded-lg border text-neutral-900 border-neutral-200 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
               style={{ lineHeight: "16px" }}
               value={editValue}
               onChange={(e) => setEditValue(e.target.value)}
@@ -1343,7 +1349,7 @@ function AdminRow({
 
           {/* Dropdown with validation results */}
           <div className="relative mt-1">
-            <div className="absolute z-10 w-full p-2 bg-white border rounded-lg shadow-lg border-neutral-200">
+            <div className="absolute z-10 p-2 w-full bg-white rounded-lg border shadow-lg border-neutral-200">
               {!editValue ? (
                 // Empty state prompt
                 <div className="flex items-center px-3 py-2 text-sm text-gray-500">
@@ -1352,12 +1358,12 @@ function AdminRow({
               ) : isValidAddress ? (
                 // Valid address/ENS result
                 <button onClick={handleSetAddress}>
-                  <div className="flex items-center flex-1">
-                    <div className="relative flex items-center group">
+                  <div className="flex flex-1 items-center">
+                    <div className="flex relative items-center group">
                       <div
-                        className={`relative w-8 h-8 mr-3 overflow-hidden border border-gray-200 rounded-full x`}
+                        className={`overflow-hidden relative mr-3 w-8 h-8 rounded-full border border-gray-200 x`}
                       >
-                        <div className="flex items-center justify-center w-full h-full text-gray-400">
+                        <div className="flex justify-center items-center w-full h-full text-gray-400">
                           {ensAvatar ? (
                             <Image
                               src={
@@ -1387,7 +1393,7 @@ function AdminRow({
                           {displayName}
                         </div>
                         {isCurrentUser && (
-                          <span className="px-2 py-0.5 ml-2 text-xs font-normal leading-4 text-neutral-900 bg-white border border-gray-200 rounded">
+                          <span className="px-2 py-0.5 ml-2 text-xs font-normal leading-4 bg-white rounded border border-gray-200 text-neutral-900">
                             You
                           </span>
                         )}
@@ -1403,7 +1409,7 @@ function AdminRow({
                 <div className="flex items-center px-3 py-2 text-sm text-red-500">
                   <Icon
                     icon="ph:warning-circle-fill"
-                    className="w-4 h-4 mr-2"
+                    className="mr-2 w-4 h-4"
                   />
                   Invalid Address
                 </div>
@@ -1416,16 +1422,16 @@ function AdminRow({
         <>
           {/* Admin info (avatar, name, address) */}
           <div
-            className="flex items-center flex-1 cursor-pointer"
+            className="flex flex-1 items-center cursor-pointer"
             onClick={() => setEditingIndex(index)}
           >
-            <button className="relative flex items-center group">
+            <button className="flex relative items-center group">
               <div
                 className={`relative w-8 h-8 mr-3 overflow-hidden border border-gray-200 rounded-full ${
                   isEditHovering ? "bg-gray-50" : "bg-white"
                 }`}
               >
-                <div className="flex items-center justify-center w-full h-full text-gray-400">
+                <div className="flex justify-center items-center w-full h-full text-gray-400">
                   {isEditHovering ? (
                     <Icon icon="clarity:edit-solid" width="16" />
                   ) : ensAvatar ? (
@@ -1456,7 +1462,7 @@ function AdminRow({
               <div className="flex items-center">
                 <div className="font-medium text-gray-900">{displayName}</div>
                 {isCurrentUser && (
-                  <span className="px-2 py-0.5 ml-2 text-xs font-normal leading-4 text-neutral-900 bg-white border border-gray-200 rounded">
+                  <span className="px-2 py-0.5 ml-2 text-xs font-normal leading-4 bg-white rounded border border-gray-200 text-neutral-900">
                     You
                   </span>
                 )}
