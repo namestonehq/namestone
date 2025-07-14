@@ -410,9 +410,10 @@ export default function Admin() {
             })
         );
         const subdomainsData = await subdomainsRes.json();
-
         if (subdomainsRes.status === 200) {
-          setSubdomains(subdomainsData);
+          const { data, pagination: paginationData } = subdomainsData;
+          setSubdomains(data);
+          setPagination(paginationData);
         } else {
           console.log(subdomainsData);
         }
@@ -467,9 +468,10 @@ export default function Admin() {
             })
         );
         const subdomainsData = await subdomainsRes.json();
-
         if (subdomainsRes.status === 200) {
-          setSubdomains(subdomainsData);
+          const { data, pagination: paginationData } = subdomainsData;
+          setSubdomains(data);
+          setPagination(paginationData);
           toast.success("Name deleted successfully");
         } else {
           console.log(subdomainsData);

@@ -12,16 +12,18 @@ export default function SubdomainTable({
   openEditNameModal,
   openDeleteSubnameModal,
   totalNames,
-  showPagination
+  showPagination,
 }) {
-
   return (
     <>
-      <div className={`w-full h-full overflow-x-auto border border-1 border-neutral-200 rounded-t-lg ${showPagination ? '' : 'rounded-b-lg'}`}>
+      <div
+        className={`w-full h-full overflow-x-auto border border-1 border-neutral-200 rounded-t-lg ${
+          showPagination ? "":"rounded-b-lg"}`}
+      >
         <table className="min-w-full divide-y divide-neutral-200">
           <thead>
-            <tr className=" bg-neutral-100">
-              <th className="px-6 py-3 text-left ">
+            <tr className="bg-neutral-100">
+              <th className="px-6 py-3 text-left">
                 <span className="text-sm font-bold text-brownblack-700">
                   Subname
                 </span>
@@ -46,7 +48,7 @@ export default function SubdomainTable({
                 <td className="px-6 py-4">
                   <Link
                     href={`https://app.ens.domains/${subdomain.name}.${subdomain.domain}`}
-                    className="underline "
+                    className="underline"
                     target="_blank"
                     rel="noreferrer"
                     style={{ fontFamily: ensFontFallback }}
@@ -57,7 +59,7 @@ export default function SubdomainTable({
                 <td className="px-6 py-4">
                   <Link
                     href={`https://etherscan.io/address/${subdomain.address}`}
-                    className="underline "
+                    className="underline"
                     target="_blank"
                     rel="noreferrer"
                   >
@@ -74,7 +76,11 @@ export default function SubdomainTable({
                     </button>
                     <button
                       onClick={() =>
-                        openDeleteSubnameModal(subdomain.name, subdomain.domain, subdomain.address)
+                        openDeleteSubnameModal(
+                          subdomain.name,
+                          subdomain.domain,
+                          subdomain.address
+                        )
                       }
                       className="text-red-600 rounded-lg hover:underline"
                     >
