@@ -7,9 +7,10 @@ const cors = Cors({
 });
 
 async function handler(req, res) {
-  // Check required parameters
   const domain = req.query.domain;
-  const addresses = req.query.addresses?.split(","); // Assuming addresses are comma-separated
+  const addresses = req.query.addresses
+    ?.split(",")
+    .map((address) => address.toLowerCase()); // comma-separated
   const name = req.query.name;
 
   if (!domain) {
@@ -17,19 +18,55 @@ async function handler(req, res) {
   }
 
   let subDomainNames;
+
   if (name) {
     subDomainNames = await sql`
-      SELECT name, address, owner,  "tokenId", "textRecords" as "textRecordsPayload", "coinTypes" as "coinTypesPayload", "registeredAt", contenthash FROM ponder_prod."NftSubdomain" WHERE "domainName" = ${domain} AND "name" = ${name} order by "registeredAt" desc
+      SELECT
+        name,
+        address,
+        owner,
+        "token_id"      AS "tokenId",
+        "text_records"  AS "textRecordsPayload",
+        "coin_types"    AS "coinTypesPayload",
+        "registered_at" AS "registeredAt",
+        contenthash
+      FROM ponder_prod."NftSubdomain"
+      WHERE domain_name = ${domain}
+        AND "name" = ${name}
+      ORDER BY "registered_at" DESC
     `;
   } else {
     if (addresses && addresses.length > 0) {
       subDomainNames = await sql`
-      SELECT name, address, owner,  "tokenId", "textRecords" as "textRecordsPayload", "coinTypes" as "coinTypesPayload", "registeredAt", contenthash FROM ponder_prod."NftSubdomain" WHERE "domainName" = ${domain} AND "address" = ANY (${addresses}) order by "registeredAt" desc
-    `;
+        SELECT
+          name,
+          address,
+          owner,
+          "token_id"      AS "tokenId",
+          "text_records"  AS "textRecordsPayload",
+          "coin_types"    AS "coinTypesPayload",
+          "registered_at" AS "registeredAt",
+          contenthash
+        FROM ponder_prod."NftSubdomain"
+        WHERE domain_name = ${domain}
+          AND "address" = ANY (${addresses})
+        ORDER BY "registered_at" DESC
+      `;
     } else {
       subDomainNames = await sql`
-      SELECT name, address, owner, "tokenId", "textRecords" as "textRecordsPayload", "coinTypes" as "coinTypesPayload", "registeredAt", contenthash FROM ponder_prod."NftSubdomain" WHERE "domainName" = ${domain} order by "registeredAt" desc
-    `;
+        SELECT
+          name,
+          address,
+          owner,
+          "token_id"      AS "tokenId",
+          "text_records"  AS "textRecordsPayload",
+          "coin_types"    AS "coinTypesPayload",
+          "registered_at" AS "registeredAt",
+          contenthash
+        FROM ponder_prod."NftSubdomain"
+        WHERE domain_name = ${domain}
+        ORDER BY "registered_at" DESC
+      `;
     }
   }
 
@@ -50,6 +87,7 @@ async function handler(req, res) {
   } of subDomainNames) {
     const text_records = JSON.parse(textRecordsPayload);
     const coin_types = JSON.parse(coinTypesPayload);
+
     result.push({
       name,
       address,

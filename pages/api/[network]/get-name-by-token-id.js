@@ -16,7 +16,14 @@ async function handler(req, res) {
     return res.status(400).json({ message: "Missing required parameters" });
   }
   const subDomainName = await sql`
-    SELECT name, address, "textRecords" FROM ponder_prod."NftSubdomain" WHERE "domainName" = ${domain} AND "tokenId" = ${tokenId}
+    SELECT
+      name,
+      address,
+      text_records as textRecords
+    FROM
+      ponder_prod."NftSubdomain"
+    WHERE 
+      domain_name = ${domain} AND token_id = ${tokenId}
   `;
 
   if (subDomainName.length === 0) {
