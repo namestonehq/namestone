@@ -1,0 +1,150 @@
+# Namestone API v1 (2026-01-07)
+
+Gasless ENS subdomain management. Issue names like alice.brand.eth via REST API.
+
+## Quick Reference
+
+POST /set-name      {domain,name,address?,text_records?,coin_types?} -> {success:true}
+POST /set-names     {domain,names[]} -> {success,processed,results[]}
+POST /delete-name   {domain,name} -> {success:true}
+GET  /get-names     ?domain&address&limit=50&offset=0 -> [{name,domain,address,text_records?,coin_types?}]
+GET  /search-names  ?domain&name&exact_match=0&limit=50 -> [{name,domain,address,...}]
+POST /set-domain    {domain,address?,text_records?,coin_types?} -> {success:true}
+GET  /get-domain    ?domain -> [{domain,address,text_records,coin_types}]
+GET  /get-domains   ?admin-address -> [{domain,address,...}]
+
+## Authentication
+
+Get API key: https://namestone.com/try-namestone
+Use in header: Authorization: YOUR_API_KEY
+Or query param: ?api_key=YOUR_API_KEY
+
+## URLs
+
+Mainnet:  https://namestone.com/api/public_v1/{endpoint}
+Sepolia:  https://namestone.com/api/public_v1_sepolia/{endpoint}
+
+## Example: Create Subdomain
+
+curl -X POST \
+  -H "Content-Type: application/json" \
+  -H "Authorization: YOUR_API_KEY" \
+  -d '{"domain":"brand.eth","name":"alice","address":"0x1234..."}' \
+  https://namestone.com/api/public_v1/set-name
+
+Response: {"success": true}
+
+## Example: With Profile Data
+
+curl -X POST \
+  -H "Content-Type: application/json" \
+  -H "Authorization: YOUR_API_KEY" \
+  -d '{
+    "domain": "brand.eth",
+    "name": "alice",
+    "address": "0x1234...",
+    "text_records": {
+      "avatar": "https://example.com/pic.jpg",
+      "com.twitter": "alice",
+      "description": "Alice profile"
+    }
+  }' \
+  https://namestone.com/api/public_v1/set-name
+
+## Example: Lookup by Address
+
+curl -H "Authorization: YOUR_API_KEY" \
+  "https://namestone.com/api/public_v1/get-names?domain=brand.eth&address=0x1234..."
+
+Response:
+[{
+  "name": "alice",
+  "domain": "brand.eth",
+  "address": "0x1234...",
+  "text_records": {"avatar": "...", "com.twitter": "alice"}
+}]
+
+## Example: Search Autocomplete
+
+curl "https://namestone.com/api/public_v1/search-names?domain=brand.eth&name=ali"
+
+Returns all names starting with "ali" (alice, alicia, etc.)
+
+## SDK (TypeScript)
+
+npm install @namestone/namestone-sdk
+
+import NameStone from "@namestone/namestone-sdk";
+
+// Mainnet
+const ns = new NameStone("YOUR_API_KEY");
+
+// Sepolia testnet
+const ns = new NameStone("YOUR_API_KEY", { network: "sepolia" });
+
+// Create subdomain
+await ns.setName({
+  domain: "brand.eth",
+  name: "alice",
+  address: "0x1234...",
+  text_records: { "com.twitter": "alice" }
+});
+
+// Lookup
+const names = await ns.getNames({ domain: "brand.eth", address: "0x1234..." });
+
+// Search
+const results = await ns.searchNames({ domain: "brand.eth", name: "ali" });
+
+// Delete
+await ns.deleteName({ domain: "brand.eth", name: "alice" });
+
+## When to Use Which
+
+Creating subdomain?
+- Single name -> setName (overwrites if exists)
+- Bulk import -> setNames (batch up to 50)
+
+Looking up subdomains?
+- By domain -> getNames({ domain })
+- By address -> getNames({ address })
+- Autocomplete -> searchNames({ domain, name: prefix })
+- Exact check -> searchNames({ domain, name, exact_match: true })
+
+## Common Mistakes
+
+1. Missing resolver setup
+   Domain must use Namestone resolver. Set in ENS manager BEFORE calling API.
+   Mainnet:  0xA87361C4E58B619c390f469B9E6F27d759715125
+   Sepolia:  0x467893bFE201F8EfEa09BBD53fB69282e6001595
+
+2. Wrong URL for testnet
+   Mainnet: /api/public_v1/...
+   Sepolia: /api/public_v1_sepolia/...
+
+3. Ignoring pagination
+   Default limit is 50. If you get exactly 50 results, there may be more.
+   Use offset parameter to paginate.
+
+4. Forgetting auth header
+   Most endpoints need Authorization header
+   get-names works without auth but won't show private names
+
+## Multichain (Advanced)
+
+Add L2 addresses via coin_types using SLIP-0044 format:
+
+"coin_types": {
+  "2147483785": "0x...",  // Optimism (0x80000000 | 10)
+  "2147492101": "0x...",  // Base (0x80000000 | 8453)
+  "2147525809": "0x..."   // Arbitrum (0x80000000 | 42161)
+}
+
+Formula: coin_type = 0x80000000 | chain_id
+
+## Links
+
+Docs: https://namestone.com/docs
+SDK: https://github.com/namestonehq/namestone-sdk
+Admin: https://namestone.com/admin
+Get Key: https://namestone.com/try-namestone
