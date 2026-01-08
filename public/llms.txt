@@ -6,7 +6,6 @@ Gasless ENS subdomain management. Issue names like alice.brand.eth via REST API.
 
 POST /set-name      {domain,name,address?,text_records?,coin_types?} -> {success:true}
 POST /set-names     {domain,names[]} -> {success,processed,results[]}
-POST /claim-name    {domain,name,address} -> {success} | 409 if exists
 POST /delete-name   {domain,name} -> {success:true}
 GET  /get-names     ?domain&address&limit=50&offset=0 -> [{name,domain,address,text_records?,coin_types?}]
 GET  /search-names  ?domain&name&exact_match=0&limit=50 -> [{name,domain,address,...}]
@@ -103,8 +102,7 @@ await ns.deleteName({ domain: "brand.eth", name: "alice" });
 ## When to Use Which
 
 Creating subdomain?
-- Backend/admin operation -> setName (overwrites if exists)
-- User self-service -> claimName (fails if exists - safer)
+- Single name -> setName (overwrites if exists)
 - Bulk import -> setNames (batch up to 50)
 
 Looking up subdomains?
@@ -119,19 +117,15 @@ Looking up subdomains?
    Domain must use resolver 0xA87361C4E58B619c390f469B9E6F27d759715125
    Set this in ENS manager BEFORE calling API
 
-2. Using setName for user input
-   setName overwrites existing - unsafe for user claims
-   Use claimName instead (returns 409 if taken)
-
-3. Wrong URL for testnet
+2. Wrong URL for testnet
    Mainnet: /api/public_v1/...
    Sepolia: /api/public_v1_sepolia/...
 
-4. Ignoring pagination
+3. Ignoring pagination
    Default limit is 50. If you get exactly 50 results, there may be more.
    Use offset parameter to paginate.
 
-5. Forgetting auth header
+4. Forgetting auth header
    Most endpoints need Authorization header
    get-names works without auth but won't show private names
 

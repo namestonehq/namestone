@@ -29,7 +29,7 @@ export default function CopyForLLM() {
         icon={copied ? "bi:check-lg" : "bi:clipboard"}
         className="w-4 h-4"
       />
-      <span>{copied ? "Copied!" : "Copy for AI"}</span>
+      <span>{copied ? "Copied!" : "Copy for LLMs"}</span>
     </button>
   );
 }
