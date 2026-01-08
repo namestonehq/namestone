@@ -3,6 +3,7 @@ import { PageSEO } from "../../components/SEO";
 import ReactMarkdown from "react-markdown";
 import Link from "next/link";
 import Header from "../../components/Header";
+import CopyForLLM from "../../components/CopyForLLM";
 import { Icon } from "@iconify/react";
 import { useState } from "react";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
@@ -111,6 +112,9 @@ export default function Docs({ content, fileName }) {
                   Sepolia
                 </button>
               </div>
+              <div className="mb-4">
+                <CopyForLLM />
+              </div>
               {Object.keys(navDict).map((item) => (
                 <div key={item}>
                   <Link
@@ -178,6 +182,9 @@ export default function Docs({ content, fileName }) {
                     >
                       Sepolia
                     </button>
+                  </div>
+                  <div className="mb-4">
+                    <CopyForLLM />
                   </div>
                   {Object.keys(navDict).map((item) => (
                     <div key={item}>
