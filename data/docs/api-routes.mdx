@@ -3,6 +3,8 @@
 NameStone's API lets you grant names (subdomains), set text records, and retrieve information about domains.
 To use our API, you'll need an API key for authentication.
 
+Using an AI coding assistant? See our [llms.txt](/llms.txt) for a machine-readable API reference.
+
 ## Get Started
 
 Use this [form](https://namestone.com/try-namestone) to enable your domain and receive a free API key via email, or enable your name programmatically via the [enable-domain](./enable-domain) endpoint. Your domain's resolver must be set to:
@@ -35,7 +37,3 @@ Learn more about our API endpoints, separated by name and domain routes:
 | [get-domain](./get-domain)             | Get text records and address for a given domain.                                                        |
 | [enable-domain](./enable-domain)       | Enable your domain on namestone. Requires a signed message from [get-siwe-message](./get-siwe-message). |
 | [get-siwe-message](./get-siwe-message) | Get a signable siwe message for accessing protected routes like [enable-domain](./enable-domain).       |
-
-## AI/LLM Integration
-
-For AI coding assistants and code generation tools, a machine-readable API reference is available at [llms.txt](/llms.txt).
