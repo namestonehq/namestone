@@ -114,8 +114,9 @@ Looking up subdomains?
 ## Common Mistakes
 
 1. Missing resolver setup
-   Domain must use resolver 0xA87361C4E58B619c390f469B9E6F27d759715125
-   Set this in ENS manager BEFORE calling API
+   Domain must use Namestone resolver. Set in ENS manager BEFORE calling API.
+   Mainnet:  0xA87361C4E58B619c390f469B9E6F27d759715125
+   Sepolia:  0x467893bFE201F8EfEa09BBD53fB69282e6001595
 
 2. Wrong URL for testnet
    Mainnet: /api/public_v1/...
