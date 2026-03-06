@@ -35,6 +35,7 @@ const SUPPORTED_NETWORKS = [
 
 describe("set-name API E2E", () => {
   let testDomainId;
+  let sharedDomainIds = {};
 
   beforeAll(async () => {
     await setupTestDatabase();
@@ -99,6 +100,73 @@ describe("set-name API E2E", () => {
       expect(JSON.parse(response._getData())).toEqual({
         error: "Invalid network",
       });
+    });
+  });
+
+  describe("Domain isolation by network", () => {
+    const sharedDomain = "shared-auth.eth";
+    const mainnetKey = "shared-auth-mainnet-key";
+    const sepoliaKey = "shared-auth-sepolia-key";
+
+    beforeEach(async () => {
+      const [mainnetDomain] = await sqlForTests`
+        INSERT INTO domain (name, network, name_limit)
+        VALUES (${sharedDomain}, 'mainnet', ${DEFAULT_SUBDOMAIN_LIMIT})
+        RETURNING id
+      `;
+      const [sepoliaDomain] = await sqlForTests`
+        INSERT INTO domain (name, network, name_limit)
+        VALUES (${sharedDomain}, 'sepolia', ${DEFAULT_SUBDOMAIN_LIMIT})
+        RETURNING id
+      `;
+
+      sharedDomainIds = {
+        mainnet: mainnetDomain.id,
+        sepolia: sepoliaDomain.id,
+      };
+
+      await sqlForTests`
+        INSERT INTO api_key (domain_id, key)
+        VALUES (${mainnetDomain.id}, ${mainnetKey}),
+               (${sepoliaDomain.id}, ${sepoliaKey})
+      `;
+    });
+
+    afterEach(async () => {
+      await sqlForTests`DELETE FROM subdomain WHERE domain_id IN (${sharedDomainIds.mainnet || 0}, ${sharedDomainIds.sepolia || 0})`;
+      await sqlForTests`DELETE FROM api_key WHERE domain_id IN (${sharedDomainIds.mainnet || 0}, ${sharedDomainIds.sepolia || 0})`;
+      await sqlForTests`DELETE FROM domain WHERE id IN (${sharedDomainIds.mainnet || 0}, ${sharedDomainIds.sepolia || 0})`;
+      sharedDomainIds = {};
+    });
+
+    test("setName_sameDomainDifferentNetworkKey_returns401", async () => {
+      const createReq = createRequest({
+        method: "POST",
+        query: {
+          network: "public_v1",
+        },
+        headers: {
+          authorization: sepoliaKey,
+        },
+        body: {
+          domain: sharedDomain,
+          name: "cross-network",
+          address: "0x1234567890123456789012345678901234567890",
+        },
+      });
+      const response = createResponse();
+
+      await handler(createReq, response);
+
+      expect(response._getStatusCode()).toBe(401);
+      expect(JSON.parse(response._getData())).toEqual({
+        error: "You are not authorized to use this endpoint",
+      });
+
+      const createdSubdomains = await sqlForTests`
+        SELECT id FROM subdomain WHERE domain_id = ${sharedDomainIds.mainnet}
+      `;
+      expect(createdSubdomains.length).toBe(0);
     });
   });
 

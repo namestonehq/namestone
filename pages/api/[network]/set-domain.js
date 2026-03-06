@@ -45,7 +45,7 @@ async function handler(req, res) {
       .json({ error: "Domain does not exist. Please use /enable-domain." });
   }
 
-  const allowedApi = await checkApiKey(apiKey, domainName);
+  const allowedApi = await checkApiKey(apiKey, domainName, network);
   if (!allowedApi) {
     return res
       .status(401)
@@ -91,7 +91,7 @@ async function handler(req, res) {
       "contenthash",
       "contenthash_raw"
     )}
-    where name = ${domainName}
+    where id = ${domainQuery[0].id}
     returning id;`;
 
   // Delete existing text records

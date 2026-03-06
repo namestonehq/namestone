@@ -285,7 +285,7 @@ export async function getEPSAddresses(hotAddress) {
   return addresses;
 }
 
-export async function checkApiKey(apiKey, domain) {
+export async function checkApiKey(apiKey, domain, network) {
   if (!apiKey) {
     return false;
   }
@@ -294,18 +294,19 @@ export async function checkApiKey(apiKey, domain) {
     join domain 
     on api_key.domain_id = domain.id
     where domain.name = ${domain}
+    and domain.network = ${network}
     and api_key.key = ${apiKey}`;
 
-  if (apiQuery.count == 1) {
+  if (apiQuery.length === 1) {
     return true;
   }
   return false;
 }
 
 // function to check if user is an admin of the domain
-export async function getAdminToken(req, domain) {
+export async function getAdminToken(req, domain, network) {
   const token = await getToken({ req });
-  if (!token || !domain) {
+  if (!token || !domain || !network) {
     return false;
   }
   const superAdminQuery = await sql`
@@ -314,7 +315,8 @@ export async function getAdminToken(req, domain) {
   SELECT * FROM admin
   join domain on admin.domain_id = domain.id
   WHERE admin.address = ${token.sub}
-  and domain.name = ${domain}`;
+  and domain.name = ${domain}
+  and domain.network = ${network}`;
   if (superAdminQuery.length === 0 && adminQuery.length === 0) {
     return false;
   }
