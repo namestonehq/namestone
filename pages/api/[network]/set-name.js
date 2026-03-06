@@ -35,7 +35,8 @@ async function handler(req, res) {
   // Check  API key
   const allowedApi = await checkApiKey(
     headers.authorization || req.query.api_key,
-    body.domain
+    body.domain,
+    network
   );
   if (!allowedApi) {
     return res

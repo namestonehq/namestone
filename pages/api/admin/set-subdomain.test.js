@@ -38,9 +38,12 @@ const TEST_ADMIN_ADDRESS = "0xAdminAddress123456789012345678901234567890";
 describe("set-subdomain API E2E", () => {
   let testDomainId;
   let testSubdomainId;
+  let otherDomainId;
+  let otherSubdomainId;
   const testDomain = "test.eth";
   const testSubdomain = "sub";
-  const testFullName = `${testSubdomain}.${testDomain}`;
+  const otherDomain = "other.eth";
+  const otherSubdomain = "other-sub";
 
   beforeAll(async () => {
     await setupTestDatabase();
@@ -72,6 +75,22 @@ describe("set-subdomain API E2E", () => {
     `;
     testSubdomainId = subdomain.id;
 
+    const [foreignDomain] = await sqlForTests`
+      INSERT INTO domain (name, network)
+      VALUES (${otherDomain}, 'mainnet')
+      RETURNING id
+    `;
+    otherDomainId = foreignDomain.id;
+
+    const [foreignSubdomain] = await sqlForTests`
+      INSERT INTO subdomain (name, domain_id, address)
+      VALUES (${normalize(
+        otherSubdomain
+      )}, ${otherDomainId}, '0x9999999999999999999999999999999999999999')
+      RETURNING id
+    `;
+    otherSubdomainId = foreignSubdomain.id;
+
     // Mock admin token
     getAdminTokenById.mockResolvedValue({
       sub: TEST_ADMIN_ADDRESS,
@@ -82,8 +101,12 @@ describe("set-subdomain API E2E", () => {
     // Clean up test data
     await sqlForTests`DELETE FROM subdomain_text_record WHERE subdomain_id = ${testSubdomainId}`;
     await sqlForTests`DELETE FROM subdomain_coin_type WHERE subdomain_id = ${testSubdomainId}`;
+    await sqlForTests`DELETE FROM subdomain_text_record WHERE subdomain_id = ${otherSubdomainId}`;
+    await sqlForTests`DELETE FROM subdomain_coin_type WHERE subdomain_id = ${otherSubdomainId}`;
     await sqlForTests`DELETE FROM subdomain WHERE domain_id = ${testDomainId}`;
+    await sqlForTests`DELETE FROM subdomain WHERE domain_id = ${otherDomainId}`;
     await sqlForTests`DELETE FROM domain WHERE id = ${testDomainId}`;
+    await sqlForTests`DELETE FROM domain WHERE id = ${otherDomainId}`;
   });
 
   /**
@@ -371,6 +394,36 @@ describe("set-subdomain API E2E", () => {
         SELECT address FROM subdomain WHERE id = ${testSubdomainId}
       `;
       expect(subdomainAfterUpdate[0].address).toBe(updatedAddress);
+    });
+
+    test("setSubdomain_rejectsUpdatingSubdomainOutsideAuthorizedDomain_returns404", async () => {
+      const foreignAddress = "0x7777777777777777777777777777777777777777";
+
+      const req = createRequest({
+        method: "POST",
+        body: JSON.stringify({
+          id: otherSubdomainId,
+          name: otherSubdomain,
+          domain: testDomain,
+          domain_id: testDomainId,
+          address: foreignAddress,
+        }),
+      });
+
+      const res = createResponse();
+      await handler(req, res);
+
+      expect(res._getStatusCode()).toBe(404);
+      expect(JSON.parse(res._getData())).toEqual({
+        error: "Subdomain not found for this domain",
+      });
+
+      const foreignSubdomainAfterAttempt = await sqlForTests`
+        SELECT address FROM subdomain WHERE id = ${otherSubdomainId}
+      `;
+      expect(foreignSubdomainAfterAttempt[0].address).toBe(
+        "0x9999999999999999999999999999999999999999"
+      );
     });
   });
 
