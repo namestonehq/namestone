@@ -7,7 +7,7 @@ const cors = Cors({
   origin: "*",
 });
 
-async function checkApiKey(apiKey, domain) {
+async function checkApiKey(apiKey, domain, network) {
   if (!apiKey) {
     return false;
   }
@@ -15,16 +15,19 @@ async function checkApiKey(apiKey, domain) {
   if (!domain) {
     apiQuery = await sql`
     SELECT api_key.id, key FROM api_key 
-    where api_key.key = ${apiKey}`;
+    join domain on api_key.domain_id = domain.id
+    where api_key.key = ${apiKey}
+    and domain.network = ${network}`;
   } else {
     apiQuery = await sql`
     SELECT api_key.id, key FROM api_key 
     join domain 
     on api_key.domain_id = domain.id
     where domain.name = ${domain}
+    and domain.network = ${network}
     and api_key.key = ${apiKey}`;
   }
-  if (apiQuery.count >= 1) {
+  if (apiQuery.length >= 1) {
     return true;
   }
   return false;
@@ -64,7 +67,7 @@ async function handler(req, res) {
   const apiKey = headers.authorization || req.query.api_key;
   // Check API key
 
-  const allowedApi = await checkApiKey(apiKey, domain);
+  const allowedApi = await checkApiKey(apiKey, domain, network);
   // if apiKey exists and is not allowed, return 401
   if (apiKey && !allowedApi) {
     return res.status(401).json({ error: "Unauthorized" });

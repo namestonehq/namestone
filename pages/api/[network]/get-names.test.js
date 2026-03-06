@@ -49,6 +49,7 @@ describe("get-names API E2E", () => {
     mainnet: {},
     sepolia: {},
   };
+  let sharedDomainIds = {};
 
   beforeAll(async () => {
     await setupTestDatabase();
@@ -172,6 +173,22 @@ describe("get-names API E2E", () => {
     }
   });
 
+  afterEach(async () => {
+    if (sharedDomainIds.mainnet || sharedDomainIds.sepolia) {
+      await sqlForTests`DELETE FROM subdomain_text_record WHERE subdomain_id IN (
+        SELECT id FROM subdomain WHERE domain_id IN (${sharedDomainIds.mainnet || 0}, ${sharedDomainIds.sepolia || 0})
+      )`;
+      await sqlForTests`DELETE FROM subdomain_coin_type WHERE subdomain_id IN (
+        SELECT id FROM subdomain WHERE domain_id IN (${sharedDomainIds.mainnet || 0}, ${sharedDomainIds.sepolia || 0})
+      )`;
+      await sqlForTests`DELETE FROM subdomain WHERE domain_id IN (${sharedDomainIds.mainnet || 0}, ${sharedDomainIds.sepolia || 0})`;
+      await sqlForTests`DELETE FROM api_key WHERE domain_id IN (${sharedDomainIds.mainnet || 0}, ${sharedDomainIds.sepolia || 0})`;
+      await sqlForTests`DELETE FROM brand WHERE domain_id IN (${sharedDomainIds.mainnet || 0}, ${sharedDomainIds.sepolia || 0})`;
+      await sqlForTests`DELETE FROM domain WHERE id IN (${sharedDomainIds.mainnet || 0}, ${sharedDomainIds.sepolia || 0})`;
+      sharedDomainIds = {};
+    }
+  });
+
   afterAll(async () => {
     /**
      * Test Data Cleanup:
@@ -201,6 +218,69 @@ describe("get-names API E2E", () => {
       }
     }
     await teardownTestDatabase();
+  });
+
+  describe("Same domain name stays scoped to the selected network", () => {
+    const sharedDomain = "shared-list.eth";
+    const mainnetKey = "shared-list-mainnet-key";
+    const sepoliaKey = "shared-list-sepolia-key";
+
+    beforeEach(async () => {
+      const [mainnetDomain] = await sqlForTests`
+        INSERT INTO domain (name, network)
+        VALUES (${sharedDomain}, 'mainnet')
+        RETURNING id
+      `;
+      const [sepoliaDomain] = await sqlForTests`
+        INSERT INTO domain (name, network)
+        VALUES (${sharedDomain}, 'sepolia')
+        RETURNING id
+      `;
+
+      sharedDomainIds = {
+        mainnet: mainnetDomain.id,
+        sepolia: sepoliaDomain.id,
+      };
+
+      await sqlForTests`
+        INSERT INTO api_key (domain_id, key)
+        VALUES (${mainnetDomain.id}, ${mainnetKey}),
+               (${sepoliaDomain.id}, ${sepoliaKey})
+      `;
+
+      await sqlForTests`
+        INSERT INTO brand (domain_id, share_with_data_providers)
+        VALUES (${mainnetDomain.id}, false),
+               (${sepoliaDomain.id}, false)
+      `;
+
+      await sqlForTests`
+        INSERT INTO subdomain (domain_id, name, address)
+        VALUES (${mainnetDomain.id}, ${`main.${sharedDomain}`}, ${TEST_ADDRESSES[1]}),
+               (${sepoliaDomain.id}, ${`sepolia.${sharedDomain}`}, ${TEST_ADDRESSES[2]})
+      `;
+    });
+
+    test("getNames_sameDomainDifferentNetworkKey_returns401", async () => {
+      const req = createRequest({
+        method: "GET",
+        query: {
+          network: "public_v1",
+          domain: sharedDomain,
+        },
+        headers: {
+          authorization: sepoliaKey,
+        },
+      });
+      const res = createResponse();
+
+      await handler(req, res);
+
+      expect(res._getStatusCode()).toBe(401);
+      expect(JSON.parse(res._getData())).toEqual({
+        error: "Unauthorized",
+      });
+    });
   });
 
   /**

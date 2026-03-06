@@ -86,13 +86,20 @@ export default async function handler(req, res) {
     returning id;`;
     subdomainId = subdomainQuery[0].id;
   } else {
-    await sql`
-  update subdomain
-  set name = ${name},
-  address = ${address},
-  contenthash = ${contenthash},
-  contenthash_raw = ${contenthashRaw}
-  where id = ${subdomainId}`;
+    const updatedSubdomain = await sql`
+    update subdomain
+    set name = ${name},
+    address = ${address},
+    contenthash = ${contenthash},
+    contenthash_raw = ${contenthashRaw}
+    where id = ${subdomainId} and domain_id = ${body.domain_id}
+    returning id`;
+
+    if (updatedSubdomain.length === 0) {
+      return res.status(404).json({
+        error: "Subdomain not found for this domain",
+      });
+    }
   }
 
   // Delete existing text records

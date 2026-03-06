@@ -32,9 +32,10 @@ async function handler(req, res) {
   // Check API key
   const allowedApi = await checkApiKey(
     headers.authorization || req.query.api_key,
-    domain
+    domain,
+    network
   );
-  const adminToken = await getAdminToken(req, domain);
+  const adminToken = await getAdminToken(req, domain, network);
   if (!allowedApi && !adminToken) {
     return res.status(401).json({
       error: "key error - You are not authorized to use this endpoint",

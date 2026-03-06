@@ -33,10 +33,11 @@ async function handler(req, res) {
   }
 
   // Check API key
-  const adminToken = await getAdminToken(req, body.domain);
+  const adminToken = await getAdminToken(req, body.domain, network);
   const allowedApi = await checkApiKey(
     headers.authorization || req.query.api_key,
-    body.domain
+    body.domain,
+    network
   );
   if (!allowedApi && !adminToken) {
     return res

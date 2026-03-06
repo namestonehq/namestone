@@ -26,13 +26,89 @@ const SUPPORTED_NETWORKS = [
 
 describe("set-domain API E2E", () => {
   let testDomainId;
+  let sharedDomainIds = {};
 
   beforeAll(async () => {
     await setupTestDatabase();
   });
 
+  afterEach(async () => {
+    if (sharedDomainIds.mainnet || sharedDomainIds.sepolia) {
+      await sqlForTests`DELETE FROM domain_coin_type WHERE domain_id IN (${sharedDomainIds.mainnet || 0}, ${sharedDomainIds.sepolia || 0})`;
+      await sqlForTests`DELETE FROM domain_text_record WHERE domain_id IN (${sharedDomainIds.mainnet || 0}, ${sharedDomainIds.sepolia || 0})`;
+      await sqlForTests`DELETE FROM api_key WHERE domain_id IN (${sharedDomainIds.mainnet || 0}, ${sharedDomainIds.sepolia || 0})`;
+      await sqlForTests`DELETE FROM domain WHERE id IN (${sharedDomainIds.mainnet || 0}, ${sharedDomainIds.sepolia || 0})`;
+      sharedDomainIds = {};
+    }
+  });
+
   afterAll(async () => {
     await teardownTestDatabase();
+  });
+
+  describe("Same domain name stays scoped to the selected network", () => {
+    const sharedDomain = "shared-domain.eth";
+    const mainnetKey = "shared-domain-mainnet-key";
+    const sepoliaKey = "shared-domain-sepolia-key";
+    const originalMainnetAddress = "0x1111111111111111111111111111111111111111";
+    const originalSepoliaAddress = "0x2222222222222222222222222222222222222222";
+
+    beforeEach(async () => {
+      const [mainnetDomain] = await sqlForTests`
+        INSERT INTO domain (name, network, address)
+        VALUES (${sharedDomain}, 'mainnet', ${originalMainnetAddress})
+        RETURNING id
+      `;
+      const [sepoliaDomain] = await sqlForTests`
+        INSERT INTO domain (name, network, address)
+        VALUES (${sharedDomain}, 'sepolia', ${originalSepoliaAddress})
+        RETURNING id
+      `;
+
+      sharedDomainIds = {
+        mainnet: mainnetDomain.id,
+        sepolia: sepoliaDomain.id,
+      };
+
+      await sqlForTests`
+        INSERT INTO api_key (domain_id, key)
+        VALUES (${mainnetDomain.id}, ${mainnetKey}),
+               (${sepoliaDomain.id}, ${sepoliaKey})
+      `;
+    });
+
+    test("setDomain_updatesOnlyTheSelectedNetwork", async () => {
+      const updatedMainnetAddress =
+        "0x9999999999999999999999999999999999999999";
+      const req = createRequest({
+        method: "POST",
+        headers: {
+          authorization: mainnetKey,
+        },
+        query: {
+          network: "public_v1",
+        },
+        body: {
+          domain: sharedDomain,
+          address: updatedMainnetAddress,
+        },
+      });
+      const response = createResponse();
+
+      await handler(req, response);
+
+      expect(response._getStatusCode()).toBe(200);
+
+      const [mainnetDomain] = await sqlForTests`
+        SELECT address FROM domain WHERE id = ${sharedDomainIds.mainnet}
+      `;
+      const [sepoliaDomain] = await sqlForTests`
+        SELECT address FROM domain WHERE id = ${sharedDomainIds.sepolia}
+      `;
+
+      expect(mainnetDomain.address).toBe(updatedMainnetAddress);
+      expect(sepoliaDomain.address).toBe(originalSepoliaAddress);
+    });
   });
 
   /**
