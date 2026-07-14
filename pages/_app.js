@@ -11,6 +11,7 @@ import { http } from "wagmi";
 import { SessionProvider } from "next-auth/react";
 import { RainbowKitSiweNextAuthProvider } from "@rainbow-me/rainbowkit-siwe-next-auth";
 import ClaimContextWrapper from "../contexts/ClaimContext";
+import ShutdownBanner from "../components/ShutdownBanner";
 import { signOut } from "next-auth/react";
 import { useAccount } from "wagmi";
 import { useSession } from "next-auth/react";
@@ -120,6 +121,7 @@ function MyApp({ Component, pageProps }) {
               />
               <AuthHandler>
                 <main className={inter.className}>
+                  <ShutdownBanner />
                   <ClaimContextWrapper>
                     <Component {...pageProps} />
                   </ClaimContextWrapper>
