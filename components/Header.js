@@ -2,12 +2,10 @@ import React, { useState } from "react";
 import namestoneIcon from "../public/images/namestone-icon.svg";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/router";
 import { Icon } from "@iconify/react";
 
 export default function Header({ subtitle }) {
   const [menuOpen, setMenuOpen] = useState(false);
-  const router = useRouter();
   function toggleMenu() {
     setMenuOpen(!menuOpen);
   }
@@ -129,14 +127,6 @@ export default function Header({ subtitle }) {
                     </div>
                   </Link>
                 </div>
-              </div>
-              <div className="inline-flex items-end justify-center gap-3">
-                <button
-                  onClick={() => router.push("/try-namestone")}
-                  className="z-20 px-6 py-3 text-sm font-bold bg-orange-500 rounded-lg hover:bg-orange-700 text-brownblack-700 active:bg-orange-800"
-                >
-                  Get Started
-                </button>
               </div>
             </div>
           </>

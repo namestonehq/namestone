@@ -15,7 +15,7 @@ GET  /get-domains   ?admin-address -> [{domain,address,...}]
 
 ## Authentication
 
-Get API key: https://namestone.com/try-namestone
+API key status: NameStone is shutting down August 3, 2026, and is no longer issuing new keys.
 Use in header: Authorization: YOUR_API_KEY
 Or query param: ?api_key=YOUR_API_KEY
 
@@ -147,4 +147,4 @@ Formula: coin_type = 0x80000000 | chain_id
 Docs: https://namestone.com/docs
 SDK: https://github.com/namestonehq/namestone-sdk
 Admin: https://namestone.com/admin
-Get Key: https://namestone.com/try-namestone
+API key status: New keys are unavailable.

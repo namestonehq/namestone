@@ -118,4 +118,4 @@ For those who prefer typesafe methods, we have a [TypeScript SDK](https://namest
 
 ## Quickstart
 
-Get an API key [here](https://namestone.com/try-namestone) then follow our [docs](https://namestone.com/docs). 
+> **Service update:** NameStone is shutting down August 3, 2026, and is no longer issuing new API keys. Existing users can reference the [docs](https://namestone.com/docs).

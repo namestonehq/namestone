@@ -5,6 +5,8 @@ import { ethers } from "ethers";
 import { getToken } from "next-auth/jwt";
 import { getDomainOwner } from "../../utils/ServerUtils";
 
+const apiKeySignupDisabled = true;
+
 // Async function to resolve ENS name to address
 const resolveENS = async (name, provider) => {
   try {
@@ -18,6 +20,13 @@ const resolveENS = async (name, provider) => {
 
 export default async function handler(req, res) {
   if (req.method === "POST") {
+    if (apiKeySignupDisabled) {
+      return res.status(410).json({
+        error:
+          "NameStone is shutting down August 3, 2026, and is no longer issuing new API keys.",
+      });
+    }
+
     const token = await getToken({ req });
 
     if (!token) {

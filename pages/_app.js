@@ -67,18 +67,18 @@ function MyApp({ Component, pageProps }) {
           <RainbowKitSiweNextAuthProvider>
             <RainbowKitProvider>
               <Head>
-                <title>Create ENS Subdomains via API | NameStone</title>
+                <title>NameStone Service Update</title>
                 <meta
                   property="og:title"
-                  content="Create ENS Subdomains via API | NameStone"
+                  content="NameStone Service Update"
                 />
                 <meta
                   name="description"
-                  content="Create and issue free ENS subdomains via a REST API. Trusted by web3 leaders. Supported by ENS DAO."
+                  content="NameStone is shutting down August 3, 2026, and is no longer issuing new API keys."
                 />
                 <meta
                   property="og:description"
-                  content="Create and issue free ENS subdomains via a REST API. Trusted by web3 leaders. Supported by ENS DAO."
+                  content="NameStone is shutting down August 3, 2026, and is no longer issuing new API keys."
                 />
                 <meta property="og:image" content="/opengraph-image.jpg" />
                 <meta property="og:type" content="website" />

@@ -719,7 +719,7 @@ export default function Admin() {
               </p>
             </div>
 
-            {/* Get started card */}
+            {/* Service update card */}
             <div
               className="p-5 mb-4 rounded-xl border"
               style={{
@@ -729,55 +729,12 @@ export default function Admin() {
               }}
             >
               <h3 className="mb-4 text-sm font-semibold text-brownblack-700">
-                Get started in two steps
+                Service update
               </h3>
-
-              <div className="flex gap-3 items-start mb-3">
-                <span
-                  className="flex flex-shrink-0 justify-center items-center mt-0.5 text-xs font-bold text-white bg-orange-500 rounded-full"
-                  style={{ width: "20px", height: "20px" }}
-                >
-                  1
-                </span>
-                <p className="text-sm leading-snug text-brownblack-500">
-                  Generate a free API key on the{" "}
-                  <Link
-                    href="/try-namestone"
-                    className="font-medium text-orange-500 underline-offset-2 hover:underline"
-                  >
-                    sign-up page
-                  </Link>
-                </p>
-              </div>
-
-              <div className="flex gap-3 items-start mb-5">
-                <span
-                  className="flex flex-shrink-0 justify-center items-center mt-0.5 text-xs font-bold text-white rounded-full bg-brownblack-200"
-                  style={{ width: "20px", height: "20px" }}
-                >
-                  2
-                </span>
-                <p className="text-sm leading-snug text-brownblack-400">
-                  Add this wallet address as an admin
-                </p>
-              </div>
-
-              <Link
-                href="/try-namestone"
-                className="flex justify-center items-center py-2.5 w-full text-sm font-semibold text-white rounded-lg transition-all hover:shadow-md"
-                style={{
-                  background:
-                    "linear-gradient(135deg, #FF8B36 0%, #FF7D1F 100%)",
-                }}
-              >
-                <Icon
-                  icon="tabler:arrow-right"
-                  className="mr-2"
-                  width="16"
-                  height="16"
-                />
-                Get your API key
-              </Link>
+              <p className="text-sm leading-relaxed text-brownblack-500">
+                NameStone is shutting down August 3, 2026, and is no longer
+                issuing new API keys.
+              </p>
             </div>
 
             {/* Secondary help */}

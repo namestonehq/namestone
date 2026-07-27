@@ -66,19 +66,10 @@ export default function Home() {
                 Create ENS Subdomains
               </h1>
               <span className="max-w-lg mt-3 text-sm text-left md:text-base text-brownblack-700">
-                NameStone&apos;s API is trusted by Web3{" "}
-                <span className="font-bold">businesses and developers</span> for
-                seamless, gasless subdomain management and issuance. Get started
-                today with a free API key.
+                NameStone is shutting down August 3, 2026, and is no longer
+                issuing new API keys. Existing users can still access the Admin
+                Panel and documentation.
               </span>
-              <div className="flex flex-wrap gap-4 mt-10 sm:mb-16 ">
-                <Link
-                  className="px-4 py-2 text-sm font-bold transition-all duration-200 bg-orange-500 border border-black rounded-lg cursor-pointer md:text-sm hover:bg-orange-700 text-brownblack-700 active:bg-orange-800 "
-                  href="/try-namestone"
-                >
-                  Get Started
-                </Link>
-              </div>
             </div>
           </div>
         </div>
@@ -118,12 +109,6 @@ export default function Home() {
                 Panel.
               </div>
               <div className="flex gap-3 mt-5">
-                <Link
-                  className="px-4 py-2 text-sm font-bold transition-all duration-200 bg-orange-500 border border-black rounded-lg cursor-pointer md:text-sm hover:bg-orange-700 text-brownblack-700 active:bg-orange-800 "
-                  href="/try-namestone"
-                >
-                  Get Started
-                </Link>
                 <Link
                   className="px-4 py-2 text-sm font-bold transition-all duration-200 bg-white border rounded-lg cursor-pointer md:text-sm hover:bg-neutral-100 border-neutral-300 text-brownblack-700 active:bg-neutral-200"
                   href="/docs"
