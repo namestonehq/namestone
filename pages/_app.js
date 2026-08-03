@@ -121,7 +121,7 @@ function MyApp({ Component, pageProps }) {
               />
               <AuthHandler>
                 <main className={inter.className}>
-                  <ShutdownBanner />
+                  {!Component.hideShutdownBanner && <ShutdownBanner />}
                   <ClaimContextWrapper>
                     <Component {...pageProps} />
                   </ClaimContextWrapper>
