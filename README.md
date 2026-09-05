@@ -1,3 +1,5 @@
+> **Archived.** NameStone ceased operations on August 3, 2026. The live site is now a static page served from [aslobodnik/namestone-landing](https://github.com/aslobodnik/namestone-landing) on Vercel. This repo is kept for reference only.
+
 <svg width="1500" height="500" viewBox="0 0 1500 500" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g clip-path="url(#clip0_1229_3105)">
 <rect width="1500" height="500" fill="#171717"/>
@@ -118,4 +120,4 @@ For those who prefer typesafe methods, we have a [TypeScript SDK](https://namest
 
 ## Quickstart
 
-Get an API key [here](https://namestone.com/try-namestone) then follow our [docs](https://namestone.com/docs). 
+> **Service update:** NameStone is shutting down August 3, 2026, and is no longer issuing new API keys. Existing users can reference the [docs](https://namestone.com/docs).

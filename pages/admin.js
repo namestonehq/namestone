@@ -668,55 +668,105 @@ export default function Admin() {
   if (brandUrls.length === 0 || !selectedBrand) {
     return (
       <AuthContentContainer>
-        <div className="flex flex-col justify-center items-center px-8 mx-auto text-center">
-          {/* Wallet not recognized message */}
-          <div className="flex flex-col items-center mb-6 text-center">
-            <p className="mb-6 text-sm font-medium text-brownblack-700">
-              Wallet not recognized as admin for any names.
-            </p>
+        <div className="flex relative flex-col justify-center items-center px-6 mx-auto w-full min-h-[70vh]">
+          {/* Warm ambient glow */}
+          <div
+            className="absolute pointer-events-none"
+            style={{
+              width: "480px",
+              height: "480px",
+              borderRadius: "50%",
+              background:
+                "radial-gradient(circle, rgba(255,139,54,0.06) 0%, rgba(255,139,54,0.02) 40%, transparent 70%)",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+            }}
+          />
 
-            <div className="p-4 w-full bg-gray-50 rounded-lg">
-              <h3 className="mb-2 text-sm font-semibold text-brownblack-700">
-                New here?
-              </h3>
-              <p className="mb-3 text-sm text-brownblack-600">
-                Get a free API key and add this address as admin.
-              </p>
-              <Link
-                href="/try-namestone"
-                className="flex justify-center items-center mx-auto text-sm font-medium text-orange-500"
+          <div
+            className="relative w-full max-w-sm"
+            style={{
+              animation: "adminEmptyFadeIn 0.5s ease-out both",
+            }}
+          >
+            {/* Header */}
+            <div className="mb-8 text-center">
+              <div
+                className="flex justify-center items-center mx-auto mb-4 rounded-full"
+                style={{
+                  width: "56px",
+                  height: "56px",
+                  background:
+                    "linear-gradient(135deg, #FFF3E9 0%, #FFE8D4 100%)",
+                }}
               >
                 <Icon
-                  icon="tabler:external-link"
-                  className="mr-2"
-                  width="16"
-                  height="16"
+                  icon="tabler:user-search"
+                  className="text-orange-500"
+                  width="28"
+                  height="28"
                 />
-                Generate a key
-              </Link>
+              </div>
+              <h2
+                className="mb-2 font-semibold text-brownblack-700"
+                style={{ fontSize: "1.375rem", lineHeight: "1.3" }}
+              >
+                No names linked
+              </h2>
+              <p className="text-sm leading-relaxed text-brownblack-400">
+                This wallet isn&apos;t an admin for any names yet.
+              </p>
             </div>
 
-            <div className="p-4 mt-6 text-center bg-gray-50 rounded-lg">
-              <h3 className="mb-2 text-sm font-semibold text-brownblack-700">
-                Not seeing your name?
+            {/* Service update card */}
+            <div
+              className="p-5 mb-4 rounded-xl border"
+              style={{
+                background:
+                  "linear-gradient(180deg, #FFFAF6 0%, #FFFFFF 100%)",
+                borderColor: "#F0E0DC",
+              }}
+            >
+              <h3 className="mb-4 text-sm font-semibold text-brownblack-700">
+                Service update
               </h3>
-              <p className="mb-3 text-sm text-brownblack-600">
-                Connect with another wallet or email Alex for help.
+              <p className="text-sm leading-relaxed text-brownblack-500">
+                NameStone is shutting down August 3, 2026, and is no longer
+                issuing new API keys.
               </p>
-              <a
-                href="mailto:alex@namestone.xyz"
-                className="flex justify-center items-center mx-auto text-sm font-medium text-orange-500"
-              >
-                <Icon
-                  icon="tabler:external-link"
-                  className="mr-2"
-                  width="16"
-                  height="16"
-                />
-                alex@namestone.xyz
-              </a>
+            </div>
+
+            {/* Secondary help */}
+            <div className="py-3 text-center">
+              <p className="text-sm text-brownblack-300">
+                Already have a key?{" "}
+                <span className="text-brownblack-400">
+                  Try a different wallet or{" "}
+                  <a
+                    href="mailto:alex@namestone.xyz"
+                    className="font-medium text-brownblack-500 underline-offset-2 hover:text-orange-500 hover:underline"
+                    style={{ transition: "color 0.15s" }}
+                  >
+                    ask Alex
+                  </a>
+                </span>
+              </p>
             </div>
           </div>
+
+          <style jsx>{`
+            @keyframes adminEmptyFadeIn {
+              from {
+                opacity: 0;
+                transform: translateY(12px);
+              }
+              to {
+                opacity: 1;
+                transform: translateY(0);
+              }
+            }
+          `}</style>
         </div>
       </AuthContentContainer>
     );

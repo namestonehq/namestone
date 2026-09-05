@@ -11,6 +11,8 @@ import {
 import Cors from "micro-cors";
 import { verifySignature, getDomainOwner } from "../../../utils/ServerUtils";
 
+const apiKeySignupDisabled = true;
+
 const cors = Cors({
   allowMethods: ["GET", "HEAD", "POST", "OPTIONS"],
   origin: "*",
@@ -18,6 +20,13 @@ const cors = Cors({
 
 async function handler(req, res) {
   if (req.method === "POST") {
+    if (apiKeySignupDisabled) {
+      return res.status(410).json({
+        error:
+          "NameStone is shutting down August 3, 2026, and is no longer issuing new API keys.",
+      });
+    }
+
     const network = getNetwork(req);
     if (!network) {
       return res.status(400).json({ error: "Invalid network" });

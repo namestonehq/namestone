@@ -1,100 +1,80 @@
 import React from "react";
-
 import Head from "next/head";
-import { useState } from "react";
 import Image from "next/image";
-import CustomConnectButton from "../components/CustomConnectButton";
 import Link from "next/link";
 import namestoneIcon from "../public/images/namestone-icon.svg";
-import { SidePanel } from "../components/TryForFree/SidePanel";
-import { TopPanel } from "../components/TryForFree/TopPanel";
-import { StylishVerticalDivider } from "../components/TryForFree/StylishVerticalDivider";
-import { ApiKeyForm } from "../components/TryForFree/ApiKeyForm";
-import { ApiKeySentDocs } from "../components/TryForFree/ApiKeySentDocs";
-import { FormState, Network } from "../components/TryForFree/formStates";
-import { useWalletClient } from "wagmi";
+import sideMenuSvg from "../public/images/try-for-free-side-menu.svg";
 
 export default function TryNamestone() {
-  const { data: walletClient } = useWalletClient();
-  const [formState, setFormState] = useState(FormState.FORM);
-  const [userEnsDomain, setUserEnsDomain] = useState("");
-  const [network, setNetwork] = useState(Network.MAINNET);
-
-  const handleApiKeySentSuccessfully = (ensDomain) => {
-    setFormState(FormState.API_KEY_SENT);
-    setUserEnsDomain(ensDomain);
-  };
-
-  const handleNetworkChange = (network) => {
-    if (network === "Sepolia") {
-      setNetwork(Network.SEPOLIA);
-    } else if (network === "Mainnet") {
-      setNetwork(Network.MAINNET);
-    }
-  };
-
   return (
-    <div className="flex justify-center bg-white">
-      <div className="w-full flex flex-col max-w-[1536px] relative">
+    <div className="flex min-h-screen justify-center bg-white">
+      <div className="relative flex w-full max-w-[1536px] flex-col overflow-hidden">
         <Head>
-          <title>Try for Free | Namestone</title>
+          <title>Service Update | NameStone</title>
           <meta
             name="description"
-            content="Try NameStone for free. Sign up to get a free API key to issue gasless subdomains on any ENS domain. "
+            content="NameStone is shutting down August 3, 2026, and is no longer issuing new API keys."
           />
           <link rel="icon" href="/favicon.ico" />
         </Head>
 
-        {/* Nav Bar */}
-        <div className="fixed z-40 flex flex-col w-full max-w-[1536px]">
-          <div className="w-full backdrop-blur-sm">
-            <div className="flex justify-between w-full px-8 py-4 lg:px-32">
-              <div className="flex items-center text-2xl font-bold">
-                <Link href="/" className="flex">
-                  <Image
-                    className="h-[30px] mr-1 my-auto"
-                    priority
-                    src={namestoneIcon}
-                    alt="Forging Commmunity Identity"
-                  />{" "}
-                  <span className={`mr-1`}> NameStone </span>
-                </Link>
-              </div>
-              <CustomConnectButton />
+        <header className="relative z-20 flex w-full items-center justify-between px-6 py-4 backdrop-blur-sm lg:px-32">
+          <Link href="/" className="flex items-center text-2xl font-bold">
+            <Image
+              className="mr-1 h-[30px]"
+              priority
+              src={namestoneIcon}
+              alt="NameStone"
+            />
+            <span>NameStone</span>
+          </Link>
+          <Link
+            href="/admin"
+            className="rounded-lg bg-orange-500 px-4 py-2 text-sm font-bold text-brownblack-700 transition-colors hover:bg-orange-700 active:bg-orange-800"
+          >
+            Admin Login
+          </Link>
+        </header>
+
+        <main className="relative flex flex-1 items-center justify-center px-6 py-16 sm:px-8">
+          <Image
+            src={sideMenuSvg}
+            alt=""
+            fill
+            priority
+            className="object-cover opacity-60"
+          />
+          <div className="relative z-10 w-full max-w-2xl rounded-2xl border border-neutral-200 bg-white p-8 text-center shadow-sm sm:p-12">
+            <div className="mx-auto mb-6 h-1 w-16 rounded-full bg-orange-500" />
+            <p className="mb-3 text-sm font-bold uppercase tracking-[0.16em] text-orange-800">
+              Service update
+            </p>
+            <h1 className="text-md font-bold leading-tight text-brownblack-700 sm:text-lg">
+              NameStone is shutting down August 3, 2026.
+            </h1>
+            <p className="mx-auto mt-5 max-w-lg text-sm leading-relaxed text-neutral-600 sm:text-base">
+              We&apos;re no longer issuing new API keys. Thank you to everyone
+              who built with NameStone.
+            </p>
+
+            <div className="mt-8 flex flex-col items-center justify-center gap-3 border-t border-neutral-200 pt-8 sm:flex-row">
+              <Link
+                href="/admin"
+                className="w-full rounded-lg border border-neutral-300 bg-white px-5 py-3 text-sm font-bold text-brownblack-700 transition-colors hover:bg-neutral-100 sm:w-auto"
+              >
+                Open Admin Panel
+              </Link>
+              <Link
+                href="https://x.com/namestonehq/status/2073272170994979308"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full rounded-lg border border-neutral-300 bg-white px-5 py-3 text-sm font-bold text-brownblack-700 transition-colors hover:bg-neutral-100 sm:w-auto"
+              >
+                Read the announcement
+              </Link>
             </div>
           </div>
-        </div>
-
-        {/* Main Content Area - Below Navbar */}
-        <div className="flex flex-col w-full mt-[60px]">
-          {/* Mobile Top Panel */}
-          <TopPanel formState={formState} />
-
-          {/* Desktop Side Panel and Content */}
-          <div className="flex flex-row w-full">
-            <div className="hidden lg:block w-1/3 sticky top-[60px] h-[calc(100vh-60px)]">
-              <SidePanel formState={formState} />
-              <div className="absolute right-0 top-0 h-full">
-                <StylishVerticalDivider />
-              </div>
-            </div>
-            <div className="w-full lg:w-2/3">
-              {formState === FormState.FORM && (
-                <ApiKeyForm
-                  handleApiKeySentSuccessfully={handleApiKeySentSuccessfully}
-                  handleNetworkChange={handleNetworkChange}
-                />
-              )}
-              {formState === FormState.API_KEY_SENT && (
-                <ApiKeySentDocs
-                  userEnsDomain={userEnsDomain}
-                  walletAddress={walletClient?.account.address}
-                  network={network}
-                />
-              )}
-            </div>
-          </div>
-        </div>
+        </main>
       </div>
     </div>
   );
